@@ -20,7 +20,6 @@ type FishEntry = {
   harakiri: boolean;
   ebisu: boolean;
   taikobou: boolean;
-  zoneIds: number[];
   notes?: string;
 };
 
@@ -168,7 +167,6 @@ function main() {
       harakiri: wikiData.harakiri,
       ebisu: wikiData.ebisu,
       taikobou: false,
-      zoneIds: [],
       notes: wikiData.notes || undefined,
     });
   }

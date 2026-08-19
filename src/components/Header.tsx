@@ -1,3 +1,24 @@
+/**
+ * ============================================================================
+ * [FilePath] src/components/Header.tsx
+ * [Role] アプリケーションの固定ヘッダー・キャラクター切り替え/管理・開発用ツール導線コンポーネント
+ * 
+ * [概要]
+ * - タイトルロゴおよびアプリケーション名の表示
+ * - キャラクター選択ドロップダウン、新規追加フォーム、削除ダイアログの制御
+ * - 開発環境（`isDev === true`）におけるマスターデータ編集モーダル起動ボタンの表示
+ * 
+ * [編集・改修時の注意事項]
+ * 1. 【高さ依存】
+ *    本コンポーネントの高さ変更は `App.tsx` 内の `FilterBar` の固定位置（`top-[75px]`）に影響します。
+ *    レイアウトの高さを更新した場合は `App.tsx` の位置調整も合わせて確認してください。
+ * 2. 【キャラクター削除】
+ *    誤削除防止のためブラウザ標準の `confirm` ダイアログを挟んでいます。
+ * 3. 【開発用ツールの表示条件】
+ *    `isDev` フラグでガードしており、本番ビルド時にはマスター編集ボタンが露出しない設計です。
+ * ============================================================================
+ */
+
 import React, { useState } from 'react';
 import { Plus, Trash2, Fish, Database } from 'lucide-react';
 import type { CharacterProgress } from '@/types/fish';
@@ -22,7 +43,6 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
 	const [isAdding, setIsAdding] = useState(false);
 	const [newCharName, setNewCharName] = useState('');
-
 
 	const handleAddSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -132,8 +152,6 @@ export const Header: React.FC<HeaderProps> = ({
 						)}
 					</div>
 				</div>
-
-
 			</div>
 		</header>
 	);

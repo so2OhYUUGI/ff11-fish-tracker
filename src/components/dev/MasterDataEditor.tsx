@@ -1,17 +1,28 @@
 import React, { useState } from 'react';
 import { isDev } from '@/utils/env';
-import { FISHES, ZONES } from '@/data/';
-import type { FishMaster } from '@/types/fish';
+import { FISHES, ZONES, FISH_LOCATIONS } from '@/data/';
+import type { FishMaster, FishLocation } from '@/types/fish';
+
+type EditableFish = FishMaster & {
+	zoneIds: number[];
+};
 
 export const MasterDataEditor: React.FC = () => {
-	// 開発環境以外ではコンポーネント自体をレンダリングしない
 	if (!isDev) return null;
 
-	const [fishList, setFishList] = useState<FishMaster[]>(FISHES);
-	const [selectedFish, setSelectedFish] = useState<FishMaster | null>(null);
+	const [fishList, setFishList] = useState<EditableFish[]>(() =>
+		FISHES.map((fish) => ({
+			...fish,
+			zoneIds: FISH_LOCATIONS.filter((loc) => loc.fishId === fish.id).map(
+				(loc) => loc.zoneId
+			),
+		}))
+	);
 
-	// フィールドの直接更新処理
-	const handleFieldChange = (field: keyof FishMaster, value: any) => {
+	const [selectedFish, setSelectedFish] = useState<EditableFish | null>(null);
+	const [zoneSearch, setZoneSearch] = useState('');
+
+	const handleFieldChange = (field: keyof EditableFish, value: any) => {
 		if (!selectedFish) return;
 
 		const updated = { ...selectedFish, [field]: value };
@@ -22,7 +33,19 @@ export const MasterDataEditor: React.FC = () => {
 		);
 	};
 
-	// 直接 fishData.ts へ上書き保存する処理
+	const handleZoneToggle = (zoneId: number) => {
+		if (!selectedFish) return;
+
+		const currentZoneIds = selectedFish.zoneIds || [];
+		const isIncluded = currentZoneIds.includes(zoneId);
+
+		const updatedZoneIds = isIncluded
+			? currentZoneIds.filter((id) => id !== zoneId)
+			: [...currentZoneIds, zoneId];
+
+		handleFieldChange('zoneIds', updatedZoneIds);
+	};
+
 	const handleDirectSave = async () => {
 		try {
 			const response = await fetch('/api/save-fish-data', {
@@ -37,7 +60,7 @@ export const MasterDataEditor: React.FC = () => {
 			});
 
 			if (response.ok) {
-				alert('src/data/fishData.ts へ直接保存しました！');
+				alert('fishes.ts / fishLocations.ts / zones.ts へ直接保存しました！');
 			} else {
 				alert('保存に失敗しました。');
 			}
@@ -47,35 +70,90 @@ export const MasterDataEditor: React.FC = () => {
 		}
 	};
 
-	// 編集結果をJSONとしてダウンロード
 	const handleExport = () => {
-		const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fishList, null, 2));
+		const exportFishes = fishList.map(({ zoneIds, ...fish }) => fish);
+
+		const exportLocations: FishLocation[] = fishList.flatMap((fish) =>
+			(fish.zoneIds || []).map((zoneId) => ({
+				id: `${fish.id}-${zoneId}`,
+				fishId: fish.id,
+				zoneId,
+			}))
+		);
+
+		const exportData = {
+			fishes: exportFishes,
+			fishLocations: exportLocations,
+			zones: ZONES,
+		};
+
+		const dataStr =
+			'data:text/json;charset=utf-8,' +
+			encodeURIComponent(JSON.stringify(exportData, null, 2));
 		const downloadAnchor = document.createElement('a');
-		downloadAnchor.setAttribute("href", dataStr);
-		downloadAnchor.setAttribute("download", "updatedFishData.json");
+		downloadAnchor.setAttribute('href', dataStr);
+		downloadAnchor.setAttribute('download', 'updatedFishData.json');
 		document.body.appendChild(downloadAnchor);
 		downloadAnchor.click();
 		downloadAnchor.remove();
 	};
 
+	const filteredZones = ZONES.filter(
+		(zone) =>
+			zone.ja.includes(zoneSearch) ||
+			zone.en.toLowerCase().includes(zoneSearch.toLowerCase()) ||
+			String(zone.id).includes(zoneSearch)
+	);
+
 	return (
-		<div style={{ padding: '20px', border: '2px solid #e53e3e', borderRadius: '8px', margin: '20px 0', backgroundColor: '#fff5f5' }}>
-			<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-				<h2 style={{ color: '#c53030', margin: 0 }}>🛠️ 開発用マスターデータエディタ</h2>
-				<div style={{ display: 'flex', gap: '10px' }}>
-					{/* 上書き保存ボタン */}
-					<button onClick={handleDirectSave} style={{ padding: '8px 16px', backgroundColor: '#c53030', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
-						fishData.ts に上書き保存
-					</button>
-					<button onClick={handleExport} style={{ padding: '8px 16px', backgroundColor: '#2b6cb0', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-						JSONをダウンロード
-					</button>
-				</div>
+		<div style={{ display: 'flex', flexDirection: 'column', height: '100%', gap: '10px' }}>
+			{/* アクションボタンバー */}
+			<div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', flexShrink: 0 }}>
+				<button
+					type="button"
+					onClick={handleDirectSave}
+					style={{
+						padding: '6px 12px',
+						backgroundColor: '#c53030',
+						color: '#fff',
+						border: 'none',
+						borderRadius: '4px',
+						cursor: 'pointer',
+						fontWeight: 'bold',
+						fontSize: '12px',
+					}}
+				>
+					TSファイルへ上書き保存
+				</button>
+				<button
+					type="button"
+					onClick={handleExport}
+					style={{
+						padding: '6px 12px',
+						backgroundColor: '#2b6cb0',
+						color: '#fff',
+						border: 'none',
+						borderRadius: '4px',
+						cursor: 'pointer',
+						fontSize: '12px',
+					}}
+				>
+					JSONをダウンロード
+				</button>
 			</div>
 
-			<div style={{ display: 'flex', gap: '20px', marginTop: '15px' }}>
+			{/* 左右分割メイン領域 */}
+			<div style={{ display: 'flex', gap: '15px', flex: 1, minHeight: 0 }}>
 				{/* 左側：魚リスト */}
-				<div style={{ width: '300px', maxHeight: '500px', overflowY: 'auto', border: '1px solid #ccc', background: '#fff' }}>
+				<div
+					style={{
+						width: '260px',
+						overflowY: 'auto',
+						border: '1px solid #ccc',
+						background: '#fff',
+						flexShrink: 0,
+					}}
+				>
 					{fishList.map((fish) => (
 						<div
 							key={fish.id}
@@ -83,7 +161,9 @@ export const MasterDataEditor: React.FC = () => {
 							style={{
 								padding: '8px',
 								cursor: 'pointer',
-								backgroundColor: selectedFish?.id === fish.id ? '#e2e8f0' : 'transparent',
+								fontSize: '13px',
+								backgroundColor:
+									selectedFish?.id === fish.id ? '#e2e8f0' : 'transparent',
 								borderBottom: '1px solid #eee',
 							}}
 						>
@@ -93,10 +173,18 @@ export const MasterDataEditor: React.FC = () => {
 				</div>
 
 				{/* 右側：編集フォーム */}
-				<div style={{ flex: 1, background: '#fff', padding: '15px', border: '1px solid #ccc' }}>
+				<div
+					style={{
+						flex: 1,
+						background: '#fff',
+						padding: '15px',
+						border: '1px solid #ccc',
+						overflowY: 'auto',
+					}}
+				>
 					{selectedFish ? (
-						<div style={{ display: 'grid', gap: '10px' }}>
-							<h3>ID: {selectedFish.id} の編集</h3>
+						<div style={{ display: 'grid', gap: '10px', fontSize: '13px' }}>
+							<h3 style={{ margin: '0 0 5px 0' }}>ID: {selectedFish.id} の編集</h3>
 
 							<label>
 								日本語名:
@@ -104,7 +192,7 @@ export const MasterDataEditor: React.FC = () => {
 									type="text"
 									value={selectedFish.ja}
 									onChange={(e) => handleFieldChange('ja', e.target.value)}
-									style={{ width: '100%', padding: '4px' }}
+									style={{ width: '100%', padding: '4px', marginTop: '2px' }}
 								/>
 							</label>
 
@@ -114,7 +202,7 @@ export const MasterDataEditor: React.FC = () => {
 									type="text"
 									value={selectedFish.en}
 									onChange={(e) => handleFieldChange('en', e.target.value)}
-									style={{ width: '100%', padding: '4px' }}
+									style={{ width: '100%', padding: '4px', marginTop: '2px' }}
 								/>
 							</label>
 
@@ -123,8 +211,10 @@ export const MasterDataEditor: React.FC = () => {
 								<input
 									type="number"
 									value={selectedFish.maxSkill}
-									onChange={(e) => handleFieldChange('maxSkill', Number(e.target.value))}
-									style={{ width: '100%', padding: '4px' }}
+									onChange={(e) =>
+										handleFieldChange('maxSkill', Number(e.target.value))
+									}
+									style={{ width: '100%', padding: '4px', marginTop: '2px' }}
 								/>
 							</label>
 
@@ -132,31 +222,100 @@ export const MasterDataEditor: React.FC = () => {
 								サイズ:
 								<select
 									value={selectedFish.sizeType}
-									onChange={(e) => handleFieldChange('sizeType', e.target.value as 'small' | 'large')}
-									style={{ width: '100%', padding: '4px' }}
+									onChange={(e) =>
+										handleFieldChange(
+											'sizeType',
+											e.target.value as 'small' | 'large'
+										)
+									}
+									style={{ width: '100%', padding: '4px', marginTop: '2px' }}
 								>
 									<option value="small">小型</option>
 									<option value="large">大型</option>
 								</select>
 							</label>
 
-							<div style={{ display: 'flex', gap: '15px', marginTop: '10px' }}>
-								<label>
+							<div style={{ display: 'flex', gap: '15px', marginTop: '5px' }}>
+								<label style={{ cursor: 'pointer' }}>
 									<input
 										type="checkbox"
 										checked={selectedFish.harakiri}
-										onChange={(e) => handleFieldChange('harakiri', e.target.checked)}
-									/>
+										onChange={(e) =>
+											handleFieldChange('harakiri', e.target.checked)
+										}
+									/>{' '}
 									ハラキリ対象
 								</label>
-								<label>
+								<label style={{ cursor: 'pointer' }}>
 									<input
 										type="checkbox"
 										checked={selectedFish.ebisu}
-										onChange={(e) => handleFieldChange('ebisu', e.target.checked)}
-									/>
+										onChange={(e) =>
+											handleFieldChange('ebisu', e.target.checked)
+										}
+									/>{' '}
 									恵比寿対象
 								</label>
+							</div>
+
+							{/* 釣れるエリア（リスト形式スクロール） */}
+							<div>
+								<div
+									style={{
+										display: 'flex',
+										justify: 'space-between',
+										alignItems: 'center',
+										marginBottom: '4px',
+									}}
+								>
+									<span style={{ fontWeight: 'bold' }}>
+										釣れるエリア ({selectedFish.zoneIds?.length || 0}件選択中):
+									</span>
+									<input
+										type="text"
+										placeholder="エリア名・IDで絞り込み..."
+										value={zoneSearch}
+										onChange={(e) => setZoneSearch(e.target.value)}
+										style={{ padding: '2px 6px', fontSize: '12px' }}
+									/>
+								</div>
+
+								<div
+									style={{
+										height: '140px',
+										overflowY: 'auto',
+										border: '1px solid #ccc',
+										padding: '8px',
+										background: '#f9f9f9',
+										display: 'grid',
+										gridTemplateColumns: 'repeat(2, 1fr)',
+										gap: '4px 10px',
+									}}
+								>
+									{filteredZones.map((zone) => {
+										const isChecked =
+											selectedFish.zoneIds?.includes(zone.id) || false;
+										return (
+											<label
+												key={zone.id}
+												style={{
+													fontSize: '12px',
+													display: 'flex',
+													alignItems: 'center',
+													gap: '4px',
+													cursor: 'pointer',
+												}}
+											>
+												<input
+													type="checkbox"
+													checked={isChecked}
+													onChange={() => handleZoneToggle(zone.id)}
+												/>
+												[{zone.id}] {zone.ja}
+											</label>
+										);
+									})}
+								</div>
 							</div>
 
 							<label>
@@ -164,12 +323,14 @@ export const MasterDataEditor: React.FC = () => {
 								<textarea
 									value={selectedFish.notes || ''}
 									onChange={(e) => handleFieldChange('notes', e.target.value)}
-									style={{ width: '100%', height: '60px', padding: '4px' }}
+									style={{ width: '100%', height: '40px', padding: '4px', marginTop: '2px' }}
 								/>
 							</label>
 						</div>
 					) : (
-						<p>左側のリストから編集する魚を選択してください。</p>
+						<p style={{ color: '#666', margin: 0 }}>
+							左側のリストから編集する魚を選択してください。
+						</p>
 					)}
 				</div>
 			</div>

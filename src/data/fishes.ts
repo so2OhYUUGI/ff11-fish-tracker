@@ -10,8 +10,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 2216,
@@ -22,8 +21,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5125,
@@ -34,8 +32,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4443,
@@ -46,8 +43,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5447,
@@ -58,8 +54,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5785,
@@ -70,8 +65,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5960,
@@ -82,8 +76,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4314,
@@ -94,8 +87,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5792,
@@ -106,8 +98,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5449,
@@ -118,8 +109,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5963,
@@ -130,8 +120,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5789,
@@ -143,7 +132,6 @@ export const FISHES: FishMaster[] = [
     "harakiri": false,
     "ebisu": false,
     "taikobou": false,
-    "zoneIds": [],
     "notes": "昇級認定試験（素人→見習）"
   },
   {
@@ -155,8 +143,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 6334,
@@ -167,8 +154,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5950,
@@ -179,8 +165,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4500,
@@ -191,8 +176,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5790,
@@ -203,8 +187,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5993,
@@ -215,8 +198,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4403,
@@ -227,8 +209,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5126,
@@ -239,8 +220,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5802,
@@ -251,8 +231,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 6333,
@@ -263,8 +242,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5793,
@@ -275,8 +253,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4310,
@@ -287,8 +264,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4289,
@@ -299,8 +275,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 6613,
@@ -311,8 +286,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4379,
@@ -324,7 +298,6 @@ export const FISHES: FishMaster[] = [
     "harakiri": false,
     "ebisu": false,
     "taikobou": false,
-    "zoneIds": [],
     "notes": "昇級認定試験（見習→徒弟）"
   },
   {
@@ -336,8 +309,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5536,
@@ -348,8 +320,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 6335,
@@ -360,8 +331,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4501,
@@ -372,8 +342,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5121,
@@ -384,8 +353,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5132,
@@ -396,8 +364,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4426,
@@ -408,8 +375,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4361,
@@ -420,8 +386,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4313,
@@ -432,8 +397,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5787,
@@ -444,8 +408,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5794,
@@ -456,8 +419,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4290,
@@ -468,8 +430,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5465,
@@ -480,8 +441,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 6336,
@@ -492,8 +452,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5799,
@@ -505,7 +464,6 @@ export const FISHES: FishMaster[] = [
     "harakiri": false,
     "ebisu": false,
     "taikobou": false,
-    "zoneIds": [],
     "notes": "昇級認定試験（徒弟→下級職人）"
   },
   {
@@ -517,8 +475,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5535,
@@ -529,8 +486,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4315,
@@ -541,8 +497,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5803,
@@ -553,8 +508,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5786,
@@ -565,8 +519,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4528,
@@ -577,8 +530,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5795,
@@ -589,8 +541,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5949,
@@ -601,8 +552,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5791,
@@ -613,8 +563,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5461,
@@ -625,8 +574,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5804,
@@ -637,8 +585,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5812,
@@ -649,8 +596,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5796,
@@ -661,8 +607,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4580,
@@ -673,8 +618,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5805,
@@ -686,7 +630,6 @@ export const FISHES: FishMaster[] = [
     "harakiri": false,
     "ebisu": false,
     "taikobou": false,
-    "zoneIds": [],
     "notes": "昇級認定試験（下級職人→名取）"
   },
   {
@@ -698,8 +641,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5469,
@@ -710,8 +652,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4385,
@@ -722,8 +663,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5952,
@@ -734,8 +674,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5797,
@@ -746,8 +685,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5453,
@@ -758,8 +696,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5788,
@@ -770,8 +707,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5458,
@@ -782,8 +718,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5128,
@@ -794,8 +729,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5448,
@@ -806,8 +740,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4470,
@@ -818,8 +751,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 6144,
@@ -830,8 +762,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4291,
@@ -842,8 +773,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5800,
@@ -854,8 +784,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 9077,
@@ -867,7 +796,6 @@ export const FISHES: FishMaster[] = [
     "harakiri": false,
     "ebisu": false,
     "taikobou": false,
-    "zoneIds": [],
     "notes": "2015.5.14追加"
   },
   {
@@ -880,7 +808,6 @@ export const FISHES: FishMaster[] = [
     "harakiri": false,
     "ebisu": false,
     "taikobou": false,
-    "zoneIds": [],
     "notes": "2015.8.5追加"
   },
   {
@@ -893,7 +820,6 @@ export const FISHES: FishMaster[] = [
     "harakiri": false,
     "ebisu": false,
     "taikobou": false,
-    "zoneIds": [],
     "notes": "昇級認定試験（名取→目録）"
   },
   {
@@ -905,8 +831,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4402,
@@ -917,8 +842,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4484,
@@ -929,8 +853,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5131,
@@ -941,8 +864,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5456,
@@ -953,8 +875,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5464,
@@ -965,8 +886,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5948,
@@ -977,8 +897,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5798,
@@ -989,8 +908,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5452,
@@ -1001,8 +919,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 9216,
@@ -1014,7 +931,6 @@ export const FISHES: FishMaster[] = [
     "harakiri": false,
     "ebisu": false,
     "taikobou": false,
-    "zoneIds": [],
     "notes": "2015.11.10追加"
   },
   {
@@ -1026,8 +942,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5459,
@@ -1038,8 +953,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5953,
@@ -1051,7 +965,6 @@ export const FISHES: FishMaster[] = [
     "harakiri": false,
     "ebisu": false,
     "taikobou": false,
-    "zoneIds": [],
     "notes": "2015.11.10追加"
   },
   {
@@ -1063,8 +976,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4317,
@@ -1075,8 +987,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 6337,
@@ -1087,8 +998,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4579,
@@ -1099,8 +1009,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5806,
@@ -1112,7 +1021,6 @@ export const FISHES: FishMaster[] = [
     "harakiri": false,
     "ebisu": false,
     "taikobou": false,
-    "zoneIds": [],
     "notes": "昇級認定試験（目録→印可）"
   },
   {
@@ -1124,8 +1032,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5466,
@@ -1136,8 +1043,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5955,
@@ -1148,8 +1054,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5816,
@@ -1160,8 +1065,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5995,
@@ -1172,8 +1076,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4485,
@@ -1184,8 +1087,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5139,
@@ -1196,8 +1098,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5957,
@@ -1209,7 +1110,6 @@ export const FISHES: FishMaster[] = [
     "harakiri": false,
     "ebisu": false,
     "taikobou": false,
-    "zoneIds": [],
     "notes": "2015.11.10追加"
   },
   {
@@ -1221,8 +1121,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4288,
@@ -1233,8 +1132,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5807,
@@ -1246,7 +1144,6 @@ export const FISHES: FishMaster[] = [
     "harakiri": false,
     "ebisu": false,
     "taikobou": false,
-    "zoneIds": [],
     "notes": "昇級認定試験（印可→高弟）"
   },
   {
@@ -1258,8 +1155,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 6145,
@@ -1270,8 +1166,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5534,
@@ -1282,8 +1177,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5130,
@@ -1294,8 +1188,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5460,
@@ -1306,8 +1199,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4451,
@@ -1318,8 +1210,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 6001,
@@ -1330,8 +1221,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5474,
@@ -1342,8 +1232,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4307,
@@ -1354,8 +1243,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4477,
@@ -1366,8 +1254,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5809,
@@ -1379,7 +1266,6 @@ export const FISHES: FishMaster[] = [
     "harakiri": false,
     "ebisu": false,
     "taikobou": false,
-    "zoneIds": [],
     "notes": "昇級認定試験（高弟→皆伝）"
   },
   {
@@ -1391,8 +1277,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5951,
@@ -1403,8 +1288,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5472,
@@ -1415,8 +1299,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4461,
@@ -1427,8 +1310,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5454,
@@ -1439,8 +1321,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5138,
@@ -1451,8 +1332,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5813,
@@ -1463,8 +1343,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4304,
@@ -1475,8 +1354,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5455,
@@ -1487,8 +1365,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4454,
@@ -1499,8 +1376,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4474,
@@ -1512,7 +1388,6 @@ export const FISHES: FishMaster[] = [
     "harakiri": false,
     "ebisu": false,
     "taikobou": false,
-    "zoneIds": [],
     "notes": "昇級認定試験（皆伝→師範）"
   },
   {
@@ -1524,8 +1399,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5467,
@@ -1536,8 +1410,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4384,
@@ -1548,8 +1421,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5457,
@@ -1560,8 +1432,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5817,
@@ -1573,7 +1444,6 @@ export const FISHES: FishMaster[] = [
     "harakiri": false,
     "ebisu": false,
     "taikobou": false,
-    "zoneIds": [],
     "notes": "昇級認定試験（師範→高級職人）"
   },
   {
@@ -1585,8 +1455,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4463,
@@ -1597,8 +1466,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4475,
@@ -1609,8 +1477,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4476,
@@ -1621,8 +1488,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5140,
@@ -1633,8 +1499,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5137,
@@ -1645,8 +1510,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4316,
@@ -1657,8 +1521,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4308,
@@ -1669,8 +1532,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5814,
@@ -1681,8 +1543,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5446,
@@ -1693,8 +1554,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5120,
@@ -1705,8 +1565,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4319,
@@ -1717,8 +1576,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 4309,
@@ -1729,8 +1587,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 6489,
@@ -1742,7 +1599,6 @@ export const FISHES: FishMaster[] = [
     "harakiri": false,
     "ebisu": false,
     "taikobou": false,
-    "zoneIds": [],
     "notes": "2015.11.10追加"
   },
   {
@@ -1754,8 +1610,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5471,
@@ -1766,8 +1621,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5127,
@@ -1779,7 +1633,6 @@ export const FISHES: FishMaster[] = [
     "harakiri": true,
     "ebisu": true,
     "taikobou": false,
-    "zoneIds": [],
     "notes": "ハラキリ「剣の枝」（恵比寿釣竿）"
   },
   {
@@ -1792,7 +1645,6 @@ export const FISHES: FishMaster[] = [
     "harakiri": true,
     "ebisu": true,
     "taikobou": false,
-    "zoneIds": [],
     "notes": "ハラキリ「五色の糸」（恵比寿釣竿）"
   },
   {
@@ -1804,8 +1656,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5540,
@@ -1817,7 +1668,6 @@ export const FISHES: FishMaster[] = [
     "harakiri": true,
     "ebisu": false,
     "taikobou": false,
-    "zoneIds": [],
     "notes": "ハラキリ「コクリュウの肝」（海竜の肝）"
   },
   {
@@ -1830,7 +1680,6 @@ export const FISHES: FishMaster[] = [
     "harakiri": true,
     "ebisu": false,
     "taikobou": false,
-    "zoneIds": [],
     "notes": "ハラキリ「ソウリュウの肝」（海竜の肝）"
   },
   {
@@ -1843,7 +1692,6 @@ export const FISHES: FishMaster[] = [
     "harakiri": true,
     "ebisu": false,
     "taikobou": false,
-    "zoneIds": [],
     "notes": "ハラキリ「セキリュウの肝」（海竜の肝）"
   },
   {
@@ -1855,8 +1703,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 6373,
@@ -1867,8 +1714,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5539,
@@ -1880,7 +1726,6 @@ export const FISHES: FishMaster[] = [
     "harakiri": true,
     "ebisu": false,
     "taikobou": false,
-    "zoneIds": [],
     "notes": "ハラキリ「ハクリュウの肝」（海竜の肝）"
   },
   {
@@ -1892,8 +1737,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 6375,
@@ -1905,7 +1749,6 @@ export const FISHES: FishMaster[] = [
     "harakiri": false,
     "ebisu": true,
     "taikobou": false,
-    "zoneIds": [],
     "notes": "クエスト「勇魚」（真恵比寿釣竿）"
   },
   {
@@ -1917,8 +1760,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 5476,
@@ -1929,8 +1771,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 6371,
@@ -1942,7 +1783,6 @@ export const FISHES: FishMaster[] = [
     "harakiri": false,
     "ebisu": true,
     "taikobou": false,
-    "zoneIds": [],
     "notes": "クエスト「勇魚」（真恵比寿釣竿）"
   },
   {
@@ -1955,7 +1795,6 @@ export const FISHES: FishMaster[] = [
     "harakiri": false,
     "ebisu": true,
     "taikobou": false,
-    "zoneIds": [],
     "notes": "クエスト「勇魚」（真恵比寿釣竿）"
   },
   {
@@ -1967,8 +1806,7 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false,
-    "zoneIds": []
+    "taikobou": false
   },
   {
     "id": 6374,
@@ -1980,7 +1818,6 @@ export const FISHES: FishMaster[] = [
     "harakiri": false,
     "ebisu": true,
     "taikobou": false,
-    "zoneIds": [],
     "notes": "クエスト「勇魚」（真恵比寿釣竿）"
   },
   {
@@ -1993,7 +1830,6 @@ export const FISHES: FishMaster[] = [
     "harakiri": false,
     "ebisu": true,
     "taikobou": false,
-    "zoneIds": [],
     "notes": "クエスト「勇魚」（真恵比寿釣竿）"
   }
 ];

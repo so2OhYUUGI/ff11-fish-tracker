@@ -1,3 +1,25 @@
+/**
+ * ============================================================================
+ * [FilePath] src/components/FilterBar.tsx
+ * [Role] メインナビゲーション・絞り込み条件・検索・プログレス表示コンポーネント
+ * 
+ * [概要]
+ * - メイン表示タブ（魚 / 餌）の切替
+ * - 魚表示時の状態絞り込み（すべて / 未達成 / 達成済）および進捗率（プログレスバー）の描画
+ * - 名称検索インプット（魚名 / 餌名の自動切替）
+ * - 表示モード切替（カード表示 / リスト表示）
+ * 
+ * [編集・改修時の注意事項]
+ * 1. 【吸着レイアウト（Sticky）】
+ *    本コンポーネントは `App.tsx` 内で `sticky top-[75px]` として配置されます。
+ *    上下幅（padding）等の調整を行う場合は、`App.tsx` 側の位置設定との整合性を考慮してください。
+ * 2. 【条件付きレンダリング】
+ *    ステータスフィルターおよび達成率表示領域は `mainTab === 'fish'` の場合のみ描画されます。
+ * 3. 【プログレス表示】
+ *    `totalFishCount` が 0 の場合は 0% 計算のゼロ除算防止ロジックを含んでいます。
+ * ============================================================================
+ */
+
 import React from 'react';
 import { Search, LayoutGrid, List, Fish, Utensils } from 'lucide-react';
 import type { ViewMode, MainTab, CharacterProgress } from '@/types/fish';
@@ -43,8 +65,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 						<button
 							onClick={() => onMainTabChange('fish')}
 							className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${mainTab === 'fish'
-									? 'bg-blue-600 text-white shadow'
-									: 'text-slate-400 hover:text-slate-200'
+								? 'bg-blue-600 text-white shadow'
+								: 'text-slate-400 hover:text-slate-200'
 								}`}
 						>
 							<Fish className="w-3.5 h-3.5" />
@@ -53,8 +75,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 						<button
 							onClick={() => onMainTabChange('bait')}
 							className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${mainTab === 'bait'
-									? 'bg-blue-600 text-white shadow'
-									: 'text-slate-400 hover:text-slate-200'
+								? 'bg-blue-600 text-white shadow'
+								: 'text-slate-400 hover:text-slate-200'
 								}`}
 						>
 							<Utensils className="w-3.5 h-3.5" />
@@ -68,8 +90,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 							<button
 								onClick={() => onStatusFilterChange('all')}
 								className={`flex-1 sm:flex-none px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${statusFilter === 'all'
-										? 'bg-slate-700 text-white shadow'
-										: 'text-slate-400 hover:text-slate-200'
+									? 'bg-slate-700 text-white shadow'
+									: 'text-slate-400 hover:text-slate-200'
 									}`}
 							>
 								すべて
@@ -77,8 +99,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 							<button
 								onClick={() => onStatusFilterChange('unchecked')}
 								className={`flex-1 sm:flex-none px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${statusFilter === 'unchecked'
-										? 'bg-amber-600 text-white shadow'
-										: 'text-slate-400 hover:text-slate-200'
+									? 'bg-amber-600 text-white shadow'
+									: 'text-slate-400 hover:text-slate-200'
 									}`}
 							>
 								未達成
@@ -86,8 +108,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 							<button
 								onClick={() => onStatusFilterChange('checked')}
 								className={`flex-1 sm:flex-none px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${statusFilter === 'checked'
-										? 'bg-emerald-600 text-white shadow'
-										: 'text-slate-400 hover:text-slate-200'
+									? 'bg-emerald-600 text-white shadow'
+									: 'text-slate-400 hover:text-slate-200'
 									}`}
 							>
 								達成済
@@ -135,8 +157,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 						<button
 							onClick={() => onViewModeChange('card')}
 							className={`p-1.5 rounded transition-colors ${viewMode === 'card'
-									? 'bg-slate-700 text-blue-400'
-									: 'text-slate-400 hover:text-slate-200'
+								? 'bg-slate-700 text-blue-400'
+								: 'text-slate-400 hover:text-slate-200'
 								}`}
 							title="カード表示"
 						>
@@ -145,8 +167,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 						<button
 							onClick={() => onViewModeChange('list')}
 							className={`p-1.5 rounded transition-colors ${viewMode === 'list'
-									? 'bg-slate-700 text-blue-400'
-									: 'text-slate-400 hover:text-slate-200'
+								? 'bg-slate-700 text-blue-400'
+								: 'text-slate-400 hover:text-slate-200'
 								}`}
 							title="リスト表示"
 						>

@@ -20,9 +20,7 @@ export const FishCard: React.FC<FishCardProps> = ({
 	onToggleCheck,
 	onClickDetail,
 }) => {
-	const fishZoneNames = fish.zoneIds
-		.map((zid) => zones.find((z) => z.id === zid)?.ja)
-		.filter(Boolean);
+	const fishZoneNames = true;
 
 	return (
 		<div
@@ -88,7 +86,7 @@ export const FishCard: React.FC<FishCardProps> = ({
 					<div className="mt-3 text-xs text-slate-300 flex items-start gap-1">
 						<span className="text-slate-500 shrink-0">生息エリア:</span>
 						<span className="line-clamp-2">
-							{fishZoneNames.length > 0 ? fishZoneNames.join('、') : '情報なし'}
+							{'情報なし'}
 						</span>
 					</div>
 

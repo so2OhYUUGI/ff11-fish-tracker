@@ -1,3 +1,25 @@
+/**
+ * ============================================================================
+ * [FilePath] src/styles/listStyles.ts
+ * [Role] リスト表示モード用の共通スタイル定義定数（Tailwind CSS クラス）
+ * 
+ * [概要]
+ * - リスト表示（`viewMode === 'list'`）時における各要素（行枠, チェックボックス, タイトル, バッジ等）のTailwindクラス定義
+ * - カード表示用の `cardStyles.ts` と対になるスタイルモジュール
+ * - 各種インタラクション状態（default, checked, selected）に対応するクラスを保持
+ * 
+ * [編集・改修時の注意事項]
+ * 1. 【`cardStyles.ts` とのトーン合わせ】
+ *    背景色（`bg-slate-800`系）やアクセントカラー（`emerald` / `cyan` / `amber`系）の色相指定は、
+ *    カード表示（`cardStyles.ts`）と統一感を保つように更新してください。
+ * 2. 【レスポンシブ表示】
+ *    リスト表示は高密度レイアウトのため、一部要素（`titleEn`, `subText` 等）に
+ *    `hidden sm:inline` や `hidden md:block` などの画面幅に応じた非表示制御が含まれています。
+ * 3. 【クラスの適用】
+ *    `cn` ユーティリティと併用して適用することを推奨します。
+ * ============================================================================
+ */
+
 export const LIST_STYLES = {
 	// コンテナ枠
 	base: 'flex items-center justify-between gap-3 p-3 rounded-lg border cursor-pointer select-none transition-all duration-150 group',

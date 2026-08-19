@@ -1,3 +1,27 @@
+/**
+ * ============================================================================
+ * [FilePath] src/App.tsx
+ * [Role] アプリケーションのルートコンポーネント（レイアウト構築・状態統合・ルーティング）
+ * 
+ * [概要]
+ * - 全体のレイアウト（Header / AdBanner / FilterBar / Main / Footer）の構築
+ * - アクティブキャラクターのチェック状態管理 (`useUserData` フックの利用)
+ * - メイン表示タブ (`mainTab`), フィルタ条件 (`statusFilter`), 検索ワード (`searchQuery`), 
+ *   表示形式 (`viewMode`) などのアプリケーション全体状態の保持
+ * - マスターデータ編集モーダル (`MasterDataEditorModal`) の表示制御
+ * - チェック操作時のトースト通知 (`sonner`) の制御
+ * 
+ * [編集・改修時の注意事項]
+ * 1. 【ヘッダー高さの依存関係】
+ *    `FilterBar` の `sticky top-[75px]` は `Header` の高さに依存しています。
+ *    `Header` のデザイン変更等で高さが変わる場合は、ここ位置合わせの値を調整してください。
+ * 2. 【トースト通知】
+ *    チェック解除時の Undo (元に戻す) 操作は `toggleFishCheck` を再実行することで実現しています。
+ * 3. 【開発用ツールの分離】
+ *    `MasterDataEditorModal` は開発環境/本番環境制御を行っている内部コンポーネントを内包しています。
+ * ============================================================================
+ */
+
 import { useState } from 'react';
 import { toast, Toaster } from 'sonner';
 import { useUserData } from '@/hooks/useUserData';
