@@ -4,3 +4,4 @@ export { RODS } from './rods';
 export { BAITS } from './baits';
 
 export { FISH_LOCATIONS } from './fishLocations';
+export { REGIONS } from './regions';

@@ -23,10 +23,10 @@
 
 // --- Windower Zone (zones.lua) 準拠データ ---
 export type ZoneMaster = {
-	id: number;            // ゾーンID (例: 248)
-	en: string;            // 英語名 (例: "Selbina")
-	ja: string;            // 日本語名 (例: "セルビナ")
-	regionId?: number;     // リージョンID
+	id: number;
+	ja: string;
+	en: string;
+	regionId?: number; // 所属するリージョンID
 };
 
 // --- ユーザー進捗データ (LocalStorage保存用) ---
@@ -99,4 +99,11 @@ export type FishLocation = {
 	zoneId: number;        // ZoneMaster.id
 	subArea?: FishingSubArea; // 淡水/海水/船など
 	notes?: string;        // エリア限定の補足（例: "S-10付近の池"、"天候：雨のみ" など）
+};
+
+// --- Windower Region (regions.lua) 準拠データ ---
+export type RegionMaster = {
+	id: number;            // リージョンID (例: 0)
+	en: string;            // 英語名 (例: "San d'Oria")
+	ja: string;            // 日本語名 (例: "サンドリア王国")
 };
