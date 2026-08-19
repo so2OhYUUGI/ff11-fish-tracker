@@ -1,31 +1,35 @@
 import type { BaitMaster } from '@/types/fish';
+import { CARD_STYLES } from '@/styles/cardStyles';
 
-type Props = {
+type BaitCardProps = {
 	bait: BaitMaster;
-	isObtained: boolean;
-	onToggleObtained: (id: number) => void;
 	onClickDetail: (bait: BaitMaster) => void;
 };
 
-export const BaitCard = ({ bait, isObtained, onToggleObtained, onClickDetail }: Props) => {
+export const BaitCard = ({ bait, onClickDetail }: BaitCardProps) => {
 	return (
-		<div className="border rounded-lg p-4 shadow-sm hover:shadow-md transition flex flex-col justify-between bg-white cursor-pointer" onClick={() => onClickDetail(bait)}>
-			<div className="flex items-start justify-between gap-2">
-				{/* チェックボックス：stopPropagationで詳細イベントの誤発火を防止 */}
-				<div onClick={(e) => e.stopPropagation()} className="pt-1">
-					<input
-						type="checkbox"
-						checked={isObtained}
-						onChange={() => onToggleObtained(bait.id)}
-						className="w-5 h-5 rounded cursor-pointer"
-					/>
+		<div
+			className={`${CARD_STYLES.base} ${CARD_STYLES.default}`}
+			onClick={() => onClickDetail(bait)}
+		>
+			<div>
+				<div className="flex items-center gap-2 flex-wrap">
+					<h3 className={`${CARD_STYLES.titleJa} ${CARD_STYLES.titleJaDefault}`}>
+						{bait.ja}
+					</h3>
+					<span className={CARD_STYLES.titleEn}>({bait.en})</span>
 				</div>
-				<div className="flex-1">
-					<h3 className="font-bold text-lg">{bait.ja}</h3>
-					<p className="text-sm text-gray-500">{bait.en}</p>
-				</div>
+
+				{bait.description && (
+					<div className={`mt-3 ${CARD_STYLES.boxBlock}`}>
+						{bait.description.split('\\n').map((line, index) => (
+							<span key={index} className="block">
+								{line}
+							</span>
+						))}
+					</div>
+				)}
 			</div>
-			<p className="text-sm text-gray-600 mt-2 line-clamp-2">{bait.description}</p>
 		</div>
 	);
 };

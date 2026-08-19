@@ -24,7 +24,7 @@ export default defineConfig({
               try {
                 const { fishList, zoneList } = JSON.parse(body);
 
-                const filePath = path.resolve(__dirname, 'src/data/fishData.ts');
+                const filePath = path.resolve(__dirname, 'src/data/fishes.ts');
                 const fileContent = `import type { FishMaster, ZoneMaster } from '@/types/fish';
 
 export const ZONES: ZoneMaster[] = ${JSON.stringify(zoneList, null, 2)};

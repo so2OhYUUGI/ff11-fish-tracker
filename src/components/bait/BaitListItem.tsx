@@ -1,32 +1,36 @@
 import type { BaitMaster } from '@/types/fish';
+import { LIST_STYLES } from '@/styles/listStyles';
 
 type Props = {
 	bait: BaitMaster;
-	isObtained: boolean;
-	onToggleObtained: (id: number) => void;
+	isSelected?: boolean;
 	onClickDetail: (bait: BaitMaster) => void;
 };
 
-export const BaitListItem = ({ bait, isObtained, onToggleObtained, onClickDetail }: Props) => {
+export const BaitListItem = ({ bait, isSelected, onClickDetail }: Props) => {
 	return (
 		<div
-      onClick= {() => onClickDetail(bait)}
-className = "flex items-center gap-4 p-3 border-b hover:bg-gray-50 cursor-pointer bg-white"
-	>
-	{/* 独立したチェックボックス列 */ }
-	< div onClick = {(e) => e.stopPropagation()} className = "flex items-center" >
-		<input
-          type="checkbox"
-checked = { isObtained }
-onChange = {() => onToggleObtained(bait.id)}
-className = "w-5 h-5 rounded cursor-pointer"
-	/>
-	</div>
-	< div className = "flex-1 grid grid-cols-1 md:grid-cols-3 gap-2 items-center" >
-		<div className="font-bold" > { bait.ja } </div>
-			< div className = "text-sm text-gray-500" > { bait.en } </div>
-				< div className = "text-sm text-gray-600 truncate" > { bait.description } </div>
+			onClick={() => onClickDetail(bait)}
+			className={`${LIST_STYLES.base} ${isSelected ? LIST_STYLES.selected : LIST_STYLES.default
+				}`}
+		>
+			<div className="flex items-center gap-3 min-w-0 flex-1">
+				<div className="min-w-0 flex-1 sm:flex sm:items-center sm:gap-3">
+					<div className="flex items-center gap-2">
+						<span
+							className={`${LIST_STYLES.titleJa} ${isSelected ? 'text-cyan-300' : LIST_STYLES.titleJaDefault
+								}`}
+						>
+							{bait.ja}
+						</span>
+						<span className={LIST_STYLES.titleEn}>({bait.en})</span>
 					</div>
-					</div>
-  );
+				</div>
+			</div>
+
+			{bait.description && (
+				<div className={LIST_STYLES.subText}>{bait.description}</div>
+			)}
+		</div>
+	);
 };

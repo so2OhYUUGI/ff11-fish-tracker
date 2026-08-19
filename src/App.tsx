@@ -1,14 +1,14 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { toast, Toaster } from 'sonner';
 import { useUserData } from '@/hooks/useUserData';
-import { FISHES, ZONES } from '@/data/';
+import { FISHES } from '@/data/';
 import { Header } from '@/components/Header';
 import { FilterBar, type StatusFilter } from '@/components/FilterBar';
-import { FishListView } from '@/components/fish/FishListView';
+import { MainContentRouter } from '@/components/MainContentRouter';
 import { AdBanner } from '@/components/AdBanner';
 import { Footer } from '@/components/Footer';
 import { MasterDataEditorModal } from '@/components/dev/MasterDataEditorModal';
-import type { ViewMode } from '@/types/fish';
+import type { ViewMode, MainTab } from '@/types/fish';
 
 export default function App() {
   const {
@@ -20,6 +20,7 @@ export default function App() {
     toggleFishCheck,
   } = useUserData();
 
+  const [mainTab, setMainTab] = useState<MainTab>('fish');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<ViewMode>('card');
@@ -42,28 +43,11 @@ export default function App() {
     }
   };
 
-  const filteredFishes = useMemo(() => {
-    return FISHES.filter((fish) => {
-      const isChecked = activeCharacter.checkedFishIds.includes(fish.id);
-      if (statusFilter === 'checked' && !isChecked) return false;
-      if (statusFilter === 'unchecked' && isChecked) return false;
-
-      if (searchQuery.trim()) {
-        const query = searchQuery.toLowerCase();
-        const matchJa = fish.ja.toLowerCase().includes(query);
-        const matchEn = fish.en.toLowerCase().includes(query);
-        if (!matchJa && !matchEn) return false;
-      }
-
-      return true;
-    });
-  }, [activeCharacter.checkedFishIds, statusFilter, searchQuery]);
-
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col font-sans">
       <Toaster position="bottom-right" theme="dark" />
 
-      {/* 最上部に固定するヘッダー */}
+      {/* 固定ヘッダー */}
       <div className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur border-b border-slate-800">
         <Header
           characters={userData.characters}
@@ -75,13 +59,15 @@ export default function App() {
         />
       </div>
 
-      {/* 広告：通常フローのためスクロールで消える */}
+      {/* 広告 */}
       <AdBanner slotId="top-banner" />
 
-      {/* ヘッダーの直下に吸着するフィルターバー（Headerの高さ分 top を調整） */}
+      {/* 吸着フィルターバー */}
       <div className="sticky top-[75px] z-30 bg-slate-900/95 backdrop-blur border-b border-slate-800 shadow-md">
         <FilterBar
+          mainTab={mainTab}
           activeCharacter={activeCharacter}
+          onMainTabChange={setMainTab}
           statusFilter={statusFilter}
           onStatusFilterChange={setStatusFilter}
           searchQuery={searchQuery}
@@ -93,11 +79,12 @@ export default function App() {
       </div>
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <FishListView
-          fishes={filteredFishes}
-          zones={ZONES}
-          checkedFishIds={activeCharacter.checkedFishIds}
+        <MainContentRouter
+          mainTab={mainTab}
+          statusFilter={statusFilter}
+          searchQuery={searchQuery}
           viewMode={viewMode}
+          activeCharacter={activeCharacter}
           onToggleCheck={handleToggleCheck}
         />
       </main>

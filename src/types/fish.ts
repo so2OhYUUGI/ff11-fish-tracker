@@ -20,8 +20,6 @@ export type UserData = {
 	characters: CharacterProgress[]; // キャラクター一覧
 };
 
-export type ViewMode = 'card' | 'list';
-
 // 竿ごとの耐久・破損挙動の定義
 export type RodDurability = {
 	rodId: number;         // 釣竿のアイテムID (例: 太公望、恵比寿など)
@@ -68,3 +66,6 @@ export type FishingRodMaster = {
 	ja: string;            // 日本語名
 	description?: string;  // 日本語の説明
 };
+
+export type MainTab = 'fish' | 'bait';
+export type ViewMode = 'card' | 'list';
