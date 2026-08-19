@@ -1,19 +1,24 @@
 import React from 'react';
 import { Search, LayoutGrid, List } from 'lucide-react';
 import type { ViewMode } from '@/types/fish';
+import type { CharacterProgress } from '@/types/fish';
 
 export type StatusFilter = 'all' | 'checked' | 'unchecked';
 
 type FilterBarProps = {
+	activeCharacter: CharacterProgress;
 	statusFilter: StatusFilter;
 	onStatusFilterChange: (status: StatusFilter) => void;
 	searchQuery: string;
 	onSearchQueryChange: (query: string) => void;
 	viewMode: ViewMode;
 	onViewModeChange: (mode: ViewMode) => void;
+	totalFishCount: number;
 };
 
 export const FilterBar: React.FC<FilterBarProps> = ({
+	activeCharacter,
+	totalFishCount,
 	statusFilter,
 	onStatusFilterChange,
 	searchQuery,
@@ -21,7 +26,13 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 	viewMode,
 	onViewModeChange,
 }) => {
+	const checkedCount = activeCharacter.checkedFishIds.length;
+	const progressPercent = totalFishCount > 0
+		? Math.round((checkedCount / totalFishCount) * 100)
+		: 0;
+
 	return (
+		
 		<div className="bg-slate-800 border-b border-slate-700 py-3 px-4 sm:px-6 lg:px-8">
 			<div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
 
@@ -91,6 +102,19 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 				</div>
 
 			</div>
-		</div>
+			{/* 進捗バー領域 */}
+			< div className="mt-4 pt-3 border-t border-slate-700/60 flex flex-col sm:flex-row sm:items-center gap-2" >
+				<div className="flex justify-between items-center text-xs font-semibold text-slate-300 w-full sm:w-auto sm:min-w-[140px]">
+					<span>達成率: {progressPercent}%</span>
+					<span className="text-slate-400 font-normal">({checkedCount} / {totalFishCount} 種)</span>
+				</div>
+				<div className="w-full bg-slate-700 rounded-full h-2.5 overflow-hidden">
+					<div
+						className="bg-blue-500 h-2.5 rounded-full transition-all duration-300 ease-out"
+						style={{ width: `${progressPercent}%` }}
+					/>
+				</div>
+			</div >
+				</div>
 	);
 };

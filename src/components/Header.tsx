@@ -9,7 +9,6 @@ type HeaderProps = {
 	onSelectCharacter: (id: string) => void;
 	onAddCharacter: (name: string) => void;
 	onDeleteCharacter: (id: string) => void;
-	totalFishCount: number;
 	onOpenMasterEditor?: () => void; // 編集画面を開くためのハンドラーを追加
 };
 
@@ -19,16 +18,11 @@ export const Header: React.FC<HeaderProps> = ({
 	onSelectCharacter,
 	onAddCharacter,
 	onDeleteCharacter,
-	totalFishCount,
 	onOpenMasterEditor,
 }) => {
 	const [isAdding, setIsAdding] = useState(false);
 	const [newCharName, setNewCharName] = useState('');
 
-	const checkedCount = activeCharacter.checkedFishIds.length;
-	const progressPercent = totalFishCount > 0
-		? Math.round((checkedCount / totalFishCount) * 100)
-		: 0;
 
 	const handleAddSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -139,19 +133,6 @@ export const Header: React.FC<HeaderProps> = ({
 					</div>
 				</div>
 
-				{/* 進捗バー領域 */}
-				<div className="mt-4 pt-3 border-t border-slate-700/60 flex flex-col sm:flex-row sm:items-center gap-2">
-					<div className="flex justify-between items-center text-xs font-semibold text-slate-300 w-full sm:w-auto sm:min-w-[140px]">
-						<span>達成率: {progressPercent}%</span>
-						<span className="text-slate-400 font-normal">({checkedCount} / {totalFishCount} 種)</span>
-					</div>
-					<div className="w-full bg-slate-700 rounded-full h-2.5 overflow-hidden">
-						<div
-							className="bg-blue-500 h-2.5 rounded-full transition-all duration-300 ease-out"
-							style={{ width: `${progressPercent}%` }}
-						/>
-					</div>
-				</div>
 
 			</div>
 		</header>
