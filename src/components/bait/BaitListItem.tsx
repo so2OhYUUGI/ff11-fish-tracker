@@ -29,7 +29,10 @@ export const BaitListItem = ({ bait, isSelected, onClickDetail }: Props) => {
 			</div>
 
 			{bait.description && (
-				<div className={LIST_STYLES.subText}>{bait.description}</div>
+				<div className={LIST_STYLES.subText}>{
+					bait.description.split('\\n').map((line) => (
+						line
+					))}</div>
 			)}
 		</div>
 	);
