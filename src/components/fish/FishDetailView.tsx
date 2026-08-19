@@ -1,6 +1,23 @@
+/**
+ * ============================================================================
+ * [FilePath] src/components/fish/FishDetailView.tsx
+ * [Role] 魚詳細情報表示コンポーネント
+ * 
+ * [概要]
+ * - 選択された魚のスペック、説明文、チェック（釣獲）状態の表示および変更
+ * - FISH_LOCATIONS を参照し、該当する ZoneMaster（生息エリア）を抽出・表示
+ * 
+ * [編集・改修時の注意事項]
+ * 1. 【エリア抽出ロジック】
+ *    `MasterDataEditor` と同等に `FISH_LOCATIONS` を直接インポートし、
+ *    `loc.fishId === fish.id` の条件で `zoneId` 配列を抽出して `zones` と照合します。
+ * ============================================================================
+ */
+
 import React from 'react';
 import { ArrowLeft, CheckSquare, Square, X } from 'lucide-react';
 import type { FishMaster, ZoneMaster } from '@/types/fish';
+import { FISH_LOCATIONS } from '@/data';
 import { DETAIL_STYLES } from '@/styles/detailStyles';
 
 type FishDetailViewProps = {
@@ -18,10 +35,13 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 	onToggleCheck,
 	onClose,
 }) => {
-	// 釣れる釣り場の一覧
-	const targetZones = zones.filter((zone) =>
-		fish.zoneIds?.includes(zone.id)
-	);
+	// FISH_LOCATIONS から該当する魚の zoneId 配列を取得
+	const targetZoneIds = FISH_LOCATIONS
+		.filter((loc) => loc.fishId === fish.id)
+		.map((loc) => loc.zoneId);
+
+	// zoneId に一致するゾーン情報を取得
+	const targetZones = zones.filter((zone) => targetZoneIds.includes(zone.id));
 
 	return (
 		<div className={DETAIL_STYLES.container}>
@@ -99,12 +119,12 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 			{/* 説明・特記事項 */}
 			{fish.description && (
 				<div className={DETAIL_STYLES.descriptionBox}>
-							{fish.description.split('\\n').map((line, index) => (
-								<React.Fragment key={index}>
-									{index > 0 && <br />}
-									{line}
-								</React.Fragment>
-							))}
+					{fish.description.split('\\n').map((line, index) => (
+						<React.Fragment key={index}>
+							{index > 0 && <br />}
+							{line}
+						</React.Fragment>
+					))}
 				</div>
 			)}
 		</div>

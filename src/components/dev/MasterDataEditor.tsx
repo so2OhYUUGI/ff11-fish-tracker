@@ -1,3 +1,24 @@
+/**
+ * ============================================================================
+ * [FilePath] src/components/dev/MasterDataEditor.tsx
+ * [Role] 開発用マスターデータ編集コンポーネント（開発環境専用）
+ * 
+ * [概要]
+ * - 魚・餌・ゾーン等のマスターデータの参照および編集機能の提供
+ * - 魚データ（FISHES）と生息地データ（FISH_LOCATIONS）の直接編集・統合管理
+ * - 編集結果のローカルTSファイル上書き（API経由）およびJSONエクスポート機能
+ * 
+ * [編集・改修時の注意事項]
+ * 1. 【開発環境専用】
+ *    `isDev` フラグによるガードを行っており、本番環境ではレンダリングされません。
+ * 2. 【エリアデータ構造】
+ *    編集画面内では `FishMaster` に `zoneIds` を一時拡張（`EditableFish`）して扱い、
+ *    保存・エクスポート時に `FishMaster` と `FishLocation[]` に再分割します。
+ * 3. 【アクセシビリティ・規約】
+ *    すべての `button` タグには `type="button"` を明記してください。
+ * ============================================================================
+ */
+
 import React, { useState } from 'react';
 import { isDev } from '@/utils/env';
 import { FISHES, ZONES, FISH_LOCATIONS } from '@/data/';
@@ -263,7 +284,6 @@ export const MasterDataEditor: React.FC = () => {
 								<div
 									style={{
 										display: 'flex',
-										justify: 'space-between',
 										alignItems: 'center',
 										marginBottom: '4px',
 									}}

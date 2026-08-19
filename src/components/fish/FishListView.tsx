@@ -1,12 +1,29 @@
+/**
+ * ============================================================================
+ * [FilePath] src/components/fish/FishListView.tsx
+ * [Role] 魚一覧／詳細ビューのレスポンシブレイアウト制御コンポーネント
+ * 
+ * [概要]
+ * - 魚カード一覧（FishCard / FishListItem）と詳細（FishDetailView）の2カラム／単一表示制御
+ * - モバイルおよびデスクトップ（sticky追従）でのレスポンシブ切り替え
+ * - FishDetailView への `locations` データリレー
+ * 
+ * [編集・改修時の注意事項]
+ * 1. 【データ連携】
+ *    `FishDetailView` に生息情報を受け渡すため、Props に `locations: FishLocation[]` を追加・伝播します。
+ * ============================================================================
+ */
+
 import { useState } from 'react';
 import { FishCard } from '@/components/fish/FishCard';
 import { FishListItem } from '@/components/fish/FishListItem';
 import { FishDetailView } from '@/components/fish/FishDetailView';
-import type { FishMaster, ViewMode, ZoneMaster } from '@/types/fish';
+import type { FishMaster, ViewMode, ZoneMaster, FishLocation } from '@/types/fish';
 
 type Props = {
 	fishes: FishMaster[];
 	zones: ZoneMaster[];
+	locations: FishLocation[];
 	checkedFishIds: number[];
 	viewMode: ViewMode;
 	onToggleCheck: (fishId: number) => void;
@@ -15,6 +32,7 @@ type Props = {
 export const FishListView = ({
 	fishes,
 	zones,
+	locations,
 	checkedFishIds,
 	viewMode,
 	onToggleCheck,
@@ -34,12 +52,7 @@ export const FishListView = ({
 
 	return (
 		<div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-			{/* 
-        左側：一覧表示領域
-        - 未選択時: lg:col-span-12（全幅）
-        - 選択中: lg:col-span-7（7列）
-        - モバイル時: 詳細選択中なら非表示（hidden）
-      */}
+			{/* 左側：一覧表示領域 */}
 			<div
 				className={`${isSelected ? 'lg:col-span-7' : 'lg:col-span-12'
 					} ${isSelected ? 'hidden lg:block' : 'block'}`}
@@ -80,11 +93,7 @@ export const FishListView = ({
 				)}
 			</div>
 
-			{/* 
-        右側：詳細表示領域
-        - 選択中のみ表示（isSelected === true）
-        - PC画面（lg）: 5列を使用し sticky で追従
-      */}
+			{/* 右側：詳細表示領域 */}
 			{isSelected && (
 				<div className="lg:col-span-5 lg:sticky lg:top-[160px] w-full">
 					<FishDetailView

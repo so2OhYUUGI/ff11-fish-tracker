@@ -1,3 +1,20 @@
+/**
+ * ============================================================================
+ * [FilePath] src/components/dev/MasterDataEditorModal.tsx
+ * [Role] 開発用マスターデータエディタモーダルコンポーネント
+ * 
+ * [概要]
+ * - `MasterDataEditor` をダイアログ・モーダル形式で描画するラッパー
+ * - バックドロップ表示および全画面スケールでのエディタ展開
+ * 
+ * [編集・改修時の注意事項]
+ * 1. 【開発環境専用】
+ *    `isDev` フラグおよび `isOpen` 判定により、開発環境かつ開状態のときのみ表示されます。
+ * 2. 【ボタン仕様】
+ *    モーダル閉じるボタン等には `type="button"` を明記しています。
+ * ============================================================================
+ */
+
 import { MasterDataEditor } from '@/components/dev/MasterDataEditor';
 import { isDev } from '@/utils/env';
 import { X } from 'lucide-react';
@@ -19,6 +36,7 @@ export const MasterDataEditorModal = ({ isOpen, onClose }: Props) => {
 						🛠️ 開発用マスターデータエディタ
 					</h2>
 					<button
+						type="button"
 						onClick={onClose}
 						className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors flex items-center gap-1 text-xs"
 					>
