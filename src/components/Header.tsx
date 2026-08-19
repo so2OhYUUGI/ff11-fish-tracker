@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Plus, Trash2, Fish } from 'lucide-react';
+import { Plus, Trash2, Fish, Database } from 'lucide-react';
 import type { CharacterProgress } from '@/types/fish';
+import { isDev } from '@/utils/env';
 
 type HeaderProps = {
 	characters: CharacterProgress[];
@@ -9,6 +10,7 @@ type HeaderProps = {
 	onAddCharacter: (name: string) => void;
 	onDeleteCharacter: (id: string) => void;
 	totalFishCount: number;
+	onOpenMasterEditor?: () => void; // 編集画面を開くためのハンドラーを追加
 };
 
 export const Header: React.FC<HeaderProps> = ({
@@ -18,6 +20,7 @@ export const Header: React.FC<HeaderProps> = ({
 	onAddCharacter,
 	onDeleteCharacter,
 	totalFishCount,
+	onOpenMasterEditor,
 }) => {
 	const [isAdding, setIsAdding] = useState(false);
 	const [newCharName, setNewCharName] = useState('');
@@ -52,7 +55,7 @@ export const Header: React.FC<HeaderProps> = ({
 						</div>
 					</div>
 
-					{/* キャラクター切り替え＆管理 */}
+					{/* キャラクター切り替え＆管理 ＋ 開発用ボタン */}
 					<div className="flex flex-wrap items-center gap-3">
 						<div className="flex items-center gap-2">
 							<label htmlFor="char-select" className="text-sm font-medium text-slate-300">
@@ -119,6 +122,18 @@ export const Header: React.FC<HeaderProps> = ({
 								title="選択中のキャラクターを削除"
 							>
 								<Trash2 className="w-4 h-4" />
+							</button>
+						)}
+
+						{/* 開発環境でのみ表示するマスター編集ボタン */}
+						{isDev && (
+							<button
+								onClick={onOpenMasterEditor}
+								className="flex items-center gap-1 bg-red-900/50 hover:bg-red-800/60 border border-red-700 text-red-200 text-xs px-2.5 py-1.5 rounded-lg font-medium transition-colors"
+								title="開発用マスターデータエディタを開く"
+							>
+								<Database className="w-3.5 h-3.5 text-red-400" />
+								マスター編集
 							</button>
 						)}
 					</div>

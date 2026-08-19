@@ -1,75 +1,46 @@
-# React + TypeScript + Vite
+# FF11 釣魚チェッカー (ff11-fish-tracker)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+FINAL FANTASY XI（FF11）の釣魚進捗管理アプリケーションです。  
+Windower Resources のデータ仕様・ID体系をベースにしており、複数キャラクターの釣り達成率の管理、ハラキリ・恵比寿・太公望関連魚のフィルタリングが可能です。
 
-Currently, two official plugins are available:
+## 特徴
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Windower Resource 準拠**: アイテムID、ゾーンID等を Windower 互換で管理
+- **マルチキャラクター対応**: 複数キャラの釣果を切り替えて管理（LocalStorage保存）
+- **各種フィルタリング**: 限界スキル、大型/小型、ハラキリ、クエスト対象魚での絞り込み
+- **モダンなUI/UX**: Vite + React + TypeScript + Tailwind CSS による高速・レスポンシブ動作
 
-## React Compiler
+## 開発環境のセットアップ
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 前提条件
+- Node.js (v18以上推奨)
+- npm
 
-## Expanding the ESLint configuration
+### 起動手順
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+\`\`\`bash
+# パッケージのインストール
+npm install
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+# 開発用サーバーの起動
+npm run dev
+\`\`\`
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+ブラウザで http://localhost:5173 にアクセスします。
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## ディレクトリ構成
 
-```
+\`\`\`text
+src/
+├── components/     # UIコンポーネント (Header, FilterBar, FishCard, AdBanner)
+├── data/           # マスターデータ・テストデータ (mockData.ts)
+├── hooks/          # カスタムフック (useUserData.ts - LocalStorage管理)
+├── types/          # TypeScript型定義 (fish.ts)
+├── App.tsx         # メインアプリケーションコンポーネント
+└── main.tsx        # エントリーポイント
+\`\`\`
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## ライセンス / 権利表記
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
+FINAL FANTASY XI is a registered trademark of Square Enix Holdings Co., Ltd.  
+© SQUARE ENIX CO., LTD. All Rights Reserved.

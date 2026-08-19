@@ -12,6 +12,7 @@ export type FishMaster = {
 	id: number;            // アイテムID (例: 4353 = ネビムコラズ)
 	en: string;            // 英語名 (例: "Nebimonite")
 	ja: string;            // 日本語名 (例: "ネビムコラズ")
+	description: string;	 // 日本語の説明
 	flags?: number;        // アイテムフラグ
 
 	// アプリ独自拡張項目
@@ -41,3 +42,5 @@ export type UserData = {
 	activeCharacterId: string;       // 現在選択中のキャラID
 	characters: CharacterProgress[]; // キャラクター一覧
 };
+
+export type ViewMode = 'card' | 'list';
