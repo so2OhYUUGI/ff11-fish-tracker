@@ -44,3 +44,16 @@ export type UserData = {
 };
 
 export type ViewMode = 'card' | 'list';
+
+export type FishingRodMaster = {
+	id: number;
+	ja: string;
+	en: string;
+};
+
+export type BaitMaster = {
+	id: number;
+	ja: string;
+	en: string;
+	description: string;
+};

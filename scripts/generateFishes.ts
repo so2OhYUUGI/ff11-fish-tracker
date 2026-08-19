@@ -7,11 +7,9 @@ const __dirname = path.dirname(__filename);
 
 const ITEMS_LUA_PATH = path.join(__dirname, '../raw_data/items.lua');
 const ITEM_DESCRIPTIONS_LUA_PATH = path.join(__dirname, '../raw_data/item_descriptions.lua');
-const ZONES_LUA_PATH = path.join(__dirname, '../raw_data/zones.lua');
 const WIKI_DATA_PATH = path.join(__dirname, '../raw_data/fish_skill_wiki.data');
-const OUTPUT_PATH = path.join(__dirname, '../src/data/fishData.ts');
+const OUTPUT_PATH = path.join(__dirname, '../src/data/fishes.ts');
 
-type ZoneEntry = { id: number; ja: string; en: string };
 type FishEntry = {
   id: number;
   ja: string;
@@ -35,13 +33,7 @@ type WikiFishData = {
   ebisu: boolean;
 };
 
-type LuaItem = {
-  id: number;
-  ja: string;
-  en: string;
-};
-
-// 1. Wikiデータのパース関数 (読み込み順序を保持するため配列で返す)
+// 1. Wikiデータのパース関数
 function parseWikiData(filePath: string): WikiFishData[] {
   const wikiList: WikiFishData[] = [];
   if (!fs.existsSync(filePath)) {
@@ -92,7 +84,7 @@ function parseWikiData(filePath: string): WikiFishData[] {
   return wikiList;
 }
 
-// 2. items.lua のパース関数 (名前からID/英語名を引けるように Map化)
+// 2. items.lua のパース関数
 function parseItemsLua(filePath: string): Map<string, { id: number; en: string }> {
   if (!fs.existsSync(filePath)) {
     console.warn(`File not found: ${filePath}`);
@@ -145,47 +137,18 @@ function parseItemDescriptionsLua(filePath: string): Record<number, string> {
   return result;
 }
 
-// 4. zones.lua のパース関数
-function parseZonesLua(filePath: string): ZoneEntry[] {
-  if (!fs.existsSync(filePath)) return [];
-
-  const content = fs.readFileSync(filePath, 'utf-8');
-  const list: ZoneEntry[] = [];
-
-  const entryRegex = /\[(\d+)\]\s*=\s*\{([\s\S]*?)\},?/g;
-  let match: RegExpExecArray | null;
-
-  while ((match = entryRegex.exec(content)) !== null) {
-    const id = Number(match[1]);
-    const body = match[2];
-
-    const jaMatch = body.match(/\bja\s*=\s*"([^"\\]*(?:\\.[^"\\]*)*)"/) || body.match(/\bja\s*=\s*'([^'\\]*(?:\\.[^'\\]*)*)'/);
-    const enMatch = body.match(/\ben\s*=\s*"([^"\\]*(?:\\.[^"\\]*)*)"/) || body.match(/\ben\s*=\s*'([^'\\]*(?:\\.[^'\\]*)*)'/);
-
-    list.push({
-      id,
-      ja: jaMatch ? jaMatch[1] : `Zone_${id}`,
-      en: enMatch ? enMatch[1] : `Zone_${id}`,
-    });
-  }
-
-  return list.sort((a, b) => a.id - b.id);
-}
-
 function main() {
-  console.log('Generating fishData.ts from Wiki Data and Windower Resources...');
+  console.log('Generating fishes.ts from Wiki Data and Windower Resources...');
 
   const wikiList = parseWikiData(WIKI_DATA_PATH);
   const itemsMap = parseItemsLua(ITEMS_LUA_PATH);
   const itemDescriptions = parseItemDescriptionsLua(ITEM_DESCRIPTIONS_LUA_PATH);
-  const zoneList = parseZonesLua(ZONES_LUA_PATH);
 
   console.log(`Loaded ${wikiList.length} wiki fish entries.`);
   console.log(`Loaded ${itemsMap.size} items from items.lua.`);
 
   const fishList: FishEntry[] = [];
 
-  // Wikiデータの並び順（配列の要素順）に従って配列を生成
   for (const wikiData of wikiList) {
     const item = itemsMap.get(wikiData.name);
     if (!item) {
@@ -210,9 +173,7 @@ function main() {
     });
   }
 
-  const fileContent = `import type { FishMaster, ZoneMaster } from '@/types/fish';
-
-export const ZONES: ZoneMaster[] = ${JSON.stringify(zoneList, null, 2)};
+  const fileContent = `import type { FishMaster } from '@/types/fish';
 
 export const FISHES: FishMaster[] = ${JSON.stringify(fishList, null, 2)};
 `;

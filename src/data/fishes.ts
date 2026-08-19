@@ -1,6 +1,5 @@
 import type { FishMaster } from '@/types/fish';
 
-
 export const FISHES: FishMaster[] = [
   {
     "id": 4318,

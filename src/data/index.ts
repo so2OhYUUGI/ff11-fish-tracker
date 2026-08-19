@@ -1,2 +1,4 @@
-export { ZONES } from './zoneData';
-export { FISHES } from './fishData';
+export { ZONES } from './zones';
+export { FISHES } from './fishes';
+export { RODS } from './rods';
+export { BAITS } from './baits';
