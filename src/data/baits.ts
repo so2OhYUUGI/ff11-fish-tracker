@@ -131,7 +131,7 @@ export const BAITS: BaitMaster[] = [
     "id": 17402,
     "ja": "シュリンプルアー",
     "en": "Shrimp Lure",
-    "description": "エビを模した擬餌。\\n"
+    "description": "エビを模した���餌。\\n"
   },
   {
     "id": 17403,

@@ -187,21 +187,40 @@ export const FishEditTab: React.FC<Props> = ({
 					flexShrink: 0,
 				}}
 			>
-				{(fishList || []).map((fish) => (
-					<div
-						key={fish.id}
-						onClick={() => setSelectedFish(fish)}
-						style={{
-							padding: '8px',
-							cursor: 'pointer',
-							fontSize: '13px',
-							backgroundColor: selectedFish?.id === fish.id ? '#e2e8f0' : 'transparent',
-							borderBottom: '1px solid #eee',
-						}}
-					>
-						[{fish.id}] {fish.ja} ({fish.maxSkill})
-					</div>
-				))}
+				{(fishList || []).map((fish) => {
+					const zoneCount = fish.zoneIds?.length || 0;
+
+					return (
+						<div
+							key={fish.id}
+							onClick={() => setSelectedFish(fish)}
+							style={{
+								padding: '8px',
+								cursor: 'pointer',
+								fontSize: '13px',
+								backgroundColor: selectedFish?.id === fish.id ? '#e2e8f0' : 'transparent',
+								borderBottom: '1px solid #eee',
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'space-between',
+							}}
+						>
+							<span>[{fish.id}] {fish.ja}</span>
+							<span
+								style={{
+									fontSize: '11px',
+									color: zoneCount > 0 ? '#2b6cb0' : '#a0aec0',
+									fontWeight: zoneCount > 0 ? 'bold' : 'normal',
+									backgroundColor: zoneCount > 0 ? '#ebf8ff' : '#edf2f7',
+									padding: '2px 6px',
+									borderRadius: '10px',
+								}}
+							>
+								{zoneCount}件
+							</span>
+						</div>
+					);
+				})}
 			</div>
 
 			{/* 右パネル: 選択中の魚の編集フォーム */}
