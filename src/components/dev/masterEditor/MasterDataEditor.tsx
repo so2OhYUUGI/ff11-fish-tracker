@@ -42,10 +42,8 @@ export const MasterDataEditor: React.FC = () => {
 
 	const [zoneList, setZoneList] = useState<ZoneMaster[]>(() => ZONES);
 
-	// 餌マスターの State（sortOrder 順にソートして初期化）
-	const [baitList, setBaitList] = useState<BaitMaster[]>(() =>
-		[...(BAITS || [])].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
-	);
+	// 餌マスターの State（定義順のまま保持）
+	const [baitList, setBaitList] = useState<BaitMaster[]>(() => BAITS || []);
 
 	// 中間リレーションデータの State
 	const [fishBaitRelations, setFishBaitRelations] = useState<FishBaitRelation[]>(
