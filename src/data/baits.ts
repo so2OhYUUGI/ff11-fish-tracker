@@ -9,6 +9,66 @@ import type { BaitMaster } from '@/types/fish';
 
 export const BAITS: BaitMaster[] = [
   {
+    "id": 4001,
+    "ja": "イワシ練り餌",
+    "en": "Sardine Sphere",
+    "description": "池に餌を撒いて魚をおびき寄せる。\\n"
+  },
+  {
+    "id": 4002,
+    "ja": "マス練り餌",
+    "en": "Bass Sphere",
+    "description": "池に餌を撒いて魚をおびき寄せる。\\n"
+  },
+  {
+    "id": 4003,
+    "ja": "エビ練り餌",
+    "en": "Shrimp Sphere",
+    "description": "池に餌を撒いて魚をおびき寄せる。\\n"
+  },
+  {
+    "id": 4004,
+    "ja": "肉練り餌",
+    "en": "Baitball",
+    "description": "池に餌を撒いて魚をおびき寄せる。\\n"
+  },
+  {
+    "id": 4005,
+    "ja": "ワークス練り餌",
+    "en": "Super Baitball",
+    "description": "インベンター・ワークスが開発した特製練り餌。\\n珍しい淡水魚がかかることがある。"
+  },
+  {
+    "id": 4006,
+    "ja": "イワシ撒き餌",
+    "en": "Sardine Chum",
+    "description": "海に餌を撒いて魚をおびき寄せる。\\n"
+  },
+  {
+    "id": 4007,
+    "ja": "マス撒き餌",
+    "en": "Bass Chum",
+    "description": "海に餌を撒いて魚をおびき寄せる。\\n"
+  },
+  {
+    "id": 4008,
+    "ja": "エビ撒き餌",
+    "en": "Shrimp Chum",
+    "description": "海に餌を撒いて魚をおびき寄せる。\\n"
+  },
+  {
+    "id": 4009,
+    "ja": "肉撒き餌",
+    "en": "Mincemeat Chum",
+    "description": "海に餌を撒いて魚をおびき寄せる。\\n"
+  },
+  {
+    "id": 4010,
+    "ja": "ワークス撒き餌",
+    "en": "Coalition Chum",
+    "description": "インベンター・ワークスが開発した特製の撒き餌。\\n珍しい海水魚がかかることがある。"
+  },
+  {
     "id": 16992,
     "ja": "ブリ切り身",
     "en": "Slice of Bluetail",
@@ -25,6 +85,12 @@ export const BAITS: BaitMaster[] = [
     "ja": "フナ切り身",
     "en": "Slice of Carp",
     "description": "堀ブナの切り身。\\n釣り餌。"
+  },
+  {
+    "id": 16995,
+    "ja": "腐肉",
+    "en": "Rotten Meat",
+    "description": "腐敗した動物の肉。\\n鼻をつく悪臭がする。"
   },
   {
     "id": 16996,
@@ -63,10 +129,22 @@ export const BAITS: BaitMaster[] = [
     "description": "「ドレッドバグ」のひだに寄生する蟲。\\n釣り餌。"
   },
   {
+    "id": 17002,
+    "ja": "ロバー針",
+    "en": "Robber Rig",
+    "description": "発光する鉤を無数に組み合わせた釣りの仕掛け。\\n魚に引っ掛けて釣る。"
+  },
+  {
     "id": 17004,
     "ja": "ジャッジミノー",
     "en": "Judge Minnow",
     "description": "小魚が尾をふって泳ぐ絡繰擬餌。\\n"
+  },
+  {
+    "id": 17005,
+    "ja": "ルフェーゼ蝿",
+    "en": "Lufaise Fly",
+    "description": "ルフェーゼ野で採れる、元気だが無鉄砲なハエ。\\nよく目立ち、フロッグフィッシングの餌に最適。"
   },
   {
     "id": 17006,
@@ -135,6 +213,12 @@ export const BAITS: BaitMaster[] = [
     "description": "クゥダフの甲羅に寄生する蟲。\\n釣り餌。"
   },
   {
+    "id": 17398,
+    "ja": "ローグ針",
+    "en": "Rogue Rig",
+    "description": "たくさんの鉤を組み合わせた釣りの仕掛け。\\n魚に引っ掛けて釣る。"
+  },
+  {
     "id": 17399,
     "ja": "さびき針",
     "en": "Sabiki Rig",
@@ -177,6 +261,12 @@ export const BAITS: BaitMaster[] = [
     "description": "毛虫を模した擬餌。\\n"
   },
   {
+    "id": 17406,
+    "ja": "ジャッジルアー",
+    "en": "Judge's Lure",
+    "description": "釣餌"
+  },
+  {
     "id": 17407,
     "ja": "ミノー",
     "en": "Minnow",
@@ -187,6 +277,12 @@ export const BAITS: BaitMaster[] = [
     "ja": "ＭＭＭミノー",
     "en": "MMM Minnow",
     "description": "ＭＭＭ社特製の擬餌。\\n"
+  },
+  {
+    "id": 19325,
+    "ja": "ジャッジフライ",
+    "en": "Judge Fly",
+    "description": "釣餌"
   },
   {
     "id": 19326,

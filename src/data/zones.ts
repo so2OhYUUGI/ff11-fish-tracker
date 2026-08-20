@@ -22,6 +22,11 @@ export const ZONES: ZoneMaster[] = [
     "en": "Bibiki Bay"
   },
   {
+    "id": -41,
+    "ja": "プルゴノルゴ島",
+    "en": "Purgonorgo Isle"
+  },
+  {
     "id": 5,
     "ja": "ウルガラン山脈",
     "en": "Uleguerand Range"

@@ -48,7 +48,7 @@ function parseBaitDescriptionIds(filePath: string): Map<number, string> {
 		const jaMatch = body.match(/\bja\s*=\s*"([^"\\]*(?:\\.[^"\\]*)*)"/) || body.match(/\bja\s*=\s*'([^'\\]*(?:\\.[^'\\]*)*)'/);
 		if (jaMatch) {
 			const description = jaMatch[1];
-			if (description.includes('釣り餌') || description.includes('擬餌')) {
+			if (description.includes('餌') || description.includes('腐敗した動物の肉') || description.includes('釣りの仕掛け')) {
 				baitDescriptions.set(id, description);
 			}
 		}
