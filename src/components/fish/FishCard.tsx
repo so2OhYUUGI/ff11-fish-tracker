@@ -4,9 +4,8 @@
  * [Role] 魚データ（個別）のカード表示コンポーネント
  * 
  * [概要]
- * - 魚の基本情報（和名、英名、説明文、スキル上限、サイズ区分、属性バッジ）のカード形式表示
+ * - 魚の基本情報（和名、英名、説明文、スキル上限、サイズ区分、水質区分、属性バッジ）のカード形式表示
  * - 獲得/達成状態（チェック状態）のインジケーター描画およびトグル操作
- * - 選択状態（アクティブ表示）に応じたハイライト表示
  * - 生息エリア（FISH_LOCATIONS参照）・備考情報の表示領域保持
  * ============================================================================
  */
@@ -26,6 +25,32 @@ type FishCardProps = {
 	onClickDetail: (fish: FishMaster) => void;
 };
 
+// サイズ表記ラベル・スタイル取得ヘルパー
+const getSizeBadgeInfo = (sizeType: FishMaster['sizeType']) => {
+	switch (sizeType) {
+		case 'large':
+			return { label: '大型魚', style: CARD_STYLES.badgeLarge };
+		case 'small':
+			return { label: '小型魚', style: CARD_STYLES.badgeSmall };
+		default:
+			return { label: 'サイズ不明', style: CARD_STYLES.badgeSizeUnknown };
+	}
+};
+
+// 水質・区分ラベル・スタイル取得ヘルパー
+const getWaterBadgeInfo = (waterType: FishMaster['waterType']) => {
+	switch (waterType) {
+		case 'freshwater':
+			return { label: '淡水', style: CARD_STYLES.badgeFreshwater };
+		case 'saltwater':
+			return { label: '海水', style: CARD_STYLES.badgeSaltwater };
+		case 'gedou':
+			return { label: '外道', style: CARD_STYLES.badgeGedou };
+		default:
+			return { label: '区分不明', style: CARD_STYLES.badgeWaterUnknown };
+	}
+};
+
 export const FishCard: React.FC<FishCardProps> = ({
 	fish,
 	zones,
@@ -34,17 +59,18 @@ export const FishCard: React.FC<FishCardProps> = ({
 	onToggleCheck,
 	onClickDetail,
 }) => {
-	// FISH_LOCATIONS から対象魚のゾーンIDを抽出し、zonesから該当するエリアを取得
 	const targetZoneIds = FISH_LOCATIONS
 		.filter((loc) => loc.fishId === fish.id)
 		.map((loc) => loc.zoneId);
 	const matchedZones = zones.filter((zone) => targetZoneIds.includes(zone.id));
 	const totalZones = matchedZones.length;
 
-	// カード表示用：最大2件表示、以降は +N バッジ化
 	const maxDisplayCount = 2;
 	const displayZones = matchedZones.slice(0, maxDisplayCount);
 	const remainingCount = totalZones - maxDisplayCount;
+
+	const sizeInfo = getSizeBadgeInfo(fish.sizeType);
+	const waterInfo = getWaterBadgeInfo(fish.waterType);
 
 	return (
 		<div
@@ -64,7 +90,6 @@ export const FishCard: React.FC<FishCardProps> = ({
 						<span className={CARD_STYLES.titleEn}>({fish.en})</span>
 					</div>
 
-					{/* アイテム説明文 */}
 					{fish.description && (
 						<div className={`mb-3 mt-2 ${CARD_STYLES.boxBlock}`}>
 							{fish.description.split('\\n').map((line, index) => (
@@ -81,13 +106,11 @@ export const FishCard: React.FC<FishCardProps> = ({
 						<span className={`${CARD_STYLES.badgeBase} ${CARD_STYLES.badgeDefault}`}>
 							上限: {fish.maxSkill}
 						</span>
-						<span
-							className={`${CARD_STYLES.badgeBase} ${fish.sizeType === 'large'
-									? CARD_STYLES.badgeLarge
-									: CARD_STYLES.badgeSmall
-								}`}
-						>
-							{fish.sizeType === 'large' ? '大型魚' : '小型魚'}
+						<span className={`${CARD_STYLES.badgeBase} ${sizeInfo.style}`}>
+							{sizeInfo.label}
+						</span>
+						<span className={`${CARD_STYLES.badgeBase} ${waterInfo.style}`}>
+							{waterInfo.label}
 						</span>
 						{fish.harakiri && (
 							<span className={`${CARD_STYLES.badgeBase} ${CARD_STYLES.badgeHarakiri}`}>
@@ -147,7 +170,6 @@ export const FishCard: React.FC<FishCardProps> = ({
 					)}
 				</div>
 
-				{/* チェック状態インジケーター */}
 				<div className="shrink-0 pt-1">
 					<button
 						type="button"

@@ -35,6 +35,8 @@ export type UserData = {
 };
 
 // --- マスタデータ構造 ---
+export type SizeType = 'small' | 'large' | 'unknown';
+export type WaterType = 'freshwater' | 'saltwater' | 'gedou' | 'unknown';
 
 export type FishMaster = {
 	// Windower (items.lua) 準拠項目
@@ -46,7 +48,8 @@ export type FishMaster = {
 
 	// アプリ独自拡張項目
 	maxSkill: number;      // 限界スキルレベル (例: 10)
-	sizeType: 'small' | 'large'; // 小型魚 / 大型魚
+	sizeType: SizeType;       // 'small' | 'large' | 'unknown'
+	waterType: WaterType;     // 'freshwater' (淡水) | 'saltwater' (海水) | 'gedou' (外道) | 'unknown' (不明)
 	harakiri: boolean;     // ハラキリ対象フラグ
 	ebisu: boolean;        // 恵比寿の竿関連（腹切り/クエスト対象等）
 	taikobou: boolean;     // 太公望の竿関連（10万匹・湾曲針対象等）

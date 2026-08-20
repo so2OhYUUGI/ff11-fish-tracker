@@ -38,12 +38,23 @@ export const CARD_STYLES = {
 	boxBlock: 'bg-slate-900/60 p-2.5 rounded border border-slate-700/50 text-xs text-slate-300 leading-relaxed',
 	notesBlock: 'mt-2 text-xs text-slate-400 flex items-start gap-1 bg-slate-900/50 p-2 rounded border border-slate-700/50',
 
-	// バッジ類
-	badgeBase: 'px-2 py-0.5 rounded font-medium text-xs',
-	badgeDefault: 'bg-slate-700 text-slate-300',
-	badgeLarge: 'bg-amber-950/80 text-amber-300 border border-amber-800',
-	badgeSmall: 'bg-blue-950/80 text-blue-300 border border-blue-800',
-	badgeHarakiri: 'bg-red-950/80 text-red-300 border border-red-800',
-	badgeEbisu: 'bg-purple-950/80 text-purple-300 border border-purple-800',
-	badgeTaikobou: 'bg-emerald-950/80 text-emerald-300 border border-emerald-800',
+	// バッジ類（共通ベース）
+	badgeBase: 'px-2 py-0.5 rounded font-medium text-xs border shrink-0',
+	badgeDefault: 'bg-slate-700/80 text-slate-300 border-slate-600',
+
+	// サイズ区分バッジ
+	badgeLarge: 'bg-indigo-950/80 text-indigo-300 border-indigo-800/60',
+	badgeSmall: 'bg-sky-950/80 text-sky-300 border-sky-800/60',
+	badgeSizeUnknown: 'bg-slate-800/80 text-slate-400 border-slate-700/60',
+
+	// 水質・区分バッジ
+	badgeFreshwater: 'bg-emerald-950/80 text-emerald-300 border-emerald-800/60',
+	badgeSaltwater: 'bg-blue-950/80 text-blue-300 border-blue-800/60',
+	badgeGedou: 'bg-amber-950/80 text-amber-300 border-amber-800/60',
+	badgeWaterUnknown: 'bg-slate-800/80 text-slate-400 border-slate-700/60',
+
+	// 属性バッジ
+	badgeHarakiri: 'bg-rose-950/80 text-rose-300 border-rose-800/60',
+	badgeEbisu: 'bg-amber-950/80 text-amber-300 border-amber-800/60',
+	badgeTaikobou: 'bg-teal-950/80 text-teal-300 border-teal-800/60',
 } as const;

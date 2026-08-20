@@ -5,6 +5,7 @@
  * 
  * [概要]
  * - ヘッダー（魚名・チェック状態）を固定し、コンテンツ部分全体を独立スクロール表示
+ * - 基本情報（スキル上限、サイズ区分、水質区分、各種関連属性フラグ）のステータス表示
  * ============================================================================
  */
 
@@ -19,6 +20,7 @@ import {
 	RODS,
 } from '@/data';
 import { DETAIL_STYLES } from '@/styles/detailStyles';
+import { CARD_STYLES } from '@/styles/cardStyles';
 
 type FishDetailViewProps = {
 	fish: FishMaster;
@@ -26,6 +28,32 @@ type FishDetailViewProps = {
 	isChecked: boolean;
 	onToggleCheck: (fishId: number) => void;
 	onClose: () => void;
+};
+
+// サイズ表記ラベル・スタイル取得ヘルパー
+const getSizeBadgeInfo = (sizeType: FishMaster['sizeType']) => {
+	switch (sizeType) {
+		case 'large':
+			return { label: '大型魚', style: CARD_STYLES.badgeLarge };
+		case 'small':
+			return { label: '小型魚', style: CARD_STYLES.badgeSmall };
+		default:
+			return { label: 'サイズ不明', style: CARD_STYLES.badgeSizeUnknown };
+	}
+};
+
+// 水質・区分ラベル・スタイル取得ヘルパー
+const getWaterBadgeInfo = (waterType: FishMaster['waterType']) => {
+	switch (waterType) {
+		case 'freshwater':
+			return { label: '淡水', style: CARD_STYLES.badgeFreshwater };
+		case 'saltwater':
+			return { label: '海水', style: CARD_STYLES.badgeSaltwater };
+		case 'gedou':
+			return { label: '外道', style: CARD_STYLES.badgeGedou };
+		default:
+			return { label: '区分不明', style: CARD_STYLES.badgeWaterUnknown };
+	}
 };
 
 export const FishDetailView: React.FC<FishDetailViewProps> = ({
@@ -54,6 +82,9 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 		);
 	};
 
+	const sizeInfo = getSizeBadgeInfo(fish.sizeType);
+	const waterInfo = getWaterBadgeInfo(fish.waterType);
+
 	return (
 		<div className="flex flex-col h-full min-h-0 overflow-hidden">
 			{/* 1. 固定ヘッダー領域 */}
@@ -78,8 +109,8 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 						type="button"
 						onClick={() => onToggleCheck(fish.id)}
 						className={`${DETAIL_STYLES.checkButtonBase} ${isChecked
-							? DETAIL_STYLES.checkButtonChecked
-							: DETAIL_STYLES.checkButtonUnchecked
+								? DETAIL_STYLES.checkButtonChecked
+								: DETAIL_STYLES.checkButtonUnchecked
 							}`}
 					>
 						{isChecked ? (
@@ -108,6 +139,37 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 
 			{/* 2. 一括スクロール可能なコンテンツ領域 */}
 			<div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-6">
+				{/* 基本情報ステータス */}
+				<div>
+					<h3 className={DETAIL_STYLES.sectionTitle}>基本ステータス</h3>
+					<div className="flex flex-wrap items-center gap-2">
+						<span className={`${CARD_STYLES.badgeBase} ${CARD_STYLES.badgeDefault}`}>
+							上限スキル: {fish.maxSkill}
+						</span>
+						<span className={`${CARD_STYLES.badgeBase} ${sizeInfo.style}`}>
+							{sizeInfo.label}
+						</span>
+						<span className={`${CARD_STYLES.badgeBase} ${waterInfo.style}`}>
+							{waterInfo.label}
+						</span>
+						{fish.harakiri && (
+							<span className={`${CARD_STYLES.badgeBase} ${CARD_STYLES.badgeHarakiri}`}>
+								ハラキリ対象
+							</span>
+						)}
+						{fish.ebisu && (
+							<span className={`${CARD_STYLES.badgeBase} ${CARD_STYLES.badgeEbisu}`}>
+								恵比寿関連
+							</span>
+						)}
+						{fish.taikobou && (
+							<span className={`${CARD_STYLES.badgeBase} ${CARD_STYLES.badgeTaikobou}`}>
+								太公望関連
+							</span>
+						)}
+					</div>
+				</div>
+
 				{/* 生息エリア・釣り場 */}
 				<div>
 					<h3 className={DETAIL_STYLES.sectionTitle}>

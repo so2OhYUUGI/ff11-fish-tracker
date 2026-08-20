@@ -6,6 +6,7 @@
  * [概要]
  * - BAITS および RODS の生データを直接参照し、全種類の餌と竿を描画
  * - 中間データ（`FishBaitRelation`, `FishRodRelation`）を介してリレーション編集を制御
+ * - サイズ区分 (sizeType)、水質区分 (waterType) のセグメントコントロール（小型・等幅トグルボタン）編集に対応
  * ============================================================================
  */
 
@@ -26,6 +27,21 @@ type Props = {
 	onBaitRelationChange?: (updatedRelations: FishBaitRelation[]) => void;
 	onRodRelationChange?: (updatedRelations: FishRodRelation[]) => void;
 };
+
+// サイズ区分の定義
+const SIZE_OPTIONS: { value: NonNullable<EditableFish['sizeType']>; label: string }[] = [
+	{ value: 'large', label: '大型魚' },
+	{ value: 'small', label: '小型魚' },
+	{ value: 'unknown', label: '不明' },
+];
+
+// 水質区分の定義
+const WATER_OPTIONS: { value: NonNullable<EditableFish['waterType']>; label: string }[] = [
+	{ value: 'freshwater', label: '淡水' },
+	{ value: 'saltwater', label: '海水' },
+	{ value: 'gedou', label: '外道' },
+	{ value: 'unknown', label: '不明' },
+];
 
 export const FishEditTab: React.FC<Props> = ({
 	fishList = [],
@@ -329,6 +345,73 @@ export const FishEditTab: React.FC<Props> = ({
 									style={{ width: '100%', padding: '4px', marginTop: '2px', boxSizing: 'border-box' }}
 								/>
 							</label>
+						</div>
+
+						{/* サイズ区分・水質区分 (段分け配置・小型等幅ボタン) */}
+						<div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+							{/* 上段: サイズ区分 */}
+							<div>
+								<div style={{ fontWeight: 'bold', marginBottom: '4px', color: '#4a5568', fontSize: '12px' }}>サイズ区分</div>
+								<div style={{ display: 'flex', gap: '6px' }}>
+									{SIZE_OPTIONS.map((item) => {
+										const isSelected = (selectedFish.sizeType || 'unknown') === item.value;
+										return (
+											<button
+												key={item.value}
+												type="button"
+												onClick={() => handleFieldChange('sizeType', item.value)}
+												style={{
+													width: '80px',
+													padding: '4px 0',
+													fontSize: '11px',
+													borderRadius: '4px',
+													cursor: 'pointer',
+													textAlign: 'center',
+													border: isSelected ? '1px solid #3182ce' : '1px solid #cbd5e0',
+													backgroundColor: isSelected ? '#ebf8ff' : '#f7fafc',
+													color: isSelected ? '#2b6cb0' : '#4a5568',
+													fontWeight: isSelected ? 'bold' : 'normal',
+													transition: 'all 0.15s ease-in-out',
+												}}
+											>
+												{item.label}
+											</button>
+										);
+									})}
+								</div>
+							</div>
+
+							{/* 下段: 水質区分 */}
+							<div>
+								<div style={{ fontWeight: 'bold', marginBottom: '4px', color: '#4a5568', fontSize: '12px' }}>水質区分</div>
+								<div style={{ display: 'flex', gap: '6px' }}>
+									{WATER_OPTIONS.map((item) => {
+										const isSelected = (selectedFish.waterType || 'unknown') === item.value;
+										return (
+											<button
+												key={item.value}
+												type="button"
+												onClick={() => handleFieldChange('waterType', item.value)}
+												style={{
+													width: '80px',
+													padding: '4px 0',
+													fontSize: '11px',
+													borderRadius: '4px',
+													cursor: 'pointer',
+													textAlign: 'center',
+													border: isSelected ? '1px solid #3182ce' : '1px solid #cbd5e0',
+													backgroundColor: isSelected ? '#ebf8ff' : '#f7fafc',
+													color: isSelected ? '#2b6cb0' : '#4a5568',
+													fontWeight: isSelected ? 'bold' : 'normal',
+													transition: 'all 0.15s ease-in-out',
+												}}
+											>
+												{item.label}
+											</button>
+										);
+									})}
+								</div>
+							</div>
 						</div>
 
 						{/* エリア選択 */}
