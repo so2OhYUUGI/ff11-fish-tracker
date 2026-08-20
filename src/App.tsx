@@ -2,23 +2,6 @@
  * ============================================================================
  * [FilePath] src/App.tsx
  * [Role] アプリケーションのルートコンポーネント（レイアウト構築・状態統合・ルーティング）
- * 
- * [概要]
- * - 全体のレイアウト（Header / AdBanner / FilterBar / Main / Footer）の構築
- * - アクティブキャラクターのチェック状態管理 (`useUserData` フックの利用)
- * - メイン表示タブ (`mainTab`), フィルタ条件 (`statusFilter`), 検索ワード (`searchQuery`), 
- *   表示形式 (`viewMode`) などのアプリケーション全体状態の保持
- * - マスターデータ編集モーダル (`MasterDataEditorModal`) および設定モーダル (`SettingsModal`) の表示制御
- * - チェック操作時のトースト通知 (`sonner`) の制御
- * 
- * [編集・改修時の注意事項]
- * 1. 【ヘッダーとフィルターバーの固定構造】
- *    Header と FilterBar を単一の sticky コンテナ (top-0) 内に配置することで、
- *    画面幅による高さ変化（タブレット縦表示等）が発生しても余白が生じないように設計しています。
- * 2. 【トースト通知】
- *    チェック解除時の Undo (元に戻す) 操作は `toggleFishCheck` を再実行することで実現しています。
- * 3. 【開発用ツールの分離】
- *    `MasterDataEditorModal` は開発環境/本番環境制御を行っている内部コンポーネントを内包しています。
  * ============================================================================
  */
 
@@ -32,6 +15,7 @@ import { FilterBar, type StatusFilter } from '@/components/FilterBar';
 import { MainContentRouter } from '@/components/MainContentRouter';
 import { AdBanner } from '@/components/AdBanner';
 import { Footer } from '@/components/Footer';
+import { LandingPage } from '@/components/LandingPage';
 import { MasterDataEditorModal } from '@/components/dev/MasterDataEditorModal';
 import type { ViewMode, MainTab } from '@/types/fish';
 
@@ -54,6 +38,11 @@ export default function App() {
   const [viewMode, setViewMode] = useState<ViewMode>('card');
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  // キャラクターが登録されていない場合はランディングページを表示
+  if (userData.characters.length === 0 || !activeCharacter) {
+    return <LandingPage onCreateCharacter={addCharacter} />;
+  }
 
   const handleToggleCheck = (fishId: number) => {
     const isCurrentlyChecked = activeCharacter.checkedFishIds.includes(fishId);

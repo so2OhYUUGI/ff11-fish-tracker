@@ -2,12 +2,6 @@
  * ============================================================================
  * [FilePath] src/hooks/useUserData.ts
  * [Role] ユーザー進捗データ（複数キャラクター・魚チェック状態）の永続化管理カスタムフック
- * 
- * [概要]
- * - `LocalStorage` を使用したユーザーデータ（`UserData`）の読み込み・自動保存
- * - アクティブキャラクターの選択・追加・名前変更・削除ロジック
- * - 選択中キャラクターに対する魚のチェック状態（済/未）のトグル操作
- * - JSONファイルのインポート / エクスポート機能（バックアップ・復元）
  * ============================================================================
  */
 
@@ -16,18 +10,10 @@ import type { UserData, CharacterProgress } from '@/types/fish';
 
 const STORAGE_KEY = 'ff11_fish_tracker_user_data';
 
-// 初期データ（デフォルトキャラクター）
-const DEFAULT_USER_DATA: UserData = {
-	activeCharacterId: 'default-char-1',
-	characters: [
-		{
-			id: 'default-char-1',
-			name: 'メインキャラ',
-			checkedFishIds: [],
-			createdAt: Date.now(),
-			updatedAt: Date.now(),
-		},
-	],
+// デフォルトキャラクターを廃止し、初期状態は空配列に設定
+const EMPTY_USER_DATA: UserData = {
+	activeCharacterId: '',
+	characters: [],
 };
 
 // ID生成ヘルパー（非セキュア環境・非対応ブラウザ向けのフォールバック処理付き）
@@ -39,25 +25,24 @@ const generateUniqueId = (): string => {
 };
 
 export const useUserData = () => {
-	// 1. 安全な LocalStorage 読み込み処理（初期値生成関数）
+	// 1. 安全な LocalStorage 読み込み処理
 	const [userData, setUserData] = useState<UserData>(() => {
 		try {
 			const saved = localStorage.getItem(STORAGE_KEY);
-			if (!saved) return DEFAULT_USER_DATA;
+			if (!saved) return EMPTY_USER_DATA;
 
 			const parsed = JSON.parse(saved);
-			// 最低限の構造チェック（破損データ対策）
-			if (!parsed || !Array.isArray(parsed.characters) || parsed.characters.length === 0) {
-				return DEFAULT_USER_DATA;
+			if (!parsed || !Array.isArray(parsed.characters)) {
+				return EMPTY_USER_DATA;
 			}
 			return parsed;
 		} catch (e) {
 			console.error('Failed to parse user data from localStorage', e);
-			return DEFAULT_USER_DATA;
+			return EMPTY_USER_DATA;
 		}
 	});
 
-	// 2. データの変更を自動で LocalStorage に保存（書き込み例外ガードを追加）
+	// 2. データの変更を自動で LocalStorage に保存
 	useEffect(() => {
 		try {
 			localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
@@ -66,7 +51,7 @@ export const useUserData = () => {
 		}
 	}, [userData]);
 
-	// 現在選択中のキャラクターを取得
+	// 現在選択中のキャラクターを取得（キャラクターが存在しない場合は undefined）
 	const activeCharacter =
 		userData.characters.find((c) => c.id === userData.activeCharacterId) ||
 		userData.characters[0];
@@ -166,7 +151,6 @@ export const useUserData = () => {
 					const content = e.target?.result as string;
 					const parsedData = JSON.parse(content);
 
-					// データの簡易構造チェック
 					if (
 						typeof parsedData === 'object' &&
 						parsedData !== null &&
