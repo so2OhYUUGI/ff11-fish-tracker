@@ -114,6 +114,14 @@ export const MasterDataEditor: React.FC = () => {
 		downloadAnchor.remove();
 	};
 
+	// ローカルデータ（LocalStorage）の初期化
+	const handleResetLocalStorage = () => {
+		if (confirm('ローカルに保存されているユーザー進捗データ（LocalStorage）をクリアして初期化しますか？\n（ページが再読み込みされます）')) {
+			localStorage.clear();
+			window.location.reload();
+		}
+	};
+
 	return (
 		<div style={{ display: 'flex', flexDirection: 'column', height: '100%', gap: '10px' }}>
 			<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
@@ -169,6 +177,23 @@ export const MasterDataEditor: React.FC = () => {
 				</div>
 
 				<div style={{ display: 'flex', gap: '8px' }}>
+					<button
+						type="button"
+						onClick={handleResetLocalStorage}
+						style={{
+							padding: '6px 12px',
+							backgroundColor: '#dd6b20',
+							color: '#fff',
+							border: 'none',
+							borderRadius: '4px',
+							cursor: 'pointer',
+							fontSize: '12px',
+							fontWeight: 'bold',
+						}}
+						title="LocalStorageのユーザーデータをクリアして初期状態に戻します"
+					>
+						🧹 ローカルデータ初期化
+					</button>
 					<button
 						type="button"
 						onClick={handleDirectSave}

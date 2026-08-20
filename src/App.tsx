@@ -82,8 +82,6 @@ export default function App() {
           characters={userData.characters}
           activeCharacter={activeCharacter}
           onSelectCharacter={setActiveCharacter}
-          onAddCharacter={addCharacter}
-          onDeleteCharacter={deleteCharacter}
           onOpenSettings={() => setIsSettingsOpen(true)}
           onOpenMasterEditor={() => setIsEditorOpen(true)}
         />
