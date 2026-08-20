@@ -4,19 +4,20 @@
  * [Role] エリア一覧表示および詳細ビュー切り替え用コンテナコンポーネント
  * 
  * [概要]
+ * - エリア（ZoneMaster）を所属リージョン（RegionMaster）ごとにグループ化して表示
  * - 選択状態（`selectedArea`）に応じた2カラム（一覧＋詳細）レスポンシブレイアウトの制御
  * - 表示モード（`viewMode`: 'card' | 'list'）に基づく `AreaCard` / `AreaListItem` の切替描画
  * - モバイル表示時の画面切替（一覧/詳細）およびPC表示時の `sticky` 追従レイアウト制御
  * 
  * [編集・改修時の注意事項]
- * 1. 【レスポンシブレイアウト】
- *    詳細表示選択時（`isSelected === true`）、モバイル環境（`lg` 未満）では一覧を非表示 (`hidden`) にし、
- *    `AreaDetailView` のみを全幅で表示するレスポンシブ仕様になっています。
+ * 1. 【グループ化ロジック】
+ *    `useMemo` 内で `REGIONS` の定義順に従って `areas` をグループ化しています。
+ *    リージョン未設定のエリアは「その他」カテゴリとして末尾にまとめられます。
  * ============================================================================
  */
 
-import { useState } from 'react';
-import type { ZoneMaster, FishMaster, ViewMode } from '@/types/fish';
+import { useState, useMemo } from 'react';
+import type { ZoneMaster, FishMaster, ViewMode, RegionMaster } from '@/types/fish';
 import { REGIONS } from '@/data/';
 import { AreaCard } from './AreaCard';
 import { AreaListItem } from './AreaListItem';
@@ -28,10 +29,43 @@ type Props = {
 	viewMode: ViewMode;
 };
 
+type RegionGroup = {
+	region: RegionMaster | null;
+	areas: ZoneMaster[];
+};
+
 export const AreaListView = ({ areas, allFishes, viewMode }: Props) => {
 	const [selectedArea, setSelectedArea] = useState<ZoneMaster | null>(null);
 
-	// 選択中のアイテムが存在するかどうか
+	// リージョンごとにエリアをグループ化
+	const groupedAreas = useMemo(() => {
+		const groups: RegionGroup[] = [];
+
+		// REGIONS の定義順にエリアを割り当てる
+		REGIONS.forEach((region) => {
+			const regionAreas = areas.filter((a) => a.regionId === region.id);
+			if (regionAreas.length > 0) {
+				groups.push({
+					region,
+					areas: regionAreas,
+				});
+			}
+		});
+
+		// regionId が未設定または REGIONS に存在しないエリアの取得
+		const unassignedAreas = areas.filter(
+			(a) => !a.regionId || !REGIONS.some((r) => r.id === a.regionId)
+		);
+		if (unassignedAreas.length > 0) {
+			groups.push({
+				region: null,
+				areas: unassignedAreas,
+			});
+		}
+
+		return groups;
+	}, [areas]);
+
 	const isSelected = selectedArea !== null;
 
 	return (
@@ -41,34 +75,57 @@ export const AreaListView = ({ areas, allFishes, viewMode }: Props) => {
 				className={`${isSelected ? 'lg:col-span-7' : 'lg:col-span-12'
 					} ${isSelected ? 'hidden lg:block' : 'block'}`}
 			>
-				{viewMode === 'card' ? (
-					<div
-						className={`grid grid-cols-1 gap-3 ${isSelected
-							? 'sm:grid-cols-2 md:grid-cols-3'
-							: 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
-							}`}
-					>
-						{areas.map((area) => (
-							<AreaCard
-								key={area.id}
-								area={area}
-								isSelected={selectedArea?.id === area.id}
-								onClickDetail={setSelectedArea}
-							/>
-						))}
-					</div>
-				) : (
-					<div className="flex flex-col gap-2">
-						{areas.map((area) => (
-							<AreaListItem
-								key={area.id}
-								area={area}
-								isSelected={selectedArea?.id === area.id}
-								onClickDetail={setSelectedArea}
-							/>
-						))}
-					</div>
-				)}
+				<div className="flex flex-col gap-6">
+					{groupedAreas.map((group) => (
+						<div key={group.region?.id ?? 'other'} className="flex flex-col gap-2">
+							{/* リージョン見出し */}
+							<div className="flex items-center gap-2 border-b border-slate-700/80 pb-1.5 px-1">
+								<span className="text-sm font-bold text-cyan-400">
+									{group.region ? group.region.ja : 'その他'}
+								</span>
+								{group.region && (
+									<span className="text-xs text-slate-400 font-mono">
+										({group.region.en})
+									</span>
+								)}
+								<span className="text-xs text-slate-500 ml-auto font-mono">
+									{group.areas.length} 件
+								</span>
+							</div>
+
+							{/* カード表示モード */}
+							{viewMode === 'card' ? (
+								<div
+									className={`grid grid-cols-1 gap-3 ${isSelected
+										? 'sm:grid-cols-2 md:grid-cols-3'
+										: 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
+										}`}
+								>
+									{group.areas.map((area) => (
+										<AreaCard
+											key={area.id}
+											area={area}
+											isSelected={selectedArea?.id === area.id}
+											onClickDetail={setSelectedArea}
+										/>
+									))}
+								</div>
+							) : (
+								/* リスト表示モード */
+								<div className="flex flex-col gap-2">
+									{group.areas.map((area) => (
+										<AreaListItem
+											key={area.id}
+											area={area}
+											isSelected={selectedArea?.id === area.id}
+											onClickDetail={setSelectedArea}
+										/>
+									))}
+								</div>
+							)}
+						</div>
+					))}
+				</div>
 			</div>
 
 			{/* 右側：詳細表示領域 */}
