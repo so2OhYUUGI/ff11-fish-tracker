@@ -5,7 +5,7 @@
  * 
  * [概要]
  * - `LocalStorage` を使用したユーザーデータ（`UserData`）の読み込み・自動保存
- * - アクティブキャラクターの選択・追加・削除ロジック
+ * - アクティブキャラクターの選択・追加・名前変更・削除ロジック
  * - 選択中キャラクターに対する魚のチェック状態（済/未）のトグル操作
  * - JSONファイルのインポート / エクスポート機能（バックアップ・復元）
  * ============================================================================
@@ -28,6 +28,14 @@ const DEFAULT_USER_DATA: UserData = {
 			updatedAt: Date.now(),
 		},
 	],
+};
+
+// ID生成ヘルパー（非セキュア環境・非対応ブラウザ向けのフォールバック処理付き）
+const generateUniqueId = (): string => {
+	if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+		return crypto.randomUUID();
+	}
+	return `char-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 };
 
 export const useUserData = () => {
@@ -74,7 +82,7 @@ export const useUserData = () => {
 	// キャラクター追加
 	const addCharacter = (name: string) => {
 		const newChar: CharacterProgress = {
-			id: crypto.randomUUID(),
+			id: generateUniqueId(),
 			name,
 			checkedFishIds: [],
 			createdAt: Date.now(),
@@ -84,6 +92,18 @@ export const useUserData = () => {
 			...prev,
 			activeCharacterId: newChar.id,
 			characters: [...prev.characters, newChar],
+		}));
+	};
+
+	// キャラクター名変更
+	const renameCharacter = (characterId: string, newName: string) => {
+		setUserData((prev) => ({
+			...prev,
+			characters: prev.characters.map((char) =>
+				char.id === characterId
+					? { ...char, name: newName, updatedAt: Date.now() }
+					: char
+			),
 		}));
 	};
 
@@ -172,6 +192,7 @@ export const useUserData = () => {
 		activeCharacter,
 		setActiveCharacter,
 		addCharacter,
+		renameCharacter,
 		deleteCharacter,
 		toggleFishCheck,
 		exportData,

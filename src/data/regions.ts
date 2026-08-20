@@ -282,5 +282,11 @@ export const REGIONS: RegionMaster[] = [
     "id": 54,
     "ja": "ひんがし",
     "en": "Far East"
+  },
+  {
+    "id": 100,
+    "ja": "航路",
+    "en": "Sea Route"
   }
+
 ];

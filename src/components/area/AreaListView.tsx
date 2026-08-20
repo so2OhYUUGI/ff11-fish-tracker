@@ -5,6 +5,7 @@
  * 
  * [概要]
  * - エリア（ZoneMaster）を所属リージョン（RegionMaster）ごとにグループ化して表示
+ * - リージョン設定のないエリアは一覧から除外
  * - 選択状態（`selectedArea`）に応じた2カラム（一覧＋詳細）レスポンシブレイアウトの制御
  * - 表示モード（`viewMode`: 'card' | 'list'）に基づく `AreaCard` / `AreaListItem` の切替描画
  * - 型不一致（number/string）を安全に変換してグループ化処理を実行
@@ -25,18 +26,18 @@ type Props = {
 };
 
 type RegionGroup = {
-	region: RegionMaster | null;
+	region: RegionMaster;
 	areas: ZoneMaster[];
 };
 
 export const AreaListView = ({ areas, allFishes, viewMode }: Props) => {
 	const [selectedArea, setSelectedArea] = useState<ZoneMaster | null>(null);
 
-	// リージョンごとにエリアをグループ化（型の不一致やプロパティの有無を型安全に照合）
+	// リージョンごとにエリアをグループ化（リージョン未設定のエリアは除外）
 	const groupedAreas = useMemo(() => {
 		const groups: RegionGroup[] = [];
 
-		// 1. REGIONS の定義順にエリアを割り当てる（文字列比較で型不一致を回避）
+		// REGIONS の定義順に該当するエリアを割り当て
 		REGIONS.forEach((region) => {
 			const regionAreas = areas.filter(
 				(a) => a.regionId !== undefined && String(a.regionId) === String(region.id)
@@ -49,21 +50,6 @@ export const AreaListView = ({ areas, allFishes, viewMode }: Props) => {
 				});
 			}
 		});
-
-		// 2. regionId が未設定または REGIONS に存在しないエリアの取得
-		const unassignedAreas = areas.filter(
-			(a) =>
-				a.regionId === undefined ||
-				a.regionId === null ||
-				!REGIONS.some((r) => String(r.id) === String(a.regionId))
-		);
-
-		if (unassignedAreas.length > 0) {
-			groups.push({
-				region: null,
-				areas: unassignedAreas,
-			});
-		}
 
 		return groups;
 	}, [areas]);
@@ -79,17 +65,15 @@ export const AreaListView = ({ areas, allFishes, viewMode }: Props) => {
 			>
 				<div className="flex flex-col gap-6">
 					{groupedAreas.map((group) => (
-						<div key={group.region?.id ?? 'other'} className="flex flex-col gap-2">
+						<div key={group.region.id} className="flex flex-col gap-2">
 							{/* リージョン見出し */}
 							<div className="flex items-center gap-2 border-b border-slate-700/80 pb-1.5 px-1">
 								<span className="text-sm font-bold text-cyan-400">
-									{group.region ? group.region.ja : 'その他'}
+									{group.region.ja}
 								</span>
-								{group.region && (
-									<span className="text-xs text-slate-400 font-mono">
-										({group.region.en})
-									</span>
-								)}
+								<span className="text-xs text-slate-400 font-mono">
+									({group.region.en})
+								</span>
 								<span className="text-xs text-slate-500 ml-auto font-mono">
 									{group.areas.length} 件
 								</span>
@@ -99,8 +83,8 @@ export const AreaListView = ({ areas, allFishes, viewMode }: Props) => {
 							{viewMode === 'card' ? (
 								<div
 									className={`grid grid-cols-1 gap-3 ${isSelected
-											? 'sm:grid-cols-2 md:grid-cols-3'
-											: 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
+										? 'sm:grid-cols-2 md:grid-cols-3'
+										: 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
 										}`}
 								>
 									{group.areas.map((area) => (

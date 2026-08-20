@@ -12,9 +12,9 @@
  * - チェック操作時のトースト通知 (`sonner`) の制御
  * 
  * [編集・改修時の注意事項]
- * 1. 【ヘッダー高さの依存関係】
- *    `FilterBar` の `sticky top-[75px]` は `Header` の高さに依存しています。
- *    `Header` のデザイン変更等で高さが変わる場合は、ここ位置合わせの値を調整してください。
+ * 1. 【ヘッダーとフィルターバーの固定構造】
+ *    Header と FilterBar を単一の sticky コンテナ (top-0) 内に配置することで、
+ *    画面幅による高さ変化（タブレット縦表示等）が発生しても余白が生じないように設計しています。
  * 2. 【トースト通知】
  *    チェック解除時の Undo (元に戻す) 操作は `toggleFishCheck` を再実行することで実現しています。
  * 3. 【開発用ツールの分離】
@@ -27,7 +27,7 @@ import { toast, Toaster } from 'sonner';
 import { useUserData } from '@/hooks/useUserData';
 import { FISHES } from '@/data/';
 import { Header } from '@/components/Header';
-import { SettingsModal } from '@/components/SettingsModal';
+import { SettingsModal } from '@/components/settings/SettingsModal';
 import { FilterBar, type StatusFilter } from '@/components/FilterBar';
 import { MainContentRouter } from '@/components/MainContentRouter';
 import { AdBanner } from '@/components/AdBanner';
@@ -41,6 +41,7 @@ export default function App() {
     activeCharacter,
     setActiveCharacter,
     addCharacter,
+    renameCharacter,
     deleteCharacter,
     toggleFishCheck,
     exportData,
@@ -75,8 +76,8 @@ export default function App() {
     <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col font-sans">
       <Toaster position="bottom-right" theme="dark" />
 
-      {/* 固定ヘッダー */}
-      <div className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur border-b border-slate-800">
+      {/* 固定ヘッダー & 吸着フィルターバーの統合ラッパー */}
+      <div className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur border-b border-slate-800 shadow-md">
         <Header
           characters={userData.characters}
           activeCharacter={activeCharacter}
@@ -86,13 +87,6 @@ export default function App() {
           onOpenSettings={() => setIsSettingsOpen(true)}
           onOpenMasterEditor={() => setIsEditorOpen(true)}
         />
-      </div>
-
-      {/* 広告 */}
-      <AdBanner slotId="top-banner" />
-
-      {/* 吸着フィルターバー */}
-      <div className="sticky top-[75px] z-30 bg-slate-900/95 backdrop-blur border-b border-slate-800 shadow-md">
         <FilterBar
           mainTab={mainTab}
           activeCharacter={activeCharacter}
@@ -106,6 +100,9 @@ export default function App() {
           totalFishCount={FISHES.length}
         />
       </div>
+
+      {/* 広告 */}
+      <AdBanner slotId="top-banner" />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <MainContentRouter
@@ -126,6 +123,12 @@ export default function App() {
       <SettingsModal
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
+        characters={userData.characters}
+        activeCharacterId={activeCharacter.id}
+        onSelectCharacter={setActiveCharacter}
+        onAddCharacter={addCharacter}
+        onRenameCharacter={renameCharacter}
+        onDeleteCharacter={deleteCharacter}
         onExport={exportData}
         onImport={importData}
       />
