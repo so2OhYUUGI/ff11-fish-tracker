@@ -52,6 +52,81 @@ export const FISH_LOCATIONS: FishLocation[] = [
     "zoneId": 8
   },
   {
+    "id": "4443-2",
+    "fishId": 4443,
+    "zoneId": 2
+  },
+  {
+    "id": "4443-14",
+    "fishId": 4443,
+    "zoneId": 14
+  },
+  {
+    "id": "4443-13",
+    "fishId": 4443,
+    "zoneId": 13
+  },
+  {
+    "id": "4443-9",
+    "fishId": 4443,
+    "zoneId": 9
+  },
+  {
+    "id": "4443-1",
+    "fishId": 4443,
+    "zoneId": 1
+  },
+  {
+    "id": "4443-39",
+    "fishId": 4443,
+    "zoneId": 39
+  },
+  {
+    "id": "4443-43",
+    "fishId": 4443,
+    "zoneId": 43
+  },
+  {
+    "id": "4443-44",
+    "fishId": 4443,
+    "zoneId": 44
+  },
+  {
+    "id": "4443-51",
+    "fishId": 4443,
+    "zoneId": 51
+  },
+  {
+    "id": "4443-47",
+    "fishId": 4443,
+    "zoneId": 47
+  },
+  {
+    "id": "4443-84",
+    "fishId": 4443,
+    "zoneId": 84
+  },
+  {
+    "id": "4443-86",
+    "fishId": 4443,
+    "zoneId": 86
+  },
+  {
+    "id": "4443-89",
+    "fishId": 4443,
+    "zoneId": 89
+  },
+  {
+    "id": "4443-83",
+    "fishId": 4443,
+    "zoneId": 83
+  },
+  {
+    "id": "4443-92",
+    "fishId": 4443,
+    "zoneId": 92
+  },
+  {
     "id": "5447-22",
     "fishId": 5447,
     "zoneId": 22

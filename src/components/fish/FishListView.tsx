@@ -6,11 +6,7 @@
  * [概要]
  * - 魚カード一覧（FishCard / FishListItem）と詳細（FishDetailView）の2カラム／単一表示制御
  * - モバイルおよびデスクトップ（sticky追従）でのレスポンシブ切り替え
- * - FishDetailView への `locations` データリレー
- * 
- * [編集・改修時の注意事項]
- * 1. 【データ連携】
- *    `FishDetailView` に生息情報を受け渡すため、Props に `locations: FishLocation[]` を追加・伝播します。
+ * - 詳細表示領域に画面高に応じた上限サイズ（calc）と独立スクロール領域を設定
  * ============================================================================
  */
 
@@ -38,6 +34,18 @@ export const FishListView = ({
 	onToggleCheck,
 }: Props) => {
 	const [selectedFish, setSelectedFish] = useState<FishMaster | null>(null);
+
+	// チェック操作ハンドラ（詳細画面表示中なら詳細対象もその魚に切り替える）
+	const handleToggleCheck = (fishId: number) => {
+		onToggleCheck(fishId);
+
+		if (selectedFish !== null) {
+			const targetFish = fishes.find((f) => f.id === fishId);
+			if (targetFish) {
+				setSelectedFish(targetFish);
+			}
+		}
+	};
 
 	if (fishes.length === 0) {
 		return (
@@ -71,7 +79,7 @@ export const FishListView = ({
 								zones={zones}
 								isChecked={checkedFishIds.includes(fish.id)}
 								isSelected={selectedFish?.id === fish.id}
-								onToggleCheck={onToggleCheck}
+								onToggleCheck={handleToggleCheck}
 								onClickDetail={setSelectedFish}
 							/>
 						))}
@@ -85,7 +93,7 @@ export const FishListView = ({
 								zones={zones}
 								isChecked={checkedFishIds.includes(fish.id)}
 								isSelected={selectedFish?.id === fish.id}
-								onToggleCheck={onToggleCheck}
+								onToggleCheck={handleToggleCheck}
 								onClickDetail={setSelectedFish}
 							/>
 						))}
@@ -93,14 +101,14 @@ export const FishListView = ({
 				)}
 			</div>
 
-			{/* 右側：詳細表示領域 */}
+			{/* 右側：詳細表示領域（画面高に合わせた独立スクロール領域を設定） */}
 			{isSelected && (
-				<div className="lg:col-span-5 lg:sticky lg:top-[160px] w-full">
+				<div className="lg:col-span-5 lg:sticky lg:top-[160px] w-full max-h-[calc(100vh-180px)] flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
 					<FishDetailView
 						fish={selectedFish}
 						zones={zones}
 						isChecked={checkedFishIds.includes(selectedFish.id)}
-						onToggleCheck={onToggleCheck}
+						onToggleCheck={handleToggleCheck}
 						onClose={() => setSelectedFish(null)}
 					/>
 				</div>

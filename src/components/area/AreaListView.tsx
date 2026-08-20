@@ -7,12 +7,7 @@
  * - エリア（ZoneMaster）を所属リージョン（RegionMaster）ごとにグループ化して表示
  * - 選択状態（`selectedArea`）に応じた2カラム（一覧＋詳細）レスポンシブレイアウトの制御
  * - 表示モード（`viewMode`: 'card' | 'list'）に基づく `AreaCard` / `AreaListItem` の切替描画
- * - モバイル表示時の画面切替（一覧/詳細）およびPC表示時の `sticky` 追従レイアウト制御
- * 
- * [編集・改修時の注意事項]
- * 1. 【グループ化ロジック】
- *    `useMemo` 内で `REGIONS` の定義順に従って `areas` をグループ化しています。
- *    リージョン未設定のエリアは「その他」カテゴリとして末尾にまとめられます。
+ * - 型不一致（number/string）を安全に変換してグループ化処理を実行
  * ============================================================================
  */
 
@@ -37,13 +32,16 @@ type RegionGroup = {
 export const AreaListView = ({ areas, allFishes, viewMode }: Props) => {
 	const [selectedArea, setSelectedArea] = useState<ZoneMaster | null>(null);
 
-	// リージョンごとにエリアをグループ化
+	// リージョンごとにエリアをグループ化（型の不一致やプロパティの有無を型安全に照合）
 	const groupedAreas = useMemo(() => {
 		const groups: RegionGroup[] = [];
 
-		// REGIONS の定義順にエリアを割り当てる
+		// 1. REGIONS の定義順にエリアを割り当てる（文字列比較で型不一致を回避）
 		REGIONS.forEach((region) => {
-			const regionAreas = areas.filter((a) => a.regionId === region.id);
+			const regionAreas = areas.filter(
+				(a) => a.regionId !== undefined && String(a.regionId) === String(region.id)
+			);
+
 			if (regionAreas.length > 0) {
 				groups.push({
 					region,
@@ -52,10 +50,14 @@ export const AreaListView = ({ areas, allFishes, viewMode }: Props) => {
 			}
 		});
 
-		// regionId が未設定または REGIONS に存在しないエリアの取得
+		// 2. regionId が未設定または REGIONS に存在しないエリアの取得
 		const unassignedAreas = areas.filter(
-			(a) => !a.regionId || !REGIONS.some((r) => r.id === a.regionId)
+			(a) =>
+				a.regionId === undefined ||
+				a.regionId === null ||
+				!REGIONS.some((r) => String(r.id) === String(a.regionId))
 		);
+
 		if (unassignedAreas.length > 0) {
 			groups.push({
 				region: null,
@@ -97,8 +99,8 @@ export const AreaListView = ({ areas, allFishes, viewMode }: Props) => {
 							{viewMode === 'card' ? (
 								<div
 									className={`grid grid-cols-1 gap-3 ${isSelected
-										? 'sm:grid-cols-2 md:grid-cols-3'
-										: 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
+											? 'sm:grid-cols-2 md:grid-cols-3'
+											: 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
 										}`}
 								>
 									{group.areas.map((area) => (
@@ -130,7 +132,7 @@ export const AreaListView = ({ areas, allFishes, viewMode }: Props) => {
 
 			{/* 右側：詳細表示領域 */}
 			{isSelected && (
-				<div className="lg:col-span-5 lg:sticky lg:top-[160px] w-full">
+				<div className="lg:col-span-5 lg:sticky lg:top-[160px] w-full max-h-[calc(100vh-180px)] flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
 					<AreaDetailView
 						area={selectedArea}
 						allFishes={allFishes}
