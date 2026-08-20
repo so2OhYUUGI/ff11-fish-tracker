@@ -130,5 +130,35 @@ export const FISH_BAIT_RELATIONS: FishBaitRelation[] = [
     "id": "4318-17002",
     "fishId": 4318,
     "baitId": 17002
+  },
+  {
+    "id": "5125-17397",
+    "fishId": 5125,
+    "baitId": 17397
+  },
+  {
+    "id": "5125-17005",
+    "fishId": 5125,
+    "baitId": 17005
+  },
+  {
+    "id": "5125-17403",
+    "fishId": 5125,
+    "baitId": 17403
+  },
+  {
+    "id": "5125-17405",
+    "fishId": 5125,
+    "baitId": 17405
+  },
+  {
+    "id": "5125-17398",
+    "fishId": 5125,
+    "baitId": 17398
+  },
+  {
+    "id": "5125-17002",
+    "fishId": 5125,
+    "baitId": 17002
   }
 ];

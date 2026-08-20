@@ -24,7 +24,7 @@ export function saveFishDataPlugin(): Plugin {
 				req.on('data', (chunk) => (body += chunk));
 				req.on('end', () => {
 					try {
-						const { fishList, zoneList, fishBaitRelations, fishRodRelations } = JSON.parse(body);
+						const { fishList, zoneList, baitList, fishBaitRelations, fishRodRelations } = JSON.parse(body);
 
 						// 1. 中間リレーションデータの抽出 (FishLocation)
 						const locations: Array<{ id: string; fishId: number; zoneId: number }> = [];
@@ -77,7 +77,17 @@ export const ZONES: ZoneMaster[] = ${JSON.stringify(zoneList, null, 2)};
 							fs.writeFileSync(zonesFilePath, zonesContent, 'utf-8');
 						}
 
-						// 5. src/data/fishBaitRelations.ts の保存
+						// 5. src/data/baits.ts の保存（餌マスター）
+						if (baitList) {
+							const baitsFilePath = path.resolve(process.cwd(), 'src/data/baits.ts');
+							const baitsContent = `import type { BaitMaster } from '@/types/fish';
+
+export const BAITS: BaitMaster[] = ${JSON.stringify(baitList, null, 2)};
+`;
+							fs.writeFileSync(baitsFilePath, baitsContent, 'utf-8');
+						}
+
+						// 6. src/data/fishBaitRelations.ts の保存
 						if (fishBaitRelations) {
 							const baitRelFilePath = path.resolve(process.cwd(), 'src/data/fishBaitRelations.ts');
 							const baitRelContent = `import type { FishBaitRelation } from '@/types/fish';
@@ -87,7 +97,7 @@ export const FISH_BAIT_RELATIONS: FishBaitRelation[] = ${JSON.stringify(fishBait
 							fs.writeFileSync(baitRelFilePath, baitRelContent, 'utf-8');
 						}
 
-						// 6. src/data/fishRodRelations.ts の保存
+						// 7. src/data/fishRodRelations.ts の保存
 						if (fishRodRelations) {
 							const rodRelFilePath = path.resolve(process.cwd(), 'src/data/fishRodRelations.ts');
 							const rodRelContent = `import type { FishRodRelation } from '@/types/fish';

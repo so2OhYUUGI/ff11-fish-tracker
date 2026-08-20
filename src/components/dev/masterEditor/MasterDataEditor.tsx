@@ -10,6 +10,7 @@ import { isDev } from '@/utils/env';
 import {
 	FISHES,
 	ZONES,
+	BAITS,
 	FISH_LOCATIONS,
 	REGIONS,
 	FISH_BAIT_RELATIONS,
@@ -18,11 +19,13 @@ import {
 import type {
 	FishLocation,
 	ZoneMaster,
+	BaitMaster,
 	FishBaitRelation,
 	FishRodRelation,
 } from '@/types/fish';
 import { FishEditTab } from './tabs/FishEditTab';
 import { ZoneEditTab } from './tabs/ZoneEditTab';
+import { BaitReorderTab } from './tabs/BaitReorderTab';
 import type { EditTab, EditableFish } from './types';
 
 export const MasterDataEditor: React.FC = () => {
@@ -38,6 +41,11 @@ export const MasterDataEditor: React.FC = () => {
 	);
 
 	const [zoneList, setZoneList] = useState<ZoneMaster[]>(() => ZONES);
+
+	// 餌マスターの State（sortOrder 順にソートして初期化）
+	const [baitList, setBaitList] = useState<BaitMaster[]>(() =>
+		[...(BAITS || [])].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+	);
 
 	// 中間リレーションデータの State
 	const [fishBaitRelations, setFishBaitRelations] = useState<FishBaitRelation[]>(
@@ -63,6 +71,7 @@ export const MasterDataEditor: React.FC = () => {
 				body: JSON.stringify({
 					fishList,
 					zoneList,
+					baitList,
 					fishBaitRelations,
 					fishRodRelations,
 				}),
@@ -93,6 +102,7 @@ export const MasterDataEditor: React.FC = () => {
 			fishes: exportFishes,
 			fishLocations: exportLocations,
 			zones: zoneList,
+			baits: baitList,
 			fishBaitRelations,
 			fishRodRelations,
 		};
@@ -141,6 +151,22 @@ export const MasterDataEditor: React.FC = () => {
 						}}
 					>
 						🗺️ ゾーン（エリア）編集
+					</button>
+					<button
+						type="button"
+						onClick={() => setActiveTab('bait')}
+						style={{
+							padding: '6px 12px',
+							backgroundColor: activeTab === 'bait' ? '#2b6cb0' : '#edf2f7',
+							color: activeTab === 'bait' ? '#fff' : '#2d3748',
+							border: 'none',
+							borderRadius: '4px',
+							cursor: 'pointer',
+							fontSize: '12px',
+							fontWeight: 'bold',
+						}}
+					>
+						🪱 餌並び順編集
 					</button>
 				</div>
 
@@ -194,6 +220,9 @@ export const MasterDataEditor: React.FC = () => {
 				)}
 				{activeTab === 'zone' && (
 					<ZoneEditTab zoneList={zoneList} regionList={REGIONS} onZoneChange={handleZoneChange} />
+				)}
+				{activeTab === 'bait' && (
+					<BaitReorderTab baitList={baitList} onBaitListChange={setBaitList} />
 				)}
 			</div>
 		</div>

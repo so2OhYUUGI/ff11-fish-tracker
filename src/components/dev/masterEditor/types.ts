@@ -10,7 +10,7 @@
 
 import type { FishMaster } from '@/types/fish';
 
-export type EditTab = 'fish' | 'zone';
+export type EditTab = 'fish' | 'zone' | 'bait';
 
 export type EditableFish = FishMaster & {
 	zoneIds?: number[];
