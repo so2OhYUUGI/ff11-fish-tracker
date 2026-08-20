@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
-    "composite": true,
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "noEmit": true, // ← JSやd.tsを出力しない
     "skipLibCheck": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
@@ -9,11 +8,11 @@
     "strict": true,
     "types": [
       "node"
-    ] // ← この行を追加（"node" 型定義を読み込む）
+    ]
   },
   "include": [
     "vite.config.ts",
     "vite/**/*.ts",
     "scripts/**/*.ts"
-  ] // ← "scripts/**/*.ts" も含めておくと安全です
+  ]
 }

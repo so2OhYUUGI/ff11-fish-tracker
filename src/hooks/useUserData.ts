@@ -7,16 +7,7 @@
  * - `LocalStorage` を使用したユーザーデータ（`UserData`）の読み込み・自動保存
  * - アクティブキャラクターの選択・追加・削除ロジック
  * - 選択中キャラクターに対する魚のチェック状態（済/未）のトグル操作
- * 
- * [編集・改修時の注意事項]
- * 1. 【ストレージキー】
- *    `STORAGE_KEY` (`ff11_fish_tracker_user_data`) を変更すると、
- *    既存ユーザーのデータが読み込めなくなるため原則変更禁止です。
- * 2. 【キャラクター削除制約】
- *    `deleteCharacter` にて最後の1キャラの削除を防ぐバリデーションを入れています。
- * 3. 【UUID生成】
- *    新規キャラクター追加時のID生成に `crypto.randomUUID()` を使用しています。
- *    古いブラウザ環境のサポートが必要な場合はフォールバックの検討が必要です。
+ * - JSONファイルのインポート / エクスポート機能（バックアップ・復元）
  * ============================================================================
  */
 
@@ -40,20 +31,31 @@ const DEFAULT_USER_DATA: UserData = {
 };
 
 export const useUserData = () => {
+	// 1. 安全な LocalStorage 読み込み処理（初期値生成関数）
 	const [userData, setUserData] = useState<UserData>(() => {
-		const saved = localStorage.getItem(STORAGE_KEY);
-		if (!saved) return DEFAULT_USER_DATA;
 		try {
-			return JSON.parse(saved);
+			const saved = localStorage.getItem(STORAGE_KEY);
+			if (!saved) return DEFAULT_USER_DATA;
+
+			const parsed = JSON.parse(saved);
+			// 最低限の構造チェック（破損データ対策）
+			if (!parsed || !Array.isArray(parsed.characters) || parsed.characters.length === 0) {
+				return DEFAULT_USER_DATA;
+			}
+			return parsed;
 		} catch (e) {
 			console.error('Failed to parse user data from localStorage', e);
 			return DEFAULT_USER_DATA;
 		}
 	});
 
-	// データの変更を自動で LocalStorage に保存
+	// 2. データの変更を自動で LocalStorage に保存（書き込み例外ガードを追加）
 	useEffect(() => {
-		localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
+		try {
+			localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
+		} catch (e) {
+			console.error('Failed to save user data to localStorage', e);
+		}
 	}, [userData]);
 
 	// 現在選択中のキャラクターを取得
@@ -124,6 +126,47 @@ export const useUserData = () => {
 		});
 	};
 
+	// 3. データのエクスポート（JSONファイルダウンロード）
+	const exportData = () => {
+		const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(userData, null, 2));
+		const downloadAnchor = document.createElement('a');
+		downloadAnchor.setAttribute('href', dataStr);
+		downloadAnchor.setAttribute('download', `ff11_fish_tracker_backup_${new Date().toISOString().slice(0, 10)}.json`);
+		document.body.appendChild(downloadAnchor);
+		downloadAnchor.click();
+		downloadAnchor.remove();
+	};
+
+	// 4. データのインポート（JSONファイル読み込み）
+	const importData = (file: File): Promise<boolean> => {
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader();
+			reader.onload = (e) => {
+				try {
+					const content = e.target?.result as string;
+					const parsedData = JSON.parse(content);
+
+					// データの簡易構造チェック
+					if (
+						typeof parsedData === 'object' &&
+						parsedData !== null &&
+						Array.isArray(parsedData.characters) &&
+						typeof parsedData.activeCharacterId === 'string'
+					) {
+						setUserData(parsedData);
+						resolve(true);
+					} else {
+						reject(new Error('無効なデータ形式です。'));
+					}
+				} catch (err) {
+					reject(err);
+				}
+			};
+			reader.onerror = () => reject(new Error('ファイルの読み込みに失敗しました。'));
+			reader.readAsText(file);
+		});
+	};
+
 	return {
 		userData,
 		activeCharacter,
@@ -131,5 +174,7 @@ export const useUserData = () => {
 		addCharacter,
 		deleteCharacter,
 		toggleFishCheck,
+		exportData,
+		importData,
 	};
 };

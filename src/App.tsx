@@ -8,7 +8,7 @@
  * - アクティブキャラクターのチェック状態管理 (`useUserData` フックの利用)
  * - メイン表示タブ (`mainTab`), フィルタ条件 (`statusFilter`), 検索ワード (`searchQuery`), 
  *   表示形式 (`viewMode`) などのアプリケーション全体状態の保持
- * - マスターデータ編集モーダル (`MasterDataEditorModal`) の表示制御
+ * - マスターデータ編集モーダル (`MasterDataEditorModal`) および設定モーダル (`SettingsModal`) の表示制御
  * - チェック操作時のトースト通知 (`sonner`) の制御
  * 
  * [編集・改修時の注意事項]
@@ -27,6 +27,7 @@ import { toast, Toaster } from 'sonner';
 import { useUserData } from '@/hooks/useUserData';
 import { FISHES } from '@/data/';
 import { Header } from '@/components/Header';
+import { SettingsModal } from '@/components/SettingsModal';
 import { FilterBar, type StatusFilter } from '@/components/FilterBar';
 import { MainContentRouter } from '@/components/MainContentRouter';
 import { AdBanner } from '@/components/AdBanner';
@@ -42,6 +43,8 @@ export default function App() {
     addCharacter,
     deleteCharacter,
     toggleFishCheck,
+    exportData,
+    importData,
   } = useUserData();
 
   const [mainTab, setMainTab] = useState<MainTab>('fish');
@@ -49,6 +52,7 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<ViewMode>('card');
   const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const handleToggleCheck = (fishId: number) => {
     const isCurrentlyChecked = activeCharacter.checkedFishIds.includes(fishId);
@@ -79,6 +83,7 @@ export default function App() {
           onSelectCharacter={setActiveCharacter}
           onAddCharacter={addCharacter}
           onDeleteCharacter={deleteCharacter}
+          onOpenSettings={() => setIsSettingsOpen(true)}
           onOpenMasterEditor={() => setIsEditorOpen(true)}
         />
       </div>
@@ -117,6 +122,15 @@ export default function App() {
 
       <Footer />
 
+      {/* 環境設定モーダル */}
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        onExport={exportData}
+        onImport={importData}
+      />
+
+      {/* マスターデータ編集モーダル */}
       <MasterDataEditorModal
         isOpen={isEditorOpen}
         onClose={() => setIsEditorOpen(false)}

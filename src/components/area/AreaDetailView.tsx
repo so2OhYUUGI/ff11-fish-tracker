@@ -92,7 +92,7 @@ export const AreaDetailView: React.FC<Props> = ({
 				{/* 説明文 */}
 				{area.description && (
 					<div className={DETAIL_STYLES.descriptionBox}>
-						{area.description.split('\\n').map((line, index) => (
+						{area.description.split('\\n').map((line: string, index: number) => (
 							<React.Fragment key={index}>
 								{index > 0 && <br />}
 								{line}

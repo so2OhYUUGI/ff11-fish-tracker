@@ -45,7 +45,7 @@ export const AreaListItem: React.FC<Props> = ({ area, isSelected, onClickDetail 
 
 			{area.description && (
 				<div className={LIST_STYLES.subText}>
-					{area.description.split('\\n').map((line, index) => (
+					{area.description.split('\\n').map((line: string, index: number) => (
 						<React.Fragment key={index}>{line}</React.Fragment>
 					))}
 				</div>

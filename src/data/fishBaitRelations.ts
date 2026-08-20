@@ -85,5 +85,15 @@ export const FISH_BAIT_RELATIONS: FishBaitRelation[] = [
     "id": "4443-19326",
     "fishId": 4443,
     "baitId": 19326
+  },
+  {
+    "id": "4318-16992",
+    "fishId": 4318,
+    "baitId": 16992
+  },
+  {
+    "id": "4318-16993",
+    "fishId": 4318,
+    "baitId": 16993
   }
 ];

@@ -14,12 +14,11 @@ import { useState } from 'react';
 import { FishCard } from '@/components/fish/FishCard';
 import { FishListItem } from '@/components/fish/FishListItem';
 import { FishDetailView } from '@/components/fish/FishDetailView';
-import type { FishMaster, ViewMode, ZoneMaster, FishLocation } from '@/types/fish';
+import type { FishMaster, ViewMode, ZoneMaster } from '@/types/fish';
 
 type Props = {
 	fishes: FishMaster[];
 	zones: ZoneMaster[];
-	locations: FishLocation[];
 	checkedFishIds: number[];
 	viewMode: ViewMode;
 	onToggleCheck: (fishId: number) => void;
@@ -28,7 +27,6 @@ type Props = {
 export const FishListView = ({
 	fishes,
 	zones,
-	locations,
 	checkedFishIds,
 	viewMode,
 	onToggleCheck,

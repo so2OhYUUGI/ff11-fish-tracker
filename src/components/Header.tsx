@@ -2,25 +2,11 @@
  * ============================================================================
  * [FilePath] src/components/Header.tsx
  * [Role] アプリケーションの固定ヘッダー・キャラクター切り替え/管理・開発用ツール導線コンポーネント
- * 
- * [概要]
- * - タイトルロゴおよびアプリケーション名の表示
- * - キャラクター選択ドロップダウン、新規追加フォーム、削除ダイアログの制御
- * - 開発環境（`isDev === true`）におけるマスターデータ編集モーダル起動ボタンの表示
- * 
- * [編集・改修時の注意事項]
- * 1. 【高さ依存】
- *    本コンポーネントの高さ変更は `App.tsx` 内の `FilterBar` の固定位置（`top-[75px]`）に影響します。
- *    レイアウトの高さを更新した場合は `App.tsx` の位置調整も合わせて確認してください。
- * 2. 【キャラクター削除】
- *    誤削除防止のためブラウザ標準の `confirm` ダイアログを挟んでいます。
- * 3. 【開発用ツールの表示条件】
- *    `isDev` フラグでガードしており、本番ビルド時にはマスター編集ボタンが露出しない設計です。
  * ============================================================================
  */
 
 import React, { useState } from 'react';
-import { Plus, Trash2, Fish, Database } from 'lucide-react';
+import { Plus, Trash2, Fish, Database, Settings } from 'lucide-react';
 import type { CharacterProgress } from '@/types/fish';
 import { isDev } from '@/utils/env';
 
@@ -30,7 +16,8 @@ type HeaderProps = {
 	onSelectCharacter: (id: string) => void;
 	onAddCharacter: (name: string) => void;
 	onDeleteCharacter: (id: string) => void;
-	onOpenMasterEditor?: () => void; // 編集画面を開くためのハンドラーを追加
+	onOpenSettings: () => void; // 設定画面を開くハンドラー
+	onOpenMasterEditor?: () => void;
 };
 
 export const Header: React.FC<HeaderProps> = ({
@@ -39,6 +26,7 @@ export const Header: React.FC<HeaderProps> = ({
 	onSelectCharacter,
 	onAddCharacter,
 	onDeleteCharacter,
+	onOpenSettings,
 	onOpenMasterEditor,
 }) => {
 	const [isAdding, setIsAdding] = useState(false);
@@ -69,7 +57,7 @@ export const Header: React.FC<HeaderProps> = ({
 						</div>
 					</div>
 
-					{/* キャラクター切り替え＆管理 ＋ 開発用ボタン */}
+					{/* キャラクター切り替え＆管理 ＋ 設定 / 開発用ボタン */}
 					<div className="flex flex-wrap items-center gap-3">
 						<div className="flex items-center gap-2">
 							<label htmlFor="char-select" className="text-sm font-medium text-slate-300">
@@ -124,7 +112,7 @@ export const Header: React.FC<HeaderProps> = ({
 							</button>
 						)}
 
-						{/* キャラ削除ボタン（2キャラ以上のときのみ表示） */}
+						{/* キャラ削除ボタン */}
 						{characters.length > 1 && (
 							<button
 								onClick={() => {
@@ -139,7 +127,17 @@ export const Header: React.FC<HeaderProps> = ({
 							</button>
 						)}
 
-						{/* 開発環境でのみ表示するマスター編集ボタン */}
+						{/* 環境設定ボタン */}
+						<button
+							onClick={onOpenSettings}
+							className="p-1.5 text-slate-300 hover:text-white bg-slate-700 hover:bg-slate-600 border border-slate-600 rounded-lg transition-colors flex items-center gap-1 text-xs px-2.5 py-1.5 font-medium"
+							title="環境設定・データ管理"
+						>
+							<Settings className="w-4 h-4" />
+							設定
+						</button>
+
+						{/* 開発環境用マスター編集ボタン */}
 						{isDev && (
 							<button
 								onClick={onOpenMasterEditor}

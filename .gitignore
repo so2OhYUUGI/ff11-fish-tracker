@@ -1,3 +1,6 @@
+*.d.ts
+*.tsbuildinfo
+
 # Logs
 logs
 *.log

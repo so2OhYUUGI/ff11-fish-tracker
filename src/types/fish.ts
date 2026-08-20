@@ -16,7 +16,8 @@ export type ZoneMaster = {
 	id: number;
 	ja: string;
 	en: string;
-	regionId?: number; // 所属するリージョンID
+	regionId?: number; // ← ? を付けてオプショナルに変更
+	description?: string;
 };
 
 // --- ユーザー進捗データ (LocalStorage保存用) ---
@@ -69,7 +70,7 @@ export type FishingRodMaster = {
 	description?: string;  // 日本語の説明
 };
 
-export type MainTab = 'fish' | 'bait';
+export type MainTab = 'fish' | 'bait' | 'area'; // 'zone' を 'area' に統一（プロジェクトの呼称に合わせる）
 export type ViewMode = 'card' | 'list';
 
 // --- 中間データ（リレーション） ---

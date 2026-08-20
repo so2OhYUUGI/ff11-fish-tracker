@@ -14,13 +14,13 @@
  */
 
 import React from 'react';
-import type { AreaMaster } from '@/types/fish';
+import type { ZoneMaster } from '@/types/fish'; // AreaMaster から変更
 import { CARD_STYLES } from '@/styles/cardStyles';
 
 type Props = {
-	area: AreaMaster;
+	area: ZoneMaster;
 	isSelected?: boolean;
-	onClickDetail: (area: AreaMaster) => void;
+	onClickDetail: (area: ZoneMaster) => void;
 };
 
 export const AreaCard: React.FC<Props> = ({ area, isSelected, onClickDetail }) => {
@@ -43,7 +43,7 @@ export const AreaCard: React.FC<Props> = ({ area, isSelected, onClickDetail }) =
 
 				{area.description && (
 					<div className={`${CARD_STYLES.boxBlock} mt-2 text-slate-300`}>
-						{area.description.split('\\n').map((line, index) => (
+						{area.description.split('\\n').map((line: string, index: number) => (
 							<p key={index}>{line}</p>
 						))}
 					</div>

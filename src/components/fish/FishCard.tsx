@@ -36,13 +36,11 @@ type FishCardProps = {
 
 export const FishCard: React.FC<FishCardProps> = ({
 	fish,
-	zones,
 	isChecked,
 	isSelected,
 	onToggleCheck,
 	onClickDetail,
 }) => {
-	const fishZoneNames = true;
 
 	return (
 		<div

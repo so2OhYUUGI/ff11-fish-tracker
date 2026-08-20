@@ -1,0 +1,58 @@
+/**
+ * ============================================================================
+ * [FilePath] scripts/generateZones.ts
+ * [Role] zones.lua から zones.ts を自動生成するビルドスクリプト
+ *
+ * [概要]
+ * - zones.lua をパースし、各エリアのID、和名、英名を取得
+ * - 型定義（ZoneMaster）に準拠した zones.ts を自動生成
+ * ============================================================================
+ */
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const ZONES_LUA_PATH = path.join(__dirname, '../raw_data/zones.lua');
+const OUTPUT_PATH = path.join(__dirname, '../src/data/zones.ts');
+// zones.lua のパース関数
+function parseZonesLua(filePath) {
+    if (!fs.existsSync(filePath)) {
+        console.warn(`File not found: ${filePath}`);
+        return [];
+    }
+    const content = fs.readFileSync(filePath, 'utf-8');
+    const list = [];
+    const entryRegex = /\[(\d+)\]\s*=\s*\{([\s\S]*?)\},?/g;
+    let match;
+    while ((match = entryRegex.exec(content)) !== null) {
+        const id = Number(match[1]);
+        const body = match[2];
+        const jaMatch = body.match(/\bja\s*=\s*"([^"\\]*(?:\\.[^"\\]*)*)"/) || body.match(/\bja\s*=\s*'([^'\\]*(?:\\.[^'\\]*)*)'/);
+        const enMatch = body.match(/\ben\s*=\s*"([^"\\]*(?:\\.[^"\\]*)*)"/) || body.match(/\ben\s*=\s*'([^'\\]*(?:\\.[^'\\]*)*)'/);
+        list.push({
+            id,
+            ja: jaMatch ? jaMatch[1] : `Zone_${id}`,
+            en: enMatch ? enMatch[1] : `Zone_${id}`,
+        });
+    }
+    return list.sort((a, b) => a.id - b.id);
+}
+function main() {
+    console.log('Generating zones.ts from zones.lua...');
+    const zoneList = parseZonesLua(ZONES_LUA_PATH);
+    const fileContent = `/**
+ * ============================================================================
+ * [FilePath] src/data/zones.ts
+ * [Role] 全エリアマスターデータ（自動生成ファイル）
+ * ============================================================================
+ */
+
+import type { ZoneMaster } from '@/types/fish';
+
+export const ZONES: ZoneMaster[] = ${JSON.stringify(zoneList, null, 2)};
+`;
+    fs.writeFileSync(OUTPUT_PATH, fileContent, 'utf-8');
+    console.log(`Successfully generated ${OUTPUT_PATH} with ${zoneList.length} zone entries!`);
+}
+main();
