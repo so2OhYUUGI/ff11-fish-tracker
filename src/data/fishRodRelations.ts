@@ -36,6 +36,5 @@ export const FISH_ROD_RELATIONS: FishRodRelation[] = [
     "rodBreak": "unknown",
     "lineBreak": "unknown",
     "notes": "小さすぎ"
-  },
-
+  }
 ];
