@@ -3,5 +3,10 @@
 	"compatibility_date": "2026-08-15",
 	"assets": {
 		"directory": "./dist"
+	},
+	"env": {
+		"staging": {
+			"name": "ff11-fish-tracker-staging"
+		}
 	}
 }
