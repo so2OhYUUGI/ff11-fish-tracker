@@ -6,6 +6,7 @@
  * [概要]
  * - BAITS および RODS の生データを直接参照し、全種類の餌と竿を描画
  * - 中間データ（`FishBaitRelation`, `FishRodRelation`）を介してリレーション編集を制御
+ * - 限界スキルレベル (maxSkill) の数値入力領域に対応
  * - サイズ区分 (sizeType)、水質区分 (waterType) のセグメントコントロール（小型・等幅トグルボタン）編集に対応
  * ============================================================================
  */
@@ -326,7 +327,7 @@ export const FishEditTab: React.FC<Props> = ({
 					<div style={{ display: 'grid', gap: '15px', fontSize: '13px' }}>
 						<h3 style={{ margin: '0 0 5px 0' }}> 魚ID: {selectedFish.id} の編集 </h3>
 
-						<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+						<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 120px', gap: '10px' }}>
 							<label>
 								日本語名:
 								<input
@@ -342,6 +343,19 @@ export const FishEditTab: React.FC<Props> = ({
 									type="text"
 									value={selectedFish.en}
 									onChange={(e) => handleFieldChange('en', e.target.value)}
+									style={{ width: '100%', padding: '4px', marginTop: '2px', boxSizing: 'border-box' }}
+								/>
+							</label>
+							<label>
+								限界スキル:
+								<input
+									type="number"
+									min="0"
+									value={selectedFish.maxSkill ?? ''}
+									onChange={(e) => {
+										const val = e.target.value === '' ? 0 : Number(e.target.value);
+										handleFieldChange('maxSkill', val);
+									}}
 									style={{ width: '100%', padding: '4px', marginTop: '2px', boxSizing: 'border-box' }}
 								/>
 							</label>

@@ -6,7 +6,7 @@
  * [概要]
  * - メイン表示タブ（魚 / 餌 / エリア）の切替
  * - 魚表示時の状態絞り込み（すべて / 未達成 / 達成済）および進捗率（プログレスバー）の描画
- * - 名称検索インプット（魚名 / 餌名 / エリア名の自動切替）
+ * - 名称検索インプット（魚名 / 餌名 / エリア名の自動切替・テキストクリア機能付き）
  * - 表示モード切替（カード表示 / リスト表示）
  * 
  * [編集・改修時の注意事項]
@@ -25,7 +25,7 @@
  */
 
 import React from 'react';
-import { Search, LayoutGrid, List, Fish, Utensils, MapPin } from 'lucide-react';
+import { Search, LayoutGrid, List, Fish, Utensils, MapPin, X } from 'lucide-react';
 import type { ViewMode, MainTab, CharacterProgress } from '@/types/fish';
 import { FILTER_BAR_STYLES } from '@/styles/filterBarStyles';
 
@@ -71,8 +71,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 							type="button"
 							onClick={() => onMainTabChange('fish')}
 							className={`${FILTER_BAR_STYLES.tabButtonBase} ${mainTab === 'fish'
-									? FILTER_BAR_STYLES.tabActive
-									: FILTER_BAR_STYLES.tabInactive
+								? FILTER_BAR_STYLES.tabActive
+								: FILTER_BAR_STYLES.tabInactive
 								}`}
 						>
 							<Fish className="w-3.5 h-3.5" />
@@ -82,8 +82,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 							type="button"
 							onClick={() => onMainTabChange('bait')}
 							className={`${FILTER_BAR_STYLES.tabButtonBase} ${mainTab === 'bait'
-									? FILTER_BAR_STYLES.tabActive
-									: FILTER_BAR_STYLES.tabInactive
+								? FILTER_BAR_STYLES.tabActive
+								: FILTER_BAR_STYLES.tabInactive
 								}`}
 						>
 							<Utensils className="w-3.5 h-3.5" />
@@ -93,8 +93,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 							type="button"
 							onClick={() => onMainTabChange('area')}
 							className={`${FILTER_BAR_STYLES.tabButtonBase} ${mainTab === 'area'
-									? FILTER_BAR_STYLES.tabActive
-									: FILTER_BAR_STYLES.tabInactive
+								? FILTER_BAR_STYLES.tabActive
+								: FILTER_BAR_STYLES.tabInactive
 								}`}
 						>
 							<MapPin className="w-3.5 h-3.5" />
@@ -109,8 +109,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 								type="button"
 								onClick={() => onStatusFilterChange('all')}
 								className={`${FILTER_BAR_STYLES.statusButtonBase} ${statusFilter === 'all'
-										? FILTER_BAR_STYLES.statusAllActive
-										: FILTER_BAR_STYLES.tabInactive
+									? FILTER_BAR_STYLES.statusAllActive
+									: FILTER_BAR_STYLES.tabInactive
 									}`}
 							>
 								すべて
@@ -119,8 +119,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 								type="button"
 								onClick={() => onStatusFilterChange('unchecked')}
 								className={`${FILTER_BAR_STYLES.statusButtonBase} ${statusFilter === 'unchecked'
-										? FILTER_BAR_STYLES.statusUncheckedActive
-										: FILTER_BAR_STYLES.tabInactive
+									? FILTER_BAR_STYLES.statusUncheckedActive
+									: FILTER_BAR_STYLES.tabInactive
 									}`}
 							>
 								未達成
@@ -129,8 +129,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 								type="button"
 								onClick={() => onStatusFilterChange('checked')}
 								className={`${FILTER_BAR_STYLES.statusButtonBase} ${statusFilter === 'checked'
-										? FILTER_BAR_STYLES.statusCheckedActive
-										: FILTER_BAR_STYLES.tabInactive
+									? FILTER_BAR_STYLES.statusCheckedActive
+									: FILTER_BAR_STYLES.tabInactive
 									}`}
 							>
 								達成済
@@ -161,8 +161,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 
 				{/* 右側: 検索 & 表示モード切り替え */}
 				<div className={FILTER_BAR_STYLES.rightGroup}>
-					{/* 検索入力フォーム（タブに応じてプレースホルダーを切替） */}
-					<div className={FILTER_BAR_STYLES.searchContainer}>
+					{/* 検索入力フォーム（テキストクリア機能付き） */}
+					<div className={`relative ${FILTER_BAR_STYLES.searchContainer}`}>
 						<Search className={FILTER_BAR_STYLES.searchIcon} />
 						<input
 							type="text"
@@ -175,8 +175,18 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 							}
 							value={searchQuery}
 							onChange={(e) => onSearchQueryChange(e.target.value)}
-							className={FILTER_BAR_STYLES.searchInput}
+							className={`${FILTER_BAR_STYLES.searchInput} ${searchQuery ? 'pr-8' : ''}`}
 						/>
+						{searchQuery && (
+							<button
+								type="button"
+								onClick={() => onSearchQueryChange('')}
+								className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 focus:outline-none"
+								aria-label="検索内容をクリア"
+							>
+								<X className="w-3.5 h-3.5" />
+							</button>
+						)}
 					</div>
 
 					{/* カード/リスト表示切替ボタン */}
@@ -185,8 +195,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 							type="button"
 							onClick={() => onViewModeChange('card')}
 							className={`${FILTER_BAR_STYLES.viewModeButtonBase} ${viewMode === 'card'
-									? FILTER_BAR_STYLES.viewModeActive
-									: FILTER_BAR_STYLES.viewModeInactive
+								? FILTER_BAR_STYLES.viewModeActive
+								: FILTER_BAR_STYLES.viewModeInactive
 								}`}
 							title="カード表示"
 						>
@@ -196,8 +206,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 							type="button"
 							onClick={() => onViewModeChange('list')}
 							className={`${FILTER_BAR_STYLES.viewModeButtonBase} ${viewMode === 'list'
-									? FILTER_BAR_STYLES.viewModeActive
-									: FILTER_BAR_STYLES.viewModeInactive
+								? FILTER_BAR_STYLES.viewModeActive
+								: FILTER_BAR_STYLES.viewModeInactive
 								}`}
 							title="リスト表示"
 						>

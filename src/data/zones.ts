@@ -1682,13 +1682,13 @@ export const ZONES: ZoneMaster[] = [
   },
   {
     "id": 287,
-    "ja": "アブダルスの模型-レギオンB",
+    "ja": "アブダルスの模��-レギオンB",
     "en": "Maquette Abdhaljs-LegionB",
     "regionId": 48
   },
   {
     "id": 288,
-    "ja": "エスカ-ジ・タ",
+    "ja": "���スカ-ジ・タ",
     "en": "Escha - Zi'Tah",
     "regionId": 53
   },
