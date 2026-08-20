@@ -22,6 +22,11 @@ export const FISH_LOCATIONS: FishLocation[] = [
     "zoneId": 12
   },
   {
+    "id": "4318-1",
+    "fishId": 4318,
+    "zoneId": 1
+  },
+  {
     "id": "2216-1",
     "fishId": 2216,
     "zoneId": 1
@@ -50,5 +55,25 @@ export const FISH_LOCATIONS: FishLocation[] = [
     "id": "5447-22",
     "fishId": 5447,
     "zoneId": 22
+  },
+  {
+    "id": "5785-1",
+    "fishId": 5785,
+    "zoneId": 1
+  },
+  {
+    "id": "5960-2",
+    "fishId": 5960,
+    "zoneId": 2
+  },
+  {
+    "id": "5792-1",
+    "fishId": 5792,
+    "zoneId": 1
+  },
+  {
+    "id": "5792-2",
+    "fishId": 5792,
+    "zoneId": 2
   }
 ];

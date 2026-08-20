@@ -1,10 +1,10 @@
 /**
  * ============================================================================
- * [FilePath] src/components/bait/BaitListItem.tsx
- * [Role] 餌データ（個別）のリスト表示コンポーネント
+ * [FilePath] src/components/area/AreaListItem.tsx
+ * [Role] エリアデータのリスト表示コンポーネント
  * 
  * [概要]
- * - 餌の基本情報（和名、英名、簡略説明文）のリスト形式（高密度レイアウト）表示
+ * - エリアの基本情報（和名、英名、簡略説明文）のリスト形式（高密度レイアウト）表示
  * - 選択中（アクティブ）状態に応じたスタイリング切り替え
  * 
  * [編集・改修時の注意事項]
@@ -13,19 +13,20 @@
  * ============================================================================
  */
 
-import type { BaitMaster } from '@/types/fish';
+import React from 'react';
+import type { AreaMaster } from '@/types/fish';
 import { LIST_STYLES } from '@/styles/listStyles';
 
 type Props = {
-	bait: BaitMaster;
+	area: AreaMaster;
 	isSelected?: boolean;
-	onClickDetail: (bait: BaitMaster) => void;
+	onClickDetail: (area: AreaMaster) => void;
 };
 
-export const BaitListItem = ({ bait, isSelected, onClickDetail }: Props) => {
+export const AreaListItem: React.FC<Props> = ({ area, isSelected, onClickDetail }) => {
 	return (
 		<div
-			onClick={() => onClickDetail(bait)}
+			onClick={() => onClickDetail(area)}
 			className={`${LIST_STYLES.base} ${isSelected ? LIST_STYLES.selected : LIST_STYLES.default
 				}`}
 		>
@@ -36,18 +37,19 @@ export const BaitListItem = ({ bait, isSelected, onClickDetail }: Props) => {
 							className={`${LIST_STYLES.titleJa} ${isSelected ? 'text-cyan-300' : LIST_STYLES.titleJaDefault
 								}`}
 						>
-							{bait.ja}
+							{area.ja}
 						</span>
-						<span className={LIST_STYLES.titleEn}>({bait.en})</span>
+						<span className={LIST_STYLES.titleEn}>({area.en})</span>
 					</div>
 				</div>
 			</div>
 
-			{bait.description && (
-				<div className={LIST_STYLES.subText}>{
-					bait.description.split('\\n').map((line) => (
-						line
-					))}</div>
+			{area.description && (
+				<div className={LIST_STYLES.subText}>
+					{area.description.split('\\n').map((line, index) => (
+						<React.Fragment key={index}>{line}</React.Fragment>
+					))}
+				</div>
 			)}
 		</div>
 	);

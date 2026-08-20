@@ -90,7 +90,6 @@ export const ZoneEditTab: React.FC<Props> = ({ zoneList, regionList, onZoneChang
 								backgroundColor: selectedRegionId === region.id ? '#e2e8f0' : 'transparent',
 								borderBottom: '1px solid #eee',
 								display: 'flex',
-								justify: 'space-between',
 								alignItems: 'center',
 							}}
 						>

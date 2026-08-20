@@ -4,18 +4,19 @@
  * [Role] メイン領域の表示切替・フィルタリング・ルーティングコンポーネント
  * 
  * [概要]
- * - 選択中のタブ（`mainTab`: 'fish' | 'bait'）に応じた表示ビューの切替
+ * - 選択中のタブ（`mainTab`: 'fish' | 'bait' | 'area'）に応じた表示ビューの切替
  * - 魚データ（`FISHES`）に対するフィルタリング（チェック状態：`statusFilter` / 検索文字列：`searchQuery`）の適用
  * - 餌データ（`BAITS`）に対する検索フィルタリングの適用
+ * - エリアデータ（`ZONES`）に対する検索フィルタリングの適用
  * - フィルタリング処理の最適化（`useMemo` によるメモ化）
  * 
  * [編集・改修時の注意事項]
  * 1. 【検索仕様】
- *    魚・餌の検索は日本語名（`ja`）と英語名（`en`）の両方を対象にした部分一致検索を行っています。
+ *    魚・餌・エリアの検索は日本語名（`ja`）と英語名（`en`）の両方を対象にした部分一致検索を行っています。
  * 2. 【フィルタ条件の追加】
  *    新しいフィルタ（スキル帯、サイズ等）を追加する場合は、`filteredFishes` 内の条件判定ロジックを拡張してください。
  * 3. 【新しいメインタブの追加】
- *    新しいメインタブ（例: 釣り場一覧など）を追加する場合は、`switch (mainTab)` に case を追加してください。
+ *    新しいメインタブを追加する場合は、`switch (mainTab)` に case を追加してください。
  * ============================================================================
  */
 
@@ -23,6 +24,7 @@ import React, { useMemo } from 'react';
 import { FISHES, ZONES, BAITS } from '@/data/';
 import { FishListView } from '@/components/fish/FishListView';
 import { BaitListView } from '@/components/bait/BaitListView';
+import { AreaListView } from '@/components/area/AreaListView';
 import type { MainTab, ViewMode, CharacterProgress } from '@/types/fish';
 import type { StatusFilter } from '@/components/FilterBar';
 
@@ -70,6 +72,16 @@ export const MainContentRouter: React.FC<MainContentRouterProps> = ({
 		);
 	}, [searchQuery]);
 
+	const filteredAreas = useMemo(() => {
+		if (!searchQuery.trim()) return ZONES;
+		const query = searchQuery.toLowerCase();
+		return ZONES.filter(
+			(zone) =>
+				zone.ja.toLowerCase().includes(query) ||
+				zone.en.toLowerCase().includes(query)
+		);
+	}, [searchQuery]);
+
 	switch (mainTab) {
 		case 'fish':
 			return (
@@ -85,6 +97,14 @@ export const MainContentRouter: React.FC<MainContentRouterProps> = ({
 			return (
 				<BaitListView
 					baits={filteredBaits}
+					allFishes={FISHES}
+					viewMode={viewMode}
+				/>
+			);
+		case 'area':
+			return (
+				<AreaListView
+					areas={filteredAreas}
 					allFishes={FISHES}
 					viewMode={viewMode}
 				/>

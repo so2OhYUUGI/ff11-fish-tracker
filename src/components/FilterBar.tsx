@@ -4,9 +4,9 @@
  * [Role] メインナビゲーション・絞り込み条件・検索・プログレス表示コンポーネント
  * 
  * [概要]
- * - メイン表示タブ（魚 / 餌）の切替
+ * - メイン表示タブ（魚 / 餌 / エリア）の切替
  * - 魚表示時の状態絞り込み（すべて / 未達成 / 達成済）および進捗率（プログレスバー）の描画
- * - 名称検索インプット（魚名 / 餌名の自動切替）
+ * - 名称検索インプット（魚名 / 餌名 / エリア名の自動切替）
  * - 表示モード切替（カード表示 / リスト表示）
  * 
  * [編集・改修時の注意事項]
@@ -25,7 +25,7 @@
  */
 
 import React from 'react';
-import { Search, LayoutGrid, List, Fish, Utensils } from 'lucide-react';
+import { Search, LayoutGrid, List, Fish, Utensils, MapPin } from 'lucide-react';
 import type { ViewMode, MainTab, CharacterProgress } from '@/types/fish';
 import { FILTER_BAR_STYLES } from '@/styles/filterBarStyles';
 
@@ -63,9 +63,9 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 	return (
 		<div className={FILTER_BAR_STYLES.container}>
 			<div className={FILTER_BAR_STYLES.inner}>
-				{/* 左側: メイン切り替え（魚 / 餌） & ステータスフィルター */}
+				{/* 左側: メイン切り替え（魚 / 餌 / エリア） & ステータスフィルター */}
 				<div className={FILTER_BAR_STYLES.leftGroup}>
-					{/* 魚/餌切り替えタブ */}
+					{/* 魚/餌/エリア切り替えタブ */}
 					<div className={FILTER_BAR_STYLES.tabContainer}>
 						<button
 							type="button"
@@ -88,6 +88,17 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 						>
 							<Utensils className="w-3.5 h-3.5" />
 							<span>餌</span>
+						</button>
+						<button
+							type="button"
+							onClick={() => onMainTabChange('area')}
+							className={`${FILTER_BAR_STYLES.tabButtonBase} ${mainTab === 'area'
+									? FILTER_BAR_STYLES.tabActive
+									: FILTER_BAR_STYLES.tabInactive
+								}`}
+						>
+							<MapPin className="w-3.5 h-3.5" />
+							<span>エリア</span>
 						</button>
 					</div>
 
@@ -150,12 +161,18 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 
 				{/* 右側: 検索 & 表示モード切り替え */}
 				<div className={FILTER_BAR_STYLES.rightGroup}>
-					{/* 検索入力フォーム */}
+					{/* 検索入力フォーム（タブに応じてプレースホルダーを切替） */}
 					<div className={FILTER_BAR_STYLES.searchContainer}>
 						<Search className={FILTER_BAR_STYLES.searchIcon} />
 						<input
 							type="text"
-							placeholder={mainTab === 'fish' ? '魚名で検索...' : '餌名で検索...'}
+							placeholder={
+								mainTab === 'fish'
+									? '魚名で検索...'
+									: mainTab === 'bait'
+										? '餌名で検索...'
+										: 'エリア名で検索...'
+							}
 							value={searchQuery}
 							onChange={(e) => onSearchQueryChange(e.target.value)}
 							className={FILTER_BAR_STYLES.searchInput}

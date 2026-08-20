@@ -1,3 +1,20 @@
+/**
+ * ============================================================================
+ * [FilePath] src/components/bait/BaitListView.tsx
+ * [Role] 餌一覧表示および詳細ビュー切り替え用コンテナコンポーネント
+ * 
+ * [概要]
+ * - 選択状態（`selectedBait`）に応じた2カラム（一覧＋詳細）レスポンシブレイアウトの制御
+ * - 表示モード（`viewMode`: 'card' | 'list'）に基づく `BaitCard` / `BaitListItem` の切替描画
+ * - モバイル表示時の画面切替（一覧/詳細）およびPC表示時の `sticky` 追従レイアウト制御
+ * 
+ * [編集・改修時の注意事項]
+ * 1. 【レスポンシブレイアウト】
+ *    詳細表示選択時（`isSelected === true`）、モバイル環境（`lg` 未満）では一覧を非表示 (`hidden`) にし、
+ *    `BaitDetailView` のみを全幅で表示するレスポンシブ仕様になっています。
+ * ============================================================================
+ */
+
 import { useState } from 'react';
 import type { BaitMaster, FishMaster, ViewMode } from '@/types/fish';
 import { BaitCard } from './BaitCard';
@@ -31,8 +48,8 @@ export const BaitListView = ({ baits, allFishes, viewMode }: Props) => {
 				{viewMode === 'card' ? (
 					<div
 						className={`grid grid-cols-1 gap-3 ${isSelected
-								? 'sm:grid-cols-2 md:grid-cols-3'
-								: 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
+							? 'sm:grid-cols-2 md:grid-cols-3'
+							: 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
 							}`}
 					>
 						{baits.map((bait) => (

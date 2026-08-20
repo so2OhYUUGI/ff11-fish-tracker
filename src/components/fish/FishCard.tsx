@@ -1,3 +1,25 @@
+/**
+ * ============================================================================
+ * [FilePath] src/components/fish/FishCard.tsx
+ * [Role] 魚データ（個別）のカード表示コンポーネント
+ * 
+ * [概要]
+ * - 魚の基本情報（和名、英名、説明文、スキル上限、サイズ区分、属性バッジ）のカード形式表示
+ * - 獲得/達成状態（チェック状態）のインジケーター描画およびトグル操作
+ * - 選択状態（アクティブ表示）に応じたハイライト表示
+ * - 生息エリア・備考情報の表示領域保持
+ * 
+ * [編集・改修時の注意事項]
+ * 1. 【イベントバブリングの防止】
+ *    チェックボタン操作（`onToggleCheck`）時は、カード全体のクリックイベント（`onClickDetail`）が
+ *    発火しないよう `e.stopPropagation()` を実行しています。
+ * 2. 【スタイルの参照】
+ *    Tailwind CSS クラスは `@/styles/cardStyles` の `CARD_STYLES` を定数参照しています。
+ * 3. 【アクセシビリティ】
+ *    チェックボタンには `type="button"` を明記しています。
+ * ============================================================================
+ */
+
 import React from 'react';
 import { Check, Info } from 'lucide-react';
 import type { FishMaster, ZoneMaster } from '@/types/fish';
@@ -59,8 +81,8 @@ export const FishCard: React.FC<FishCardProps> = ({
 						</span>
 						<span
 							className={`${CARD_STYLES.badgeBase} ${fish.sizeType === 'large'
-									? CARD_STYLES.badgeLarge
-									: CARD_STYLES.badgeSmall
+								? CARD_STYLES.badgeLarge
+								: CARD_STYLES.badgeSmall
 								}`}
 						>
 							{fish.sizeType === 'large' ? '大型魚' : '小型魚'}
@@ -108,8 +130,8 @@ export const FishCard: React.FC<FishCardProps> = ({
 							onToggleCheck(fish.id);
 						}}
 						className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${isChecked
-								? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/50'
-								: 'bg-slate-700 text-slate-500 border border-slate-600 hover:border-slate-400'
+							? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/50'
+							: 'bg-slate-700 text-slate-500 border border-slate-600 hover:border-slate-400'
 							}`}
 					>
 						<Check

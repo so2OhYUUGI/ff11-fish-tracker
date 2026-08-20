@@ -2,19 +2,16 @@ import type { ZoneMaster } from '@/types/fish';
 
 export const ZONES: ZoneMaster[] = [
   {
-    "id": 0,
-    "ja": "unknown",
-    "en": "unknown"
-  },
-  {
     "id": 1,
     "ja": "ファノエ運河",
-    "en": "Phanauet Channel"
+    "en": "Phanauet Channel",
+    "regionId": 6
   },
   {
     "id": 2,
     "ja": "ギルド桟橋",
-    "en": "Carpenters' Landing"
+    "en": "Carpenters' Landing",
+    "regionId": 6
   },
   {
     "id": 3,
