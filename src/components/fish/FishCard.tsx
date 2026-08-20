@@ -7,22 +7,14 @@
  * - 魚の基本情報（和名、英名、説明文、スキル上限、サイズ区分、属性バッジ）のカード形式表示
  * - 獲得/達成状態（チェック状態）のインジケーター描画およびトグル操作
  * - 選択状態（アクティブ表示）に応じたハイライト表示
- * - 生息エリア・備考情報の表示領域保持
- * 
- * [編集・改修時の注意事項]
- * 1. 【イベントバブリングの防止】
- *    チェックボタン操作（`onToggleCheck`）時は、カード全体のクリックイベント（`onClickDetail`）が
- *    発火しないよう `e.stopPropagation()` を実行しています。
- * 2. 【スタイルの参照】
- *    Tailwind CSS クラスは `@/styles/cardStyles` の `CARD_STYLES` を定数参照しています。
- * 3. 【アクセシビリティ】
- *    チェックボタンには `type="button"` を明記しています。
+ * - 生息エリア（FISH_LOCATIONS参照）・備考情報の表示領域保持
  * ============================================================================
  */
 
 import React from 'react';
-import { Check, Info } from 'lucide-react';
+import { Check, Info, MapPin } from 'lucide-react';
 import type { FishMaster, ZoneMaster } from '@/types/fish';
+import { FISH_LOCATIONS } from '@/data';
 import { CARD_STYLES } from '@/styles/cardStyles';
 
 type FishCardProps = {
@@ -36,11 +28,23 @@ type FishCardProps = {
 
 export const FishCard: React.FC<FishCardProps> = ({
 	fish,
+	zones,
 	isChecked,
 	isSelected,
 	onToggleCheck,
 	onClickDetail,
 }) => {
+	// FISH_LOCATIONS から対象魚のゾーンIDを抽出し、zonesから該当するエリアを取得
+	const targetZoneIds = FISH_LOCATIONS
+		.filter((loc) => loc.fishId === fish.id)
+		.map((loc) => loc.zoneId);
+	const matchedZones = zones.filter((zone) => targetZoneIds.includes(zone.id));
+	const totalZones = matchedZones.length;
+
+	// カード表示用：最大2件表示、以降は +N バッジ化
+	const maxDisplayCount = 2;
+	const displayZones = matchedZones.slice(0, maxDisplayCount);
+	const remainingCount = totalZones - maxDisplayCount;
 
 	return (
 		<div
@@ -79,8 +83,8 @@ export const FishCard: React.FC<FishCardProps> = ({
 						</span>
 						<span
 							className={`${CARD_STYLES.badgeBase} ${fish.sizeType === 'large'
-								? CARD_STYLES.badgeLarge
-								: CARD_STYLES.badgeSmall
+									? CARD_STYLES.badgeLarge
+									: CARD_STYLES.badgeSmall
 								}`}
 						>
 							{fish.sizeType === 'large' ? '大型魚' : '小型魚'}
@@ -103,11 +107,35 @@ export const FishCard: React.FC<FishCardProps> = ({
 					</div>
 
 					{/* 生息エリア */}
-					<div className="mt-3 text-xs text-slate-300 flex items-start gap-1">
-						<span className="text-slate-500 shrink-0">生息エリア:</span>
-						<span className="line-clamp-2">
-							{'情報なし'}
-						</span>
+					<div className="mt-3 text-xs flex items-center gap-1.5 flex-wrap">
+						<div className="flex items-center gap-1 text-slate-400 shrink-0 font-medium">
+							<MapPin className="w-3.5 h-3.5 text-slate-400" />
+							<span>生息エリア ({totalZones}):</span>
+						</div>
+
+						{totalZones > 0 ? (
+							<div className="flex items-center gap-1 flex-wrap min-w-0">
+								{displayZones.map((zone) => (
+									<span
+										key={zone.id}
+										className="px-1.5 py-0.5 bg-slate-800 text-slate-300 border border-slate-700/60 rounded text-[11px] truncate max-w-[120px]"
+										title={zone.ja}
+									>
+										{zone.ja}
+									</span>
+								))}
+								{remainingCount > 0 && (
+									<span
+										className="px-1.5 py-0.5 bg-cyan-950/80 text-cyan-300 border border-cyan-800/60 rounded text-[11px] font-semibold"
+										title={`他 ${remainingCount} エリア`}
+									>
+										+{remainingCount}
+									</span>
+								)}
+							</div>
+						) : (
+							<span className="text-slate-500 italic">情報なし</span>
+						)}
 					</div>
 
 					{/* 備考 */}
@@ -119,7 +147,7 @@ export const FishCard: React.FC<FishCardProps> = ({
 					)}
 				</div>
 
-				{/* チェック状態インジケーター（クリックイベントのバブリングを防止） */}
+				{/* チェック状態インジケーター */}
 				<div className="shrink-0 pt-1">
 					<button
 						type="button"
@@ -128,8 +156,8 @@ export const FishCard: React.FC<FishCardProps> = ({
 							onToggleCheck(fish.id);
 						}}
 						className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${isChecked
-							? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/50'
-							: 'bg-slate-700 text-slate-500 border border-slate-600 hover:border-slate-400'
+								? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/50'
+								: 'bg-slate-700 text-slate-500 border border-slate-600 hover:border-slate-400'
 							}`}
 					>
 						<Check

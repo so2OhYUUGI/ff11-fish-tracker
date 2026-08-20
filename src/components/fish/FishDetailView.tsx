@@ -78,8 +78,8 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 						type="button"
 						onClick={() => onToggleCheck(fish.id)}
 						className={`${DETAIL_STYLES.checkButtonBase} ${isChecked
-								? DETAIL_STYLES.checkButtonChecked
-								: DETAIL_STYLES.checkButtonUnchecked
+							? DETAIL_STYLES.checkButtonChecked
+							: DETAIL_STYLES.checkButtonUnchecked
 							}`}
 					>
 						{isChecked ? (
@@ -154,19 +154,19 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 							<thead className="bg-slate-800 text-slate-400 border-b border-slate-700">
 								<tr>
 									<th className="p-2">竿名</th>
-									<th className="p-2 text-center w-16">釣獲</th>
-									<th className="p-2 text-center w-16">竿折れ</th>
-									<th className="p-2 text-center w-16">糸切れ</th>
-									<th className="p-2 text-center w-20">小さすぎ</th>
+									<th className="p-2 text-center w-20">釣り可能</th>
+									<th className="p-2 text-center w-20">竿折れ</th>
+									<th className="p-2 text-center w-20">糸切れ</th>
+									<th className="p-2 text-left">備考</th>
 								</tr>
 							</thead>
 							<tbody className="divide-y divide-slate-700/50">
 								{RODS.map((rod) => {
 									const rel = getRodRelation(rod.id);
-									const isImpossible = Boolean(rel?.isImpossible);
-									const canRodBreak = Boolean(rel?.canRodBreak);
-									const canLineBreak = Boolean(rel?.canLineBreak);
-									const isTooSmall = Boolean(rel?.isTooSmall);
+									const catchability = rel?.catchability || 'unknown';
+									const rodBreak = rel?.rodBreak || 'unknown';
+									const lineBreak = rel?.lineBreak || 'unknown';
+									const notes = rel?.notes || '';
 
 									return (
 										<tr key={rod.id} className="hover:bg-slate-800/40">
@@ -177,32 +177,34 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 												</span>
 											</td>
 											<td className="p-2 text-center">
-												{isImpossible ? (
+												{catchability === 'possible' ? (
+													<span className="text-emerald-400 font-bold">可能</span>
+												) : catchability === 'impossible' ? (
 													<span className="text-red-400 font-bold">不可</span>
 												) : (
-													<span className="text-emerald-400">可能</span>
+													<span className="text-slate-500">不明</span>
 												)}
 											</td>
 											<td className="p-2 text-center">
-												{canRodBreak ? (
+												{rodBreak === 'yes' ? (
 													<span className="text-amber-400 font-bold">あり</span>
+												) : rodBreak === 'no' ? (
+													<span className="text-sky-400">なし</span>
 												) : (
-													<span className="text-slate-500">なし</span>
+													<span className="text-slate-500">不明</span>
 												)}
 											</td>
 											<td className="p-2 text-center">
-												{canLineBreak ? (
+												{lineBreak === 'yes' ? (
 													<span className="text-amber-400 font-bold">あり</span>
+												) : lineBreak === 'no' ? (
+													<span className="text-sky-400">なし</span>
 												) : (
-													<span className="text-slate-500">なし</span>
+													<span className="text-slate-500">不明</span>
 												)}
 											</td>
-											<td className="p-2 text-center">
-												{isTooSmall ? (
-													<span className="text-purple-400 font-bold">該当</span>
-												) : (
-													<span className="text-slate-500">なし</span>
-												)}
+											<td className="p-2 text-slate-400">
+												{notes || '-'}
 											</td>
 										</tr>
 									);

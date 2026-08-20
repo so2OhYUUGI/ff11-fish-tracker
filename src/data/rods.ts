@@ -98,34 +98,36 @@ export const RODS: FishingRodMaster[] = [
     "en": "Ebisu Fishing Rod",
     "description": "東方の神話に登場する竿に似た伝説の釣り竿。\\n"
   },
-  {
-    "id": 19320,
-    "ja": "真太公望の釣竿",
-    "en": "Lu Sh. F. Rod +1",
-    "description": "龍を釣り上げた伝説の釣り竿。\\n"
-  },
-  {
-    "id": 19321,
-    "ja": "真恵比寿釣竿",
-    "en": "Ebisu F. Rod +1",
-    "description": "東方の神話に登場する伝説の釣り竿。\\n"
-  },
-  {
-    "id": 17013,
-    "ja": "お椀",
-    "en": "Goldfish Basket",
-    "description": "水を満たした容器。\\n「金魚すくい」で捕獲した金魚を入れておく。"
-  },
-  {
-    "id": 19319,
-    "ja": "モブリン式釣竿",
-    "en": "MMM Fishing Rod",
-    "description": "モブリンの技術で作られた釣り竿。\\n"
-  },
-  {
-    "id": 17012,
-    "ja": "ジャッジロッド",
-    "en": "Judge's Rod",
-    "description": "釣り竿。"
-  },
+  /*** 
+      {
+        "id": 19320,
+        "ja": "真太公望の釣竿",
+        "en": "Lu Sh. F. Rod +1",
+        "description": "龍を釣り上げた伝説の釣り竿。\\n"
+      },
+      {
+        "id": 19321,
+        "ja": "真恵比寿釣竿",
+        "en": "Ebisu F. Rod +1",
+        "description": "東方の神話に登場する伝説の釣り竿。\\n"
+      },
+      {
+        "id": 17013,
+        "ja": "お椀",
+        "en": "Goldfish Basket",
+        "description": "水を満たした容器。\\n「金魚すくい」で捕獲した金魚を入れておく。"
+      },
+      {
+        "id": 19319,
+        "ja": "モブリン式釣竿",
+        "en": "MMM Fishing Rod",
+        "description": "モブリンの技術で作られた釣り竿。\\n"
+      },
+      {
+        "id": 17012,
+        "ja": "ジャッジロッド",
+        "en": "Judge's Rod",
+        "description": "釣り竿。"
+      },
+  ***/
 ];

@@ -101,13 +101,12 @@ export type FishRodRelation = {
 	fishId: number;           // FishMaster.id
 	rodId: number;            // FishingRodMaster.id
 
-	// 反応・結果フラグ（該当する場合に true）
-	isImpossible?: boolean;   // 釣るのが不可能（引っかかっても絶対にかからないなど）
-	canRodBreak?: boolean;    // 竿折れの可能性あり
-	canLineBreak?: boolean;   // 糸切れの可能性あり
-	isTooSmall?: boolean;     // 「小さすぎる」メッセージ等で不可
+	// 釣り可否・反応ステータス
+	catchability?: 'unknown' | 'possible' | 'impossible'; // 釣り可能（不明 / 可能 / 不可）
+	rodBreak?: 'unknown' | 'no' | 'yes';                 // 竿折れ（不明 / なし / あり）
+	lineBreak?: 'unknown' | 'no' | 'yes';                // 糸切れ（不明 / なし / あり）
 
-	notes?: string;           // 補足情報
+	notes?: string;           // 文字列による補足
 };
 
 // --- Windower Region (regions.lua) 準拠データ ---

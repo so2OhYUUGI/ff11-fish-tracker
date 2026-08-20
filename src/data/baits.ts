@@ -119,7 +119,7 @@ export const BAITS: BaitMaster[] = [
     "id": 17407,
     "ja": "ミノー",
     "en": "Minnow",
-    "description": "泳ぐ小魚を模した擬餌。\\n"
+    "description": "泳ぐ小魚を模�������た擬餌。\\n"
   },
   {
     "id": 17400,

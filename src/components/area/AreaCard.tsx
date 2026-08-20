@@ -5,6 +5,7 @@
  * 
  * [概要]
  * - エリアの基本情報（和名、英名、説明文など）をカード形式で表示
+ * - 該当エリアで釣れる魚の抽出および上限数制限付きタグ表示（上位表示＋残り件数バッジ）
  * - 選択中（アクティブ）状態に応じたスタイリング切り替え
  * 
  * [編集・改修時の注意事項]
@@ -14,16 +15,39 @@
  */
 
 import React from 'react';
-import type { ZoneMaster } from '@/types/fish'; // AreaMaster から変更
+import { Fish } from 'lucide-react';
+import type { ZoneMaster, FishMaster } from '@/types/fish';
+import { FISH_LOCATIONS, FISHES } from '@/data';
 import { CARD_STYLES } from '@/styles/cardStyles';
 
 type Props = {
 	area: ZoneMaster;
+	fishes?: FishMaster[]; // 外部から渡される場合はそれを使用し、未渡しの場合は FISHES を参照
 	isSelected?: boolean;
 	onClickDetail: (area: ZoneMaster) => void;
 };
 
-export const AreaCard: React.FC<Props> = ({ area, isSelected, onClickDetail }) => {
+export const AreaCard: React.FC<Props> = ({
+	area,
+	fishes = FISHES,
+	isSelected,
+	onClickDetail,
+}) => {
+	// 該当エリア (area.id) で釣れる魚の ID 一覧を抽出
+	const targetFishIds = FISH_LOCATIONS
+		.filter((loc) => loc.zoneId === area.id)
+		.map((loc) => loc.fishId);
+
+	// 重複を除外して魚データと紐付け
+	const uniqueFishIds = Array.from(new Set(targetFishIds));
+	const matchedFishes = fishes.filter((fish) => uniqueFishIds.includes(fish.id));
+	const totalFishes = matchedFishes.length;
+
+	// カード表示用：最大2件を表示、溢れた分は +N 表示
+	const maxDisplayCount = 2;
+	const displayFishes = matchedFishes.slice(0, maxDisplayCount);
+	const remainingCount = totalFishes - maxDisplayCount;
+
 	return (
 		<div
 			onClick={() => onClickDetail(area)}
@@ -48,6 +72,38 @@ export const AreaCard: React.FC<Props> = ({ area, isSelected, onClickDetail }) =
 						))}
 					</div>
 				)}
+
+				{/* 釣れる魚の表示領域 */}
+				<div className="mt-3 text-xs flex items-center gap-1.5 flex-wrap">
+					<div className="flex items-center gap-1 text-slate-400 shrink-0 font-medium">
+						<Fish className="w-3.5 h-3.5 text-slate-400" />
+						<span>釣れる魚 ({totalFishes}):</span>
+					</div>
+
+					{totalFishes > 0 ? (
+						<div className="flex items-center gap-1 flex-wrap min-w-0">
+							{displayFishes.map((fish) => (
+								<span
+									key={fish.id}
+									className="px-1.5 py-0.5 bg-slate-800 text-slate-300 border border-slate-700/60 rounded text-[11px] truncate max-w-[120px]"
+									title={fish.ja}
+								>
+									{fish.ja}
+								</span>
+							))}
+							{remainingCount > 0 && (
+								<span
+									className="px-1.5 py-0.5 bg-cyan-950/80 text-cyan-300 border border-cyan-800/60 rounded text-[11px] font-semibold"
+									title={`他 ${remainingCount} 種類`}
+								>
+									+{remainingCount}
+								</span>
+							)}
+						</div>
+					) : (
+						<span className="text-slate-500 italic">情報なし</span>
+					)}
+				</div>
 			</div>
 		</div>
 	);

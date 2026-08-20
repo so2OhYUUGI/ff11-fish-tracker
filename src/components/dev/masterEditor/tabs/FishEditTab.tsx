@@ -85,10 +85,10 @@ export const FishEditTab: React.FC<Props> = ({
 		onBaitRelationChange(updatedRelations);
 	};
 
-	// 竿属性フラグのトグル（FishRodRelation の更新）
-	const handleRodAttrToggle = (
+	// 竿属性（catchability, rodBreak, lineBreak）のループ切り替え
+	const handleRodStatusToggle = (
 		rodId: number,
-		field: 'isImpossible' | 'canRodBreak' | 'canLineBreak' | 'isTooSmall'
+		field: 'catchability' | 'rodBreak' | 'lineBreak'
 	) => {
 		if (!selectedFish || !onRodRelationChange) return;
 
@@ -97,34 +97,90 @@ export const FishEditTab: React.FC<Props> = ({
 		);
 
 		let updatedRelations = [...fishRodRelations];
+		const existingRel = targetRelIndex >= 0 ? updatedRelations[targetRelIndex] : null;
+
+		// ループ順序の定義
+		const catchabilityOrder: NonNullable<FishRodRelation['catchability']>[] = ['unknown', 'possible', 'impossible'];
+		const breakOrder: NonNullable<FishRodRelation['rodBreak']>[] = ['unknown', 'no', 'yes'];
+
+		let nextValue: string;
+		if (field === 'catchability') {
+			const currentValue = existingRel?.catchability || 'unknown';
+			const nextIdx = (catchabilityOrder.indexOf(currentValue) + 1) % catchabilityOrder.length;
+			nextValue = catchabilityOrder[nextIdx];
+		} else {
+			const currentValue = existingRel?.[field] || 'unknown';
+			const nextIdx = (breakOrder.indexOf(currentValue) + 1) % breakOrder.length;
+			nextValue = breakOrder[nextIdx];
+		}
+
+		const updatedRel: FishRodRelation = {
+			id: existingRel?.id || `${selectedFish.id}-${rodId}`,
+			fishId: selectedFish.id,
+			rodId,
+			catchability: existingRel?.catchability || 'unknown',
+			rodBreak: existingRel?.rodBreak || 'unknown',
+			lineBreak: existingRel?.lineBreak || 'unknown',
+			notes: existingRel?.notes || '',
+			[field]: nextValue,
+		};
+
+		// すべてが初期状態（unknown または 空白）か判定
+		const isDefaultState =
+			(!updatedRel.catchability || updatedRel.catchability === 'unknown') &&
+			(!updatedRel.rodBreak || updatedRel.rodBreak === 'unknown') &&
+			(!updatedRel.lineBreak || updatedRel.lineBreak === 'unknown') &&
+			!updatedRel.notes;
 
 		if (targetRelIndex >= 0) {
-			const existingRel = updatedRelations[targetRelIndex];
-			const updatedValue = !existingRel[field];
-			const updatedRel = { ...existingRel, [field]: updatedValue };
-
-			// すべてのフラグが false（または undefined）になった場合はリレーション自体を削除する
-			const hasAnyFlag =
-				updatedRel.isImpossible ||
-				updatedRel.canRodBreak ||
-				updatedRel.canLineBreak ||
-				updatedRel.isTooSmall ||
-				Boolean(updatedRel.notes);
-
-			if (hasAnyFlag) {
-				updatedRelations[targetRelIndex] = updatedRel;
-			} else {
+			if (isDefaultState) {
 				updatedRelations = updatedRelations.filter((_, idx) => idx !== targetRelIndex);
+			} else {
+				updatedRelations[targetRelIndex] = updatedRel;
 			}
-		} else {
-			// リレーションが存在しない場合は新規作成
-			const newRel: FishRodRelation = {
-				id: `${selectedFish.id}-${rodId}`,
-				fishId: selectedFish.id,
-				rodId,
-				[field]: true,
-			};
-			updatedRelations.push(newRel);
+		} else if (!isDefaultState) {
+			updatedRelations.push(updatedRel);
+		}
+
+		onRodRelationChange(updatedRelations);
+	};
+
+	// 竿の備考変更処理
+	const handleRodNotesChange = (rodId: number, notesValue: string) => {
+		if (!selectedFish || !onRodRelationChange) return;
+
+		const targetRelIndex = fishRodRelations.findIndex(
+			(rel) => rel.fishId === selectedFish.id && rel.rodId === rodId
+		);
+
+		let updatedRelations = [...fishRodRelations];
+		const existingRel = targetRelIndex >= 0 ? updatedRelations[targetRelIndex] : null;
+
+		const updatedRel: FishRodRelation = {
+			id: existingRel?.id || `${selectedFish.id}-${rodId}`,
+			fishId: selectedFish.id,
+			rodId,
+			catchability: existingRel?.catchability || 'unknown',
+			rodBreak: existingRel?.rodBreak || 'unknown',
+			lineBreak: existingRel?.lineBreak || 'unknown',
+			notes: notesValue,
+		};
+
+		// すべてが初期状態（unknown または 空白）か判定
+		const isDefaultState =
+			(!updatedRel.catchability || updatedRel.catchability === 'unknown') &&
+			(!updatedRel.rodBreak || updatedRel.rodBreak === 'unknown') &&
+			(!updatedRel.lineBreak || updatedRel.lineBreak === 'unknown') &&
+			!updatedRel.notes;
+
+		if (targetRelIndex >= 0) {
+			if (isDefaultState) {
+				updatedRelations = updatedRelations.filter((_, idx) => idx !== targetRelIndex);
+			} else {
+				updatedRelations[targetRelIndex] = updatedRel;
+			}
+		} else if (!isDefaultState) {
+			updatedRelations.push(updatedRel);
 		}
 
 		onRodRelationChange(updatedRelations);
@@ -174,6 +230,31 @@ export const FishEditTab: React.FC<Props> = ({
 			(rel) => rel.fishId === selectedFish.id && rel.rodId === rodId
 		);
 	};
+
+	// ボタンレンダリング用ヘルパー
+	const renderStatusButton = (
+		label: string,
+		colorStyle: { bg: string; text: string; border: string },
+		onClick: () => void
+	) => (
+		<button
+			type="button"
+			onClick={onClick}
+			style={{
+				padding: '3px 8px',
+				fontSize: '11px',
+				borderRadius: '4px',
+				cursor: 'pointer',
+				fontWeight: 'bold',
+				border: `1px solid ${colorStyle.border}`,
+				backgroundColor: colorStyle.bg,
+				color: colorStyle.text,
+				minWidth: '60px',
+			}}
+		>
+			{label}
+		</button>
+	);
 
 	return (
 		<div style={{ display: 'flex', gap: '15px', height: '100%', width: '100%' }}>
@@ -277,46 +358,79 @@ export const FishEditTab: React.FC<Props> = ({
 								<thead>
 									<tr style={{ background: '#f7fafc', borderBottom: '2px solid #e2e8f0' }}>
 										<th style={{ padding: '6px', textAlign: 'left' }}>竿名</th>
-										<th style={{ padding: '6px', textAlign: 'center', width: '60px' }}>不可</th>
-										<th style={{ padding: '6px', textAlign: 'center', width: '60px' }}>竿折れ</th>
-										<th style={{ padding: '6px', textAlign: 'center', width: '60px' }}>糸切れ</th>
-										<th style={{ padding: '6px', textAlign: 'center', width: '60px' }}>小さすぎ</th>
+										<th style={{ padding: '6px', textAlign: 'center', width: '80px' }}>釣り可能</th>
+										<th style={{ padding: '6px', textAlign: 'center', width: '80px' }}>竿折れ</th>
+										<th style={{ padding: '6px', textAlign: 'center', width: '80px' }}>糸切れ</th>
+										<th style={{ padding: '6px', textAlign: 'left' }}>備考</th>
 									</tr>
 								</thead>
 								<tbody>
 									{RODS.map((rod) => {
 										const rodRel = getRodRelation(rod.id);
+
+										const catchability = rodRel?.catchability || 'unknown';
+										const rodBreak = rodRel?.rodBreak || 'unknown';
+										const lineBreak = rodRel?.lineBreak || 'unknown';
+										const notes = rodRel?.notes || '';
+
+										// 釣り可能スタイリング
+										const catchStyle =
+											catchability === 'possible'
+												? { bg: '#c6f6d5', text: '#22543d', border: '#38a169', label: '可能' }
+												: catchability === 'impossible'
+													? { bg: '#fed7d7', text: '#742a2a', border: '#e53e3e', label: '不可' }
+													: { bg: '#edf2f7', text: '#718096', border: '#cbd5e0', label: '不明' };
+
+										// 竿折れスタイリング
+										const rodBreakStyle =
+											rodBreak === 'yes'
+												? { bg: '#fed7d7', text: '#742a2a', border: '#e53e3e', label: 'あり' }
+												: rodBreak === 'no'
+													? { bg: '#ebf8ff', text: '#2b6cb0', border: '#3182ce', label: 'なし' }
+													: { bg: '#edf2f7', text: '#718096', border: '#cbd5e0', label: '不明' };
+
+										// 糸切れスタイリング
+										const lineBreakStyle =
+											lineBreak === 'yes'
+												? { bg: '#fed7d7', text: '#742a2a', border: '#e53e3e', label: 'あり' }
+												: lineBreak === 'no'
+													? { bg: '#ebf8ff', text: '#2b6cb0', border: '#3182ce', label: 'なし' }
+													: { bg: '#edf2f7', text: '#718096', border: '#cbd5e0', label: '不明' };
+
 										return (
 											<tr key={rod.id} style={{ borderBottom: '1px solid #edf2f7' }}>
 												<td style={{ padding: '6px' }}>
 													{rod.ja} <span style={{ color: '#718096', fontSize: '10px' }}>({rod.en})</span>
 												</td>
 												<td style={{ padding: '6px', textAlign: 'center' }}>
-													<input
-														type="checkbox"
-														checked={Boolean(rodRel?.isImpossible)}
-														onChange={() => handleRodAttrToggle(rod.id, 'isImpossible')}
-													/>
+													{renderStatusButton(catchStyle.label, catchStyle, () =>
+														handleRodStatusToggle(rod.id, 'catchability')
+													)}
 												</td>
 												<td style={{ padding: '6px', textAlign: 'center' }}>
-													<input
-														type="checkbox"
-														checked={Boolean(rodRel?.canRodBreak)}
-														onChange={() => handleRodAttrToggle(rod.id, 'canRodBreak')}
-													/>
+													{renderStatusButton(rodBreakStyle.label, rodBreakStyle, () =>
+														handleRodStatusToggle(rod.id, 'rodBreak')
+													)}
 												</td>
 												<td style={{ padding: '6px', textAlign: 'center' }}>
-													<input
-														type="checkbox"
-														checked={Boolean(rodRel?.canLineBreak)}
-														onChange={() => handleRodAttrToggle(rod.id, 'canLineBreak')}
-													/>
+													{renderStatusButton(lineBreakStyle.label, lineBreakStyle, () =>
+														handleRodStatusToggle(rod.id, 'lineBreak')
+													)}
 												</td>
-												<td style={{ padding: '6px', textAlign: 'center' }}>
+												<td style={{ padding: '6px' }}>
 													<input
-														type="checkbox"
-														checked={Boolean(rodRel?.isTooSmall)}
-														onChange={() => handleRodAttrToggle(rod.id, 'isTooSmall')}
+														type="text"
+														value={notes}
+														placeholder="備考を入力"
+														onChange={(e) => handleRodNotesChange(rod.id, e.target.value)}
+														style={{
+															width: '100%',
+															padding: '3px 6px',
+															fontSize: '11px',
+															border: '1px solid #cbd5e0',
+															borderRadius: '4px',
+															boxSizing: 'border-box',
+														}}
 													/>
 												</td>
 											</tr>
