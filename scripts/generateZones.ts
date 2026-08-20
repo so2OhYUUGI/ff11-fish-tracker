@@ -1,3 +1,14 @@
+/**
+ * ============================================================================
+ * [FilePath] scripts/generateZones.ts
+ * [Role] zones.lua から zones.ts を自動生成するビルドスクリプト
+ * 
+ * [概要]
+ * - zones.lua をパースし、各エリアのID、和名、英名を取得
+ * - 型定義（ZoneMaster）に準拠した zones.ts を自動生成
+ * ============================================================================
+ */
+
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -49,7 +60,14 @@ function main() {
 
 	const zoneList = parseZonesLua(ZONES_LUA_PATH);
 
-	const fileContent = `import type { ZoneMaster } from '@/types/fish';
+	const fileContent = `/**
+ * ============================================================================
+ * [FilePath] src/data/zones.ts
+ * [Role] 全エリアマスターデータ（自動生成ファイル）
+ * ============================================================================
+ */
+
+import type { ZoneMaster } from '@/types/fish';
 
 export const ZONES: ZoneMaster[] = ${JSON.stringify(zoneList, null, 2)};
 `;

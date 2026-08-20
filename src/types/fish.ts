@@ -6,18 +6,8 @@
  * [概要]
  * - FFXI（Windowerデータ準拠）のマスタデータ型定義（Zone, Fish, Bait, Rod）
  * - ユーザーデータおよび進捗データ構造の定義（LocalStorage保存用）
- * - 生息域（FishLocation）などのリレーション型定義
+ * - 生息域（FishLocation）および釣れる餌（FishBaitRelation）の中間リレーション型定義
  * - UI表示状態に関する型定義（MainTab, ViewModeなど）
- * 
- * [編集・改修時の注意事項]
- * 1. 【Windower ID準拠】
- *    `id` フィールド（`FishMaster`, `ZoneMaster`, `BaitMaster` 等）は、
- *    Windowerの `items.lua` / `zones.lua` のIDと一致させる必要があります。
- * 2. 【LocalStorage互換性】
- *    `CharacterProgress` や `UserData` の構造を変更する場合は、
- *    既存ユーザーの保存データ壊れを防ぐマイグレーションロジックの導入を検討してください。
- * 3. 【一意識別キー】
- *    `FishLocation.id` は、原則として `${fishId}-${zoneId}` の形式を想定しています。
  * ============================================================================
  */
 
@@ -99,6 +89,14 @@ export type FishLocation = {
 	zoneId: number;        // ZoneMaster.id
 	subArea?: FishingSubArea; // 淡水/海水/船など
 	notes?: string;        // エリア限定の補足（例: "S-10付近の池"、"天候：雨のみ" など）
+};
+
+// 釣れる餌情報（Fish ↔ Bait の中間エンティティ）
+export type FishBaitRelation = {
+	id: string;            // 一意の識別子（例: "4353-16992"）
+	fishId: number;        // FishMaster.id
+	baitId: number;        // BaitMaster.id
+	notes?: string;        // 補足情報
 };
 
 // --- Windower Region (regions.lua) 準拠データ ---

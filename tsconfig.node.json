@@ -13,6 +13,7 @@
   },
   "include": [
     "vite.config.ts",
+    "vite/**/*.ts",
     "scripts/**/*.ts"
   ] // ← "scripts/**/*.ts" も含めておくと安全です
 }

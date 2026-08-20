@@ -1,16 +1,29 @@
+/**
+ * ============================================================================
+ * [FilePath] src/components/bait/BaitDetailView.tsx
+ * [Role] 餌の詳細情報表示コンポーネント
+ * 
+ * [概要]
+ * - 選択された餌の基本情報・説明文の表示
+ * - 中間データ（`FishBaitRelation`）に基づいた、その餌で釣れる対象魚一覧の抽出と表示
+ * ============================================================================
+ */
+
 import React from 'react';
 import { ArrowLeft, Fish, X } from 'lucide-react';
-import type { BaitMaster, FishMaster } from '@/types/fish';
+import type { BaitMaster, FishMaster, FishBaitRelation } from '@/types/fish';
 
 type BaitDetailViewProps = {
 	bait: BaitMaster | null;
 	allFishes: FishMaster[];
+	fishBaitRelations?: FishBaitRelation[];
 	onClose?: () => void;
 };
 
 export const BaitDetailView: React.FC<BaitDetailViewProps> = ({
 	bait,
 	allFishes,
+	fishBaitRelations = [],
 	onClose,
 }) => {
 	if (!bait) {
@@ -22,10 +35,15 @@ export const BaitDetailView: React.FC<BaitDetailViewProps> = ({
 		);
 	}
 
-	// 該当する餌で釣れる魚の一覧
-	const targetFishes = allFishes.filter((fish) =>
-		fish.baitItemIds?.includes(bait.id)
+	// 中間データ (FishBaitRelation) を参照して該当する餌で釣れる魚のIDセットを作成
+	const targetFishIds = new Set(
+		fishBaitRelations
+			.filter((rel) => rel.baitId === bait.id)
+			.map((rel) => rel.fishId)
 	);
+
+	// 該当する魚の一覧を取得
+	const targetFishes = allFishes.filter((fish) => targetFishIds.has(fish.id));
 
 	return (
 		<div className="bg-slate-800 border border-slate-700 rounded-xl p-5 md:p-6 flex flex-col gap-6 h-full relative">

@@ -4,14 +4,12 @@ export const ZONES: ZoneMaster[] = [
   {
     "id": 1,
     "ja": "ファノエ運河",
-    "en": "Phanauet Channel",
-    "regionId": 6
+    "en": "Phanauet Channel"
   },
   {
     "id": 2,
     "ja": "ギルド桟橋",
-    "en": "Carpenters' Landing",
-    "regionId": 6
+    "en": "Carpenters' Landing"
   },
   {
     "id": 3,
@@ -396,8 +394,7 @@ export const ZONES: ZoneMaster[] = [
   {
     "id": 80,
     "ja": "南サンドリア〔Ｓ〕",
-    "en": "Southern San d'Oria [S]",
-    "regionId": 0
+    "en": "Southern San d'Oria [S]"
   },
   {
     "id": 81,
@@ -432,8 +429,7 @@ export const ZONES: ZoneMaster[] = [
   {
     "id": 87,
     "ja": "バストゥーク商業区〔Ｓ〕",
-    "en": "Bastok Markets [S]",
-    "regionId": 1
+    "en": "Bastok Markets [S]"
   },
   {
     "id": 88,
@@ -1128,20 +1124,17 @@ export const ZONES: ZoneMaster[] = [
   {
     "id": 230,
     "ja": "南サンドリア",
-    "en": "Southern San d'Oria",
-    "regionId": 0
+    "en": "Southern San d'Oria"
   },
   {
     "id": 231,
     "ja": "北サンドリア",
-    "en": "Northern San d'Oria",
-    "regionId": 0
+    "en": "Northern San d'Oria"
   },
   {
     "id": 232,
     "ja": "サンドリア港",
-    "en": "Port San d'Oria",
-    "regionId": 0
+    "en": "Port San d'Oria"
   },
   {
     "id": 233,
@@ -1151,20 +1144,17 @@ export const ZONES: ZoneMaster[] = [
   {
     "id": 234,
     "ja": "バストゥーク鉱山区",
-    "en": "Bastok Mines",
-    "regionId": 1
+    "en": "Bastok Mines"
   },
   {
     "id": 235,
     "ja": "バストゥーク商業区",
-    "en": "Bastok Markets",
-    "regionId": 1
+    "en": "Bastok Markets"
   },
   {
     "id": 236,
     "ja": "バストゥーク港",
-    "en": "Port Bastok",
-    "regionId": 1
+    "en": "Port Bastok"
   },
   {
     "id": 237,

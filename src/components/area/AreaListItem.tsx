@@ -14,21 +14,20 @@
  */
 
 import React from 'react';
-import type { AreaMaster } from '@/types/fish';
+import type { ZoneMaster } from '@/types/fish';
 import { LIST_STYLES } from '@/styles/listStyles';
 
 type Props = {
-	area: AreaMaster;
+	area: ZoneMaster;
 	isSelected?: boolean;
-	onClickDetail: (area: AreaMaster) => void;
+	onClickDetail: (area: ZoneMaster) => void;
 };
 
 export const AreaListItem: React.FC<Props> = ({ area, isSelected, onClickDetail }) => {
 	return (
 		<div
 			onClick={() => onClickDetail(area)}
-			className={`${LIST_STYLES.base} ${isSelected ? LIST_STYLES.selected : LIST_STYLES.default
-				}`}
+			className={`${LIST_STYLES.base} ${isSelected ? LIST_STYLES.selected : LIST_STYLES.default}`}
 		>
 			<div className="flex items-center gap-3 min-w-0 flex-1">
 				<div className="min-w-0 flex-1 sm:flex sm:items-center sm:gap-3">

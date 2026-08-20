@@ -1,3 +1,15 @@
+/**
+ * ============================================================================
+ * [FilePath] scripts/generateBaits.ts
+ * [Role] items.lua および item_descriptions.lua から baits.ts を自動生成するビルドスクリプト
+ * 
+ * [概要]
+ * - item_descriptions.lua から「釣り餌」「擬餌」が含まれるテキストを抽出
+ * - items.lua から対象アイテムの名称（和名・英名）を取得して紐付け
+ * - 型定義（BaitMaster）に準拠した baits.ts を自動生成
+ * ============================================================================
+ */
+
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -86,7 +98,14 @@ function main() {
 
 	const baitList = parseBaitsLua(ITEMS_LUA_PATH, baitDescriptions);
 
-	const fileContent = `import type { BaitMaster } from '@/types/fish';
+	const fileContent = `/**
+ * ============================================================================
+ * [FilePath] src/data/baits.ts
+ * [Role] 全餌マスターデータ（自動生成ファイル）
+ * ============================================================================
+ */
+
+import type { BaitMaster } from '@/types/fish';
 
 export const BAITS: BaitMaster[] = ${JSON.stringify(baitList, null, 2)};
 `;
