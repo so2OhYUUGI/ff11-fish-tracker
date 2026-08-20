@@ -1,7 +1,7 @@
 /**
  * ============================================================================
- * [FilePath] vite-plugin-save-fish-data.ts
- * [Role] 魚関連マスターデータ保存用の Vite 開発サーバープラグイン
+ * [FilePath] vite/vite-plugin-save-fish-data.ts
+ * [Role] 魚関連マスターデータおよび中間リレーション保存用の Vite プラグイン
  * ============================================================================
  */
 
@@ -24,12 +24,21 @@ export function saveFishDataPlugin(): Plugin {
 				req.on('data', (chunk) => (body += chunk));
 				req.on('end', () => {
 					try {
-						const { fishList, zoneList, fishBaitRelations } = JSON.parse(body);
+						const { fishList, zoneList, fishBaitRelations, fishRodRelations } = JSON.parse(body);
 
 						// 1. 中間リレーションデータの抽出 (FishLocation)
 						const locations: Array<{ id: string; fishId: number; zoneId: number }> = [];
 						const cleanFishList = fishList.map((fish: any) => {
-							const { zoneIds, ...restFish } = fish;
+							// 魚マスターから一時的なUI用ID配列や過去の旧プロパティを除去
+							const {
+								zoneIds,
+								impossibleRodIds,
+								brokenRodIds,
+								brokenLineRodIds,
+								tooSmallRodIds,
+								...restFish
+							} = fish;
+
 							if (Array.isArray(zoneIds)) {
 								zoneIds.forEach((zoneId: number) => {
 									locations.push({
@@ -76,6 +85,16 @@ export const ZONES: ZoneMaster[] = ${JSON.stringify(zoneList, null, 2)};
 export const FISH_BAIT_RELATIONS: FishBaitRelation[] = ${JSON.stringify(fishBaitRelations, null, 2)};
 `;
 							fs.writeFileSync(baitRelFilePath, baitRelContent, 'utf-8');
+						}
+
+						// 6. src/data/fishRodRelations.ts の保存
+						if (fishRodRelations) {
+							const rodRelFilePath = path.resolve(process.cwd(), 'src/data/fishRodRelations.ts');
+							const rodRelContent = `import type { FishRodRelation } from '@/types/fish';
+
+export const FISH_ROD_RELATIONS: FishRodRelation[] = ${JSON.stringify(fishRodRelations, null, 2)};
+`;
+							fs.writeFileSync(rodRelFilePath, rodRelContent, 'utf-8');
 						}
 
 						res.statusCode = 200;

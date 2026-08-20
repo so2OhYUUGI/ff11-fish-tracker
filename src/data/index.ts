@@ -5,3 +5,6 @@ export { BAITS } from './baits';
 
 export { FISH_LOCATIONS } from './fishLocations';
 export { REGIONS } from './regions';
+
+export { FISH_BAIT_RELATIONS } from './fishBaitRelations';
+export { FISH_ROD_RELATIONS } from './fishRodRelations';

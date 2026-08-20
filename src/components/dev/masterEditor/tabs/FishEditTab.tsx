@@ -5,12 +5,12 @@
  * 
  * [概要]
  * - BAITS および RODS の生データを直接参照し、全種類の餌と竿を描画
- * - 中間データ（`FishBaitRelation`）を介して「釣れる餌」のリレーション編集を制御
+ * - 中間データ（`FishBaitRelation`, `FishRodRelation`）を介してリレーション編集を制御
  * ============================================================================
  */
 
 import React, { useState } from 'react';
-import type { ZoneMaster, RegionMaster, FishBaitRelation } from '@/types/fish';
+import type { ZoneMaster, RegionMaster, FishBaitRelation, FishRodRelation } from '@/types/fish';
 import { BAITS } from '@/data/baits';
 import { RODS } from '@/data/rods';
 import { RelationEditor } from '../RelationEditor';
@@ -21,8 +21,10 @@ type Props = {
 	zoneList?: ZoneMaster[];
 	regionList?: RegionMaster[];
 	fishBaitRelations?: FishBaitRelation[];
+	fishRodRelations?: FishRodRelation[];
 	onFishChange: (updatedFish: EditableFish) => void;
 	onBaitRelationChange?: (updatedRelations: FishBaitRelation[]) => void;
+	onRodRelationChange?: (updatedRelations: FishRodRelation[]) => void;
 };
 
 export const FishEditTab: React.FC<Props> = ({
@@ -30,8 +32,10 @@ export const FishEditTab: React.FC<Props> = ({
 	zoneList = [],
 	regionList = [],
 	fishBaitRelations = [],
+	fishRodRelations = [],
 	onFishChange,
 	onBaitRelationChange,
+	onRodRelationChange,
 }) => {
 	const [selectedFish, setSelectedFish] = useState<EditableFish | null>(null);
 
@@ -81,17 +85,49 @@ export const FishEditTab: React.FC<Props> = ({
 		onBaitRelationChange(updatedRelations);
 	};
 
-	// 竿の各種属性トグル
+	// 竿属性フラグのトグル（FishRodRelation の更新）
 	const handleRodAttrToggle = (
-		field: 'impossibleRodIds' | 'brokenRodIds' | 'brokenLineRodIds' | 'tooSmallRodIds',
-		rodId: number
+		rodId: number,
+		field: 'isImpossible' | 'canRodBreak' | 'canLineBreak' | 'isTooSmall'
 	) => {
-		if (!selectedFish) return;
-		const currentList = selectedFish[field] || [];
-		const updatedList = currentList.includes(rodId)
-			? currentList.filter((id) => id !== rodId)
-			: [...currentList, rodId];
-		handleFieldChange(field, updatedList);
+		if (!selectedFish || !onRodRelationChange) return;
+
+		const targetRelIndex = fishRodRelations.findIndex(
+			(rel) => rel.fishId === selectedFish.id && rel.rodId === rodId
+		);
+
+		let updatedRelations = [...fishRodRelations];
+
+		if (targetRelIndex >= 0) {
+			const existingRel = updatedRelations[targetRelIndex];
+			const updatedValue = !existingRel[field];
+			const updatedRel = { ...existingRel, [field]: updatedValue };
+
+			// すべてのフラグが false（または undefined）になった場合はリレーション自体を削除する
+			const hasAnyFlag =
+				updatedRel.isImpossible ||
+				updatedRel.canRodBreak ||
+				updatedRel.canLineBreak ||
+				updatedRel.isTooSmall ||
+				Boolean(updatedRel.notes);
+
+			if (hasAnyFlag) {
+				updatedRelations[targetRelIndex] = updatedRel;
+			} else {
+				updatedRelations = updatedRelations.filter((_, idx) => idx !== targetRelIndex);
+			}
+		} else {
+			// リレーションが存在しない場合は新規作成
+			const newRel: FishRodRelation = {
+				id: `${selectedFish.id}-${rodId}`,
+				fishId: selectedFish.id,
+				rodId,
+				[field]: true,
+			};
+			updatedRelations.push(newRel);
+		}
+
+		onRodRelationChange(updatedRelations);
 	};
 
 	// ゾーンエンティティの生成
@@ -130,6 +166,14 @@ export const FishEditTab: React.FC<Props> = ({
 			.filter((rel) => rel.fishId === selectedFish.id)
 			.map((rel) => rel.baitId)
 		: [];
+
+	// 選択中の魚に対応する竿リレーションの参照ヘルパー関数
+	const getRodRelation = (rodId: number): FishRodRelation | undefined => {
+		if (!selectedFish) return undefined;
+		return fishRodRelations.find(
+			(rel) => rel.fishId === selectedFish.id && rel.rodId === rodId
+		);
+	};
 
 	return (
 		<div style={{ display: 'flex', gap: '15px', height: '100%', width: '100%' }}>
@@ -205,7 +249,7 @@ export const FishEditTab: React.FC<Props> = ({
 							onToggle={handleBaitToggle}
 						/>
 
-						{/* 生データ RODS から直接表示する竿一覧 */}
+						{/* 生データ RODS から直接表示する竿一覧（FishRodRelation 中間データ経由） */}
 						<div>
 							<div style={{ fontWeight: 'bold', marginBottom: '6px' }}>
 								竿の相性・反応設定 (全 {RODS.length} 種類)
@@ -221,41 +265,44 @@ export const FishEditTab: React.FC<Props> = ({
 									</tr>
 								</thead>
 								<tbody>
-									{RODS.map((rod) => (
-										<tr key={rod.id} style={{ borderBottom: '1px solid #edf2f7' }}>
-											<td style={{ padding: '6px' }}>
-												{rod.ja} <span style={{ color: '#718096', fontSize: '10px' }}>({rod.en})</span>
-											</td>
-											<td style={{ padding: '6px', textAlign: 'center' }}>
-												<input
-													type="checkbox"
-													checked={(selectedFish.impossibleRodIds || []).includes(rod.id)}
-													onChange={() => handleRodAttrToggle('impossibleRodIds', rod.id)}
-												/>
-											</td>
-											<td style={{ padding: '6px', textAlign: 'center' }}>
-												<input
-													type="checkbox"
-													checked={(selectedFish.brokenRodIds || []).includes(rod.id)}
-													onChange={() => handleRodAttrToggle('brokenRodIds', rod.id)}
-												/>
-											</td>
-											<td style={{ padding: '6px', textAlign: 'center' }}>
-												<input
-													type="checkbox"
-													checked={(selectedFish.brokenLineRodIds || []).includes(rod.id)}
-													onChange={() => handleRodAttrToggle('brokenLineRodIds', rod.id)}
-												/>
-											</td>
-											<td style={{ padding: '6px', textAlign: 'center' }}>
-												<input
-													type="checkbox"
-													checked={(selectedFish.tooSmallRodIds || []).includes(rod.id)}
-													onChange={() => handleRodAttrToggle('tooSmallRodIds', rod.id)}
-												/>
-											</td>
-										</tr>
-									))}
+									{RODS.map((rod) => {
+										const rodRel = getRodRelation(rod.id);
+										return (
+											<tr key={rod.id} style={{ borderBottom: '1px solid #edf2f7' }}>
+												<td style={{ padding: '6px' }}>
+													{rod.ja} <span style={{ color: '#718096', fontSize: '10px' }}>({rod.en})</span>
+												</td>
+												<td style={{ padding: '6px', textAlign: 'center' }}>
+													<input
+														type="checkbox"
+														checked={Boolean(rodRel?.isImpossible)}
+														onChange={() => handleRodAttrToggle(rod.id, 'isImpossible')}
+													/>
+												</td>
+												<td style={{ padding: '6px', textAlign: 'center' }}>
+													<input
+														type="checkbox"
+														checked={Boolean(rodRel?.canRodBreak)}
+														onChange={() => handleRodAttrToggle(rod.id, 'canRodBreak')}
+													/>
+												</td>
+												<td style={{ padding: '6px', textAlign: 'center' }}>
+													<input
+														type="checkbox"
+														checked={Boolean(rodRel?.canLineBreak)}
+														onChange={() => handleRodAttrToggle(rod.id, 'canLineBreak')}
+													/>
+												</td>
+												<td style={{ padding: '6px', textAlign: 'center' }}>
+													<input
+														type="checkbox"
+														checked={Boolean(rodRel?.isTooSmall)}
+														onChange={() => handleRodAttrToggle(rod.id, 'isTooSmall')}
+													/>
+												</td>
+											</tr>
+										);
+									})}
 								</tbody>
 							</table>
 						</div>

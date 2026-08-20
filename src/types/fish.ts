@@ -6,7 +6,7 @@
  * [概要]
  * - FFXI（Windowerデータ準拠）のマスタデータ型定義（Zone, Fish, Bait, Rod）
  * - ユーザーデータおよび進捗データ構造の定義（LocalStorage保存用）
- * - 生息域（FishLocation）および釣れる餌（FishBaitRelation）の中間リレーション型定義
+ * - 生息域（FishLocation）、釣れる餌（FishBaitRelation）、釣れる竿（FishRodRelation）の中間リレーション型定義
  * - UI表示状態に関する型定義（MainTab, ViewModeなど）
  * ============================================================================
  */
@@ -33,12 +33,7 @@ export type UserData = {
 	characters: CharacterProgress[]; // キャラクター一覧
 };
 
-// 竿ごとの耐久・破損挙動の定義
-export type RodDurability = {
-	rodId: number;         // 釣竿のアイテムID (例: 太公望、恵比寿など)
-	canLineBreak: boolean; // 糸切れの有無（true: 切れる / false: 切れない）
-	canRodBreak: boolean;  // 竿折れの有無（true: 折れる / false: 折れない）
-};
+// --- マスタデータ構造 ---
 
 export type FishMaster = {
 	// Windower (items.lua) 準拠項目
@@ -84,7 +79,7 @@ export type FishingSubArea = 'sea' | 'river' | 'lake' | 'pond' | 'ship' | 'all';
 
 // 生息情報（Fish ↔ Zone の中間エンティティ）
 export type FishLocation = {
-	id: string;            // 一意の識別子（例: "4353-248" や UUID）
+	id: string;            // 一意の識別子（例: "4353-248"）
 	fishId: number;        // FishMaster.id
 	zoneId: number;        // ZoneMaster.id
 	subArea?: FishingSubArea; // 淡水/海水/船など
@@ -97,6 +92,21 @@ export type FishBaitRelation = {
 	fishId: number;        // FishMaster.id
 	baitId: number;        // BaitMaster.id
 	notes?: string;        // 補足情報
+};
+
+// 釣れる竿情報（Fish ↔ Rod の中間エンティティ）
+export type FishRodRelation = {
+	id: string;               // 例: "4353-17011" (魚ID-竿ID)
+	fishId: number;           // FishMaster.id
+	rodId: number;            // FishingRodMaster.id
+
+	// 反応・結果フラグ（該当する場合に true）
+	isImpossible?: boolean;   // 釣るのが不可能（引っかかっても絶対にかからないなど）
+	canRodBreak?: boolean;    // 竿折れの可能性あり
+	canLineBreak?: boolean;   // 糸切れの可能性あり
+	isTooSmall?: boolean;     // 「小さすぎる」メッセージ等で不可
+
+	notes?: string;           // 補足情報
 };
 
 // --- Windower Region (regions.lua) 準拠データ ---

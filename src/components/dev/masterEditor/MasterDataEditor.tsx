@@ -7,8 +7,20 @@
 
 import React, { useState } from 'react';
 import { isDev } from '@/utils/env';
-import { FISHES, ZONES, FISH_LOCATIONS, REGIONS } from '@/data/';
-import type { FishLocation, ZoneMaster } from '@/types/fish';
+import {
+	FISHES,
+	ZONES,
+	FISH_LOCATIONS,
+	REGIONS,
+	FISH_BAIT_RELATIONS,
+	FISH_ROD_RELATIONS,
+} from '@/data/';
+import type {
+	FishLocation,
+	ZoneMaster,
+	FishBaitRelation,
+	FishRodRelation,
+} from '@/types/fish';
 import { FishEditTab } from './tabs/FishEditTab';
 import { ZoneEditTab } from './tabs/ZoneEditTab';
 import type { EditTab, EditableFish } from './types';
@@ -27,6 +39,14 @@ export const MasterDataEditor: React.FC = () => {
 
 	const [zoneList, setZoneList] = useState<ZoneMaster[]>(() => ZONES);
 
+	// 中間リレーションデータの State
+	const [fishBaitRelations, setFishBaitRelations] = useState<FishBaitRelation[]>(
+		() => FISH_BAIT_RELATIONS || []
+	);
+	const [fishRodRelations, setFishRodRelations] = useState<FishRodRelation[]>(
+		() => FISH_ROD_RELATIONS || []
+	);
+
 	const handleFishChange = (updated: EditableFish) => {
 		setFishList((prev) => prev.map((item) => (item.id === updated.id ? updated : item)));
 	};
@@ -40,11 +60,16 @@ export const MasterDataEditor: React.FC = () => {
 			const response = await fetch('/api/save-fish-data', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ fishList, zoneList }),
+				body: JSON.stringify({
+					fishList,
+					zoneList,
+					fishBaitRelations,
+					fishRodRelations,
+				}),
 			});
 
 			if (response.ok) {
-				alert('fishes.ts / fishLocations.ts / zones.ts へ直接保存しました！');
+				alert('マスターデータ（TSファイル）へ直接保存しました！');
 			} else {
 				alert('保存に失敗しました。');
 			}
@@ -68,6 +93,8 @@ export const MasterDataEditor: React.FC = () => {
 			fishes: exportFishes,
 			fishLocations: exportLocations,
 			zones: zoneList,
+			fishBaitRelations,
+			fishRodRelations,
 		};
 
 		const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(exportData, null, 2));
@@ -154,7 +181,16 @@ export const MasterDataEditor: React.FC = () => {
 
 			<div style={{ display: 'flex', gap: '15px', flex: 1, minHeight: 0 }}>
 				{activeTab === 'fish' && (
-					<FishEditTab fishList={fishList} zoneList={zoneList} onFishChange={handleFishChange} />
+					<FishEditTab
+						fishList={fishList}
+						zoneList={zoneList}
+						regionList={REGIONS}
+						fishBaitRelations={fishBaitRelations}
+						fishRodRelations={fishRodRelations}
+						onFishChange={handleFishChange}
+						onBaitRelationChange={setFishBaitRelations}
+						onRodRelationChange={setFishRodRelations}
+					/>
 				)}
 				{activeTab === 'zone' && (
 					<ZoneEditTab zoneList={zoneList} regionList={REGIONS} onZoneChange={handleZoneChange} />
