@@ -20,6 +20,8 @@ type BaitDetailViewProps = {
 	bait: BaitMaster | null;
 	allFishes: FishMaster[];
 	onClose: () => void;
+	onBack?: () => void;
+	canGoBack?: boolean;
 	onClickFishDetail?: (fish: FishMaster) => void;
 };
 
@@ -42,6 +44,8 @@ export const BaitDetailView: React.FC<BaitDetailViewProps> = ({
 	bait,
 	allFishes,
 	onClose,
+	onBack,
+	canGoBack = false,
 	onClickFishDetail,
 }) => {
 	if (!bait) {
@@ -63,29 +67,38 @@ export const BaitDetailView: React.FC<BaitDetailViewProps> = ({
 
 	return (
 		<div className="flex flex-col h-full min-h-0 overflow-hidden">
-			{/* 1. 固定ヘッダー領域 */}
-			<div className={`${DETAIL_STYLES.header} flex-shrink-0 z-10 bg-slate-900 shadow-md border-b border-slate-800`}>
-				<div className={DETAIL_STYLES.headerLeft}>
-					<button
-						type="button"
-						onClick={onClose}
-						className={DETAIL_STYLES.backButton}
-					>
-						<ArrowLeft className="w-4 h-4" />
-						<span>戻る</span>
-					</button>
-					<div>
-						<h2 className={DETAIL_STYLES.titleJa}>{bait.ja}</h2>
-						<p className={DETAIL_STYLES.titleEn}>{bait.en}</p>
+			{/* 1. 固定ヘッダー領域（幅縮小時・縦表示時の潰れ・押し出しを防止） */}
+			<div className="flex-shrink-0 z-10 bg-slate-900 shadow-md border-b border-slate-800 p-3 flex items-center justify-between gap-2 min-w-0">
+				{/* 左側：戻るボタン ＋ タイトル */}
+				<div className="flex items-center gap-2 min-w-0 flex-1">
+					{canGoBack && onBack && (
+						<button
+							type="button"
+							onClick={onBack}
+							className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-slate-300 bg-slate-800 hover:bg-slate-700 rounded border border-slate-700 shrink-0 transition-colors"
+							title="前の画面へ戻る"
+						>
+							<ArrowLeft className="w-4 h-4 shrink-0" />
+							<span>戻る</span>
+						</button>
+					)}
+					<div className="min-w-0 flex-1">
+						<h2 className="text-base font-bold text-slate-100 truncate leading-tight">
+							{bait.ja}
+						</h2>
+						<p className="text-xs text-slate-400 font-mono truncate">
+							{bait.en}
+						</p>
 					</div>
 				</div>
 
-				<div className={DETAIL_STYLES.headerRight}>
+				{/* 右側：閉じるボタン */}
+				<div className="flex items-center shrink-0">
 					<button
 						type="button"
 						onClick={onClose}
 						title="詳細を閉じる"
-						className={DETAIL_STYLES.closeButton}
+						className="p-1.5 text-slate-400 hover:text-slate-100 hover:bg-slate-800 rounded-lg transition-colors shrink-0"
 					>
 						<X className="w-5 h-5" />
 					</button>

@@ -5,7 +5,7 @@
  * 
  * [概要]
  * - エリア（ZoneMaster）を所属リージョン（RegionMaster）ごとにグループ化して表示
- * - `useNavigationStack`（`navStack`）の最前面データ（`current`）に基づき、詳細パネルの切り替え・スタック遷移を描達
+ * - `useNavigationStack`（`navStack`）の最前面データ（`current`）に基づき、詳細パネルの切り替え・スタック遷移を描画
  * - 選択状態（`current !== null`）に応じた2カラム（一覧＋詳細）レスポンシブレイアウトの制御
  * - 表示モード（`viewMode`: 'card' | 'list'）に基づく `AreaCard` / `AreaListItem` の切替描画
  * - 詳細表示領域に画面高に応じた上限サイズ（calc）と独立スクロール領域を設定
@@ -40,16 +40,7 @@ export const AreaListView = ({
 	viewMode,
 	navStack,
 }: Props) => {
-	const { current, push, pop, clear, canGoBack } = navStack;
-
-	// 閉じるボタン押下時の制御（スタックが残っていれば1つ戻り、無ければクリア）
-	const handleCloseDetail = () => {
-		if (canGoBack) {
-			pop();
-		} else {
-			clear();
-		}
-	};
+	const { current, push, replace, pop, clear, canGoBack } = navStack;
 
 	// リージョンごとにエリアをグループ化（リージョン未設定のエリアは除外）
 	const groupedAreas = useMemo(() => {
@@ -80,8 +71,8 @@ export const AreaListView = ({
 		<div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 			{/* 左側：一覧表示領域 */}
 			<div
-				className={`${isSelected ? 'lg:col-span-7' : 'lg:col-span-12'
-					} ${isSelected ? 'hidden lg:block' : 'block'}`}
+				className={`${isSelected ? 'lg:col-span-7' : 'lg:col-span-12'} ${isSelected ? 'hidden lg:block' : 'block'
+					}`}
 			>
 				<div className="flex flex-col gap-6">
 					{groupedAreas.map((group) => (
@@ -112,7 +103,7 @@ export const AreaListView = ({
 											key={area.id}
 											area={area}
 											isSelected={selectedAreaId === area.id}
-											onClickDetail={(a) => push({ type: 'area', item: a })}
+											onClickDetail={(a) => replace({ type: 'area', item: a })}
 										/>
 									))}
 								</div>
@@ -124,7 +115,7 @@ export const AreaListView = ({
 											key={area.id}
 											area={area}
 											isSelected={selectedAreaId === area.id}
-											onClickDetail={(a) => push({ type: 'area', item: a })}
+											onClickDetail={(a) => replace({ type: 'area', item: a })}
 										/>
 									))}
 								</div>
@@ -134,7 +125,7 @@ export const AreaListView = ({
 				</div>
 			</div>
 
-			{/* 右側：詳細表示領域（スタックの型に応じて動的にコンテンツを切り替え） */}
+			{/* 右側：詳細表示領域 */}
 			{isSelected && (
 				<div className="lg:col-span-5 lg:sticky lg:top-[160px] w-full max-h-[calc(100vh-180px)] flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
 					{current.type === 'area' && (
@@ -142,7 +133,9 @@ export const AreaListView = ({
 							area={current.item}
 							allFishes={allFishes}
 							regionList={REGIONS}
-							onClose={handleCloseDetail}
+							onClose={clear}
+							onBack={pop}
+							canGoBack={canGoBack}
 							onClickFishDetail={(fish) => push({ type: 'fish', item: fish })}
 						/>
 					)}
@@ -153,7 +146,9 @@ export const AreaListView = ({
 							zones={ZONES}
 							isChecked={false}
 							onToggleCheck={() => { }}
-							onClose={handleCloseDetail}
+							onClose={clear}
+							onBack={pop}
+							canGoBack={canGoBack}
 							onClickAreaDetail={(area) => push({ type: 'area', item: area })}
 							onClickBaitDetail={(bait) => push({ type: 'bait', item: bait })}
 						/>
@@ -163,7 +158,9 @@ export const AreaListView = ({
 						<BaitDetailView
 							bait={current.item}
 							allFishes={allFishes}
-							onClose={handleCloseDetail}
+							onClose={clear}
+							onBack={pop}
+							canGoBack={canGoBack}
 							onClickFishDetail={(fish) => push({ type: 'fish', item: fish })}
 						/>
 					)}

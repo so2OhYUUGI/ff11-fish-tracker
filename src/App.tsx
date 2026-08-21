@@ -1,19 +1,14 @@
 /**
  * ============================================================================
  * [FilePath] src/App.tsx
- * [Role] アプリケーションのルートコンポーネント（レイアウト構築・状態統合・ルーティング）
- * 
- * [概要]
- * - ユーザーデータのロード・アクティブキャラクター判定およびランディングページの切り替え
- * - グローバルな表示モード・フィルター・検索クエリ管理
- * - 画面遷移スタック（`useNavigationStack`）の保持・管理による循環詳細表示のサポート
+ * [Role] アプリケーションのルートコンポーネント
  * ============================================================================
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast, Toaster } from 'sonner';
 import { useUserData } from '@/hooks/useUserData';
-import { useNavigationStack } from '@/hooks/useNavigationStack';
+import { useNavigationStack, type NavItem } from '@/hooks/useNavigationStack';
 import { FISHES } from '@/data/';
 import { Header } from '@/components/Header';
 import { SettingsModal } from '@/components/settings/SettingsModal';
@@ -24,6 +19,22 @@ import { Footer } from '@/components/Footer';
 import { LandingPage } from '@/components/LandingPage';
 import { MasterDataEditorModal } from '@/components/dev/MasterDataEditorModal';
 import type { ViewMode, MainTab } from '@/types/fish';
+
+const useIsMobileLayout = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+
+    checkIsMobile();
+    window.addEventListener('resize', checkIsMobile);
+    return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
+
+  return isMobile;
+};
 
 export default function App() {
   const {
@@ -38,8 +49,8 @@ export default function App() {
     importData,
   } = useUserData();
 
-  // 詳細画面の巡回・ドリルダウン用ナビゲーションスタック
   const navStack = useNavigationStack();
+  const isMobileLayout = useIsMobileLayout();
 
   const [mainTab, setMainTab] = useState<MainTab>('fish');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
@@ -48,7 +59,6 @@ export default function App() {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
-  // キャラクターが登録されていない場合はランディングページを表示
   if (userData.characters.length === 0 || !activeCharacter) {
     return <LandingPage onCreateCharacter={addCharacter} />;
   }
@@ -70,17 +80,39 @@ export default function App() {
     }
   };
 
-  // メインタブ切り替え時は詳細スタックをクリアする
   const handleMainTabChange = (tab: MainTab) => {
     setMainTab(tab);
     navStack.clear();
+  };
+
+  // 一覧リストからの選択処理をレイアウトに応じて分岐
+  // - 1カラム（モバイル）：一覧に戻るため push
+  // - 2カラム（PC）：新しい詳細で置き換えるため replace
+  const handleSelectFromList = (item: NavItem) => {
+    if (isMobileLayout) {
+      navStack.push(item);
+    } else {
+      navStack.replace(item);
+    }
+  };
+
+  // 画面モードごとの「戻る」有効化判定
+  // - 1カラム（モバイル）: 1つ以上のスタックがあれば有効（一覧に戻る）
+  // - 2カラム（PC）: 2つ以上のスタック（詳細からさらに詳細を開いた時）があれば有効（前の詳細に戻る）
+  const canGoBackEffective = isMobileLayout
+    ? navStack.stack.length > 0
+    : navStack.stack.length > 1;
+
+  const effectiveNavStack = {
+    ...navStack,
+    selectFromList: handleSelectFromList,
+    canGoBack: canGoBackEffective,
   };
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col font-sans">
       <Toaster position="bottom-right" theme="dark" />
 
-      {/* 固定ヘッダー & 吸着フィルターバーの統合ラッパー */}
       <div className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur border-b border-slate-800 shadow-md">
         <Header
           characters={userData.characters}
@@ -103,7 +135,6 @@ export default function App() {
         />
       </div>
 
-      {/* 広告 banner */}
       <AdBanner slotId="top-banner" />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -114,7 +145,7 @@ export default function App() {
           viewMode={viewMode}
           activeCharacter={activeCharacter}
           onToggleCheck={handleToggleCheck}
-          navStack={navStack}
+          navStack={effectiveNavStack}
         />
       </main>
 
@@ -122,7 +153,6 @@ export default function App() {
 
       <Footer />
 
-      {/* モーダル群 */}
       <SettingsModal
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}

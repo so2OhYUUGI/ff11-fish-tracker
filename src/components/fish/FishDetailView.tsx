@@ -29,6 +29,8 @@ type FishDetailViewProps = {
 	isChecked: boolean;
 	onToggleCheck: (fishId: number) => void;
 	onClose: () => void;
+	onBack?: () => void;
+	canGoBack?: boolean;
 	onClickAreaDetail?: (area: ZoneMaster) => void;
 	onClickBaitDetail?: (bait: BaitMaster) => void;
 };
@@ -65,6 +67,8 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 	isChecked,
 	onToggleCheck,
 	onClose,
+	onBack,
+	canGoBack = false,
 	onClickAreaDetail,
 	onClickBaitDetail,
 }) => {
@@ -92,41 +96,50 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 
 	return (
 		<div className="flex flex-col h-full min-h-0 overflow-hidden">
-			{/* 1. 固定ヘッダー領域 */}
-			<div className={`${DETAIL_STYLES.header} flex-shrink-0 z-10 bg-slate-900 shadow-md border-b border-slate-800`}>
-				<div className={DETAIL_STYLES.headerLeft}>
-					<button
-						type="button"
-						onClick={onClose}
-						className={DETAIL_STYLES.backButton}
-					>
-						<ArrowLeft className="w-4 h-4" />
-						<span>戻る</span>
-					</button>
-					<div>
-						<h2 className={DETAIL_STYLES.titleJa}>{fish.ja}</h2>
-						<p className={DETAIL_STYLES.titleEn}>{fish.en}</p>
+			{/* 1. 固定ヘッダー領域（幅縮小時・縦表示時の潰れ・押し出しを防止） */}
+			<div className="flex-shrink-0 z-10 bg-slate-900 shadow-md border-b border-slate-800 p-3 flex items-center justify-between gap-2 min-w-0">
+				{/* 左側：戻るボタン ＋ タイトル */}
+				<div className="flex items-center gap-2 min-w-0 flex-1">
+					{canGoBack && onBack && (
+						<button
+							type="button"
+							onClick={onBack}
+							className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-slate-300 bg-slate-800 hover:bg-slate-700 rounded border border-slate-700 shrink-0 transition-colors"
+							title="前の画面へ戻る"
+						>
+							<ArrowLeft className="w-4 h-4 shrink-0" />
+							<span>戻る</span>
+						</button>
+					)}
+					<div className="min-w-0 flex-1">
+						<h2 className="text-base font-bold text-slate-100 truncate leading-tight">
+							{fish.ja}
+						</h2>
+						<p className="text-xs text-slate-400 font-mono truncate">
+							{fish.en}
+						</p>
 					</div>
 				</div>
 
-				<div className={DETAIL_STYLES.headerRight}>
+				{/* 右側：チェックボタン ＋ 閉じるボタン */}
+				<div className="flex items-center gap-1.5 shrink-0">
 					<button
 						type="button"
 						onClick={() => onToggleCheck(fish.id)}
 						className={`${DETAIL_STYLES.checkButtonBase} ${isChecked
-							? DETAIL_STYLES.checkButtonChecked
-							: DETAIL_STYLES.checkButtonUnchecked
-							}`}
+								? DETAIL_STYLES.checkButtonChecked
+								: DETAIL_STYLES.checkButtonUnchecked
+							} shrink-0`}
 					>
 						{isChecked ? (
 							<>
-								<CheckSquare className="w-4 h-4 text-emerald-400" />
-								<span>釣獲済み</span>
+								<CheckSquare className="w-4 h-4 text-emerald-400 shrink-0" />
+								<span className="hidden sm:inline">釣獲済み</span>
 							</>
 						) : (
 							<>
-								<Square className="w-4 h-4 text-slate-400" />
-								<span>未釣獲</span>
+								<Square className="w-4 h-4 text-slate-400 shrink-0" />
+								<span className="hidden sm:inline">未釣獲</span>
 							</>
 						)}
 					</button>
@@ -135,7 +148,7 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 						type="button"
 						onClick={onClose}
 						title="詳細を閉じる"
-						className={DETAIL_STYLES.closeButton}
+						className="p-1.5 text-slate-400 hover:text-slate-100 hover:bg-slate-800 rounded-lg transition-colors shrink-0"
 					>
 						<X className="w-5 h-5" />
 					</button>

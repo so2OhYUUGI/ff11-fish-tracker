@@ -18,6 +18,7 @@ import { AreaDetailView } from '@/components/area/AreaDetailView';
 import { BaitDetailView } from '@/components/bait/BaitDetailView';
 import type { FishMaster, ViewMode, ZoneMaster } from '@/types/fish';
 import type { useNavigationStack } from '@/hooks/useNavigationStack';
+import { REGIONS } from '@/data';
 
 type Props = {
 	fishes: FishMaster[];
@@ -36,20 +37,11 @@ export const FishListView = ({
 	onToggleCheck,
 	navStack,
 }: Props) => {
-	const { current, push, pop, clear, canGoBack } = navStack;
+	const { current, push, replace, pop, clear, canGoBack } = navStack;
 
 	// チェック操作ハンドラ
 	const handleToggleCheck = (fishId: number) => {
 		onToggleCheck(fishId);
-	};
-
-	// 閉じるボタン押下時の制御（スタックが残っていれば1つ戻り、無ければクリア）
-	const handleCloseDetail = () => {
-		if (canGoBack) {
-			pop();
-		} else {
-			clear();
-		}
 	};
 
 	if (fishes.length === 0) {
@@ -88,7 +80,7 @@ export const FishListView = ({
 								isChecked={checkedFishIds.includes(fish.id)}
 								isSelected={selectedFishId === fish.id}
 								onToggleCheck={handleToggleCheck}
-								onClickDetail={(f) => push({ type: 'fish', item: f })}
+								onClickDetail={(f) => replace({ type: 'fish', item: f })}
 							/>
 						))}
 					</div>
@@ -102,7 +94,7 @@ export const FishListView = ({
 								isChecked={checkedFishIds.includes(fish.id)}
 								isSelected={selectedFishId === fish.id}
 								onToggleCheck={handleToggleCheck}
-								onClickDetail={(f) => push({ type: 'fish', item: f })}
+								onClickDetail={(f) => replace({ type: 'fish', item: f })}
 							/>
 						))}
 					</div>
@@ -118,7 +110,9 @@ export const FishListView = ({
 							zones={zones}
 							isChecked={checkedFishIds.includes(current.item.id)}
 							onToggleCheck={handleToggleCheck}
-							onClose={handleCloseDetail}
+							onClose={clear}
+							onBack={pop}
+							canGoBack={canGoBack}
 							onClickAreaDetail={(area) => push({ type: 'area', item: area })}
 							onClickBaitDetail={(bait) => push({ type: 'bait', item: bait })}
 						/>
@@ -128,8 +122,10 @@ export const FishListView = ({
 						<AreaDetailView
 							area={current.item}
 							allFishes={fishes}
-							regionList={[]}
-							onClose={handleCloseDetail}
+							regionList={REGIONS}
+							onClose={clear}
+							onBack={pop}
+							canGoBack={canGoBack}
 							onClickFishDetail={(fish) => push({ type: 'fish', item: fish })}
 						/>
 					)}
@@ -138,7 +134,9 @@ export const FishListView = ({
 						<BaitDetailView
 							bait={current.item}
 							allFishes={fishes}
-							onClose={handleCloseDetail}
+							onClose={clear}
+							onBack={pop}
+							canGoBack={canGoBack}
 							onClickFishDetail={(fish) => push({ type: 'fish', item: fish })}
 						/>
 					)}

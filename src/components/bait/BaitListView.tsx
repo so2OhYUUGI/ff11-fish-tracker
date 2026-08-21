@@ -23,7 +23,7 @@ import { BaitListItem } from './BaitListItem';
 import { BaitDetailView } from './BaitDetailView';
 import { FishDetailView } from '@/components/fish/FishDetailView';
 import { AreaDetailView } from '@/components/area/AreaDetailView';
-import { ZONES } from '@/data';
+import { REGIONS, ZONES } from '@/data';
 
 type Props = {
 	baits: BaitMaster[];
@@ -38,16 +38,7 @@ export const BaitListView = ({
 	viewMode,
 	navStack,
 }: Props) => {
-	const { current, push, pop, clear, canGoBack } = navStack;
-
-	// 閉じるボタン押下時の制御（スタックが残っていれば1つ戻り、無ければクリア）
-	const handleCloseDetail = () => {
-		if (canGoBack) {
-			pop();
-		} else {
-			clear();
-		}
-	};
+	const { current, push, replace, pop, clear, canGoBack } = navStack;
 
 	if (baits.length === 0) {
 		return (
@@ -87,7 +78,7 @@ export const BaitListView = ({
 								key={bait.id}
 								bait={bait}
 								isSelected={selectedBaitId === bait.id}
-								onClickDetail={(b) => push({ type: 'bait', item: b })}
+								onClickDetail={(b) => replace({ type: 'bait', item: b })}
 							/>
 						))}
 					</div>
@@ -98,7 +89,7 @@ export const BaitListView = ({
 								key={bait.id}
 								bait={bait}
 								isSelected={selectedBaitId === bait.id}
-								onClickDetail={(b) => push({ type: 'bait', item: b })}
+								onClickDetail={(b) => replace({ type: 'bait', item: b })}
 							/>
 						))}
 					</div>
@@ -116,7 +107,9 @@ export const BaitListView = ({
 						<BaitDetailView
 							bait={current.item}
 							allFishes={allFishes}
-							onClose={handleCloseDetail}
+							onClose={clear}
+							onBack={pop}
+							canGoBack={canGoBack}
 							onClickFishDetail={(fish) => push({ type: 'fish', item: fish })}
 						/>
 					)}
@@ -127,7 +120,9 @@ export const BaitListView = ({
 							zones={ZONES}
 							isChecked={false}
 							onToggleCheck={() => { }}
-							onClose={handleCloseDetail}
+							onClose={clear}
+							onBack={pop}
+							canGoBack={canGoBack}
 							onClickAreaDetail={(area) => push({ type: 'area', item: area })}
 							onClickBaitDetail={(bait) => push({ type: 'bait', item: bait })}
 						/>
@@ -137,8 +132,10 @@ export const BaitListView = ({
 						<AreaDetailView
 							area={current.item}
 							allFishes={allFishes}
-							regionList={[]}
-							onClose={handleCloseDetail}
+							regionList={REGIONS}
+							onClose={clear}
+							onBack={pop}
+							canGoBack={canGoBack}
 							onClickFishDetail={(fish) => push({ type: 'fish', item: fish })}
 						/>
 					)}
