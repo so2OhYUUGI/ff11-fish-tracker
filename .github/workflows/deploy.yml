@@ -28,7 +28,7 @@ jobs:
       # staging ブランチへの push ➔ ステージング環境へデプロイ
       - name: Deploy to Staging
         if: github.ref == 'refs/heads/staging'
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@v3@v3.14.0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
