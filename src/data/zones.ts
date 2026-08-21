@@ -26,7 +26,7 @@ export const ZONES: ZoneMaster[] = [
     "regionId": 10
   },
   {
-    "id": -41,
+    "id": 10004,
     "ja": "プルゴノルゴ島",
     "en": "Purgonorgo Isle",
     "regionId": 10
@@ -283,7 +283,7 @@ export const ZONES: ZoneMaster[] = [
     "en": "Open sea route to Mhaura"
   },
   {
-    "id": -47,
+    "id": 10047,
     "ja": "外洋航路：マウラ - アルザビ",
     "en": "Open sea route to Mhaura",
     "regionId": 100
@@ -353,7 +353,7 @@ export const ZONES: ZoneMaster[] = [
     "en": "Silver Sea route to Al Zahbi"
   },
   {
-    "id": -59,
+    "id": 10059,
     "ja": "銀海航路：アルザビ - ナシュモ",
     "en": "Silver Sea route to Al Zahbi",
     "regionId": 100
@@ -1665,7 +1665,7 @@ export const ZONES: ZoneMaster[] = [
   },
   {
     "id": 283,
-    "ja": "��ル��ー・ナイフ",
+    "ja": "シルバー・ナイフ",
     "en": "Silver Knife",
     "regionId": 50
   },

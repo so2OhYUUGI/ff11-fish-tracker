@@ -575,7 +575,7 @@ export const FISHES: FishMaster[] = [
     "description": "体表に結晶が浮かんだダークバスの変種。\\n",
     "maxSkill": 35,
     "sizeType": "small",
-    "waterType": "unknown",
+    "waterType": "freshwater",
     "harakiri": false,
     "ebisu": false,
     "taikobou": false
