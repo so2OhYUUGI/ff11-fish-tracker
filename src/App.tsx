@@ -2,12 +2,18 @@
  * ============================================================================
  * [FilePath] src/App.tsx
  * [Role] アプリケーションのルートコンポーネント（レイアウト構築・状態統合・ルーティング）
+ * 
+ * [概要]
+ * - ユーザーデータのロード・アクティブキャラクター判定およびランディングページの切り替え
+ * - グローバルな表示モード・フィルター・検索クエリ管理
+ * - 画面遷移スタック（`useNavigationStack`）の保持・管理による循環詳細表示のサポート
  * ============================================================================
  */
 
 import { useState } from 'react';
 import { toast, Toaster } from 'sonner';
 import { useUserData } from '@/hooks/useUserData';
+import { useNavigationStack } from '@/hooks/useNavigationStack';
 import { FISHES } from '@/data/';
 import { Header } from '@/components/Header';
 import { SettingsModal } from '@/components/settings/SettingsModal';
@@ -31,6 +37,9 @@ export default function App() {
     exportData,
     importData,
   } = useUserData();
+
+  // 詳細画面の巡回・ドリルダウン用ナビゲーションスタック
+  const navStack = useNavigationStack();
 
   const [mainTab, setMainTab] = useState<MainTab>('fish');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
@@ -61,6 +70,12 @@ export default function App() {
     }
   };
 
+  // メインタブ切り替え時は詳細スタックをクリアする
+  const handleMainTabChange = (tab: MainTab) => {
+    setMainTab(tab);
+    navStack.clear();
+  };
+
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col font-sans">
       <Toaster position="bottom-right" theme="dark" />
@@ -77,7 +92,7 @@ export default function App() {
         <FilterBar
           mainTab={mainTab}
           activeCharacter={activeCharacter}
-          onMainTabChange={setMainTab}
+          onMainTabChange={handleMainTabChange}
           statusFilter={statusFilter}
           onStatusFilterChange={setStatusFilter}
           searchQuery={searchQuery}
@@ -88,7 +103,7 @@ export default function App() {
         />
       </div>
 
-      {/* 広告 */}
+      {/* 広告 banner */}
       <AdBanner slotId="top-banner" />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -99,6 +114,7 @@ export default function App() {
           viewMode={viewMode}
           activeCharacter={activeCharacter}
           onToggleCheck={handleToggleCheck}
+          navStack={navStack}
         />
       </main>
 
@@ -106,7 +122,7 @@ export default function App() {
 
       <Footer />
 
-      {/* 環境設定モーダル */}
+      {/* モーダル群 */}
       <SettingsModal
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
@@ -120,7 +136,6 @@ export default function App() {
         onImport={importData}
       />
 
-      {/* マスターデータ編集モーダル */}
       <MasterDataEditorModal
         isOpen={isEditorOpen}
         onClose={() => setIsEditorOpen(false)}

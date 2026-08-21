@@ -8,15 +8,14 @@
  * - 魚データ（`FISHES`）に対するフィルタリング（チェック状態：`statusFilter` / 検索文字列：`searchQuery`）の適用
  * - 餌データ（`BAITS`）に対する検索フィルタリングの適用
  * - エリアデータ（`ZONES`）に対する検索フィルタリングの適用
+ * - ナビゲーションスタック（`navStack`）を受け取り、各一覧ビューへ詳細循環遷移ロジックを伝達
  * - フィルタリング処理の最適化（`useMemo` によるメモ化）
  * 
  * [編集・改修時の注意事項]
  * 1. 【検索仕様】
  *    魚・餌・エリアの検索は日本語名（`ja`）と英語名（`en`）の両方を対象にした部分一致検索を行っています。
- * 2. 【フィルタ条件の追加】
- *    新しいフィルタ（スキル帯、サイズ等）を追加する場合は、`filteredFishes` 内の条件判定ロジックを拡張してください。
- * 3. 【新しいメインタブの追加】
- *    新しいメインタブを追加する場合は、`switch (mainTab)` に case を追加してください。
+ * 2. 【スタック管理の伝達】
+ *    各ListViewコンポーネントへ `navStack` を渡すことで、子ビューでの詳細遷移および相互移動を可能にしています。
  * ============================================================================
  */
 
@@ -27,6 +26,7 @@ import { BaitListView } from '@/components/bait/BaitListView';
 import { AreaListView } from '@/components/area/AreaListView';
 import type { MainTab, ViewMode, CharacterProgress } from '@/types/fish';
 import type { StatusFilter } from '@/components/FilterBar';
+import type { useNavigationStack } from '@/hooks/useNavigationStack';
 
 type MainContentRouterProps = {
 	mainTab: MainTab;
@@ -35,6 +35,7 @@ type MainContentRouterProps = {
 	viewMode: ViewMode;
 	activeCharacter: CharacterProgress;
 	onToggleCheck: (fishId: number) => void;
+	navStack: ReturnType<typeof useNavigationStack>;
 };
 
 export const MainContentRouter: React.FC<MainContentRouterProps> = ({
@@ -44,6 +45,7 @@ export const MainContentRouter: React.FC<MainContentRouterProps> = ({
 	viewMode,
 	activeCharacter,
 	onToggleCheck,
+	navStack,
 }) => {
 	const filteredFishes = useMemo(() => {
 		return FISHES.filter((fish) => {
@@ -91,6 +93,7 @@ export const MainContentRouter: React.FC<MainContentRouterProps> = ({
 					checkedFishIds={activeCharacter.checkedFishIds}
 					viewMode={viewMode}
 					onToggleCheck={onToggleCheck}
+					navStack={navStack}
 				/>
 			);
 		case 'bait':
@@ -99,6 +102,7 @@ export const MainContentRouter: React.FC<MainContentRouterProps> = ({
 					baits={filteredBaits}
 					allFishes={FISHES}
 					viewMode={viewMode}
+					navStack={navStack}
 				/>
 			);
 		case 'area':
@@ -107,6 +111,7 @@ export const MainContentRouter: React.FC<MainContentRouterProps> = ({
 					areas={filteredAreas}
 					allFishes={FISHES}
 					viewMode={viewMode}
+					navStack={navStack}
 				/>
 			);
 		default:

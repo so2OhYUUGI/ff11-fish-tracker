@@ -71,7 +71,7 @@ export const AreaDetailView: React.FC<Props> = ({
 						className={DETAIL_STYLES.backButton}
 					>
 						<ArrowLeft className="w-4 h-4" />
-						<span>一覧へ戻る</span>
+						<span>戻る</span>
 					</button>
 					<div className="flex items-center gap-2">
 						<MapPin className="w-5 h-5 text-cyan-400 shrink-0" />

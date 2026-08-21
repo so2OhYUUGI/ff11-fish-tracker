@@ -6,12 +6,13 @@
  * [概要]
  * - ヘッダー（魚名・チェック状態）を固定し、コンテンツ部分全体を独立スクロール表示
  * - 基本情報（スキル上限、サイズ区分、水質区分、各種関連属性フラグ）のステータス表示
+ * - 生息エリアタグや餌タグクリックによる他詳細画面（`AreaDetailView` / `BaitDetailView`）への相互遷移サポート
  * ============================================================================
  */
 
 import React from 'react';
 import { ArrowLeft, CheckSquare, Square, X } from 'lucide-react';
-import type { FishMaster, ZoneMaster } from '@/types/fish';
+import type { FishMaster, ZoneMaster, BaitMaster } from '@/types/fish';
 import {
 	FISH_LOCATIONS,
 	FISH_BAIT_RELATIONS,
@@ -28,6 +29,8 @@ type FishDetailViewProps = {
 	isChecked: boolean;
 	onToggleCheck: (fishId: number) => void;
 	onClose: () => void;
+	onClickAreaDetail?: (area: ZoneMaster) => void;
+	onClickBaitDetail?: (bait: BaitMaster) => void;
 };
 
 // サイズ表記ラベル・スタイル取得ヘルパー
@@ -62,6 +65,8 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 	isChecked,
 	onToggleCheck,
 	onClose,
+	onClickAreaDetail,
+	onClickBaitDetail,
 }) => {
 	// 1. エリア情報の抽出
 	const targetZoneIds = FISH_LOCATIONS
@@ -96,7 +101,7 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 						className={DETAIL_STYLES.backButton}
 					>
 						<ArrowLeft className="w-4 h-4" />
-						<span>一覧へ戻る</span>
+						<span>戻る</span>
 					</button>
 					<div>
 						<h2 className={DETAIL_STYLES.titleJa}>{fish.ja}</h2>
@@ -109,8 +114,8 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 						type="button"
 						onClick={() => onToggleCheck(fish.id)}
 						className={`${DETAIL_STYLES.checkButtonBase} ${isChecked
-								? DETAIL_STYLES.checkButtonChecked
-								: DETAIL_STYLES.checkButtonUnchecked
+							? DETAIL_STYLES.checkButtonChecked
+							: DETAIL_STYLES.checkButtonUnchecked
 							}`}
 					>
 						{isChecked ? (
@@ -178,9 +183,14 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 					{targetZones.length > 0 ? (
 						<div className={DETAIL_STYLES.tagList}>
 							{targetZones.map((zone) => (
-								<span key={zone.id} className={DETAIL_STYLES.tagItem}>
+								<button
+									key={zone.id}
+									type="button"
+									onClick={() => onClickAreaDetail?.(zone)}
+									className={`${DETAIL_STYLES.tagItem} hover:border-cyan-500 hover:text-cyan-300 transition-colors cursor-pointer`}
+								>
 									{zone.ja}
-								</span>
+								</button>
 							))}
 						</div>
 					) : (
@@ -188,7 +198,7 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 					)}
 				</div>
 
-				{/* 釣れる餌一覧（該当するもののみ列挙） */}
+				{/* 釣れる餌一覧 */}
 				<div>
 					<h3 className={DETAIL_STYLES.sectionTitle}>
 						釣れる餌 ({targetBaits.length} 種類)
@@ -196,9 +206,14 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 					{targetBaits.length > 0 ? (
 						<div className={DETAIL_STYLES.tagList}>
 							{targetBaits.map((bait) => (
-								<span key={bait.id} className={DETAIL_STYLES.tagItem}>
+								<button
+									key={bait.id}
+									type="button"
+									onClick={() => onClickBaitDetail?.(bait)}
+									className={`${DETAIL_STYLES.tagItem} hover:border-cyan-500 hover:text-cyan-300 transition-colors cursor-pointer`}
+								>
 									{bait.ja}
-								</span>
+								</button>
 							))}
 						</div>
 					) : (
@@ -206,7 +221,7 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 					)}
 				</div>
 
-				{/* 釣竿ごとの反応・相性一覧（全種類の竿を列挙） */}
+				{/* 釣竿ごとの反応・相性一覧 */}
 				<div>
 					<h3 className={DETAIL_STYLES.sectionTitle}>
 						釣竿との相性・反応 (全 {RODS.length} 種類)

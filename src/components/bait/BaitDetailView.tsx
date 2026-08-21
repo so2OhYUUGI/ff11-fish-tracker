@@ -72,7 +72,7 @@ export const BaitDetailView: React.FC<BaitDetailViewProps> = ({
 						className={DETAIL_STYLES.backButton}
 					>
 						<ArrowLeft className="w-4 h-4" />
-						<span>一覧へ戻る</span>
+						<span>戻る</span>
 					</button>
 					<div>
 						<h2 className={DETAIL_STYLES.titleJa}>{bait.ja}</h2>
