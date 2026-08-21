@@ -16,7 +16,6 @@ import { FishListItem } from '@/components/fish/FishListItem';
 import { FishDetailView } from '@/components/fish/FishDetailView';
 import { AreaDetailView } from '@/components/area/AreaDetailView';
 import { BaitDetailView } from '@/components/bait/BaitDetailView';
-import { BAITS, ZONES } from '@/data';
 import type { FishMaster, ViewMode, ZoneMaster } from '@/types/fish';
 import type { useNavigationStack } from '@/hooks/useNavigationStack';
 
