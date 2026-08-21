@@ -12,12 +12,25 @@
  * ============================================================================
  */
 
-import React, { useState } from 'react';
-import type { ZoneMaster, RegionMaster, FishBaitRelation, FishRodRelation } from '@/types/fish';
+import React, { useState, useEffect } from 'react';
+import type {
+	FishMaster,
+	ZoneMaster,
+	RegionMaster,
+	FishBaitRelation,
+	FishRodRelation,
+	SizeType,
+	WaterType,
+} from '@/types/fish';
 import { BAITS } from '@/data/baits';
 import { RODS } from '@/data/rods';
 import { RelationEditor } from '../RelationEditor';
-import type { EditableFish, EntityItem } from '../types';
+import type { EntityItem } from '../types';
+
+// FishMaster をベースに、UI操作用の zoneIds を許容する型定義
+export type EditableFish = FishMaster & {
+	zoneIds?: number[];
+};
 
 type Props = {
 	fishList?: EditableFish[];
@@ -30,15 +43,15 @@ type Props = {
 	onRodRelationChange?: (updatedRelations: FishRodRelation[]) => void;
 };
 
-// サイズ区分の定義
-const SIZE_OPTIONS: { value: NonNullable<EditableFish['sizeType']>; label: string }[] = [
+// サイズ区分の定義 (SizeType 準拠)
+const SIZE_OPTIONS: { value: SizeType; label: string }[] = [
 	{ value: 'large', label: '大型魚' },
 	{ value: 'small', label: '小型魚' },
 	{ value: 'unknown', label: '不明' },
 ];
 
-// 水質区分の定義
-const WATER_OPTIONS: { value: NonNullable<EditableFish['waterType']>; label: string }[] = [
+// 水質区分の定義 (WaterType 準拠)
+const WATER_OPTIONS: { value: WaterType; label: string }[] = [
 	{ value: 'freshwater', label: '淡水' },
 	{ value: 'saltwater', label: '海水' },
 	{ value: 'gedou', label: '外道' },
@@ -58,6 +71,16 @@ export const FishEditTab: React.FC<Props> = ({
 	const [selectedFish, setSelectedFish] = useState<EditableFish | null>(null);
 	const [searchQuery, setSearchQuery] = useState<string>('');
 
+	// 親から渡される fishList の変更時に selectedFish を同期
+	useEffect(() => {
+		if (selectedFish) {
+			const currentInList = fishList.find((f) => f.id === selectedFish.id);
+			if (currentInList) {
+				setSelectedFish(currentInList);
+			}
+		}
+	}, [fishList]);
+
 	// 検索条件による魚一覧の絞り込み
 	const filteredFishList = fishList.filter((fish) => {
 		if (!searchQuery.trim()) return true;
@@ -68,7 +91,7 @@ export const FishEditTab: React.FC<Props> = ({
 		return matchJa || matchEn || matchId;
 	});
 
-	const handleFieldChange = (field: keyof EditableFish, value: any) => {
+	const handleFieldChange = <K extends keyof EditableFish>(field: K, value: EditableFish[K]) => {
 		if (!selectedFish) return;
 		const updated = { ...selectedFish, [field]: value };
 		setSelectedFish(updated);
@@ -132,14 +155,18 @@ export const FishEditTab: React.FC<Props> = ({
 		const catchabilityOrder: NonNullable<FishRodRelation['catchability']>[] = ['unknown', 'possible', 'impossible'];
 		const breakOrder: NonNullable<FishRodRelation['rodBreak']>[] = ['unknown', 'no', 'yes'];
 
-		let nextValue: string;
+		let nextValue: any;
 		if (field === 'catchability') {
 			const currentValue = existingRel?.catchability || 'unknown';
-			const nextIdx = (catchabilityOrder.indexOf(currentValue) + 1) % catchabilityOrder.length;
+			const currentIdx = catchabilityOrder.indexOf(currentValue);
+			const safeIdx = currentIdx >= 0 ? currentIdx : 0;
+			const nextIdx = (safeIdx + 1) % catchabilityOrder.length;
 			nextValue = catchabilityOrder[nextIdx];
 		} else {
 			const currentValue = existingRel?.[field] || 'unknown';
-			const nextIdx = (breakOrder.indexOf(currentValue) + 1) % breakOrder.length;
+			const currentIdx = breakOrder.indexOf(currentValue);
+			const safeIdx = currentIdx >= 0 ? currentIdx : 0;
+			const nextIdx = (safeIdx + 1) % breakOrder.length;
 			nextValue = breakOrder[nextIdx];
 		}
 

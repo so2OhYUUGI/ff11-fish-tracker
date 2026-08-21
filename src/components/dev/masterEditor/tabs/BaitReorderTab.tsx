@@ -11,12 +11,12 @@ import type { DropResult } from '@hello-pangea/dnd';
 import type { BaitMaster } from '@/types/fish';
 
 interface BaitReorderTabProps {
-	baitList: BaitMaster[];
+	baitList?: BaitMaster[];
 	onBaitListChange: (newList: BaitMaster[]) => void;
 }
 
 export const BaitReorderTab: React.FC<BaitReorderTabProps> = ({
-	baitList,
+	baitList = [],
 	onBaitListChange,
 }) => {
 	const handleOnDragEnd = (result: DropResult) => {
@@ -48,6 +48,7 @@ export const BaitReorderTab: React.FC<BaitReorderTabProps> = ({
 											{...provided.draggableProps}
 											{...provided.dragHandleProps}
 											style={{
+												...provided.draggableProps.style,
 												padding: '10px 14px',
 												backgroundColor: snapshot.isDragging ? '#e2e8f0' : '#ffffff',
 												border: '1px solid #cbd5e0',
@@ -58,7 +59,6 @@ export const BaitReorderTab: React.FC<BaitReorderTabProps> = ({
 												cursor: 'grab',
 												userSelect: 'none',
 												boxShadow: snapshot.isDragging ? '0 4px 8px rgba(0,0,0,0.1)' : 'none',
-												...provided.draggableProps.style,
 											}}
 										>
 											<div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>

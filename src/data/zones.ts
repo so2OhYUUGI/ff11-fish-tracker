@@ -1625,7 +1625,7 @@ export const ZONES: ZoneMaster[] = [
   },
   {
     "id": 276,
-    "ja": "ラ・カザナル宮内郭",
+    "ja": "ラ・カザ��ル宮��郭",
     "en": "Ra'Kaznar Inner Court",
     "regionId": 52
   },

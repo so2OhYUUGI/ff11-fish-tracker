@@ -5,21 +5,32 @@
  * ============================================================================
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { ZoneMaster, RegionMaster } from '@/types/fish';
 import { RelationEditor } from '../RelationEditor';
 import type { EntityItem } from '../types';
 
 type Props = {
-	zoneList: ZoneMaster[];
-	regionList: RegionMaster[];
+	zoneList?: ZoneMaster[];
+	regionList?: RegionMaster[];
 	onZoneChange: (updatedZone: ZoneMaster) => void;
 };
 
-export const ZoneEditTab: React.FC<Props> = ({ zoneList, regionList, onZoneChange }) => {
+export const ZoneEditTab: React.FC<Props> = ({
+	zoneList = [],
+	regionList = [],
+	onZoneChange,
+}) => {
 	const [selectedRegionId, setSelectedRegionId] = useState<number | string | null>(
 		regionList[0]?.id ?? null
 	);
+
+	// regionList の更新時に選択 ID を補正
+	useEffect(() => {
+		if (selectedRegionId === null && regionList.length > 0) {
+			setSelectedRegionId(regionList[0].id);
+		}
+	}, [regionList, selectedRegionId]);
 
 	const selectedRegion = regionList.find((r) => r.id === selectedRegionId);
 
@@ -61,7 +72,7 @@ export const ZoneEditTab: React.FC<Props> = ({ zoneList, regionList, onZoneChang
 	});
 
 	return (
-		<>
+		<div style={{ display: 'flex', gap: '15px', height: '100%', width: '100%' }}>
 			{/* 左パネル: リージョン選択リスト */}
 			<div
 				style={{
@@ -91,6 +102,7 @@ export const ZoneEditTab: React.FC<Props> = ({ zoneList, regionList, onZoneChang
 								borderBottom: '1px solid #eee',
 								display: 'flex',
 								alignItems: 'center',
+								justifyContent: 'space-between',
 							}}
 						>
 							<span>[{region.id}] {region.ja}</span>
@@ -131,6 +143,6 @@ export const ZoneEditTab: React.FC<Props> = ({ zoneList, regionList, onZoneChang
 					<p style={{ color: '#666', margin: 0 }}>左側のリストからリージョンを選択してください。</p>
 				)}
 			</div>
-		</>
+		</div>
 	);
 };
