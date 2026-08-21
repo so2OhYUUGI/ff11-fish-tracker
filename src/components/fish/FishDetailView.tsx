@@ -135,12 +135,12 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 						{isChecked ? (
 							<>
 								<CheckSquare className="w-4 h-4 text-emerald-400 shrink-0" />
-								<span className="hidden sm:inline">釣獲済み</span>
+								<span className="hidden sm:inline">達成済</span>
 							</>
 						) : (
 							<>
 								<Square className="w-4 h-4 text-slate-400 shrink-0" />
-								<span className="hidden sm:inline">未釣獲</span>
+								<span className="hidden sm:inline">未達成</span>
 							</>
 						)}
 					</button>
