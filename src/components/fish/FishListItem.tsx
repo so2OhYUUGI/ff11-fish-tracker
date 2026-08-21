@@ -6,6 +6,7 @@
  * [概要]
  * - 魚の基本情報（和名、英名）のリスト形式（高密度レイアウト）表示
  * - 魚名称の日本語・英語表記を縦並び（カッコ外し）へ統一
+ * - FISH_LOCATIONS から生息エリア数を算出し、英語名横にバッジ表示
  * - サイズ（大型/小型/不明）および水質（淡水/海水/外道/不明）のバッジ表示
  * - 獲得/達成状態（チェック状態）のチェックボックス描画およびトグル操作
  * - チェック済・選択中（アクティブ）・デフォルト状態に応じた行全体のスタイリング切り替え
@@ -17,9 +18,10 @@
  */
 
 import React from 'react';
+import { Check, MapPin } from 'lucide-react';
 import type { FishMaster, ZoneMaster, SizeType, WaterType } from '@/types/fish';
+import { FISH_LOCATIONS } from '@/data';
 import { LIST_STYLES } from '@/styles/listStyles';
-import { Check } from 'lucide-react';
 
 type Props = {
 	fish: FishMaster;
@@ -47,11 +49,22 @@ const WATER_CONFIG: Record<WaterType, { label: string; style: string }> = {
 
 export const FishListItem: React.FC<Props> = ({
 	fish,
+	zones = [],
 	isChecked,
 	isSelected,
 	onToggleCheck,
 	onClickDetail,
 }) => {
+	// FishCard と同じロジックで生息エリア数を算出
+	const targetZoneIds = FISH_LOCATIONS
+		.filter((loc) => loc.fishId === fish.id)
+		.map((loc) => loc.zoneId);
+
+	// propsのzonesがある場合はIDの一致を確認、ない場合は抽出結果の長さをそのまま採用
+	const totalZones = zones.length > 0
+		? zones.filter((zone) => targetZoneIds.includes(zone.id)).length
+		: targetZoneIds.length;
+
 	// スタイルの判定を分離・整理
 	const containerStyle = isSelected
 		? `${LIST_STYLES.selected} ${isChecked ? 'opacity-90' : ''}`
@@ -81,7 +94,7 @@ export const FishListItem: React.FC<Props> = ({
 					{isChecked && <Check className="w-4 h-4 stroke-[3]" />}
 				</button>
 
-				{/* 魚名表示領域：縦並び（改行）へ改修 */}
+				{/* 魚名表示領域：縦並び ＋ 英語名横にエリア数バッジ */}
 				<div className="flex flex-col min-w-0 flex-1">
 					<span
 						className={`truncate ${LIST_STYLES.titleJa} ${isSelected
@@ -93,9 +106,23 @@ export const FishListItem: React.FC<Props> = ({
 					>
 						{fish.ja}
 					</span>
-					<span className="truncate text-xs text-slate-400 font-mono font-normal">
-						{fish.en}
-					</span>
+					<div className="flex items-center gap-2 min-w-0">
+						<span className="truncate text-xs text-slate-400 font-mono font-normal">
+							{fish.en}
+						</span>
+						{totalZones > 0 && (
+							<span
+								className={`inline-flex items-center gap-0.5 px-1 py-0.2 rounded text-[10px] font-medium border shrink-0 ${totalZones === 1
+										? 'bg-amber-950/50 text-amber-300 border-amber-800/40' // 1箇所固有種のアクセントカラー
+										: 'bg-slate-800/80 text-slate-300 border-slate-700/60'
+									}`}
+								title={`生息エリア: ${totalZones}箇所`}
+							>
+								<MapPin className="w-2.5 h-2.5 opacity-70" />
+								{totalZones}
+							</span>
+						)}
+					</div>
 				</div>
 			</div>
 
