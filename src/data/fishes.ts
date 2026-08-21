@@ -20,7 +20,7 @@ export const FISHES: FishMaster[] = [
     "description": "緑藻が集まって作り出した球体。\\n発光する種は、エジワ蘿洞にのみ生息する。",
     "maxSkill": 3,
     "sizeType": "small",
-    "waterType": "unknown",
+    "waterType": "freshwater",
     "harakiri": false,
     "ebisu": false,
     "taikobou": false
@@ -32,7 +32,7 @@ export const FISHES: FishMaster[] = [
     "description": "ファノエ運河にのみ生息する緑色のイモリ。\\n",
     "maxSkill": 4,
     "sizeType": "small",
-    "waterType": "unknown",
+    "waterType": "freshwater",
     "harakiri": false,
     "ebisu": false,
     "taikobou": false
@@ -539,7 +539,7 @@ export const FISHES: FishMaster[] = [
     "description": "ファノエ運河の近辺に生息する淡水魚。\\n地上でも呼吸ができる。",
     "maxSkill": 32,
     "sizeType": "small",
-    "waterType": "unknown",
+    "waterType": "freshwater",
     "harakiri": false,
     "ebisu": false,
     "taikobou": false
@@ -563,7 +563,7 @@ export const FISHES: FishMaster[] = [
     "description": "ヴァナ・ディール全土の湖沼に生息する淡水魚。\\n",
     "maxSkill": 33,
     "sizeType": "small",
-    "waterType": "unknown",
+    "waterType": "freshwater",
     "harakiri": false,
     "ebisu": false,
     "taikobou": false
