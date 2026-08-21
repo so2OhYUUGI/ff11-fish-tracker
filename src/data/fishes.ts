@@ -237,7 +237,7 @@ export const FISHES: FishMaster[] = [
     "description": "ファノエ運河に生息する小さなイモリ。\\n水中に入ると、大きなエラが飛び出す。",
     "maxSkill": 18,
     "sizeType": "small",
-    "waterType": "unknown",
+    "waterType": "freshwater",
     "harakiri": false,
     "ebisu": false,
     "taikobou": false
@@ -309,7 +309,7 @@ export const FISHES: FishMaster[] = [
     "description": "醴泉島の水辺に生息する両生類。\\n",
     "maxSkill": 20,
     "sizeType": "small",
-    "waterType": "unknown",
+    "waterType": "freshwater",
     "harakiri": false,
     "ebisu": false,
     "taikobou": false
@@ -321,7 +321,7 @@ export const FISHES: FishMaster[] = [
     "description": "シュヴァル川流域に生息する淡水魚。\\n",
     "maxSkill": 21,
     "sizeType": "small",
-    "waterType": "unknown",
+    "waterType": "freshwater",
     "harakiri": false,
     "ebisu": false,
     "taikobou": false,
@@ -346,7 +346,7 @@ export const FISHES: FishMaster[] = [
     "description": "ヨルシア森林に生息する淡水魚。\\nナイフのような姿をしている。",
     "maxSkill": 22,
     "sizeType": "small",
-    "waterType": "unknown",
+    "waterType": "freshwater",
     "harakiri": false,
     "ebisu": false,
     "taikobou": false
@@ -406,7 +406,7 @@ export const FISHES: FishMaster[] = [
     "description": "クォン大陸の河川に生息する淡水魚。\\nウィンダスでは観賞用として珍重される。",
     "maxSkill": 27,
     "sizeType": "small",
-    "waterType": "unknown",
+    "waterType": "freshwater",
     "harakiri": false,
     "ebisu": false,
     "taikobou": false

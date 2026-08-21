@@ -7,6 +7,7 @@
  * - 魚の基本情報（和名、英名、説明文、スキル上限、サイズ区分、水質区分、属性バッジ）のカード形式表示
  * - 獲得/達成状態（チェック状態）のインジケーター描画およびトグル操作
  * - 生息エリア（FISH_LOCATIONS参照）・備考情報の表示領域保持
+ * - 魚名称の日本語と英語を明示的に改行して視認性と統一感を確保
  * ============================================================================
  */
 
@@ -80,14 +81,17 @@ export const FishCard: React.FC<FishCardProps> = ({
 		>
 			<div className="flex items-start justify-between gap-3">
 				<div className="flex-1 min-w-0">
-					<div className="flex items-center gap-2 flex-wrap">
+					{/* 日本語名と英語名を明確に縦並び（改行）へ変更 */}
+					<div className="flex flex-col min-w-0">
 						<h3
-							className={`${CARD_STYLES.titleJa} ${isSelected ? 'text-cyan-300' : CARD_STYLES.titleJaDefault
+							className={`truncate ${CARD_STYLES.titleJa} ${isSelected ? 'text-cyan-300' : CARD_STYLES.titleJaDefault
 								}`}
 						>
 							{fish.ja}
 						</h3>
-						<span className={CARD_STYLES.titleEn}>({fish.en})</span>
+						<span className={`truncate text-xs text-slate-400 font-normal mt-0.5 ${CARD_STYLES.titleEn}`}>
+							{fish.en}
+						</span>
 					</div>
 
 					{fish.description && (
@@ -178,8 +182,8 @@ export const FishCard: React.FC<FishCardProps> = ({
 							onToggleCheck(fish.id);
 						}}
 						className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${isChecked
-								? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/50'
-								: 'bg-slate-700 text-slate-500 border border-slate-600 hover:border-slate-400'
+							? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/50'
+							: 'bg-slate-700 text-slate-500 border border-slate-600 hover:border-slate-400'
 							}`}
 					>
 						<Check

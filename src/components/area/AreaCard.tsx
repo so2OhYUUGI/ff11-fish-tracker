@@ -5,6 +5,7 @@
  * 
  * [概要]
  * - エリアの基本情報（和名、英名、説明文など）をカード形式で表示
+ * - エリア名称の日本語と英語を明示的に改行して視認性と統一感を確保
  * - 該当エリアで釣れる魚の抽出および上限数制限付きタグ表示（上位表示＋残り件数バッジ）
  * - 選択中（アクティブ）状態に応じたスタイリング切り替え
  * 
@@ -55,14 +56,17 @@ export const AreaCard: React.FC<Props> = ({
 				} cursor-pointer p-4 flex flex-col justify-between`}
 		>
 			<div>
-				<div className="flex items-center justify-between gap-2 mb-2">
+				{/* 日本語名と英語名を明確に縦並び（改行）へ変更 */}
+				<div className="flex flex-col min-w-0 mb-2">
 					<h3
-						className={`${CARD_STYLES.titleJa} ${isSelected ? 'text-cyan-300' : CARD_STYLES.titleJaDefault
+						className={`truncate ${CARD_STYLES.titleJa} ${isSelected ? 'text-cyan-300' : CARD_STYLES.titleJaDefault
 							}`}
 					>
 						{area.ja}
 					</h3>
-					<span className="text-xs text-slate-400 font-mono">({area.en})</span>
+					<span className="truncate text-xs text-slate-400 font-mono font-normal mt-0.5">
+						{area.en}
+					</span>
 				</div>
 
 				{area.description && (
