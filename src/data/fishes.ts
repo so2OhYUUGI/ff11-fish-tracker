@@ -68,7 +68,7 @@ export const FISHES: FishMaster[] = [
     "description": "ヴァナ・ディール全土に生息する甲殻類。\\n",
     "maxSkill": 7,
     "sizeType": "small",
-    "waterType": "saltwater",
+    "waterType": "freshwater",
     "harakiri": false,
     "ebisu": false,
     "taikobou": false
