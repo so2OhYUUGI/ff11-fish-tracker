@@ -8,6 +8,7 @@
  * - 中間データ（`FishBaitRelation`, `FishRodRelation`）を介してリレーション編集を制御
  * - 限界スキルレベル (maxSkill) の数値入力領域に対応
  * - サイズ区分 (sizeType)、水質区分 (waterType) のセグメントコントロール（小型・等幅トグルボタン）編集に対応
+ * - 左パネルの魚一覧に検索フィルター窓を追加（日本語・英語・ID検索対応）
  * ============================================================================
  */
 
@@ -55,6 +56,17 @@ export const FishEditTab: React.FC<Props> = ({
 	onRodRelationChange,
 }) => {
 	const [selectedFish, setSelectedFish] = useState<EditableFish | null>(null);
+	const [searchQuery, setSearchQuery] = useState<string>('');
+
+	// 検索条件による魚一覧の絞り込み
+	const filteredFishList = fishList.filter((fish) => {
+		if (!searchQuery.trim()) return true;
+		const query = searchQuery.toLowerCase().trim();
+		const matchJa = fish.ja ? fish.ja.toLowerCase().includes(query) : false;
+		const matchEn = fish.en ? fish.en.toLowerCase().includes(query) : false;
+		const matchId = fish.id ? String(fish.id).includes(query) : false;
+		return matchJa || matchEn || matchId;
+	});
 
 	const handleFieldChange = (field: keyof EditableFish, value: any) => {
 		if (!selectedFish) return;
@@ -279,46 +291,73 @@ export const FishEditTab: React.FC<Props> = ({
 			<div
 				style={{
 					width: '260px',
-					overflowY: 'auto',
+					display: 'flex',
+					flexDirection: 'column',
 					border: '1px solid #ccc',
 					background: '#fff',
 					flexShrink: 0,
 				}}
 			>
-				{(fishList || []).map((fish) => {
-					const zoneCount = fish.zoneIds?.length || 0;
+				{/* 検索窓ヘッダー */}
+				<div style={{ padding: '8px', borderBottom: '1px solid #ccc', backgroundColor: '#f7fafc' }}>
+					<input
+						type="text"
+						value={searchQuery}
+						onChange={(e) => setSearchQuery(e.target.value)}
+						placeholder="名前 / ID で検索..."
+						style={{
+							width: '100%',
+							padding: '5px 8px',
+							fontSize: '12px',
+							border: '1px solid #cbd5e0',
+							borderRadius: '4px',
+							boxSizing: 'border-box',
+						}}
+					/>
+				</div>
 
-					return (
-						<div
-							key={fish.id}
-							onClick={() => setSelectedFish(fish)}
-							style={{
-								padding: '8px',
-								cursor: 'pointer',
-								fontSize: '13px',
-								backgroundColor: selectedFish?.id === fish.id ? '#e2e8f0' : 'transparent',
-								borderBottom: '1px solid #eee',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'space-between',
-							}}
-						>
-							<span>[{fish.id}] {fish.ja}</span>
-							<span
+				{/* 魚リスト表示エリア */}
+				<div style={{ flex: 1, overflowY: 'auto' }}>
+					{filteredFishList.map((fish) => {
+						const zoneCount = fish.zoneIds?.length || 0;
+
+						return (
+							<div
+								key={fish.id}
+								onClick={() => setSelectedFish(fish)}
 								style={{
-									fontSize: '11px',
-									color: zoneCount > 0 ? '#2b6cb0' : '#a0aec0',
-									fontWeight: zoneCount > 0 ? 'bold' : 'normal',
-									backgroundColor: zoneCount > 0 ? '#ebf8ff' : '#edf2f7',
-									padding: '2px 6px',
-									borderRadius: '10px',
+									padding: '8px',
+									cursor: 'pointer',
+									fontSize: '13px',
+									backgroundColor: selectedFish?.id === fish.id ? '#e2e8f0' : 'transparent',
+									borderBottom: '1px solid #eee',
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'space-between',
 								}}
 							>
-								{zoneCount}件
-							</span>
+								<span>[{fish.id}] {fish.ja}</span>
+								<span
+									style={{
+										fontSize: '11px',
+										color: zoneCount > 0 ? '#2b6cb0' : '#a0aec0',
+										fontWeight: zoneCount > 0 ? 'bold' : 'normal',
+										backgroundColor: zoneCount > 0 ? '#ebf8ff' : '#edf2f7',
+										padding: '2px 6px',
+										borderRadius: '10px',
+									}}
+								>
+									{zoneCount}件
+								</span>
+							</div>
+						);
+					})}
+					{filteredFishList.length === 0 && (
+						<div style={{ padding: '12px', fontSize: '12px', color: '#a0aec0', textAlign: 'center' }}>
+							該当する魚が見つかりません
 						</div>
-					);
-				})}
+					)}
+				</div>
 			</div>
 
 			{/* 右パネル: 選択中の魚の編集フォーム */}
