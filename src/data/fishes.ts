@@ -611,7 +611,7 @@ export const FISHES: FishMaster[] = [
     "description": "クォン大陸北部の清流に生息する淡水魚。\\n",
     "maxSkill": 37,
     "sizeType": "small",
-    "waterType": "unknown",
+    "waterType": "freshwater",
     "harakiri": false,
     "ebisu": false,
     "taikobou": false
@@ -623,7 +623,7 @@ export const FISHES: FishMaster[] = [
     "description": "近東の清流に生息する淡水魚。\\n",
     "maxSkill": 37,
     "sizeType": "small",
-    "waterType": "unknown",
+    "waterType": "freshwater",
     "harakiri": false,
     "ebisu": false,
     "taikobou": false
