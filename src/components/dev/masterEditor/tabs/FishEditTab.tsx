@@ -215,28 +215,20 @@ export const FishEditTab: React.FC<Props> = ({
 		onRodRelationChange(updatedRelations);
 	};
 
-	// ゾーンエンティティの生成
-	const zoneEntityItems: EntityItem[] = [];
-	(regionList || []).forEach((region) => {
-		const belongingZones = (zoneList || []).filter((z) => z.regionId === region.id);
-		belongingZones.forEach((z) => {
-			zoneEntityItems.push({
-				id: z.id,
-				label: z.ja,
-				subLabel: `[${region.ja}] ${z.en}`,
-			});
-		});
-	});
+	// ゾーンエンティティの生成（一元化処理と型安全性を確保）
+	const regionMap = new Map((regionList || []).map((r) => [r.id, r.ja]));
 
-	(zoneList || [])
-		.filter((z) => !z.regionId || !(regionList || []).some((r) => r.id === z.regionId))
-		.forEach((z) => {
-			zoneEntityItems.push({
-				id: z.id,
-				label: z.ja,
-				subLabel: `[その他] ${z.en}`,
-			});
-		});
+	const zoneEntityItems: EntityItem[] = (zoneList || []).map((z) => {
+		const regionName = z.regionId !== undefined && z.regionId !== null && regionMap.has(z.regionId)
+			? regionMap.get(z.regionId)
+			: 'その他';
+
+		return {
+			id: z.id,
+			label: z.ja,
+			subLabel: `[${regionName}] ${z.en}`,
+		};
+	});
 
 	// BAITS生データをエンティティ化
 	const baitEntityItems: EntityItem[] = BAITS.map((b) => ({

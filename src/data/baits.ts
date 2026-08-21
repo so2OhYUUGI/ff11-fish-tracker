@@ -113,13 +113,13 @@ export const BAITS: BaitMaster[] = [
     "id": 17006,
     "ja": "ドリルカラマリ",
     "en": "Drill Calamary",
-    "description": "尖がった�����が特徴的な小型の頭足類。\\n釣り餌。"
+    "description": "尖がった殻が特徴的な小型の頭足類。\n釣り餌。"
   },
   {
     "id": 17407,
     "ja": "ミノー",
     "en": "Minnow",
-    "description": "泳���小魚を����������た擬餌。\\n"
+    "description": "泳ぐ小魚を模した擬餌。\n"
   },
   {
     "id": 17400,
@@ -131,7 +131,7 @@ export const BAITS: BaitMaster[] = [
     "id": 17402,
     "ja": "シュリンプルアー",
     "en": "Shrimp Lure",
-    "description": "エビを模した���餌。\\n"
+    "description": "エビを模した擬餌。\n"
   },
   {
     "id": 17403,

@@ -1665,7 +1665,7 @@ export const ZONES: ZoneMaster[] = [
   },
   {
     "id": 283,
-    "ja": "シルバー・ナイフ",
+    "ja": "��ル��ー・ナイフ",
     "en": "Silver Knife",
     "regionId": 50
   },
@@ -1682,13 +1682,13 @@ export const ZONES: ZoneMaster[] = [
   },
   {
     "id": 287,
-    "ja": "アブダルスの模��-レギオンB",
+    "ja": "アブダルスの模型-レギオンB",
     "en": "Maquette Abdhaljs-LegionB",
     "regionId": 48
   },
   {
     "id": 288,
-    "ja": "���スカ-ジ・タ",
+    "ja": "エスカ-ジ・タ",
     "en": "Escha - Zi'Tah",
     "regionId": 53
   },
