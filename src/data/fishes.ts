@@ -780,7 +780,7 @@ export const FISHES: FishMaster[] = [
     "description": "近東の河川に生息する淡水魚。\\n",
     "maxSkill": 47,
     "sizeType": "small",
-    "waterType": "unknown",
+    "waterType": "freshwater",
     "harakiri": false,
     "ebisu": false,
     "taikobou": false
@@ -816,7 +816,7 @@ export const FISHES: FishMaster[] = [
     "description": "フォルガンディの氷の下に生息する淡水魚。\\n",
     "maxSkill": 49,
     "sizeType": "small",
-    "waterType": "unknown",
+    "waterType": "freshwater",
     "harakiri": false,
     "ebisu": false,
     "taikobou": false
@@ -828,7 +828,7 @@ export const FISHES: FishMaster[] = [
     "description": "ウルブカ大陸の氷河湖に生息する淡水魚。 \\n",
     "maxSkill": 49,
     "sizeType": "small",
-    "waterType": "unknown",
+    "waterType": "freshwater",
     "harakiri": false,
     "ebisu": false,
     "taikobou": false
@@ -840,7 +840,7 @@ export const FISHES: FishMaster[] = [
     "description": "アルテパ砂漠の地底に生息する淡水魚。\\n",
     "maxSkill": 50,
     "sizeType": "small",
-    "waterType": "unknown",
+    "waterType": "freshwater",
     "harakiri": false,
     "ebisu": false,
     "taikobou": false
@@ -864,7 +864,7 @@ export const FISHES: FishMaster[] = [
     "description": "エスカの影響を受けた淡水魚。",
     "maxSkill": 50,
     "sizeType": "small",
-    "waterType": "unknown",
+    "waterType": "freshwater",
     "harakiri": false,
     "ebisu": false,
     "taikobou": false,
@@ -877,7 +877,7 @@ export const FISHES: FishMaster[] = [
     "description": "エスカの影響を受けた甲殻類。\\n",
     "maxSkill": 50,
     "sizeType": "small",
-    "waterType": "saltwater",
+    "waterType": "freshwater",
     "harakiri": false,
     "ebisu": false,
     "taikobou": false,
@@ -903,7 +903,7 @@ export const FISHES: FishMaster[] = [
     "description": "汽水域にも生息する鱗の美しい淡水魚。\\nアドゥリンでは観賞用として珍重される。",
     "maxSkill": 52,
     "sizeType": "small",
-    "waterType": "unknown",
+    "waterType": "freshwater",
     "harakiri": false,
     "ebisu": false,
     "taikobou": false
@@ -915,7 +915,7 @@ export const FISHES: FishMaster[] = [
     "description": "クォン大陸の湖沼に生息する獰猛なカメ。\\n",
     "maxSkill": 53,
     "sizeType": "small",
-    "waterType": "unknown",
+    "waterType": "freshwater",
     "harakiri": false,
     "ebisu": false,
     "taikobou": false
@@ -963,7 +963,7 @@ export const FISHES: FishMaster[] = [
     "description": "近東の湖沼に生息する鈍重なカメ。\\n",
     "maxSkill": 53,
     "sizeType": "small",
-    "waterType": "unknown",
+    "waterType": "freshwater",
     "harakiri": false,
     "ebisu": false,
     "taikobou": false
@@ -1015,7 +1015,7 @@ export const FISHES: FishMaster[] = [
     "harakiri": false,
     "ebisu": false,
     "taikobou": false,
-    "notes": "2015.11.10追加"
+    "notes": "2015.11.10追加\nE-10:最寄#1or2　橋下　ヴァナ時間6:00～11:00出現\nJ-7:最寄#6　渓流　ヴァナ時間16:00～21:00出現\nG-9:最寄#2　池　ヴァナ時間23:00～04:00出現"
   },
   {
     "id": 4427,
