@@ -5,6 +5,7 @@
  * 
  * [概要]
  * - 餌の基本情報（和名、英名、簡略説明文）のリスト形式（高密度レイアウト）表示
+ * - 餌名称（縦並び）と説明文（右側横並び）のレイアウト配置
  * - 選択中（アクティブ）状態に応じたスタイリング切り替え
  * 
  * [編集・改修時の注意事項]
@@ -13,6 +14,7 @@
  * ============================================================================
  */
 
+import React from 'react';
 import type { BaitMaster } from '@/types/fish';
 import { LIST_STYLES } from '@/styles/listStyles';
 
@@ -22,32 +24,37 @@ type Props = {
 	onClickDetail: (bait: BaitMaster) => void;
 };
 
-export const BaitListItem = ({ bait, isSelected, onClickDetail }: Props) => {
+export const BaitListItem: React.FC<Props> = ({
+	bait,
+	isSelected,
+	onClickDetail,
+}) => {
 	return (
 		<div
 			onClick={() => onClickDetail(bait)}
 			className={`${LIST_STYLES.base} ${isSelected ? LIST_STYLES.selected : LIST_STYLES.default
-				}`}
+				} flex items-center justify-between gap-4 cursor-pointer py-2 px-3`}
 		>
-			<div className="flex items-center gap-3 min-w-0 flex-1">
-				<div className="min-w-0 flex-1 sm:flex sm:items-center sm:gap-3">
-					<div className="flex items-center gap-2">
-						<span
-							className={`${LIST_STYLES.titleJa} ${isSelected ? 'text-cyan-300' : LIST_STYLES.titleJaDefault
-								}`}
-						>
-							{bait.ja}
-						</span>
-						<span className={LIST_STYLES.titleEn}>({bait.en})</span>
-					</div>
-				</div>
+			{/* 左側：名称表示領域（縦並び） */}
+			<div className="flex flex-col min-w-[140px] shrink-0">
+				<span
+					className={`truncate ${LIST_STYLES.titleJa} ${isSelected ? 'text-cyan-300' : LIST_STYLES.titleJaDefault
+						}`}
+				>
+					{bait.ja}
+				</span>
+				<span className="truncate text-xs text-slate-400 font-mono font-normal">
+					{bait.en}
+				</span>
 			</div>
 
-			{bait.description && (
-				<div className={LIST_STYLES.subText}>{
-					bait.description.split('\\n').map((line) => (
-						line
-					))}</div>
+			{/* 右側：簡略説明文（横並び・右寄せ） */}
+			{bait.description ? (
+				<div className={`${LIST_STYLES.subText} truncate text-right flex-1 min-w-0`}>
+					{bait.description.replace(/\\n/g, ' ')}
+				</div>
+			) : (
+				<div className="flex-1" />
 			)}
 		</div>
 	);

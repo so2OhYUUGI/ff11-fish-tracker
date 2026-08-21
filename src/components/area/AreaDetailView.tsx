@@ -7,12 +7,13 @@
  * - ヘッダー（エリア名）を固定し、コンテンツ部分全体を独立スクロール表示
  * - `regionList` から `area.regionId` に一致するリージョン情報を参照して描画
  * - 中間データ `FISH_LOCATIONS` を参照し、当該エリア（`area.id`）で釣れる魚を抽出・一覧表示
+ * - 生息魚一覧をバッジ形式から属性情報付きのリスト形式へ変更し、視認性と比較の容易性を向上
  * ============================================================================
  */
 
 import React from 'react';
-import { ArrowLeft, MapPin, X } from 'lucide-react';
-import type { ZoneMaster, FishMaster, RegionMaster } from '@/types/fish';
+import { ArrowLeft, MapPin, X, Fish } from 'lucide-react';
+import type { ZoneMaster, FishMaster, RegionMaster, SizeType, WaterType } from '@/types/fish';
 import { FISH_LOCATIONS } from '@/data';
 import { DETAIL_STYLES } from '@/styles/detailStyles';
 
@@ -21,6 +22,22 @@ type Props = {
 	allFishes: FishMaster[];
 	regionList: RegionMaster[];
 	onClose: () => void;
+	onClickFishDetail?: (fish: FishMaster) => void; // オプション: 魚詳細への動線用
+};
+
+// サイズ表記のラベルとスタイルマッピング
+const SIZE_CONFIG: Record<SizeType, { label: string; style: string }> = {
+	small: { label: '小型', style: 'bg-emerald-950/60 text-emerald-300 border-emerald-800/50' },
+	large: { label: '大型', style: 'bg-amber-950/60 text-amber-300 border-amber-800/50' },
+	unknown: { label: '不明', style: 'bg-slate-800/60 text-slate-400 border-slate-700/50' },
+};
+
+// 水質表記のラベルとスタイルマッピング
+const WATER_CONFIG: Record<WaterType, { label: string; style: string }> = {
+	freshwater: { label: '淡水', style: 'bg-teal-950/60 text-teal-300 border-teal-800/50' },
+	saltwater: { label: '海水', style: 'bg-blue-950/60 text-blue-300 border-blue-800/50' },
+	gedou: { label: '外道', style: 'bg-purple-950/60 text-purple-300 border-purple-800/50' },
+	unknown: { label: '不明', style: 'bg-slate-800/60 text-slate-400 border-slate-700/50' },
 };
 
 export const AreaDetailView: React.FC<Props> = ({
@@ -28,6 +45,7 @@ export const AreaDetailView: React.FC<Props> = ({
 	allFishes,
 	regionList,
 	onClose,
+	onClickFishDetail,
 }) => {
 	// FISH_LOCATIONS から当該エリア (area.id) に該当する fishId の配列を取得
 	const targetFishIds = FISH_LOCATIONS
@@ -101,26 +119,56 @@ export const AreaDetailView: React.FC<Props> = ({
 					</div>
 				)}
 
-				{/* 釣れる魚一覧 */}
+				{/* 釣れる魚一覧（リスト形式へ変更） */}
 				<div>
-					<h3 className={DETAIL_STYLES.sectionTitle}>
-						生息する魚 ({catchableFishes.length} 種)
+					<h3 className={`${DETAIL_STYLES.sectionTitle} mb-3 flex items-center gap-2`}>
+						<Fish className="w-4 h-4 text-cyan-400" />
+						<span>生息する魚 ({catchableFishes.length} 種)</span>
 					</h3>
+
 					{catchableFishes.length > 0 ? (
-						<div className={DETAIL_STYLES.tagList}>
-							{catchableFishes.map((fish) => (
-								<span key={fish.id} className={DETAIL_STYLES.tagItem}>
-									{fish.ja}
-									<span className="text-slate-500 text-[10px] ml-1">
-										({fish.en})
-									</span>
-									{fish.maxSkill > 0 && (
-										<span className="text-cyan-400/80 text-[10px] ml-1.5 font-mono">
-											[上限:{fish.maxSkill}]
-										</span>
-									)}
-								</span>
-							))}
+						<div className="space-y-2">
+							{catchableFishes.map((fish) => {
+								const sizeInfo = SIZE_CONFIG[fish.sizeType] ?? SIZE_CONFIG.unknown;
+								const waterInfo = WATER_CONFIG[fish.waterType] ?? WATER_CONFIG.unknown;
+
+								return (
+									<div
+										key={fish.id}
+										onClick={() => onClickFishDetail?.(fish)}
+										className={`p-3 rounded-lg bg-slate-800/60 border border-slate-700/50 flex flex-wrap items-center justify-between gap-2 ${onClickFishDetail ? 'cursor-pointer hover:bg-slate-800 transition-colors' : ''
+											}`}
+									>
+										{/* 左側：魚名（日本語・英語） */}
+										<div className="flex flex-col min-w-[140px]">
+											<span className="text-sm font-bold text-slate-200">
+												{fish.ja}
+											</span>
+											<span className="text-xs text-slate-400 font-mono">
+												{fish.en}
+											</span>
+										</div>
+
+										{/* 右側：属性・上限スキルバッジ群 */}
+										<div className="flex items-center gap-1.5 flex-wrap shrink-0">
+											<span className="px-2 py-0.5 rounded text-xs font-mono bg-slate-900/80 text-cyan-300 border border-slate-700">
+												上限: {fish.maxSkill}
+											</span>
+											<span className={`px-1.5 py-0.5 rounded text-xs border ${sizeInfo.style}`}>
+												{sizeInfo.label}
+											</span>
+											<span className={`px-1.5 py-0.5 rounded text-xs border ${waterInfo.style}`}>
+												{waterInfo.label}
+											</span>
+											{fish.harakiri && (
+												<span className="px-1.5 py-0.5 rounded text-xs bg-red-950/60 text-red-300 border border-red-800/50">
+													ハラキリ
+												</span>
+											)}
+										</div>
+									</div>
+								);
+							})}
 						</div>
 					) : (
 						<p className={DETAIL_STYLES.emptyText}>このエリアで釣れる魚の情報はありません</p>
