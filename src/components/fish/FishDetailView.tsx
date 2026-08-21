@@ -6,6 +6,7 @@
  * [概要]
  * - ヘッダー（魚名・チェック状態）を固定し、コンテンツ部分全体を独立スクロール表示
  * - 基本情報（スキル上限、サイズ区分、水質区分、各種関連属性フラグ）のステータス表示
+ * - 魚マスタの補足メモ (fish.notes) および説明文 (fish.description) の描画に対応
  * - 生息エリアタグや餌タグクリックによる他詳細画面（`AreaDetailView` / `BaitDetailView`）への相互遷移サポート
  * ============================================================================
  */
@@ -188,6 +189,16 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 					</div>
 				</div>
 
+				{/* 補足・特記事項 (fish.notes) */}
+				{fish.notes && (
+					<div>
+						<h3 className={DETAIL_STYLES.sectionTitle}>補足・特記事項</h3>
+						<div className="p-3 bg-slate-800/60 border border-slate-700/80 rounded-lg text-xs text-slate-200 leading-relaxed whitespace-pre-wrap">
+							{fish.notes}
+						</div>
+					</div>
+				)}
+
 				{/* 生息エリア・釣り場 */}
 				<div>
 					<h3 className={DETAIL_STYLES.sectionTitle}>
@@ -304,15 +315,18 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 					</div>
 				</div>
 
-				{/* 説明・特記事項 */}
+				{/* アイテム説明文 (fish.description) */}
 				{fish.description && (
-					<div className={DETAIL_STYLES.descriptionBox}>
-						{fish.description.split('\\n').map((line, index) => (
-							<React.Fragment key={index}>
-								{index > 0 && <br />}
-								{line}
-							</React.Fragment>
-						))}
+					<div>
+						<h3 className={DETAIL_STYLES.sectionTitle}>アイテム説明</h3>
+						<div className={DETAIL_STYLES.descriptionBox}>
+							{fish.description.split('\\n').map((line, index) => (
+								<React.Fragment key={index}>
+									{index > 0 && <br />}
+									{line}
+								</React.Fragment>
+							))}
+						</div>
 					</div>
 				)}
 			</div>
