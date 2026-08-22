@@ -11,7 +11,7 @@
  */
 
 import React from 'react';
-import { ArrowLeft, Fish, X } from 'lucide-react';
+import { ArrowLeft, Utensils, Fish, X } from 'lucide-react';
 import type { BaitMaster, FishMaster, SizeType, WaterType } from '@/types/fish';
 import { FISH_BAIT_RELATIONS } from '@/data';
 import { DETAIL_STYLES } from '@/styles/detailStyles';
@@ -51,7 +51,7 @@ export const BaitDetailView: React.FC<BaitDetailViewProps> = ({
 	if (!bait) {
 		return (
 			<div className="h-full min-h-[300px] flex flex-col items-center justify-center p-8 bg-slate-800/50 border border-slate-700/60 rounded-xl text-slate-400">
-				<Fish className="w-12 h-12 mb-3 text-slate-600" />
+				<Utensils className="w-12 h-12 mb-3 text-slate-600" />
 				<p className="text-sm font-medium">リストから餌を選択すると詳細が表示されます</p>
 			</div>
 		);
@@ -82,13 +82,16 @@ export const BaitDetailView: React.FC<BaitDetailViewProps> = ({
 							<span>戻る</span>
 						</button>
 					)}
-					<div className="min-w-0 flex-1">
-						<h2 className="text-base font-bold text-slate-100 truncate leading-tight">
-							{bait.ja}
-						</h2>
-						<p className="text-xs text-slate-400 font-mono truncate">
-							{bait.en}
-						</p>
+					<div className="flex items-center gap-2 min-w-0 flex-1">
+						<Utensils className="w-5 h-5 text-amber-400 shrink-0" />
+						<div className="min-w-0 flex-1">
+							<h2 className="text-base font-bold text-slate-100 truncate leading-tight">
+								{bait.ja}
+							</h2>
+							<p className="text-xs text-slate-400 font-mono truncate">
+								{bait.en}
+							</p>
+						</div>
 					</div>
 				</div>
 
@@ -160,11 +163,6 @@ export const BaitDetailView: React.FC<BaitDetailViewProps> = ({
 											<span className={`px-1.5 py-0.5 rounded text-xs border ${waterInfo.style}`}>
 												{waterInfo.label}
 											</span>
-											{fish.harakiri && (
-												<span className="px-1.5 py-0.5 rounded text-xs bg-red-950/60 text-red-300 border border-red-800/50">
-													ハラキリ
-												</span>
-											)}
 										</div>
 									</div>
 								);

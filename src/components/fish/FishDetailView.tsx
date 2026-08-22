@@ -8,11 +8,12 @@
  * - 基本情報（スキル上限、サイズ区分、水質区分、各種関連属性フラグ）のステータス表示
  * - ハラキリ対象（アイテム・称号の有無）時の獲得可能アイテムおよび称号の表示
  * - 生息エリアタグや餌タグクリックによる他詳細画面（`AreaDetailView` / `BaitDetailView`）への相互遷移サポート
+ * - 釣竿相性一覧、特記事項（`notes`）、説明文（`description`）の表示
  * ============================================================================
  */
 
 import React from 'react';
-import { ArrowLeft, CheckSquare, Square, X } from 'lucide-react';
+import { ArrowLeft, CheckSquare, Info, Square, X, Fish } from 'lucide-react';
 import type { FishMaster, ZoneMaster, BaitMaster } from '@/types/fish';
 import {
 	FISH_LOCATIONS,
@@ -117,13 +118,16 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 							<span>戻る</span>
 						</button>
 					)}
-					<div className="min-w-0 flex-1">
-						<h2 className="text-base font-bold text-slate-100 truncate leading-tight">
-							{fish.ja}
-						</h2>
-						<p className="text-xs text-slate-400 font-mono truncate">
-							{fish.en}
-						</p>
+					<div className="flex items-center gap-2 min-w-0 flex-1">
+						<Fish className="w-5 h-5 text-cyan-400 shrink-0" />
+						<div className="min-w-0 flex-1">
+							<h2 className="text-base font-bold text-slate-100 truncate leading-tight">
+								{fish.ja}
+							</h2>
+							<p className="text-xs text-slate-400 font-mono truncate">
+								{fish.en}
+							</p>
+						</div>
 					</div>
 				</div>
 
@@ -342,7 +346,18 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 					</div>
 				</div>
 
-				{/* 説明・特記事項 */}
+				{/* 特記事項（表データの後に配置） */}
+				{fish.notes && (
+					<div>
+						<h3 className={DETAIL_STYLES.sectionTitle}>特記事項</h3>
+						<div className={CARD_STYLES.notesBlock}>
+							<Info className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+							<span className="text-sm text-slate-300 leading-relaxed">{fish.notes}</span>
+						</div>
+					</div>
+				)}
+
+				{/* 説明文（ゲーム内フレーバーテキスト） */}
 				{fish.description && (
 					<div className={DETAIL_STYLES.descriptionBox}>
 						{fish.description.split('\\n').map((line, index) => (
