@@ -75,6 +75,35 @@
 | `src/styles/detailStyles.ts` | 詳細ビュー用共通Tailwind CSSクラス定義（`DETAIL_STYLES`） |
 | `src/data/` | マスターデータおよびリレーション定義（`fishes`, `zones`, `baits`, `locations`, `relations`） |
 
+## 4. コンポーネント・ファイル構成と役割
+
+| ファイル | 役割 |
+|---|---|
+| `src/types/fish.ts` | 型定義（Windower互換データ、アプリ拡張、進捗構造） |
+| `src/hooks/useNavigationStack.ts` | ページ遷移の管理 |
+| `src/hooks/useUserData.ts` | LocalStorage永続化、キャラ追加/削除/切替、魚チェックON/OFFロジック |
+| `src/components/Header.tsx` | アプリタイトル、キャラ切替UI、開発用ツール導線（`isDev`制御） |
+| `src/components/Footer.tsx` | 権利表記・ライセンス注記・著作権表示コンポーネント |
+| `src/components/AdBanner.tsx` | 広告エリア（プレースホルダー / AdSense枠）コンポーネント |
+| `src/features/fishtracker/FilterBar.tsx` | メインナビゲーション（魚/エリア/餌切替）、達成状態フィルター、プログレス表示、検索フォーム |
+| `src/features/fishtracker/FishTrackerContent.tsx` | 魚チェッカーメイン領域の表示切替（魚/エリア/餌）、ルーティング |
+| `src/features/fishtracker/fish/FishCard.tsx` | 個別魚カード（スペック表示、エリア情報の表示と+Nバッジ表示） |
+| `src/features/fishtracker/fish/FishListItem.tsx` | リスト表示用個別魚行コンポーネント |
+| `src/features/fishtracker/fish/FishDetailView.tsx` | 魚詳細情報表示コンポーネント |
+| `src/features/fishtracker/area/AreaCard.tsx` | 個別エリアカード（基本情報および釣れる魚のタグ一覧＋+Nバッジ表示） |
+| `src/features/fishtracker/area/AreaListItem.tsx` | リスト表示用個別エリア行コンポーネント（対象魚の総数バッジ表示） |
+| `src/features/fishtracker/area/AreaDetailView.tsx` | エリア詳細情報表示コンポーネント |
+| `src/features/fishtracker/bait/BaitCard.tsx` | 個別餌カード（基本情報および釣れる魚のタグ一覧＋+Nバッジ表示） |
+| `src/features/fishtracker/bait/BaitListItem.tsx` | リスト表示用個別餌行コンポーネント（説明文横並び＋対象魚の総数バッジ表示） |
+| `src/features/fishtracker/bait/BaitDetailView.tsx` | 餌詳細情報表示コンポーネント |
+| `src/styles/components/cardStyles.ts` | カードUI用共通Tailwind CSSクラス定義（`CARD_STYLES`） |
+| `src/styles/components/listStyles.ts` | リストUI用共通Tailwind CSSクラス定義（`LIST_STYLES`） |
+| `src/styles/components/detailStyles.ts` | 詳細ビュー用共通Tailwind CSSクラス定義（`DETAIL_STYLES`） |
+| `src/styles/features/fishStyles.ts` | 魚チェッカー CSSクラス定義（`FISH_STYLES`） |
+| `src/styles/tokens/commonTokens.ts` | アプリ共通 CSSクラス定義（`COMMON_TOKENS`） |
+| `src/styles/tokens/layoutTokens.ts` | アプリ共通 CSSクラス定義（`LAYOUT_TOKENS`） |
+| `src/data/` | マスターデータおよびリレーション定義（`fishes`, `zones`, `baits`, `locations`, `relations`） |
+
 ---
 
 ## 5. UI/UX標準化ルール（カード vs リスト）

@@ -11,11 +11,11 @@
  * ============================================================================
  */
 
-import { FishCard } from '@/components/fish/FishCard';
-import { FishListItem } from '@/components/fish/FishListItem';
-import { FishDetailView } from '@/components/fish/FishDetailView';
-import { AreaDetailView } from '@/components/area/AreaDetailView';
-import { BaitDetailView } from '@/components/bait/BaitDetailView';
+import { FishCard } from '../fish/FishCard';
+import { FishListItem } from '../fish/FishListItem';
+import { FishDetailView } from '../fish/FishDetailView';
+import { AreaDetailView } from '../area/AreaDetailView';
+import { BaitDetailView } from '../bait/BaitDetailView';
 import type { FishMaster, ViewMode, ZoneMaster } from '@/types/fish';
 import type { useNavigationStack } from '@/hooks/useNavigationStack';
 import { REGIONS } from '@/data';

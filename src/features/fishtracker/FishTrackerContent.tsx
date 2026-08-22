@@ -15,11 +15,11 @@
 
 import React, { useMemo } from 'react';
 import { FISHES, ZONES, BAITS } from '@/data/';
-import { FishListView } from '@/components/fish/FishListView';
-import { BaitListView } from '@/components/bait/BaitListView';
-import { AreaListView } from '@/components/area/AreaListView';
+import { FishListView } from './fish/FishListView';
+import { BaitListView } from './bait/BaitListView';
+import { AreaListView } from './area/AreaListView';
 import type { MainTab, ViewMode, CharacterProgress } from '@/types/fish';
-import type { StatusFilter } from '@/components/FilterBar';
+import type { StatusFilter } from '@/features/fishtracker/FilterBar';
 import type { useNavigationStack } from '@/hooks/useNavigationStack';
 
 type MainContentRouterProps = {

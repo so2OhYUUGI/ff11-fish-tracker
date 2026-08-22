@@ -20,8 +20,8 @@ import { REGIONS, ZONES, FISH_LOCATIONS } from '@/data/';
 import { AreaCard } from './AreaCard';
 import { AreaListItem } from './AreaListItem';
 import { AreaDetailView } from './AreaDetailView';
-import { FishDetailView } from '@/components/fish/FishDetailView';
-import { BaitDetailView } from '@/components/bait/BaitDetailView';
+import { FishDetailView } from '../fish/FishDetailView';
+import { BaitDetailView } from '../bait/BaitDetailView';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
 import { CARD_STYLES } from '@/styles/components/cardStyles';
 

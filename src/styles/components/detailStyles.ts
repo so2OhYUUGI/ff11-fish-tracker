@@ -5,8 +5,6 @@
  * ============================================================================
  */
 
-import { COMMON_TOKENS } from '../tokens/commonTokens';
-
 export const DETAIL_STYLES = {
   // コンテナ
   container:

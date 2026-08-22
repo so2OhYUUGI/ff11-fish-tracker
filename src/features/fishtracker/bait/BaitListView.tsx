@@ -16,8 +16,8 @@ import type { useNavigationStack } from '@/hooks/useNavigationStack';
 import { BaitCard } from './BaitCard';
 import { BaitListItem } from './BaitListItem';
 import { BaitDetailView } from './BaitDetailView';
-import { FishDetailView } from '@/components/fish/FishDetailView';
-import { AreaDetailView } from '@/components/area/AreaDetailView';
+import { FishDetailView } from '../fish/FishDetailView';
+import { AreaDetailView } from '../area/AreaDetailView';
 import { REGIONS, ZONES } from '@/data';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
 
