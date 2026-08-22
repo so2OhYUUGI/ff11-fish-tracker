@@ -7,30 +7,28 @@
  * - ヘッダー（エリア名）を固定し、コンテンツ部分全体を独立スクロール表示
  * - `regionList` から `area.regionId` に一致するリージョン情報を参照して描画
  * - 中間データ `FISH_LOCATIONS` を参照し、当該エリア（`area.id`）で釣れる魚を抽出・一覧表示
- * - 生息魚一覧をバッジ形式から属性情報付きのリスト形式へ変更し、視認性と比較の容易性を向上
- * - 全スタイルの参照を `DETAIL_STYLES` および `FISH_STYLES` へ完全移行
+ * - 釣れる魚一覧の各行を統合作成した FishListItem（variant="inline"）へ置き換え
+ * - 全スタイルの参照を `DETAIL_STYLES` および `COMMON_TOKENS` へ完全集約
  * ============================================================================
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ArrowLeft, MapPin, X, Fish } from 'lucide-react';
 import type { ZoneMaster, FishMaster, RegionMaster } from '@/types/fish';
 import { FISH_LOCATIONS } from '@/data';
 import { DETAIL_STYLES } from '@/styles/components/detailStyles';
-import { FISH_STYLES, BADGE_BASE_STYLE } from '@/styles/features/FishTrackerStyle';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
-import {
-	SizeBadge,
-	WaterBadge,
-} from '@/features/fishtracker/common/FishBadges';
+import { FishListItem } from '@/features/fishtracker/fish/FishListItem';
 
 type Props = {
 	area: ZoneMaster;
 	allFishes: FishMaster[];
 	regionList: RegionMaster[];
+	checkedFishIds?: number[];
 	onClose: () => void;
 	onBack?: () => void;
 	canGoBack?: boolean;
+	onToggleCheck?: (fishId: number) => void;
 	onClickFishDetail?: (fish: FishMaster) => void;
 };
 
@@ -38,23 +36,31 @@ export const AreaDetailView: React.FC<Props> = ({
 	area,
 	allFishes,
 	regionList,
+	checkedFishIds = [],
 	onClose,
 	onBack,
 	canGoBack = false,
+	onToggleCheck,
 	onClickFishDetail,
 }) => {
-	// FISH_LOCATIONS から当該エリア (area.id) に該当する fishId の配列を取得
-	const targetFishIds = FISH_LOCATIONS
-		.filter((loc) => loc.zoneId === area.id)
-		.map((loc) => loc.fishId);
+	// FISH_LOCATIONS から当該エリア (area.id) で釣れる魚のデータリストを取得
+	const catchableFishes = useMemo(() => {
+		if (!area) return [];
+		const targetFishIds = new Set(
+			FISH_LOCATIONS
+				.filter((loc) => loc.zoneId === area.id)
+				.map((loc) => loc.fishId)
+		);
+		return allFishes.filter((fish) => targetFishIds.has(fish.id));
+	}, [area, allFishes]);
 
-	// fishId に一致する魚情報を取得
-	const catchableFishes = allFishes.filter((fish) => targetFishIds.includes(fish.id));
-
-	// area.regionId に一致するリージョン情報を検索（型変換を考慮）
-	const belongsRegion = regionList.find(
-		(r) => area.regionId !== undefined && String(r.id) === String(area.regionId)
-	);
+	// area.regionId に一致するリージョン情報を検索
+	const belongsRegion = useMemo(() => {
+		if (area.regionId === undefined) return undefined;
+		return regionList.find(
+			(r) => String(r.id) === String(area.regionId)
+		);
+	}, [area.regionId, regionList]);
 
 	return (
 		<div className={DETAIL_STYLES.panelBase}>
@@ -115,7 +121,7 @@ export const AreaDetailView: React.FC<Props> = ({
 				{/* 説明文 */}
 				{area.description && (
 					<div className={DETAIL_STYLES.descriptionBox}>
-						{area.description.split('\\n').map((line: string, index: number) => (
+						{area.description.split(/\r?\n|\\n/).map((line: string, index: number) => (
 							<React.Fragment key={index}>
 								{index > 0 && <br />}
 								{line}
@@ -133,37 +139,16 @@ export const AreaDetailView: React.FC<Props> = ({
 
 					{catchableFishes.length > 0 ? (
 						<div className={DETAIL_STYLES.relatedList}>
-							{catchableFishes.map((fish) => {
-								const RowComponent = onClickFishDetail ? 'button' : 'div';
-								return (
-									<RowComponent
-										key={fish.id}
-										type={onClickFishDetail ? 'button' : undefined}
-										onClick={() => onClickFishDetail?.(fish)}
-										className={`${DETAIL_STYLES.relatedRow} ${onClickFishDetail ? DETAIL_STYLES.relatedRowInteractive : ''
-											}`}
-									>
-										{/* 左側：魚名（日本語・英語） */}
-										<div className={DETAIL_STYLES.relatedRowTitleGroup}>
-											<span className={DETAIL_STYLES.relatedRowTitle}>
-												{fish.ja}
-											</span>
-											<span className={DETAIL_STYLES.relatedRowSubTitle}>
-												{fish.en}
-											</span>
-										</div>
-
-										{/* 右側：属性・上限スキルバッジ群 */}
-										<div className={DETAIL_STYLES.relatedRowBadgeGroup}>
-											<span className={`${BADGE_BASE_STYLE} ${FISH_STYLES.badgeSkill}`}>
-												上限: {fish.maxSkill}
-											</span>
-											<SizeBadge sizeType={fish.sizeType} useShortLabel />
-											<WaterBadge waterType={fish.waterType} />
-										</div>
-									</RowComponent>
-								);
-							})}
+							{catchableFishes.map((fish) => (
+								<FishListItem
+									key={fish.id}
+									fish={fish}
+									variant="inline"
+									isChecked={checkedFishIds.includes(fish.id)}
+									onToggleCheck={onToggleCheck}
+									onClickDetail={onClickFishDetail}
+								/>
+							))}
 						</div>
 					) : (
 						<p className={DETAIL_STYLES.emptyText}>このエリアで釣れる魚の情報はありません</p>

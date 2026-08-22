@@ -6,39 +6,51 @@
  * [概要]
  * - ヘッダー（餌名）を固定し、コンテンツ部分全体を独立スクロール表示
  * - `@/data` の中間マスタを参照し、その餌で釣れる魚の一覧を抽出・描画
+ * - 釣れる魚一覧の各行を統合作成した FishListItem（variant="inline"）へ置き換え
  * - 全スタイルの参照を `DETAIL_STYLES` および `COMMON_TOKENS` へ完全集約
  * ============================================================================
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ArrowLeft, Utensils, Fish, X } from 'lucide-react';
 import type { BaitMaster, FishMaster } from '@/types/fish';
 import { FISH_BAIT_RELATIONS } from '@/data';
 import { DETAIL_STYLES } from '@/styles/components/detailStyles';
-import { FISH_STYLES, BADGE_BASE_STYLE } from '@/styles/features/FishTrackerStyle';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
-import {
-	SizeBadge,
-	WaterBadge,
-} from '@/features/fishtracker/common/FishBadges';
+import { FishListItem } from '@/features/fishtracker/fish/FishListItem';
 
 type BaitDetailViewProps = {
 	bait: BaitMaster | null;
 	allFishes: FishMaster[];
+	checkedFishIds?: number[];
 	onClose: () => void;
 	onBack?: () => void;
 	canGoBack?: boolean;
+	onToggleCheck?: (fishId: number) => void;
 	onClickFishDetail?: (fish: FishMaster) => void;
 };
 
 export const BaitDetailView: React.FC<BaitDetailViewProps> = ({
 	bait,
 	allFishes,
+	checkedFishIds = [],
 	onClose,
 	onBack,
 	canGoBack = false,
+	onToggleCheck,
 	onClickFishDetail,
 }) => {
+	// FISH_BAIT_RELATIONS から対象の餌(bait.id)で釣れる魚のデータオブジェクトリストを取得
+	const targetFishes = useMemo(() => {
+		if (!bait) return [];
+		const targetFishIds = new Set(
+			FISH_BAIT_RELATIONS
+				.filter((rel) => rel.baitId === bait.id)
+				.map((rel) => rel.fishId)
+		);
+		return allFishes.filter((fish) => targetFishIds.has(fish.id));
+	}, [bait, allFishes]);
+
 	if (!bait) {
 		return (
 			<div className={DETAIL_STYLES.emptyDetailContainer}>
@@ -47,14 +59,6 @@ export const BaitDetailView: React.FC<BaitDetailViewProps> = ({
 			</div>
 		);
 	}
-
-	// FISH_BAIT_RELATIONS から対象の餌(bait.id)で釣れる魚のIDリストを抽出
-	const targetFishIds = FISH_BAIT_RELATIONS
-		.filter((rel) => rel.baitId === bait.id)
-		.map((rel) => rel.fishId);
-
-	// 対象となる魚のデータオブジェクトリストを取得
-	const targetFishes = allFishes.filter((fish) => targetFishIds.includes(fish.id));
 
 	return (
 		<div className={DETAIL_STYLES.panelBase}>
@@ -104,7 +108,7 @@ export const BaitDetailView: React.FC<BaitDetailViewProps> = ({
 				{/* 説明文 */}
 				{bait.description && (
 					<div className={DETAIL_STYLES.descriptionBox}>
-						{bait.description.split('\\n').map((line, index) => (
+						{bait.description.split(/\r?\n|\\n/).map((line, index) => (
 							<React.Fragment key={index}>
 								{index > 0 && <br />}
 								{line}
@@ -122,37 +126,16 @@ export const BaitDetailView: React.FC<BaitDetailViewProps> = ({
 
 					{targetFishes.length > 0 ? (
 						<div className={DETAIL_STYLES.relatedList}>
-							{targetFishes.map((fish) => {
-								const RowComponent = onClickFishDetail ? 'button' : 'div';
-								return (
-									<RowComponent
-										key={fish.id}
-										type={onClickFishDetail ? 'button' : undefined}
-										onClick={() => onClickFishDetail?.(fish)}
-										className={`${DETAIL_STYLES.relatedRow} ${onClickFishDetail ? DETAIL_STYLES.relatedRowInteractive : ''
-											}`}
-									>
-										{/* 左側：魚名（日本語・英語） */}
-										<div className={DETAIL_STYLES.relatedRowTitleGroup}>
-											<span className={DETAIL_STYLES.relatedRowTitle}>
-												{fish.ja}
-											</span>
-											<span className={DETAIL_STYLES.relatedRowSubTitle}>
-												{fish.en}
-											</span>
-										</div>
-
-										{/* 右側：属性・上限スキルバッジ群 */}
-										<div className={DETAIL_STYLES.relatedRowBadgeGroup}>
-											<span className={`${BADGE_BASE_STYLE} ${FISH_STYLES.badgeSkill}`}>
-												上限: {fish.maxSkill}
-											</span>
-											<SizeBadge sizeType={fish.sizeType} useShortLabel />
-											<WaterBadge waterType={fish.waterType} />
-										</div>
-									</RowComponent>
-								);
-							})}
+							{targetFishes.map((fish) => (
+								<FishListItem
+									key={fish.id}
+									fish={fish}
+									variant="inline"
+									isChecked={checkedFishIds.includes(fish.id)}
+									onToggleCheck={onToggleCheck}
+									onClickDetail={onClickFishDetail}
+								/>
+							))}
 						</div>
 					) : (
 						<p className={DETAIL_STYLES.emptyText}>対象の魚データがありません</p>

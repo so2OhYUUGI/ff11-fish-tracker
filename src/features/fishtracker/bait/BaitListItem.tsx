@@ -10,7 +10,7 @@
  * ============================================================================
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Fish } from 'lucide-react';
 import type { BaitMaster, FishMaster } from '@/types/fish';
 import { FISH_BAIT_RELATIONS, FISHES } from '@/data';
@@ -30,12 +30,21 @@ export const BaitListItem: React.FC<Props> = ({
 	isSelected,
 	onClickDetail,
 }) => {
-	// 該当する餌 (bait.id) で釣れる魚の総数を算出
-	const targetFishIds = FISH_BAIT_RELATIONS
-		.filter((rel) => rel.baitId === bait.id)
-		.map((rel) => rel.fishId);
-	const uniqueFishIds = Array.from(new Set(targetFishIds));
-	const totalFishes = fishes.filter((fish) => uniqueFishIds.includes(fish.id)).length;
+	// 該当する餌 (bait.id) で釣れる魚の総数を算出（重複を除外して最適化）
+	const totalFishes = useMemo(() => {
+		const uniqueFishIds = new Set(
+			FISH_BAIT_RELATIONS
+				.filter((rel) => rel.baitId === bait.id)
+				.map((rel) => rel.fishId)
+		);
+		return fishes.filter((fish) => uniqueFishIds.has(fish.id)).length;
+	}, [bait.id, fishes]);
+
+	// 説明文の改行エスケープ（\n または \\n をスペース1つに置換）
+	const formattedDescription = useMemo(() => {
+		if (!bait.description) return null;
+		return bait.description.replace(/\r?\n|\\n/g, ' ');
+	}, [bait.description]);
 
 	return (
 		<div
@@ -57,9 +66,9 @@ export const BaitListItem: React.FC<Props> = ({
 			</div>
 
 			{/* 2. 中央：簡略説明文（1行・右寄せでデッドスペースを埋める） */}
-			{bait.description ? (
+			{formattedDescription ? (
 				<div className={LIST_STYLES.description}>
-					{bait.description.replace(/\\n/g, ' ')}
+					{formattedDescription}
 				</div>
 			) : (
 				<div className={LIST_STYLES.spacer} />

@@ -37,7 +37,7 @@
 ### **エリアマスターデータ (ZoneMaster) & 餌マスターデータ (BaitMaster)**
 - `id`: ゾーンID / アイテムID
 - `ja` / `en`: 日本語名 / 英語名
-- `description`: 簡略説明文（改行コード `\n` を含む）
+- `description`: 簡略説明文（改行コード `\n` または `\\n` を含む）
 
 ### **リレーションデータ**
 - `FISH_LOCATIONS`: 魚ID (`fishId`) と エリアID (`zoneId`) の紐付け
@@ -55,31 +55,6 @@
 | ファイル | 役割 |
 |---|---|
 | `src/types/fish.ts` | 型定義（Windower互換データ、アプリ拡張、進捗構造） |
-| `src/hooks/useUserData.ts` | LocalStorage永続化、キャラ追加/削除/切替、魚チェックON/OFFロジック |
-| `src/components/common/Header.tsx` | アプリタイトル、キャラ切替UI、開発用ツール導線（`isDev`制御） |
-| `src/components/common/FilterBar.tsx` | メインナビゲーション（魚/エリア/餌切替）、達成状態フィルター、プログレス表示、検索フォーム |
-| `src/components/common/Footer.tsx` | 権利表記・ライセンス注記・著作権表示コンポーネント |
-| `src/components/common/MainContentRouter.tsx` | メイン領域の表示切替（魚/エリア/餌）、ルーティング |
-| `src/components/common/AdBanner.tsx` | 広告エリア（プレースホルダー / AdSense枠）コンポーネント |
-| `src/components/fish/FishCard.tsx` | 個別魚カード（スペック表示、エリア情報の表示と+Nバッジ表示） |
-| `src/components/fish/FishListItem.tsx` | リスト表示用個別魚行コンポーネント |
-| `src/components/fish/FishDetailView.tsx` | 魚詳細情報表示コンポーネント |
-| `src/components/area/AreaCard.tsx` | 個別エリアカード（基本情報および釣れる魚のタグ一覧＋+Nバッジ表示） |
-| `src/components/area/AreaListItem.tsx` | リスト表示用個別エリア行コンポーネント（対象魚の総数バッジ表示） |
-| `src/components/area/AreaDetailView.tsx` | エリア詳細情報表示コンポーネント |
-| `src/components/bait/BaitCard.tsx` | 個別餌カード（基本情報および釣れる魚のタグ一覧＋+Nバッジ表示） |
-| `src/components/bait/BaitListItem.tsx` | リスト表示用個別餌行コンポーネント（説明文横並び＋対象魚の総数バッジ表示） |
-| `src/components/bait/BaitDetailView.tsx` | 餌詳細情報表示コンポーネント |
-| `src/styles/cardStyles.ts` | カードUI用共通Tailwind CSSクラス定義（`CARD_STYLES`） |
-| `src/styles/listStyles.ts` | リストUI用共通Tailwind CSSクラス定義（`LIST_STYLES`） |
-| `src/styles/detailStyles.ts` | 詳細ビュー用共通Tailwind CSSクラス定義（`DETAIL_STYLES`） |
-| `src/data/` | マスターデータおよびリレーション定義（`fishes`, `zones`, `baits`, `locations`, `relations`） |
-
-## 4. コンポーネント・ファイル構成と役割
-
-| ファイル | 役割 |
-|---|---|
-| `src/types/fish.ts` | 型定義（Windower互換データ、アプリ拡張、進捗構造） |
 | `src/hooks/useNavigationStack.ts` | ページ遷移の管理 |
 | `src/hooks/useUserData.ts` | LocalStorage永続化、キャラ追加/削除/切替、魚チェックON/OFFロジック |
 | `src/components/Header.tsx` | アプリタイトル、キャラ切替UI、開発用ツール導線（`isDev`制御） |
@@ -88,14 +63,14 @@
 | `src/features/fishtracker/FilterBar.tsx` | メインナビゲーション（魚/エリア/餌切替）、達成状態フィルター、プログレス表示、検索フォーム |
 | `src/features/fishtracker/FishTrackerContent.tsx` | 魚チェッカーメイン領域の表示切替（魚/エリア/餌）、ルーティング |
 | `src/features/fishtracker/fish/FishCard.tsx` | 個別魚カード（スペック表示、エリア情報の表示と+Nバッジ表示） |
-| `src/features/fishtracker/fish/FishListItem.tsx` | リスト表示用個別魚行コンポーネント |
+| `src/features/fishtracker/fish/FishListItem.tsx` | リスト表示用個別魚行コンポーネント（詳細パネル内での `variant="inline"` 対応） |
 | `src/features/fishtracker/fish/FishDetailView.tsx` | 魚詳細情報表示コンポーネント |
 | `src/features/fishtracker/area/AreaCard.tsx` | 個別エリアカード（基本情報および釣れる魚のタグ一覧＋+Nバッジ表示） |
-| `src/features/fishtracker/area/AreaListItem.tsx` | リスト表示用個別エリア行コンポーネント（対象魚の総数バッジ表示） |
-| `src/features/fishtracker/area/AreaDetailView.tsx` | エリア詳細情報表示コンポーネント |
+| `src/features/fishtracker/area/AreaListItem.tsx` | リスト表示用個別エリア行コンポーネント（対象魚の総数バッジ表示、`useMemo`・改行エスケープ最適化） |
+| `src/features/fishtracker/area/AreaDetailView.tsx` | エリア詳細情報表示コンポーネント（魚チェック・スタック遷移連携） |
 | `src/features/fishtracker/bait/BaitCard.tsx` | 個別餌カード（基本情報および釣れる魚のタグ一覧＋+Nバッジ表示） |
-| `src/features/fishtracker/bait/BaitListItem.tsx` | リスト表示用個別餌行コンポーネント（説明文横並び＋対象魚の総数バッジ表示） |
-| `src/features/fishtracker/bait/BaitDetailView.tsx` | 餌詳細情報表示コンポーネント |
+| `src/features/fishtracker/bait/BaitListItem.tsx` | リスト表示用個別餌行コンポーネント（説明文横並び＋対象魚の総数バッジ表示、`useMemo`・改行エスケープ最適化） |
+| `src/features/fishtracker/bait/BaitDetailView.tsx` | 餌詳細情報表示コンポーネント（魚チェック・スタック遷移連携） |
 | `src/styles/components/cardStyles.ts` | カードUI用共通Tailwind CSSクラス定義（`CARD_STYLES`） |
 | `src/styles/components/listStyles.ts` | リストUI用共通Tailwind CSSクラス定義（`LIST_STYLES`） |
 | `src/styles/components/detailStyles.ts` | 詳細ビュー用共通Tailwind CSSクラス定義（`DETAIL_STYLES`） |
@@ -121,8 +96,8 @@
 
 ### **ヘッダーアイコンのカラー定義**
 - **魚（Fish）:** シアン (`text-cyan-400`)
-- **エリア（MapPin）:** エメラルド (`text-red-400`)
-- **エサ（Disc）:** オレンジ/アンバー (`text-amber-400`)
+- **エリア（MapPin）:** エメラルド / レッド (`text-red-400` 等)
+- **エサ（Disc / Utensils）:** アンバー (`text-amber-400`)
 
 ---
 
@@ -139,22 +114,22 @@
 - **ファイル先頭のメタデータブロックの明記**:
   - コードファイル（JSX/TSX/TS等）の先頭には、必ず以下の形式で役割・ファイルパス・概要・改修時の注意事項を含めたブロックコメントを明記すること。
 
-  \`\`\`tsx
-  /**
-   * ============================================================================
-   * [FilePath] src/components/Example.tsx
-   * [Role] コンポーネントの役割
-   * 
-   * [概要]
-   * - 主な機能・役割1
-   * - 主な機能・役割2
-   * 
-   * [編集・改修時の注意事項]
-   * 1. 【注意事項1】記述内容
-   * 2. 【注意事項2】記述内容
-   * ============================================================================
-   */
-  \`\`\`
+```tsx
+/**
+ * ============================================================================
+ * [FilePath] src/components/Example.tsx
+ * [Role] コンポーネントの役割
+ * 
+ * [概要]
+ * - 主な機能・役割1
+ * - 主な機能・役割2
+ * 
+ * [編集・改修時の注意事項]
+ * 1. 【注意事項1】記述内容
+ * 2. 【注意事項2】記述内容
+ * ============================================================================
+ */
+```
 
 - **リレーションデータの参照基準**:
   - 魚・エリア・餌の結びつきを表示する際は、単体マスターの埋め込み配列ではなく、必ずマスターリレーションデータ（`FISH_LOCATIONS`, `FISH_BAIT_RELATIONS` 等）を参照して動的に算出すること。
@@ -165,5 +140,10 @@
 - **ボタン要素の定義**:
   - `button` タグを配置する際は、必ず `type="button"`（フォーム送信用の場合は `type="submit"`）を明記すること。
 - **テキストデータの改行処理**:
-  - マスターデータ内のテキスト改行は `\n` で統一・保持する。
-  - 表示側（React）では `.split('\\n')` や `whitespace-pre-line` クラス等を用いて適切に改行レンダリングを行うこと。
+  - マスターデータ内のテキスト改行は `\n`（または `\\n`）で混在しうるため、表示側（React）では `/\r?\n|\\n/` の正規表現等を用いて安全に分割・置換・レンダリングを行うこと。
+
+---
+
+## AI Development Context & Architecture Guide出力時の注意
+
+- バッククォートを4連（````）で囲むことで、内部の ```tsx などのコードブロックが意図せず閉じたり、プレーンテキスト表示が崩れたりしないようにエスケープ処理を行ってください。

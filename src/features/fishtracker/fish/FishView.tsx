@@ -12,7 +12,7 @@
  */
 
 import { FishCard } from './FishCard';
-import { FishListItem } from './FishListItem';
+import { FishListItem } from '../fish/FishListItem';
 import { FishDetailView } from './FishDetailView';
 import { AreaDetailView } from '../area/AreaDetailView';
 import { BaitDetailView } from '../bait/BaitDetailView';
@@ -125,6 +125,8 @@ export const FishView = ({
 							area={current.item}
 							allFishes={fishes}
 							regionList={REGIONS}
+							checkedFishIds={checkedFishIds}
+							onToggleCheck={handleToggleCheck}
 							onClose={clear}
 							onBack={pop}
 							canGoBack={canGoBack}
@@ -136,6 +138,8 @@ export const FishView = ({
 						<BaitDetailView
 							bait={current.item}
 							allFishes={fishes}
+							checkedFishIds={checkedFishIds}
+							onToggleCheck={handleToggleCheck}
 							onClose={clear}
 							onBack={pop}
 							canGoBack={canGoBack}

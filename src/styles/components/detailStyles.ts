@@ -57,6 +57,8 @@ export const DETAIL_STYLES = {
   tagList: 'flex flex-wrap gap-2',
   tagItem:
     'bg-slate-900/80 border border-slate-700 text-slate-200 text-xs px-2.5 py-1 rounded-md',
+  tagItemInteractive:
+    'hover:border-cyan-500 hover:text-cyan-300 transition-colors cursor-pointer',
   descriptionBox:
     'bg-slate-900/60 p-3.5 rounded-lg border border-slate-700/50 text-sm text-slate-300 leading-relaxed',
 

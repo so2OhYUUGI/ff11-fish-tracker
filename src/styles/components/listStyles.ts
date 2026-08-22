@@ -18,6 +18,10 @@ export const LIST_STYLES = {
 	checked: COMMON_TOKENS.state.checked,
 	empty: COMMON_TOKENS.state.empty,
 
+	// 1b. インライン用リスト行（詳細パネル等で利用）
+	inlineBase: 'w-full text-left p-3 rounded-lg bg-slate-800/60 border border-slate-700/50 flex items-center justify-between gap-2',
+	inlineInteractive: 'cursor-pointer hover:bg-slate-800 transition-colors',
+
 	// 2. レイアウトグループ
 	nameGroup: 'flex flex-col min-w-[130px] max-w-[180px] shrink-0',
 	titleGroup: 'flex flex-col min-w-0',
@@ -34,6 +38,11 @@ export const LIST_STYLES = {
 	titleJaChecked: 'line-through text-slate-500',
 	titleEn: COMMON_TOKENS.text.titleEn,
 	subText: COMMON_TOKENS.text.subText,
+
+	// インライン用タイトル表現
+	titleInlineJa: 'text-sm font-bold text-slate-200',
+	titleInlineJaChecked: 'text-sm font-bold text-slate-500 line-through',
+	titleInlineEn: 'text-xs text-slate-400 font-mono',
 
 	// 4. チェックボックス UI
 	checkboxBase: 'w-5 h-5 rounded border flex items-center justify-center transition-colors shrink-0',

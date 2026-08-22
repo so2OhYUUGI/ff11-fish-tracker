@@ -13,7 +13,7 @@
  * ============================================================================
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Fish } from 'lucide-react';
 import type { ZoneMaster, FishMaster } from '@/types/fish';
 import { FISH_LOCATIONS, FISHES } from '@/data';
@@ -32,26 +32,35 @@ export const AreaListItem: React.FC<Props> = ({
   isSelected,
   onClickDetail,
 }) => {
-  const targetFishIds = FISH_LOCATIONS
-    .filter((loc) => loc.zoneId === area.id)
-    .map((loc) => loc.fishId);
-  const uniqueFishIds = Array.from(new Set(targetFishIds));
-  const totalFishes = fishes.filter((fish) => uniqueFishIds.includes(fish.id)).length;
+  // 該当エリア (area.id) で釣れる魚の総数を算出（重複排除・メモ化）
+  const totalFishes = useMemo(() => {
+    const uniqueFishIds = new Set(
+      FISH_LOCATIONS
+        .filter((loc) => loc.zoneId === area.id)
+        .map((loc) => loc.fishId)
+    );
+    return fishes.filter((fish) => uniqueFishIds.has(fish.id)).length;
+  }, [area.id, fishes]);
+
   const hasFish = totalFishes > 0;
+
+  // 説明文の改行エスケープ（\n または \\n をスペース1つに置換）
+  const formattedDescription = useMemo(() => {
+    if (!area.description) return null;
+    return area.description.replace(/\r?\n|\\n/g, ' ');
+  }, [area.description]);
 
   return (
     <div
       onClick={() => onClickDetail(area)}
-      className={`${LIST_STYLES.base} ${
-        isSelected ? LIST_STYLES.selected : LIST_STYLES.default
-      } ${LIST_STYLES.itemRow} ${!hasFish ? LIST_STYLES.dimmed : ''}`}
+      className={`${LIST_STYLES.base} ${isSelected ? LIST_STYLES.selected : LIST_STYLES.default
+        } ${LIST_STYLES.itemRow} ${!hasFish ? LIST_STYLES.dimmed : ''}`}
     >
       <div className="flex-1 min-w-0">
         <div className={LIST_STYLES.titleGroup}>
           <span
-            className={`truncate ${LIST_STYLES.titleJa} ${
-              isSelected ? LIST_STYLES.titleJaSelectedArea : LIST_STYLES.titleJaDefault
-            }`}
+            className={`truncate ${LIST_STYLES.titleJa} ${isSelected ? LIST_STYLES.titleJaSelectedArea : LIST_STYLES.titleJaDefault
+              }`}
           >
             {area.ja}
           </span>
@@ -60,9 +69,9 @@ export const AreaListItem: React.FC<Props> = ({
           </span>
         </div>
 
-        {area.description && (
+        {formattedDescription && (
           <div className={LIST_STYLES.descriptionSub}>
-            {area.description.replace(/\\n/g, ' ')}
+            {formattedDescription}
           </div>
         )}
       </div>

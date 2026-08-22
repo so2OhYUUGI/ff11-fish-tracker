@@ -30,14 +30,14 @@ export const FISH_STYLES = {
 	badgeSizeUnknown: 'bg-slate-800/80 text-slate-400 border-slate-700/60',
 
 	// 水質・区分バッジ
-	badgeFreshwater: COMMON_TOKENS.entity.area.badge,
+	badgeFreshwater: 'bg-emerald-950/80 text-emerald-300 border-emerald-800/60',
 	badgeSaltwater: 'bg-blue-950/80 text-blue-300 border-blue-800/60',
-	badgeGedou: COMMON_TOKENS.entity.bait.badge,
+	badgeGedou: 'bg-gray-950/80 text-gray-300 border-gray-800/60',
 	badgeWaterUnknown: 'bg-slate-800/80 text-slate-400 border-slate-700/60',
 
 	// 魚固有の特殊属性バッジ
 	badgeHarakiri: 'bg-rose-950/80 text-rose-300 border-rose-800/60',
-	badgeEbisu: COMMON_TOKENS.entity.bait.badge,
+	badgeEbisu: 'bg-amber-950/80 text-amber-300 border-amber-800/60',
 	badgeTaikobou: 'bg-teal-950/80 text-teal-300 border-teal-800/60',
 } as const;
 

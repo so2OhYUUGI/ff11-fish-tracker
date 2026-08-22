@@ -163,6 +163,8 @@ export const AreaView = ({
 							area={current.item}
 							allFishes={allFishes}
 							regionList={REGIONS}
+							checkedFishIds={checkedFishIds}
+							onToggleCheck={handleToggleCheck}
 							onClose={clear}
 							onBack={pop}
 							canGoBack={canGoBack}
@@ -188,6 +190,8 @@ export const AreaView = ({
 						<BaitDetailView
 							bait={current.item}
 							allFishes={allFishes}
+							checkedFishIds={checkedFishIds}
+							onToggleCheck={handleToggleCheck}
 							onClose={clear}
 							onBack={pop}
 							canGoBack={canGoBack}
