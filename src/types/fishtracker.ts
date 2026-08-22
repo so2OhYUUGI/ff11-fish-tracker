@@ -32,6 +32,7 @@ export type CharacterProgress = {
 export type UserData = {
 	activeCharacterId: string;       // 現在選択中のキャラID
 	characters: CharacterProgress[]; // キャラクター一覧
+	viewMode?: ViewMode; // アプリ全体の表示モード（未設定時は default: 'card'）
 };
 
 // --- マスタデータ構造 ---
@@ -122,3 +123,4 @@ export type RegionMaster = {
 	en: string;            // 英語名 (例: "San d'Oria")
 	ja: string;            // 日本語名 (例: "サンドリア王国")
 };
+

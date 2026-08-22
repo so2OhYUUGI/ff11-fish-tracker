@@ -8,7 +8,7 @@
  * ============================================================================
  */
 
-import type { FishMaster } from '@/types/fish';
+import type { FishMaster } from '@/types/fishtracker';
 
 export type EditTab = 'fish' | 'zone' | 'bait';
 

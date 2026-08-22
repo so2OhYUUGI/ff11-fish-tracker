@@ -1,4 +1,4 @@
-import type { BaitMaster } from '@/types/fish';
+import type { BaitMaster } from '@/types/fishtracker';
 
 export const BAITS: BaitMaster[] = [
   {

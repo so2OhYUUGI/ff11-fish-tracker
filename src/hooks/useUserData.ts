@@ -1,22 +1,21 @@
 /**
  * ============================================================================
  * [FilePath] src/hooks/useUserData.ts
- * [Role] ユーザー進捗データ（複数キャラクター・魚チェック状態）の永続化管理カスタムフック
+ * [Role] ユーザー進捗データおよびアプリ設定（表示モード等）の永続化管理カスタムフック
  * ============================================================================
  */
 
 import { useState, useEffect } from 'react';
-import type { UserData, CharacterProgress } from '@/types/fish';
+import type { UserData, CharacterProgress, ViewMode } from '@/types/fishtracker';
 
 const STORAGE_KEY = 'ff11_fish_tracker_user_data';
 
-// デフォルトキャラクターを廃止し、初期状態は空配列に設定
 const EMPTY_USER_DATA: UserData = {
 	activeCharacterId: '',
 	characters: [],
+	viewMode: 'card',
 };
 
-// ID生成ヘルパー（非セキュア環境・非対応ブラウザ向けのフォールバック処理付き）
 const generateUniqueId = (): string => {
 	if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
 		return crypto.randomUUID();
@@ -25,7 +24,6 @@ const generateUniqueId = (): string => {
 };
 
 export const useUserData = () => {
-	// 1. 安全な LocalStorage 読み込み処理
 	const [userData, setUserData] = useState<UserData>(() => {
 		try {
 			const saved = localStorage.getItem(STORAGE_KEY);
@@ -35,14 +33,16 @@ export const useUserData = () => {
 			if (!parsed || !Array.isArray(parsed.characters)) {
 				return EMPTY_USER_DATA;
 			}
-			return parsed;
+			return {
+				...parsed,
+				viewMode: parsed.viewMode ?? 'card',
+			};
 		} catch (e) {
 			console.error('Failed to parse user data from localStorage', e);
 			return EMPTY_USER_DATA;
 		}
 	});
 
-	// 2. データの変更を自動で LocalStorage に保存
 	useEffect(() => {
 		try {
 			localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
@@ -51,12 +51,10 @@ export const useUserData = () => {
 		}
 	}, [userData]);
 
-	// 現在選択中のキャラクターを取得（キャラクターが存在しない場合は undefined）
 	const activeCharacter =
 		userData.characters.find((c) => c.id === userData.activeCharacterId) ||
 		userData.characters[0];
 
-	// キャラクター切り替え
 	const setActiveCharacter = (characterId: string) => {
 		setUserData((prev) => ({
 			...prev,
@@ -64,7 +62,6 @@ export const useUserData = () => {
 		}));
 	};
 
-	// キャラクター追加
 	const addCharacter = (name: string) => {
 		const newChar: CharacterProgress = {
 			id: generateUniqueId(),
@@ -80,7 +77,6 @@ export const useUserData = () => {
 		}));
 	};
 
-	// キャラクター名変更
 	const renameCharacter = (characterId: string, newName: string) => {
 		setUserData((prev) => ({
 			...prev,
@@ -92,9 +88,8 @@ export const useUserData = () => {
 		}));
 	};
 
-	// キャラクター削除
 	const deleteCharacter = (characterId: string) => {
-		if (userData.characters.length <= 1) return; // 最後の1キャラは削除不可
+		if (userData.characters.length <= 1) return;
 		setUserData((prev) => {
 			const nextChars = prev.characters.filter((c) => c.id !== characterId);
 			return {
@@ -106,7 +101,6 @@ export const useUserData = () => {
 		});
 	};
 
-	// 魚の【済 / 未】トグル（チェック付け外し）
 	const toggleFishCheck = (fishId: number) => {
 		setUserData((prev) => {
 			const updatedChars = prev.characters.map((char) => {
@@ -131,7 +125,14 @@ export const useUserData = () => {
 		});
 	};
 
-	// 3. データのエクスポート（JSONファイルダウンロード）
+	// 表示モード（カード / リスト）の変更関数
+	const setViewMode = (viewMode: ViewMode) => {
+		setUserData((prev) => ({
+			...prev,
+			viewMode,
+		}));
+	};
+
 	const exportData = () => {
 		const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(userData, null, 2));
 		const downloadAnchor = document.createElement('a');
@@ -142,7 +143,6 @@ export const useUserData = () => {
 		downloadAnchor.remove();
 	};
 
-	// 4. データのインポート（JSONファイル読み込み）
 	const importData = (file: File): Promise<boolean> => {
 		return new Promise((resolve, reject) => {
 			const reader = new FileReader();
@@ -157,7 +157,10 @@ export const useUserData = () => {
 						Array.isArray(parsedData.characters) &&
 						typeof parsedData.activeCharacterId === 'string'
 					) {
-						setUserData(parsedData);
+						setUserData({
+							...parsedData,
+							viewMode: parsedData.viewMode ?? 'card',
+						});
 						resolve(true);
 					} else {
 						reject(new Error('無効なデータ形式です。'));
@@ -174,6 +177,8 @@ export const useUserData = () => {
 	return {
 		userData,
 		activeCharacter,
+		viewMode: userData.viewMode ?? 'card',
+		setViewMode,
 		setActiveCharacter,
 		addCharacter,
 		renameCharacter,

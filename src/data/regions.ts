@@ -5,7 +5,7 @@
  * ============================================================================
  */
 
-import type { RegionMaster } from '@/types/fish';
+import type { RegionMaster } from '@/types/fishtracker';
 
 export const REGIONS: RegionMaster[] = [
   {

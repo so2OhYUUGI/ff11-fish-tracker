@@ -14,7 +14,7 @@
 
 import React from 'react';
 import { Fish } from 'lucide-react';
-import type { BaitMaster, FishMaster } from '@/types/fish';
+import type { BaitMaster, FishMaster } from '@/types/fishtracker';
 import { FISH_BAIT_RELATIONS, FISHES } from '@/data';
 import { CARD_STYLES } from '@/styles/components/cardStyles';
 

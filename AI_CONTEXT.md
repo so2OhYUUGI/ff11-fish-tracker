@@ -54,7 +54,7 @@
 
 | ファイル | 役割 |
 |---|---|
-| `src/types/fish.ts` | 型定義（Windower互換データ、アプリ拡張、進捗構造） |
+| `src/types/fishtracker.ts` | 型定義（Windower互換データ、アプリ拡張、進捗構造） |
 | `src/hooks/useNavigationStack.ts` | ページ遷移の管理 |
 | `src/hooks/useUserData.ts` | LocalStorage永続化、キャラ追加/削除/切替、魚チェックON/OFFロジック |
 | `src/components/Header.tsx` | アプリタイトル、キャラ切替UI、開発用ツール導線（`isDev`制御） |

@@ -15,7 +15,7 @@
  */
 
 import { useMemo } from 'react';
-import type { ZoneMaster, FishMaster, ViewMode, RegionMaster } from '@/types/fish';
+import type { ZoneMaster, FishMaster, ViewMode, RegionMaster } from '@/types/fishtracker';
 import type { useNavigationStack } from '@/hooks/useNavigationStack';
 import { REGIONS, ZONES, FISH_LOCATIONS } from '@/data/';
 import { AreaCard } from './AreaCard';

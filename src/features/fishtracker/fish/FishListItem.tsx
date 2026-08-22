@@ -16,7 +16,7 @@
 
 import React, { useMemo } from 'react';
 import { Check, MapPin } from 'lucide-react';
-import type { FishMaster, ZoneMaster } from '@/types/fish';
+import type { FishMaster, ZoneMaster } from '@/types/fishtracker';
 import { FISH_LOCATIONS } from '@/data';
 import { LIST_STYLES } from '@/styles/components/listStyles';
 import { FISH_STYLES, BADGE_BASE_STYLE } from '@/styles/features/FishTrackerStyle';

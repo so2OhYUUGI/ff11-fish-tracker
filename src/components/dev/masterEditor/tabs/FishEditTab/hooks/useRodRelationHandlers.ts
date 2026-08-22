@@ -12,7 +12,7 @@
  */
 
 import { useCallback } from 'react';
-import type { FishRodRelation } from '@/types/fish';
+import type { FishRodRelation } from '@/types/fishtracker';
 import type { EditableFish } from '../types';
 
 export function useRodRelationHandlers(

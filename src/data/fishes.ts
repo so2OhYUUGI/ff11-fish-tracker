@@ -1,4 +1,4 @@
-import type { FishMaster } from '@/types/fish';
+import type { FishMaster } from '@/types/fishtracker';
 
 export const FISHES: FishMaster[] = [
   {

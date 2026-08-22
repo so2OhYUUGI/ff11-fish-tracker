@@ -5,7 +5,7 @@
  * ============================================================================
  */
 
-import type { FishingRodMaster } from '@/types/fish';
+import type { FishingRodMaster } from '@/types/fishtracker';
 
 export const RODS: FishingRodMaster[] = [
   {

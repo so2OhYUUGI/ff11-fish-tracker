@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { UserPlus, Edit2, Trash2, Check, X, User } from 'lucide-react';
-import type { CharacterProgress } from '@/types/fish';
+import type { CharacterProgress } from '@/types/fishtracker';
 import { SETTINGS_STYLES } from '@/styles/components/settingsStyles';
 
 type CharacterTabProps = {

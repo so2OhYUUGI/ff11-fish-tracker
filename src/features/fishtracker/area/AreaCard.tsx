@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { Fish } from 'lucide-react';
-import type { ZoneMaster, FishMaster } from '@/types/fish';
+import type { ZoneMaster, FishMaster } from '@/types/fishtracker';
 import { FISH_LOCATIONS, FISHES } from '@/data';
 import { CARD_STYLES } from '@/styles/components/cardStyles';
 

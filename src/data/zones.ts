@@ -1,4 +1,4 @@
-import type { ZoneMaster } from '@/types/fish';
+import type { ZoneMaster } from '@/types/fishtracker';
 
 export const ZONES: ZoneMaster[] = [
   {

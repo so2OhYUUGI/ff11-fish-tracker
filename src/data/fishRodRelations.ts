@@ -1,4 +1,4 @@
-import type { FishRodRelation } from '@/types/fish';
+import type { FishRodRelation } from '@/types/fishtracker';
 
 export const FISH_ROD_RELATIONS: FishRodRelation[] = [
   {

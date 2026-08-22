@@ -15,7 +15,7 @@
 
 import React from 'react';
 import { ArrowLeft, CheckSquare, Info, Square, X, Fish } from 'lucide-react';
-import type { FishMaster, ZoneMaster, BaitMaster } from '@/types/fish';
+import type { FishMaster, ZoneMaster, BaitMaster } from '@/types/fishtracker';
 import {
 	FISH_LOCATIONS,
 	FISH_BAIT_RELATIONS,

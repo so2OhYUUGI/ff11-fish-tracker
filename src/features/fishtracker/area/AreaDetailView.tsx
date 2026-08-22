@@ -14,7 +14,7 @@
 
 import React, { useMemo } from 'react';
 import { ArrowLeft, MapPin, X, Fish } from 'lucide-react';
-import type { ZoneMaster, FishMaster, RegionMaster } from '@/types/fish';
+import type { ZoneMaster, FishMaster, RegionMaster } from '@/types/fishtracker';
 import { FISH_LOCATIONS } from '@/data';
 import { DETAIL_STYLES } from '@/styles/components/detailStyles';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';

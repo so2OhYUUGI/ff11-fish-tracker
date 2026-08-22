@@ -12,7 +12,7 @@
  * ============================================================================
  */
 
-import type { BaitMaster, FishMaster, ViewMode } from '@/types/fish';
+import type { BaitMaster, FishMaster, ViewMode } from '@/types/fishtracker';
 import type { useNavigationStack } from '@/hooks/useNavigationStack';
 import { BaitCard } from './BaitCard';
 import { BaitListItem } from './BaitListItem';

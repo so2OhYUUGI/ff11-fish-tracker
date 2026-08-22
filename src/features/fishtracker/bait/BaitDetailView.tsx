@@ -13,7 +13,7 @@
 
 import React, { useMemo } from 'react';
 import { ArrowLeft, Utensils, Fish, X } from 'lucide-react';
-import type { BaitMaster, FishMaster } from '@/types/fish';
+import type { BaitMaster, FishMaster } from '@/types/fishtracker';
 import { FISH_BAIT_RELATIONS } from '@/data';
 import { DETAIL_STYLES } from '@/styles/components/detailStyles';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';

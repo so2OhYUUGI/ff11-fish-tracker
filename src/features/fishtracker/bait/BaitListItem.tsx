@@ -12,7 +12,7 @@
 
 import React, { useMemo } from 'react';
 import { Fish } from 'lucide-react';
-import type { BaitMaster, FishMaster } from '@/types/fish';
+import type { BaitMaster, FishMaster } from '@/types/fishtracker';
 import { FISH_BAIT_RELATIONS, FISHES } from '@/data';
 import { LIST_STYLES } from '@/styles/components/listStyles';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';

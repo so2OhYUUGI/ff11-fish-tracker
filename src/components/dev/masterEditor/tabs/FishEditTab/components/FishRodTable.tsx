@@ -13,7 +13,7 @@
  */
 
 import React from 'react';
-import type { FishRodRelation } from '@/types/fish';
+import type { FishRodRelation } from '@/types/fishtracker';
 import { RODS } from '@/data/rods';
 import { EDITOR_STYLES } from '@/styles/components/editorStyles';
 

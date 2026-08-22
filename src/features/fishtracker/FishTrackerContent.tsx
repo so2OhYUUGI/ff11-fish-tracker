@@ -19,7 +19,7 @@ import { FISHES, ZONES, BAITS } from '@/data/';
 import { FishView } from './fish/FishView';
 import { BaitView } from './bait/BaitView';
 import { AreaView } from './area/AreaView';
-import type { MainTab, ViewMode, CharacterProgress } from '@/types/fish';
+import type { MainTab, ViewMode, CharacterProgress } from '@/types/fishtracker';
 import type { StatusFilter } from '@/features/fishtracker/FilterBar';
 import type { useNavigationStack } from '@/hooks/useNavigationStack';
 

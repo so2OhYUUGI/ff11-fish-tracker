@@ -9,7 +9,7 @@
  * ============================================================================
  */
 
-import type { SizeType, WaterType } from '@/types/fish';
+import type { SizeType, WaterType } from '@/types/fishtracker';
 import { COMMON_TOKENS } from '../tokens/commonTokens';
 
 // バッジ共通ベーススタイル

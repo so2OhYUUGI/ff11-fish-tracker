@@ -7,7 +7,7 @@
 
 import React, { useState } from 'react';
 import { X, User, Database } from 'lucide-react';
-import type { CharacterProgress } from '@/types/fish';
+import type { CharacterProgress } from '@/types/fishtracker';
 import { CharacterTab } from './CharacterTab';
 import { DataTab } from './DataTab';
 import { SETTINGS_STYLES } from '@/styles/components/settingsStyles';

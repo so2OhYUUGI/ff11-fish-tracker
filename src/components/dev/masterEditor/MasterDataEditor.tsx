@@ -26,7 +26,7 @@ import type {
 	BaitMaster,
 	FishBaitRelation,
 	FishRodRelation,
-} from '@/types/fish';
+} from '@/types/fishtracker';
 import { FishEditTab } from './tabs/FishEditTab/FishEditTab';
 import { ZoneEditTab } from './tabs/ZoneEditTab';
 import { BaitReorderTab } from './tabs/BaitReorderTab';

@@ -18,7 +18,7 @@ import type {
 	FishRodRelation,
 	SizeType,
 	WaterType,
-} from '@/types/fish';
+} from '@/types/fishtracker';
 
 export type EditableFish = FishMaster & {
 	zoneIds?: number[];

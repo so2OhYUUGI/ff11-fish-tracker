@@ -5,7 +5,7 @@
  */
 
 import { useState, useCallback } from 'react';
-import type { FishMaster, ZoneMaster, BaitMaster } from '@/types/fish';
+import type { FishMaster, ZoneMaster, BaitMaster } from '@/types/fishtracker';
 
 export type NavItem =
 	| { type: 'fish'; item: FishMaster }

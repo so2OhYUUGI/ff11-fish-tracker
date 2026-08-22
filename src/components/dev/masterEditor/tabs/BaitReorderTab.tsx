@@ -12,7 +12,7 @@
 import React from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import type { DropResult } from '@hello-pangea/dnd';
-import type { BaitMaster } from '@/types/fish';
+import type { BaitMaster } from '@/types/fishtracker';
 import { EDITOR_STYLES } from '@/styles/components/editorStyles';
 
 interface BaitReorderTabProps {

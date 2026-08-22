@@ -6,7 +6,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import type { ZoneMaster, RegionMaster } from '@/types/fish';
+import type { ZoneMaster, RegionMaster } from '@/types/fishtracker';
 import { RelationEditor } from '../RelationEditor';
 import type { EntityItem } from '../types';
 import { EDITOR_STYLES } from '@/styles/components/editorStyles';

@@ -10,7 +10,7 @@
  */
 
 import React from 'react';
-import type { SizeType, WaterType } from '@/types/fish';
+import type { SizeType, WaterType } from '@/types/fishtracker';
 import {
 	BADGE_BASE_STYLE,
 	FISH_SIZE_CONFIG,

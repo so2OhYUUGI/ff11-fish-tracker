@@ -1,4 +1,4 @@
-import type { FishBaitRelation } from '@/types/fish';
+import type { FishBaitRelation } from '@/types/fishtracker';
 
 export const FISH_BAIT_RELATIONS: FishBaitRelation[] = [
   {

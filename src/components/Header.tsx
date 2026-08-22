@@ -7,7 +7,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Fish, Database, Settings, ChevronDown, Check, User } from 'lucide-react';
-import type { CharacterProgress } from '@/types/fish';
+import type { CharacterProgress } from '@/types/fishtracker';
 import { isDev } from '@/utils/env';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';

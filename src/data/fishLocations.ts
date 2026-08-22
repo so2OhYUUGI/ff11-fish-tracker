@@ -1,4 +1,4 @@
-import type { FishLocation } from '@/types/fish';
+import type { FishLocation } from '@/types/fishtracker';
 
 export const FISH_LOCATIONS: FishLocation[] = [
   {

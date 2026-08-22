@@ -18,7 +18,7 @@ import { AdBanner } from '@/components/AdBanner';
 import { Footer } from '@/components/Footer';
 import { LandingPage } from '@/components/LandingPage';
 import { MasterDataEditorModal } from '@/components/dev/MasterDataEditorModal';
-import type { ViewMode, MainTab } from '@/types/fish';
+import type { MainTab } from '@/types/fishtracker';
 
 const useIsMobileLayout = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -40,6 +40,8 @@ export default function App() {
   const {
     userData,
     activeCharacter,
+    viewMode,
+    setViewMode,
     setActiveCharacter,
     addCharacter,
     renameCharacter,
@@ -55,7 +57,6 @@ export default function App() {
   const [mainTab, setMainTab] = useState<MainTab>('fish');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [viewMode, setViewMode] = useState<ViewMode>('card');
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
