@@ -266,7 +266,7 @@ export const FISHES: FishMaster[] = [
     "description": "東方伝来の小型観賞魚。鮮やかな橙色をしており、\\nふよふよと愛らしく泳ぐ。",
     "maxSkill": 20,
     "sizeType": "small",
-    "waterType": "unknown",
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false
   },
@@ -1651,8 +1651,8 @@ export const FISHES: FishMaster[] = [
     "ebisu": false,
     "taikobou": false,
     "harakiriItems": [
-      "水の鉱",
-      "石闇の鉱石",
+      "水の鉱石",
+      "闇の鉱石",
       "氷の鉱石"
     ]
   },
@@ -1895,7 +1895,7 @@ export const FISHES: FishMaster[] = [
     "waterType": "saltwater",
     "ebisu": false,
     "taikobou": false,
-    "notes": "だいじなもの「、伝説の巨大魚紀聞」？\nmap 2の地底湖"
+    "notes": "だいじなもの「伝説の巨大魚紀聞」？\nmap 2の地底湖"
   },
   {
     "id": 6373,

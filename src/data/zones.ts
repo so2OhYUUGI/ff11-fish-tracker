@@ -105,7 +105,8 @@ export const ZONES: ZoneMaster[] = [
   {
     "id": 17,
     "ja": "ホラの塔",
-    "en": "Spire of Holla"
+    "en": "Spire of Holla",
+    "regionId": 25
   },
   {
     "id": 18,
@@ -116,7 +117,8 @@ export const ZONES: ZoneMaster[] = [
   {
     "id": 19,
     "ja": "デムの塔",
-    "en": "Spire of Dem"
+    "en": "Spire of Dem",
+    "regionId": 25
   },
   {
     "id": 20,
@@ -127,7 +129,8 @@ export const ZONES: ZoneMaster[] = [
   {
     "id": 21,
     "ja": "メアの塔",
-    "en": "Spire of Mea"
+    "en": "Spire of Mea",
+    "regionId": 25
   },
   {
     "id": 22,
@@ -138,7 +141,8 @@ export const ZONES: ZoneMaster[] = [
   {
     "id": 23,
     "ja": "ヴァズの塔",
-    "en": "Spire of Vahzl"
+    "en": "Spire of Vahzl",
+    "regionId": 25
   },
   {
     "id": 24,
@@ -1724,22 +1728,26 @@ export const ZONES: ZoneMaster[] = [
   {
     "id": 294,
     "ja": "デュナミス-サンドリア〔Ｄ〕",
-    "en": "Dynamis - San d'Oria [D]"
+    "en": "Dynamis - San d'Oria [D]",
+    "regionId": 21
   },
   {
     "id": 295,
     "ja": "デュナミス-バストゥーク〔Ｄ〕",
-    "en": "Dynamis - Bastok [D]"
+    "en": "Dynamis - Bastok [D]",
+    "regionId": 21
   },
   {
     "id": 296,
     "ja": "デュナミス-ウィンダス〔Ｄ〕",
-    "en": "Dynamis - Windurst [D]"
+    "en": "Dynamis - Windurst [D]",
+    "regionId": 21
   },
   {
     "id": 297,
     "ja": "デュナミス-ジュノ〔Ｄ〕",
-    "en": "Dynamis - Jeuno [D]"
+    "en": "Dynamis - Jeuno [D]",
+    "regionId": 21
   },
   {
     "id": 298,
