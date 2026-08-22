@@ -22,6 +22,7 @@ export const CARD_STYLES = {
 	titleJaDefault: 'text-white group-hover:text-cyan-400',
 	titleJaSelected: COMMON_TOKENS.entity.fish.textActive,
 	titleJaSelectedBait: COMMON_TOKENS.entity.bait.textActive,
+	titleJaSelectedArea: COMMON_TOKENS.entity.area.textActive,
 	titleJaChecked: 'line-through text-slate-400',
 	titleEn: COMMON_TOKENS.text.titleEn,
 	titleEnSub: `${COMMON_TOKENS.text.titleEn} mt-0.5`,
@@ -32,10 +33,6 @@ export const CARD_STYLES = {
 	descriptionBox: `${COMMON_TOKENS.box.dark} p-2.5 rounded text-xs leading-relaxed mt-2 text-slate-300`,
 	notesBlock: 'mt-2 text-xs text-slate-400 flex items-start gap-1 bg-slate-900/50 p-2 rounded border border-slate-700/50',
 
-	// 汎用バッジベース
-	badgeBase: 'px-2 py-0.5 rounded font-medium text-xs border shrink-0',
-	badgeDefault: 'bg-slate-700/80 text-slate-300 border-slate-600',
-
 	// カード内インラインタグ・関連エンティティリスト
 	targetLabelGroup: 'mt-3 text-xs flex items-center gap-1.5 flex-wrap',
 	targetLabel: 'flex items-center gap-1 text-slate-400 shrink-0 font-medium',
@@ -43,6 +40,15 @@ export const CARD_STYLES = {
 	tagItem: 'px-1.5 py-0.5 bg-slate-800 text-slate-300 border border-slate-700/60 rounded text-[11px] truncate max-w-[120px]',
 	tagOverflow: 'px-1.5 py-0.5 bg-cyan-950/80 text-cyan-300 border border-cyan-800/60 rounded text-[11px] font-semibold',
 	tagEmpty: 'text-slate-500 italic',
+
+	// チェックボタン領域のスタイル
+	checkButton: {
+		base: 'w-8 h-8 rounded-lg flex items-center justify-center transition-colors shrink-0',
+		checked: 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/50',
+		unchecked: 'bg-slate-700 text-slate-500 border border-slate-600 hover:border-slate-400',
+		iconChecked: 'w-5 h-5 stroke-[3]',
+		iconUnchecked: 'w-5 h-5 stroke-[2]',
+	},
 
 	// セクション・リージョンヘッダー要素
 	sectionHeader: {

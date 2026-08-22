@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * [FilePath] src/components/bait/BaitCard.tsx
+ * [FilePath] src/features/fishtracker/bait/BaitCard.tsx
  * [Role] 餌データ（個別）のカード表示コンポーネント
  * 
  * [概要]

@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * [FilePath] src/components/area/AreaCard.tsx
+ * [FilePath] src/features/fishtracker/area/AreaCard.tsx
  * [Role] エリアデータのカード表示コンポーネント
  * 
  * [概要]
@@ -59,7 +59,7 @@ export const AreaCard: React.FC<Props> = ({
           {/* 日本語名と英語名 */}
           <div className={CARD_STYLES.titleGroup}>
             <h3
-              className={`truncate ${CARD_STYLES.titleJa} ${isSelected ? 'text-cyan-300' : CARD_STYLES.titleJaDefault
+              className={`truncate ${CARD_STYLES.titleJa} ${isSelected ? CARD_STYLES.titleJaSelectedArea : CARD_STYLES.titleJaDefault
                 }`}
             >
               {area.ja}

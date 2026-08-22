@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * [FilePath] src/components/fish/FishListView.tsx
+ * [FilePath] src/features/fishtracker/fish/FishListView.tsx
  * [Role] 魚一覧／詳細ビューのレスポンシブレイアウト制御コンポーネント
  * 
  * [概要]

@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * [FilePath] src/components/fish/FishDetailView.tsx
+ * [FilePath] src/features/fishtracker/fish/FishDetailView.tsx
  * [Role] 魚詳細情報表示コンポーネント
  * 
  * [概要]
@@ -23,8 +23,12 @@ import {
 	RODS,
 } from '@/data';
 import { DETAIL_STYLES } from '@/styles/components/detailStyles';
-import { CARD_STYLES } from '@/styles/components/cardStyles';
-import { FISH_STYLES } from '@/styles/features/fishStyles';
+import { FISH_STYLES, BADGE_BASE_STYLE } from '@/styles/features/fishStyles';
+import {
+	SizeBadge,
+	WaterBadge,
+	FlagBadge,
+} from '@/features/fishtracker/common/FishBadges';
 
 type FishDetailViewProps = {
 	fish: FishMaster;
@@ -36,32 +40,6 @@ type FishDetailViewProps = {
 	canGoBack?: boolean;
 	onClickAreaDetail?: (area: ZoneMaster) => void;
 	onClickBaitDetail?: (bait: BaitMaster) => void;
-};
-
-// サイズ表記ラベル・スタイル取得ヘルパー（FISH_STYLES を参照）
-const getSizeBadgeInfo = (sizeType: FishMaster['sizeType']) => {
-	switch (sizeType) {
-		case 'large':
-			return { label: '大型魚', style: FISH_STYLES.badgeLarge };
-		case 'small':
-			return { label: '小型魚', style: FISH_STYLES.badgeSmall };
-		default:
-			return { label: 'サイズ不明', style: FISH_STYLES.badgeSizeUnknown };
-	}
-};
-
-// 水質・区分ラベル・スタイル取得ヘルパー（FISH_STYLES を参照）
-const getWaterBadgeInfo = (waterType: FishMaster['waterType']) => {
-	switch (waterType) {
-		case 'freshwater':
-			return { label: '淡水', style: FISH_STYLES.badgeFreshwater };
-		case 'saltwater':
-			return { label: '海水', style: FISH_STYLES.badgeSaltwater };
-		case 'gedou':
-			return { label: '外道', style: FISH_STYLES.badgeGedou };
-		default:
-			return { label: '区分不明', style: FISH_STYLES.badgeWaterUnknown };
-	}
 };
 
 export const FishDetailView: React.FC<FishDetailViewProps> = ({
@@ -93,9 +71,6 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 			(rel) => rel.fishId === fish.id && rel.rodId === rodId
 		);
 	};
-
-	const sizeInfo = getSizeBadgeInfo(fish.sizeType);
-	const waterInfo = getWaterBadgeInfo(fish.waterType);
 
 	const hasHarakiriItems = Boolean(fish.harakiriItems && fish.harakiriItems.length > 0);
 	const hasHarakiriTitle = Boolean(fish.harakiriTitle);
@@ -169,30 +144,14 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 				<div>
 					<h3 className={DETAIL_STYLES.sectionTitle}>基本ステータス</h3>
 					<div className="flex flex-wrap items-center gap-2">
-						<span className={`${CARD_STYLES.badgeBase} ${CARD_STYLES.badgeDefault}`}>
+						<span className={`${BADGE_BASE_STYLE} ${FISH_STYLES.badgeSkill}`}>
 							上限スキル: {fish.maxSkill}
 						</span>
-						<span className={`${CARD_STYLES.badgeBase} ${sizeInfo.style}`}>
-							{sizeInfo.label}
-						</span>
-						<span className={`${CARD_STYLES.badgeBase} ${waterInfo.style}`}>
-							{waterInfo.label}
-						</span>
-						{isHarakiriTarget && (
-							<span className={`${CARD_STYLES.badgeBase} ${FISH_STYLES.badgeHarakiri}`}>
-								ハラキリ
-							</span>
-						)}
-						{fish.ebisu && (
-							<span className={`${CARD_STYLES.badgeBase} ${FISH_STYLES.badgeEbisu}`}>
-								恵比寿関連
-							</span>
-						)}
-						{fish.taikobou && (
-							<span className={`${CARD_STYLES.badgeBase} ${FISH_STYLES.badgeTaikobou}`}>
-								太公望関連
-							</span>
-						)}
+						<SizeBadge sizeType={fish.sizeType} />
+						<WaterBadge waterType={fish.waterType} />
+						{isHarakiriTarget && <FlagBadge type="harakiri" />}
+						{fish.ebisu && <FlagBadge type="ebisu" />}
+						{fish.taikobou && <FlagBadge type="taikobou" />}
 					</div>
 				</div>
 

@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * [FilePath] src/components/area/AreaListItem.tsx
+ * [FilePath] src/features/fishtracker/area/AreaListItem.tsx
  * [Role] エリアデータのリスト表示コンポーネント
  * 
  * [概要]

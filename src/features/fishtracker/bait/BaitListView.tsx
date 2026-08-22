@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * [FilePath] src/components/bait/BaitListView.tsx
+ * [FilePath] src/features/fishtracker/bait/BaitListView.tsx
  * [Role] 餌一覧表示および詳細ビュー切り替え用コンテナコンポーネント
  * 
  * [概要]

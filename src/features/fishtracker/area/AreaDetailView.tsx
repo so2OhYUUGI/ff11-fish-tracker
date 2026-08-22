@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * [FilePath] src/components/area/AreaDetailView.tsx
+ * [FilePath] src/features/fishtracker/area/AreaDetailView.tsx
  * [Role] 選択されたエリアの詳細情報および釣れる魚一覧の表示コンポーネント
  * 
  * [概要]
@@ -8,15 +8,20 @@
  * - `regionList` から `area.regionId` に一致するリージョン情報を参照して描画
  * - 中間データ `FISH_LOCATIONS` を参照し、当該エリア（`area.id`）で釣れる魚を抽出・一覧表示
  * - 生息魚一覧をバッジ形式から属性情報付きのリスト形式へ変更し、視認性と比較の容易性を向上
- * - 全スタイルの参照を `DETAIL_STYLES` へ完全移行
+ * - 全スタイルの参照を `DETAIL_STYLES` および `FISH_STYLES` へ完全移行
  * ============================================================================
  */
 
 import React from 'react';
 import { ArrowLeft, MapPin, X, Fish } from 'lucide-react';
-import type { ZoneMaster, FishMaster, RegionMaster, SizeType, WaterType } from '@/types/fish';
+import type { ZoneMaster, FishMaster, RegionMaster } from '@/types/fish';
 import { FISH_LOCATIONS } from '@/data';
 import { DETAIL_STYLES } from '@/styles/components/detailStyles';
+import { FISH_STYLES, BADGE_BASE_STYLE } from '@/styles/features/fishStyles';
+import {
+	SizeBadge,
+	WaterBadge,
+} from '@/features/fishtracker/common/FishBadges';
 
 type Props = {
 	area: ZoneMaster;
@@ -26,21 +31,6 @@ type Props = {
 	onBack?: () => void;
 	canGoBack?: boolean;
 	onClickFishDetail?: (fish: FishMaster) => void;
-};
-
-// サイズ表記のラベルとスタイルマッピング
-const SIZE_CONFIG: Record<SizeType, { label: string; style: string }> = {
-	small: { label: '小型', style: DETAIL_STYLES.badgeSize.small },
-	large: { label: '大型', style: DETAIL_STYLES.badgeSize.large },
-	unknown: { label: '不明', style: DETAIL_STYLES.badgeSize.unknown },
-};
-
-// 水質表記のラベルとスタイルマッピング
-const WATER_CONFIG: Record<WaterType, { label: string; style: string }> = {
-	freshwater: { label: '淡水', style: DETAIL_STYLES.badgeWater.freshwater },
-	saltwater: { label: '海水', style: DETAIL_STYLES.badgeWater.saltwater },
-	gedou: { label: '外道', style: DETAIL_STYLES.badgeWater.gedou },
-	unknown: { label: '不明', style: DETAIL_STYLES.badgeWater.unknown },
 };
 
 export const AreaDetailView: React.FC<Props> = ({
@@ -142,42 +132,33 @@ export const AreaDetailView: React.FC<Props> = ({
 
 					{catchableFishes.length > 0 ? (
 						<div className={DETAIL_STYLES.relatedList}>
-							{catchableFishes.map((fish) => {
-								const sizeInfo = SIZE_CONFIG[fish.sizeType] ?? SIZE_CONFIG.unknown;
-								const waterInfo = WATER_CONFIG[fish.waterType] ?? WATER_CONFIG.unknown;
-
-								return (
-									<div
-										key={fish.id}
-										onClick={() => onClickFishDetail?.(fish)}
-										className={`${DETAIL_STYLES.relatedRow} ${onClickFishDetail ? DETAIL_STYLES.relatedRowInteractive : ''
-											}`}
-									>
-										{/* 左側：魚名（日本語・英語） */}
-										<div className={DETAIL_STYLES.relatedRowTitleGroup}>
-											<span className={DETAIL_STYLES.relatedRowTitle}>
-												{fish.ja}
-											</span>
-											<span className={DETAIL_STYLES.relatedRowSubTitle}>
-												{fish.en}
-											</span>
-										</div>
-
-										{/* 右側：属性・上限スキルバッジ群 */}
-										<div className={DETAIL_STYLES.relatedRowBadgeGroup}>
-											<span className={DETAIL_STYLES.badgeSkill}>
-												上限: {fish.maxSkill}
-											</span>
-											<span className={`${DETAIL_STYLES.badgeBase} ${sizeInfo.style}`}>
-												{sizeInfo.label}
-											</span>
-											<span className={`${DETAIL_STYLES.badgeBase} ${waterInfo.style}`}>
-												{waterInfo.label}
-											</span>
-										</div>
+							{catchableFishes.map((fish) => (
+								<div
+									key={fish.id}
+									onClick={() => onClickFishDetail?.(fish)}
+									className={`${DETAIL_STYLES.relatedRow} ${onClickFishDetail ? DETAIL_STYLES.relatedRowInteractive : ''
+										}`}
+								>
+									{/* 左側：魚名（日本語・英語） */}
+									<div className={DETAIL_STYLES.relatedRowTitleGroup}>
+										<span className={DETAIL_STYLES.relatedRowTitle}>
+											{fish.ja}
+										</span>
+										<span className={DETAIL_STYLES.relatedRowSubTitle}>
+											{fish.en}
+										</span>
 									</div>
-								);
-							})}
+
+									{/* 右側：属性・上限スキルバッジ群 */}
+									<div className={DETAIL_STYLES.relatedRowBadgeGroup}>
+										<span className={`${BADGE_BASE_STYLE} ${FISH_STYLES.badgeSkill}`}>
+											上限: {fish.maxSkill}
+										</span>
+										<SizeBadge sizeType={fish.sizeType} useShortLabel />
+										<WaterBadge waterType={fish.waterType} />
+									</div>
+								</div>
+							))}
 						</div>
 					) : (
 						<p className={DETAIL_STYLES.emptyText}>このエリアで釣れる魚の情報はありません</p>

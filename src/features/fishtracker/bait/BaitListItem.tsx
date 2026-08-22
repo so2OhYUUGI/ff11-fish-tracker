@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * [FilePath] src/components/bait/BaitListItem.tsx
+ * [FilePath] src/features/fishtracker/bait/BaitListItem.tsx
  * [Role] 餌データ（個別）のリスト表示コンポーネント
  * 
  * [概要]

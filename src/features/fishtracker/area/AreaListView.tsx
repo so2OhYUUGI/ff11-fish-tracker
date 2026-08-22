@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * [FilePath] src/components/area/AreaListView.tsx
+ * [FilePath] src/features/fishtracker/area/AreaListView.tsx
  * [Role] エリア一覧表示および詳細ビュー切り替え用コンテナコンポーネント
  * 
  * [概要]

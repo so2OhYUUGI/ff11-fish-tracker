@@ -11,6 +11,7 @@ export const LIST_STYLES = {
 	// 1. 基本リスト行・レイアウト
 	base: 'relative rounded-lg border p-2.5 transition-all duration-150 select-none group',
 	itemRow: 'flex items-center justify-between gap-3 cursor-pointer py-2 px-3',
+	fishRow: 'flex items-center justify-between gap-3 cursor-pointer py-2 px-3',
 	dimmed: 'opacity-70',
 	default: 'bg-slate-800/60 border-slate-700/60 hover:border-slate-500 hover:bg-slate-800 shadow-sm',
 	selected: COMMON_TOKENS.state.selected,
@@ -47,4 +48,9 @@ export const LIST_STYLES = {
 	indicatorIcon: 'w-3.5 h-3.5',
 	indicatorIconActive: 'w-3.5 h-3.5 text-cyan-400',
 	indicatorIconEmpty: 'w-3.5 h-3.5 text-slate-500',
+
+	// 6. 生息エリア数バッジ（個別）
+	zoneCountBase: 'inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium border shrink-0',
+	zoneCountSingle: 'bg-amber-950/50 text-amber-300 border-amber-800/40',
+	zoneCountMultiple: 'bg-slate-800/80 text-slate-300 border-slate-700/60',
 } as const;

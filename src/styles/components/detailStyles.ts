@@ -81,20 +81,4 @@ export const DETAIL_STYLES = {
   relatedRowTitle: 'text-sm font-bold text-slate-200',
   relatedRowSubTitle: 'text-xs text-slate-400 font-mono',
   relatedRowBadgeGroup: 'flex items-center gap-1.5 flex-wrap shrink-0',
-
-  // 属性・区分バッジ定義
-  badgeBase: 'px-1.5 py-0.5 rounded text-xs border',
-  badgeSkill:
-    'px-2 py-0.5 rounded text-xs font-mono bg-slate-900/80 text-cyan-300 border border-slate-700',
-  badgeSize: {
-    small: 'bg-emerald-950/60 text-emerald-300 border-emerald-800/50',
-    large: 'bg-amber-950/60 text-amber-300 border-amber-800/50',
-    unknown: 'bg-slate-800/60 text-slate-400 border-slate-700/50',
-  },
-  badgeWater: {
-    freshwater: 'bg-teal-950/60 text-teal-300 border-teal-800/50',
-    saltwater: 'bg-blue-950/60 text-blue-300 border-blue-800/50',
-    gedou: 'bg-purple-950/60 text-purple-300 border-purple-800/50',
-    unknown: 'bg-slate-800/60 text-slate-400 border-slate-700/50',
-  },
 } as const;

@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * [FilePath] src/components/bait/BaitDetailView.tsx
+ * [FilePath] src/features/fishtracker/bait/BaitDetailView.tsx
  * [Role] 餌の詳細情報表示コンポーネント
  * 
  * [概要]
@@ -12,10 +12,15 @@
 
 import React from 'react';
 import { ArrowLeft, Utensils, Fish, X } from 'lucide-react';
-import type { BaitMaster, FishMaster, SizeType, WaterType } from '@/types/fish';
+import type { BaitMaster, FishMaster } from '@/types/fish';
 import { FISH_BAIT_RELATIONS } from '@/data';
 import { DETAIL_STYLES } from '@/styles/components/detailStyles';
+import { FISH_STYLES, BADGE_BASE_STYLE } from '@/styles/features/fishStyles';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
+import {
+	SizeBadge,
+	WaterBadge,
+} from '@/features/fishtracker/common/FishBadges';
 
 type BaitDetailViewProps = {
 	bait: BaitMaster | null;
@@ -24,21 +29,6 @@ type BaitDetailViewProps = {
 	onBack?: () => void;
 	canGoBack?: boolean;
 	onClickFishDetail?: (fish: FishMaster) => void;
-};
-
-// サイズ表記ラベル定義
-const SIZE_LABEL: Record<SizeType, string> = {
-	small: '小型',
-	large: '大型',
-	unknown: '不明',
-};
-
-// 水質表記ラベル定義
-const WATER_LABEL: Record<WaterType, string> = {
-	freshwater: '淡水',
-	saltwater: '海水',
-	gedou: '外道',
-	unknown: '不明',
 };
 
 export const BaitDetailView: React.FC<BaitDetailViewProps> = ({
@@ -132,42 +122,33 @@ export const BaitDetailView: React.FC<BaitDetailViewProps> = ({
 
 					{targetFishes.length > 0 ? (
 						<div className={DETAIL_STYLES.relatedList}>
-							{targetFishes.map((fish) => {
-								const sizeStyle = DETAIL_STYLES.badgeSize[fish.sizeType] ?? DETAIL_STYLES.badgeSize.unknown;
-								const waterStyle = DETAIL_STYLES.badgeWater[fish.waterType] ?? DETAIL_STYLES.badgeWater.unknown;
-
-								return (
-									<div
-										key={fish.id}
-										onClick={() => onClickFishDetail?.(fish)}
-										className={`${DETAIL_STYLES.relatedRow} ${onClickFishDetail ? DETAIL_STYLES.relatedRowInteractive : ''
-											}`}
-									>
-										{/* 左側：魚名（日本語・英語） */}
-										<div className="flex flex-col min-w-[140px]">
-											<span className={DETAIL_STYLES.relatedRowTitle}>
-												{fish.ja}
-											</span>
-											<span className={DETAIL_STYLES.relatedRowSubTitle}>
-												{fish.en}
-											</span>
-										</div>
-
-										{/* 右側：属性・上限スキルバッジ群 */}
-										<div className="flex items-center gap-1.5 flex-wrap shrink-0">
-											<span className={DETAIL_STYLES.badgeSkill}>
-												上限: {fish.maxSkill}
-											</span>
-											<span className={`px-1.5 py-0.5 rounded text-xs border ${sizeStyle}`}>
-												{SIZE_LABEL[fish.sizeType] ?? SIZE_LABEL.unknown}
-											</span>
-											<span className={`px-1.5 py-0.5 rounded text-xs border ${waterStyle}`}>
-												{WATER_LABEL[fish.waterType] ?? WATER_LABEL.unknown}
-											</span>
-										</div>
+							{targetFishes.map((fish) => (
+								<div
+									key={fish.id}
+									onClick={() => onClickFishDetail?.(fish)}
+									className={`${DETAIL_STYLES.relatedRow} ${onClickFishDetail ? DETAIL_STYLES.relatedRowInteractive : ''
+										}`}
+								>
+									{/* 左側：魚名（日本語・英語） */}
+									<div className="flex flex-col min-w-[140px]">
+										<span className={DETAIL_STYLES.relatedRowTitle}>
+											{fish.ja}
+										</span>
+										<span className={DETAIL_STYLES.relatedRowSubTitle}>
+											{fish.en}
+										</span>
 									</div>
-								);
-							})}
+
+									{/* 右側：属性・上限スキルバッジ群 */}
+									<div className="flex items-center gap-1.5 flex-wrap shrink-0">
+										<span className={`${BADGE_BASE_STYLE} ${FISH_STYLES.badgeSkill}`}>
+											上限: {fish.maxSkill}
+										</span>
+										<SizeBadge sizeType={fish.sizeType} useShortLabel />
+										<WaterBadge waterType={fish.waterType} />
+									</div>
+								</div>
+							))}
 						</div>
 					) : (
 						<p className={DETAIL_STYLES.emptyText}>対象の魚データがありません</p>

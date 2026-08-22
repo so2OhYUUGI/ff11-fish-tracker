@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * [FilePath] src/components/fish/FishListItem.tsx
+ * [FilePath] src/features/fishtracker/components/lists/FishListItem.tsx
  * [Role] 魚データ（個別）のリスト表示コンポーネント
  * 
  * [概要]
@@ -15,10 +15,13 @@
 
 import React from 'react';
 import { Check, MapPin } from 'lucide-react';
-import type { FishMaster, ZoneMaster, SizeType, WaterType } from '@/types/fish';
+import type { FishMaster, ZoneMaster } from '@/types/fish';
 import { FISH_LOCATIONS } from '@/data';
 import { LIST_STYLES } from '@/styles/components/listStyles';
-import { FISH_STYLES } from '@/styles/features/fishStyles';
+import {
+	SizeBadge,
+	WaterBadge,
+} from '@/features/fishtracker/common/FishBadges';
 
 type Props = {
 	fish: FishMaster;
@@ -27,21 +30,6 @@ type Props = {
 	isSelected?: boolean;
 	onToggleCheck: (fishId: number) => void;
 	onClickDetail: (fish: FishMaster) => void;
-};
-
-// サイズ表記のラベルとスタイルマッピング（FISH_STYLES を参照）
-const SIZE_CONFIG: Record<SizeType, { label: string; style: string }> = {
-	small: { label: '小型', style: FISH_STYLES.badgeSmall },
-	large: { label: '大型', style: FISH_STYLES.badgeLarge },
-	unknown: { label: '不明', style: FISH_STYLES.badgeSizeUnknown },
-};
-
-// 水質表記のラベルとスタイルマッピング（FISH_STYLES を参照）
-const WATER_CONFIG: Record<WaterType, { label: string; style: string }> = {
-	freshwater: { label: '淡水', style: FISH_STYLES.badgeFreshwater },
-	saltwater: { label: '海水', style: FISH_STYLES.badgeSaltwater },
-	gedou: { label: '外道', style: FISH_STYLES.badgeGedou },
-	unknown: { label: '不明', style: FISH_STYLES.badgeWaterUnknown },
 };
 
 export const FishListItem: React.FC<Props> = ({
@@ -68,13 +56,10 @@ export const FishListItem: React.FC<Props> = ({
 			? LIST_STYLES.checked
 			: LIST_STYLES.default;
 
-	const sizeInfo = SIZE_CONFIG[fish.sizeType] ?? SIZE_CONFIG.unknown;
-	const waterInfo = WATER_CONFIG[fish.waterType] ?? WATER_CONFIG.unknown;
-
 	return (
 		<div
 			onClick={() => onClickDetail(fish)}
-			className={`${LIST_STYLES.base} ${containerStyle} flex items-center justify-between gap-3 cursor-pointer py-2 px-3`}
+			className={`${LIST_STYLES.base} ${LIST_STYLES.fishRow} ${containerStyle}`}
 		>
 			<div className="flex items-center gap-3 min-w-0 flex-1">
 				{/* チェックボックス領域 */}
@@ -94,10 +79,10 @@ export const FishListItem: React.FC<Props> = ({
 				<div className="flex flex-col min-w-0 flex-1">
 					<span
 						className={`truncate ${LIST_STYLES.titleJa} ${isSelected
-							? LIST_STYLES.titleJaSelected
-							: isChecked
-								? LIST_STYLES.titleJaChecked
-								: LIST_STYLES.titleJaDefault
+								? LIST_STYLES.titleJaSelected
+								: isChecked
+									? LIST_STYLES.titleJaChecked
+									: LIST_STYLES.titleJaDefault
 							}`}
 					>
 						{fish.ja}
@@ -112,9 +97,9 @@ export const FishListItem: React.FC<Props> = ({
 			<div className="flex items-center gap-1.5 shrink-0">
 				{totalZones > 0 && (
 					<span
-						className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium border shrink-0 ${totalZones === 1
-							? 'bg-amber-950/50 text-amber-300 border-amber-800/40'
-							: 'bg-slate-800/80 text-slate-300 border-slate-700/60'
+						className={`${LIST_STYLES.zoneCountBase} ${totalZones === 1
+								? LIST_STYLES.zoneCountSingle
+								: LIST_STYLES.zoneCountMultiple
 							}`}
 						title={`生息エリア: ${totalZones}箇所`}
 					>
@@ -122,16 +107,8 @@ export const FishListItem: React.FC<Props> = ({
 						<span>{totalZones}</span>
 					</span>
 				)}
-				<span
-					className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium border ${sizeInfo.style}`}
-				>
-					{sizeInfo.label}
-				</span>
-				<span
-					className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium border ${waterInfo.style}`}
-				>
-					{waterInfo.label}
-				</span>
+				<SizeBadge sizeType={fish.sizeType} useShortLabel />
+				<WaterBadge waterType={fish.waterType} />
 			</div>
 		</div>
 	);
