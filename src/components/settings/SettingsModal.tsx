@@ -10,6 +10,7 @@ import { X, User, Database } from 'lucide-react';
 import type { CharacterProgress } from '@/types/fish';
 import { CharacterTab } from './CharacterTab';
 import { DataTab } from './DataTab';
+import { SETTINGS_STYLES } from '@/styles/components/settingsStyles';
 
 type TabType = 'character' | 'data';
 
@@ -43,28 +44,27 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 	if (!isOpen) return null;
 
 	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-			{/* 修正点: h-[500px] で高さを固定、max-h-[85vh] で画面からはみ出るのを防止 */}
-			<div className="bg-slate-800 border border-slate-700 rounded-xl shadow-2xl w-full max-w-lg h-[500px] max-h-[85vh] overflow-hidden text-white flex flex-col">
+		<div className={SETTINGS_STYLES.overlay}>
+			<div className={SETTINGS_STYLES.modal}>
 
-				{/* ヘッダー (高さ固定) */}
-				<div className="flex items-center justify-between px-6 py-4 border-b border-slate-700 shrink-0">
-					<h2 className="text-lg font-bold">環境設定・データ管理</h2>
+				{/* ヘッダー */}
+				<div className={SETTINGS_STYLES.header.container}>
+					<h2 className={SETTINGS_STYLES.header.title}>環境設定・データ管理</h2>
 					<button
 						onClick={onClose}
-						className="p-1 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors"
+						className={SETTINGS_STYLES.header.closeButton}
 					>
 						<X className="w-5 h-5" />
 					</button>
 				</div>
 
-				{/* タブナビゲーション (高さ固定) */}
-				<div className="flex border-b border-slate-700 bg-slate-900/40 px-6 shrink-0">
+				{/* タブナビゲーション */}
+				<div className={SETTINGS_STYLES.tabNav.container}>
 					<button
 						onClick={() => setActiveTab('character')}
-						className={`flex items-center gap-2 py-3 px-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'character'
-								? 'border-blue-500 text-blue-400'
-								: 'border-transparent text-slate-400 hover:text-slate-200'
+						className={`${SETTINGS_STYLES.tabNav.buttonBase} ${activeTab === 'character'
+								? SETTINGS_STYLES.tabNav.active
+								: SETTINGS_STYLES.tabNav.inactive
 							}`}
 					>
 						<User className="w-4 h-4" />
@@ -72,9 +72,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 					</button>
 					<button
 						onClick={() => setActiveTab('data')}
-						className={`flex items-center gap-2 py-3 px-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'data'
-								? 'border-blue-500 text-blue-400'
-								: 'border-transparent text-slate-400 hover:text-slate-200'
+						className={`${SETTINGS_STYLES.tabNav.buttonBase} ${activeTab === 'data'
+								? SETTINGS_STYLES.tabNav.active
+								: SETTINGS_STYLES.tabNav.inactive
 							}`}
 					>
 						<Database className="w-4 h-4" />
@@ -82,8 +82,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 					</button>
 				</div>
 
-				{/* タブコンテンツ (残り高さを全占有・内部のみスクロール) */}
-				<div className="p-6 overflow-y-auto flex-1">
+				{/* タブコンテンツ */}
+				<div className={SETTINGS_STYLES.content}>
 					{activeTab === 'character' && (
 						<CharacterTab
 							characters={characters}
@@ -103,11 +103,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 					)}
 				</div>
 
-				{/* フッター (高さ固定) */}
-				<div className="px-6 py-3 bg-slate-800/50 border-t border-slate-700 text-right shrink-0">
+				{/* フッター */}
+				<div className={SETTINGS_STYLES.footer.container}>
 					<button
 						onClick={onClose}
-						className="px-4 py-1.5 bg-slate-700 hover:bg-slate-600 text-white text-sm rounded-lg font-medium transition-colors"
+						className={SETTINGS_STYLES.footer.closeButton}
 					>
 						閉じる
 					</button>
