@@ -1848,10 +1848,11 @@ export const FISHES: FishMaster[] = [
     "en": "Remora",
     "description": "伝説の巨大な古代魚。\\n",
     "maxSkill": 120,
-    "sizeType": "small",
-    "waterType": "unknown",
+    "sizeType": "large",
+    "waterType": "freshwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "notes": "だいじなもの「伝説の巨大魚紀聞」\nMAP[1](J-11)"
   },
   {
     "id": 6374,
@@ -1863,7 +1864,7 @@ export const FISHES: FishMaster[] = [
     "waterType": "saltwater",
     "ebisu": true,
     "taikobou": false,
-    "notes": "クエスト「勇魚」（真恵比寿釣竿）"
+    "notes": "クエスト「勇魚」（真恵比寿釣竿）\nだいじなもの「サーペントの伝説」"
   },
   {
     "id": 6372,
@@ -1871,8 +1872,8 @@ export const FISHES: FishMaster[] = [
     "en": "Lord of Ulbuka",
     "description": "厄災を引き起こすと恐れられる、伝説の巨大魚。\\n",
     "maxSkill": 120,
-    "sizeType": "small",
-    "waterType": "unknown",
+    "sizeType": "large",
+    "waterType": "freshwater",
     "ebisu": true,
     "taikobou": false,
     "notes": "クエスト「勇魚」（真恵比寿釣竿）"
