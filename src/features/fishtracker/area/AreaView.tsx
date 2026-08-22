@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * [FilePath] src/features/fishtracker/area/AreaListView.tsx
+ * [FilePath] src/features/fishtracker/area/AreaView.tsx
  * [Role] エリア一覧表示および詳細ビュー切り替え用コンテナコンポーネント
  * 
  * [概要]
@@ -9,6 +9,7 @@
  * - `useNavigationStack`（`navStack`）の最前面データ（`current`）に基づき、詳細パネルの切り替え・スタック遷移を描画
  * - 選択状態（`current !== null`）に応じた2カラム（一覧＋詳細）レスポンシブレイアウトの制御
  * - 表示モード（`viewMode`: 'card' | 'list'）に基づく `AreaCard` / `AreaListItem` の切替描画
+ * - 詳細ビュー内の魚達成チェック操作を判定・実行可能に拡張
  * - 全レイアウト・スタイルの参照を `LAYOUT_TOKENS` および `CARD_STYLES` へ集約
  * ============================================================================
  */
@@ -28,7 +29,9 @@ import { CARD_STYLES } from '@/styles/components/cardStyles';
 type Props = {
 	areas: ZoneMaster[];
 	allFishes: FishMaster[];
+	checkedFishIds: number[];
 	viewMode: ViewMode;
+	onToggleCheck: (fishId: number) => void;
 	navStack: ReturnType<typeof useNavigationStack>;
 };
 
@@ -37,13 +40,20 @@ type RegionGroup = {
 	areas: ZoneMaster[];
 };
 
-export const AreaListView = ({
+export const AreaView = ({
 	areas,
 	allFishes,
+	checkedFishIds,
 	viewMode,
+	onToggleCheck,
 	navStack,
 }: Props) => {
 	const { current, push, replace, pop, clear, canGoBack } = navStack;
+
+	// チェック操作ハンドラ
+	const handleToggleCheck = (fishId: number) => {
+		onToggleCheck(fishId);
+	};
 
 	// リージョンごとにエリアをグループ化＆各リージョン内で魚0件エリアを末尾にソート
 	const groupedAreas = useMemo(() => {
@@ -164,8 +174,8 @@ export const AreaListView = ({
 						<FishDetailView
 							fish={current.item}
 							zones={ZONES}
-							isChecked={false}
-							onToggleCheck={() => { }}
+							isChecked={checkedFishIds.includes(current.item.id)}
+							onToggleCheck={handleToggleCheck}
 							onClose={clear}
 							onBack={pop}
 							canGoBack={canGoBack}

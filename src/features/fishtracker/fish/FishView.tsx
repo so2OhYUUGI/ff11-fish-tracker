@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * [FilePath] src/features/fishtracker/fish/FishListView.tsx
+ * [FilePath] src/features/fishtracker/fish/FishView.tsx
  * [Role] 魚一覧／詳細ビューのレスポンシブレイアウト制御コンポーネント
  * 
  * [概要]
@@ -11,9 +11,9 @@
  * ============================================================================
  */
 
-import { FishCard } from '../fish/FishCard';
-import { FishListItem } from '../fish/FishListItem';
-import { FishDetailView } from '../fish/FishDetailView';
+import { FishCard } from './FishCard';
+import { FishListItem } from './FishListItem';
+import { FishDetailView } from './FishDetailView';
 import { AreaDetailView } from '../area/AreaDetailView';
 import { BaitDetailView } from '../bait/BaitDetailView';
 import type { FishMaster, ViewMode, ZoneMaster } from '@/types/fish';
@@ -31,7 +31,7 @@ type Props = {
 	navStack: ReturnType<typeof useNavigationStack>;
 };
 
-export const FishListView = ({
+export const FishView = ({
 	fishes,
 	zones,
 	checkedFishIds,

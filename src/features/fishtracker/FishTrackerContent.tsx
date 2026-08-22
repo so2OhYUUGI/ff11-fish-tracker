@@ -1,6 +1,7 @@
 /**
  * ============================================================================
  * [FilePath] src/components/MainContentRouter.tsx
+ * [FilePath] src/features/fishtracker/FishTrackerContent.tsx
  * [Role] メイン領域の表示切替・フィルタリング・ルーティングコンポーネント
  * 
  * [概要]
@@ -15,9 +16,9 @@
 
 import React, { useMemo } from 'react';
 import { FISHES, ZONES, BAITS } from '@/data/';
-import { FishListView } from './fish/FishListView';
-import { BaitListView } from './bait/BaitListView';
-import { AreaListView } from './area/AreaListView';
+import { FishView } from './fish/FishView';
+import { BaitView } from './bait/BaitView';
+import { AreaView } from './area/AreaView';
 import type { MainTab, ViewMode, CharacterProgress } from '@/types/fish';
 import type { StatusFilter } from '@/features/fishtracker/FilterBar';
 import type { useNavigationStack } from '@/hooks/useNavigationStack';
@@ -81,7 +82,7 @@ export const MainContentRouter: React.FC<MainContentRouterProps> = ({
 	switch (mainTab) {
 		case 'fish':
 			return (
-				<FishListView
+				<FishView
 					fishes={filteredFishes}
 					zones={ZONES}
 					checkedFishIds={activeCharacter.checkedFishIds}
@@ -92,19 +93,23 @@ export const MainContentRouter: React.FC<MainContentRouterProps> = ({
 			);
 		case 'bait':
 			return (
-				<BaitListView
+				<BaitView
 					baits={filteredBaits}
 					allFishes={FISHES}
+					checkedFishIds={activeCharacter.checkedFishIds}
 					viewMode={viewMode}
+					onToggleCheck={onToggleCheck}
 					navStack={navStack}
 				/>
 			);
 		case 'area':
 			return (
-				<AreaListView
+				<AreaView
 					areas={filteredAreas}
 					allFishes={FISHES}
+					checkedFishIds={activeCharacter.checkedFishIds}
 					viewMode={viewMode}
+					onToggleCheck={onToggleCheck}
 					navStack={navStack}
 				/>
 			);
