@@ -84,3 +84,18 @@ export const DETAIL_STYLES = {
   relatedRowSubTitle: 'text-xs text-slate-400 font-mono',
   relatedRowBadgeGroup: 'flex items-center gap-1.5 flex-wrap shrink-0',
 } as const;
+
+// 詳細表示用データテーブル構造スタイル
+export const DETAIL_TABLE_STYLES = {
+  wrapper: 'border border-slate-700 rounded-lg overflow-hidden',
+  table: 'w-full text-xs text-left text-slate-300',
+  thead: 'bg-slate-800 text-slate-400 border-b border-slate-700',
+  th: 'p-2',
+  thCenter: 'p-2 text-center w-20',
+  tbody: 'divide-y divide-slate-700/50',
+  tr: 'hover:bg-slate-800/40',
+  tdName: 'p-2 font-medium text-slate-200',
+  subText: 'text-slate-500 text-[10px] ml-1',
+  tdCenter: 'p-2 text-center',
+  tdNotes: 'p-2 text-slate-400',
+} as const;

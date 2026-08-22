@@ -116,3 +116,17 @@ export const FILTER_BAR_STYLES = {
 	viewModeInactive: 'text-slate-400 hover:text-slate-200',
 	viewModeIcon: 'w-4 h-4 shrink-0',
 } as const;
+
+// 判定・ステータス用スタイル定義（テーブル等のセル内表示用）
+export const FISH_STATUS_TEXT_STYLES = {
+	// 肯定・成功（可能）
+	possible: 'text-emerald-400 font-bold',
+	// 否定・不可（不可）
+	impossible: 'text-red-400 font-bold',
+	// 警告・注意（あり）
+	yes: 'text-amber-400 font-bold',
+	// 安全・正常（なし）
+	no: 'text-sky-400',
+	// 未確認・未知（不明）
+	unknown: 'text-slate-500',
+} as const;
