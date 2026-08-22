@@ -18,6 +18,15 @@ export const LAYOUT_TOKENS = {
 		container: 'bg-slate-800 text-white shadow-md border-b border-slate-700',
 		inner: 'max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8',
 		iconBg: 'p-2 bg-blue-600 rounded-lg',
+		// 収束ボタン（select や control.button と高さを完全一致させる）
+		collapsedMenuButton: 'bg-slate-700 border border-slate-600 text-white text-sm rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none flex items-center gap-2 transition-colors shadow-sm',
+		collapsedButtonText: 'max-w-[120px] truncate',
+		collapsedChevron: (isOpen: boolean) => `w-4 h-4 text-slate-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`,
+		dropdownContainer: 'absolute right-0 mt-2 w-56 bg-slate-900 border border-slate-700 rounded-lg shadow-xl py-1 z-50 divide-y divide-slate-800',
+		sectionHeader: 'px-3 py-1.5 text-[10px] font-semibold tracking-wider text-slate-400 uppercase',
+		dropdownItemActive: 'w-full text-left px-3 py-2 text-xs flex items-center justify-between transition-colors bg-blue-600/20 text-blue-300 font-medium',
+		dropdownItemInactive: 'w-full text-left px-3 py-2 text-xs flex items-center justify-between transition-colors text-slate-300 hover:bg-slate-800 hover:text-white',
+		dropdownActionItem: 'w-full text-left px-3 py-2 text-xs text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-2 transition-colors',
 	},
 
 	// コントロール要素
