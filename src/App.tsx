@@ -18,7 +18,9 @@ import { AdBanner } from '@/components/AdBanner';
 import { Footer } from '@/components/Footer';
 import { LandingPage } from '@/components/LandingPage';
 import { MasterDataEditorModal } from '@/components/dev/MasterDataEditorModal';
+import { LAYOUT_TOKENS } from './styles/tokens/layoutTokens';
 import type { MainTab } from '@/types/fishtracker';
+
 
 const useIsMobileLayout = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -86,9 +88,6 @@ export default function App() {
     navStack.clear();
   };
 
-  // 一覧リストからの選択処理をレイアウトに応じて分岐
-  // - 1カラム（モバイル）：一覧に戻るため push
-  // - 2カラム（PC）：新しい詳細で置き換えるため replace
   const handleSelectFromList = (item: NavItem) => {
     if (isMobileLayout) {
       navStack.push(item);
@@ -97,9 +96,6 @@ export default function App() {
     }
   };
 
-  // 画面モードごとの「戻る」有効化判定
-  // - 1カラム（モバイル）: 1つ以上のスタックがあれば有効（一覧に戻る）
-  // - 2カラム（PC）: 2つ以上のスタック（詳細からさらに詳細を開いた時）があれば有効（前の詳細に戻る）
   const canGoBackEffective = isMobileLayout
     ? navStack.stack.length > 0
     : navStack.stack.length > 1;
@@ -111,10 +107,10 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col font-sans">
+    <div className={LAYOUT_TOKENS.page.appWrapper}>
       <Toaster position="bottom-right" theme="dark" />
 
-      <div className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur border-b border-slate-800 shadow-md">
+      <div className={LAYOUT_TOKENS.header.stickyWrapper}>
         <Header
           characters={userData.characters}
           activeCharacter={activeCharacter}
@@ -138,7 +134,7 @@ export default function App() {
 
       <AdBanner slotId="top-banner" />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className={LAYOUT_TOKENS.page.mainContainer}>
         <FishTrackerContent
           mainTab={mainTab}
           statusFilter={statusFilter}

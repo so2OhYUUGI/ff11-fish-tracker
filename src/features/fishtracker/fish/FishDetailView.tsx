@@ -9,7 +9,7 @@
  * - ハラキリ対象（アイテム・称号の有無）時の獲得可能アイテムおよび称号の表示
  * - 生息エリアタグや餌タグクリックによる他詳細画面（`AreaDetailView` / `BaitDetailView`）への相互遷移サポート
  * - 釣竿相性一覧、特記事項（`notes`）、説明文（`description`）の表示
- * - 全スタイルの参照を `DETAIL_STYLES` および `COMMON_TOKENS` へ完全移行
+ * - 全スタイルの参照を `DETAIL_STYLES` / `DETAIL_TABLE_STYLES` および `COMMON_TOKENS` へ完全移行
  * ============================================================================
  */
 
@@ -23,13 +23,16 @@ import {
 	BAITS,
 	RODS,
 } from '@/data';
-import { DETAIL_STYLES } from '@/styles/components/detailStyles';
-import { FISH_STYLES, BADGE_BASE_STYLE } from '@/styles/features/FishTrackerStyle';
+import { DETAIL_STYLES, DETAIL_TABLE_STYLES } from '@/styles/components/detailStyles';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 import {
 	SizeBadge,
 	WaterBadge,
 	FlagBadge,
+	SkillBadge,
+	HarakiriItemBadge,
+	HarakiriTitleBadge,
+	RodStatusText,
 } from '@/features/fishtracker/common/FishBadges';
 
 type FishDetailViewProps = {
@@ -146,9 +149,7 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 				<div>
 					<h3 className={DETAIL_STYLES.sectionTitle}>基本ステータス</h3>
 					<div className="flex flex-wrap items-center gap-2">
-						<span className={`${BADGE_BASE_STYLE} ${FISH_STYLES.badgeSkill}`}>
-							上限スキル: {fish.maxSkill}
-						</span>
+						<SkillBadge maxSkill={fish.maxSkill} />
 						<SizeBadge sizeType={fish.sizeType} />
 						<WaterBadge waterType={fish.waterType} />
 						{isHarakiriTarget && <FlagBadge type="harakiri" />}
@@ -166,21 +167,14 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 								<div className="flex flex-wrap items-center gap-2">
 									<span className="text-xs text-slate-400">入手アイテム:</span>
 									{fish.harakiriItems!.map((item, index) => (
-										<span
-											key={index}
-											className="px-2.5 py-1 rounded bg-slate-800 text-slate-200 border border-slate-700 text-xs font-medium"
-										>
-											{item}
-										</span>
+										<HarakiriItemBadge key={index} itemName={item} />
 									))}
 								</div>
 							)}
 							{hasHarakiriTitle && (
 								<div className="flex items-center gap-2 text-xs">
 									<span className="text-slate-400">獲得称号:</span>
-									<span className="px-2.5 py-1 rounded bg-amber-950/40 text-amber-300 border border-amber-800/60 font-medium">
-										{fish.harakiriTitle}
-									</span>
+									<HarakiriTitleBadge titleName={fish.harakiriTitle!} />
 								</div>
 							)}
 						</div>
@@ -248,18 +242,18 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 					<h3 className={DETAIL_STYLES.sectionTitle}>
 						釣竿との相性・反応 (全 {RODS.length} 種類)
 					</h3>
-					<div className="border border-slate-700 rounded-lg overflow-hidden">
-						<table className="w-full text-xs text-left text-slate-300">
-							<thead className="bg-slate-800 text-slate-400 border-b border-slate-700">
+					<div className={DETAIL_TABLE_STYLES.wrapper}>
+						<table className={DETAIL_TABLE_STYLES.table}>
+							<thead className={DETAIL_TABLE_STYLES.thead}>
 								<tr>
-									<th className="p-2">竿名</th>
-									<th className="p-2 text-center w-20">釣り可能</th>
-									<th className="p-2 text-center w-20">竿折れ</th>
-									<th className="p-2 text-center w-20">糸切れ</th>
-									<th className="p-2 text-left">備考</th>
+									<th className={DETAIL_TABLE_STYLES.th}>竿名</th>
+									<th className={DETAIL_TABLE_STYLES.thCenter}>釣り可能</th>
+									<th className={DETAIL_TABLE_STYLES.thCenter}>竿折れ</th>
+									<th className={DETAIL_TABLE_STYLES.thCenter}>糸切れ</th>
+									<th className={DETAIL_TABLE_STYLES.th}>備考</th>
 								</tr>
 							</thead>
-							<tbody className="divide-y divide-slate-700/50">
+							<tbody className={DETAIL_TABLE_STYLES.tbody}>
 								{RODS.map((rod) => {
 									const rel = getRodRelation(rod.id);
 									const catchability = rel?.catchability || 'unknown';
@@ -268,41 +262,41 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 									const notes = rel?.notes || '';
 
 									return (
-										<tr key={rod.id} className="hover:bg-slate-800/40">
-											<td className="p-2 font-medium text-slate-200">
+										<tr key={rod.id} className={DETAIL_TABLE_STYLES.tr}>
+											<td className={DETAIL_TABLE_STYLES.tdName}>
 												{rod.ja}
-												<span className="text-slate-500 text-[10px] ml-1">
+												<span className={DETAIL_TABLE_STYLES.subText}>
 													({rod.en})
 												</span>
 											</td>
-											<td className="p-2 text-center">
+											<td className={DETAIL_TABLE_STYLES.tdCenter}>
 												{catchability === 'possible' ? (
-													<span className="text-emerald-400 font-bold">可能</span>
+													<RodStatusText type="possible" label="可能" />
 												) : catchability === 'impossible' ? (
-													<span className="text-red-400 font-bold">不可</span>
+													<RodStatusText type="impossible" label="不可" />
 												) : (
-													<span className="text-slate-500">不明</span>
+													<RodStatusText type="unknown" label="不明" />
 												)}
 											</td>
-											<td className="p-2 text-center">
+											<td className={DETAIL_TABLE_STYLES.tdCenter}>
 												{rodBreak === 'yes' ? (
-													<span className="text-amber-400 font-bold">あり</span>
+													<RodStatusText type="yes" label="あり" />
 												) : rodBreak === 'no' ? (
-													<span className="text-sky-400">なし</span>
+													<RodStatusText type="no" label="なし" />
 												) : (
-													<span className="text-slate-500">不明</span>
+													<RodStatusText type="unknown" label="不明" />
 												)}
 											</td>
-											<td className="p-2 text-center">
+											<td className={DETAIL_TABLE_STYLES.tdCenter}>
 												{lineBreak === 'yes' ? (
-													<span className="text-amber-400 font-bold">あり</span>
+													<RodStatusText type="yes" label="あり" />
 												) : lineBreak === 'no' ? (
-													<span className="text-sky-400">なし</span>
+													<RodStatusText type="no" label="なし" />
 												) : (
-													<span className="text-slate-500">不明</span>
+													<RodStatusText type="unknown" label="不明" />
 												)}
 											</td>
-											<td className="p-2 text-slate-400">
+											<td className={DETAIL_TABLE_STYLES.tdNotes}>
 												{notes || '-'}
 											</td>
 										</tr>

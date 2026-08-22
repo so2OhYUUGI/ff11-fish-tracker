@@ -8,6 +8,7 @@
 export const LAYOUT_TOKENS = {
 	// アプリ・ページ全体のベースレイアウト
 	page: {
+		appWrapper: 'min-h-screen bg-slate-900 text-slate-100 flex flex-col font-sans',
 		base: 'min-h-screen bg-slate-900 text-slate-100 font-sans',
 		centered: 'min-h-screen bg-slate-900 text-slate-100 flex flex-col justify-center items-center px-4 py-12',
 		mainContainer: 'flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6',
@@ -15,6 +16,7 @@ export const LAYOUT_TOKENS = {
 
 	// ヘッダー領域
 	header: {
+		stickyWrapper: 'sticky top-0 z-40 bg-slate-900/95 backdrop-blur border-b border-slate-800 shadow-md',
 		container: 'bg-slate-800 text-white shadow-md border-b border-slate-700',
 		inner: 'max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8',
 		iconBg: 'p-2 bg-blue-600 rounded-lg',
