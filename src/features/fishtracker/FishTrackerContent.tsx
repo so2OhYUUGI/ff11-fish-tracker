@@ -23,7 +23,7 @@ import type { MainTab, ViewMode, CharacterProgress } from '@/types/fishtracker';
 import type { StatusFilter } from '@/features/fishtracker/FilterBar';
 import type { useNavigationStack } from '@/hooks/useNavigationStack';
 
-type MainContentRouterProps = {
+type FishTrackerContentProps = {
 	mainTab: MainTab;
 	statusFilter: StatusFilter;
 	searchQuery: string;
@@ -33,7 +33,7 @@ type MainContentRouterProps = {
 	navStack: ReturnType<typeof useNavigationStack>;
 };
 
-export const MainContentRouter: React.FC<MainContentRouterProps> = ({
+export const FishTrackerContent: React.FC<FishTrackerContentProps> = ({
 	mainTab,
 	statusFilter,
 	searchQuery,

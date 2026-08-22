@@ -13,7 +13,7 @@ import { FISHES } from '@/data/';
 import { Header } from '@/components/Header';
 import { SettingsModal } from '@/components/settings/SettingsModal';
 import { FilterBar, type StatusFilter } from '@/features/fishtracker/FilterBar';
-import { MainContentRouter } from '@/features/fishtracker/FishTrackerContent';
+import { FishTrackerContent } from '@/features/fishtracker/FishTrackerContent';
 import { AdBanner } from '@/components/AdBanner';
 import { Footer } from '@/components/Footer';
 import { LandingPage } from '@/components/LandingPage';
@@ -139,7 +139,7 @@ export default function App() {
       <AdBanner slotId="top-banner" />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <MainContentRouter
+        <FishTrackerContent
           mainTab={mainTab}
           statusFilter={statusFilter}
           searchQuery={searchQuery}
