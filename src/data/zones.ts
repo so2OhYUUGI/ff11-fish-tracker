@@ -1302,7 +1302,7 @@ export const ZONES: ZoneMaster[] = [
     "en": "Ship bound for Mhaura"
   },
   {
-    "id": -221,
+    "id": 10221,
     "ja": "機船航路：セルビナ - マウラ",
     "en": "Ship bound for Mhaura",
     "regionId": 100
@@ -1625,7 +1625,7 @@ export const ZONES: ZoneMaster[] = [
   },
   {
     "id": 276,
-    "ja": "ラ・カザ��ル宮��郭",
+    "ja": "ラ・カザナル宮内郭",
     "en": "Ra'Kaznar Inner Court",
     "regionId": 52
   },

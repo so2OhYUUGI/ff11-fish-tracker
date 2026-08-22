@@ -232,7 +232,10 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "saltwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "猛毒素"
+    ]
   },
   {
     "id": 6333,
@@ -453,7 +456,10 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "waterType": "unknown",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "スケルトンキー"
+    ]
   },
   {
     "id": 5799,
@@ -480,7 +486,10 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "freshwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "テルリックリング"
+    ]
   },
   {
     "id": 5535,
@@ -513,7 +522,10 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "saltwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "黒インク"
+    ]
   },
   {
     "id": 5786,
@@ -597,7 +609,11 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "saltwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "貝殻",
+      "ネビムナイト"
+    ]
   },
   {
     "id": 5812,
@@ -642,7 +658,10 @@ export const FISHES: FishMaster[] = [
     "waterType": "saltwater",
     "ebisu": false,
     "taikobou": false,
-    "notes": "昇級認定試験（下級職人→名取）"
+    "notes": "昇級認定試験（下級職人→名取）",
+    "harakiriItems": [
+      "タイニータスラム"
+    ]
   },
   {
     "id": 5450,
@@ -653,7 +672,11 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "saltwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "真珠",
+      "黒真珠"
+    ]
   },
   {
     "id": 5469,
@@ -675,7 +698,10 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "waterType": "saltwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "藍石"
+    ]
   },
   {
     "id": 5952,
@@ -796,7 +822,10 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "freshwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "折れたハルシオン竿"
+    ]
   },
   {
     "id": 9077,
@@ -832,7 +861,10 @@ export const FISHES: FishMaster[] = [
     "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false,
-    "notes": "昇級認定試験（名取→目録）"
+    "notes": "昇級認定試験（名取→目録）",
+    "harakiriItems": [
+      "毒素"
+    ]
   },
   {
     "id": 5959,
@@ -988,7 +1020,10 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "freshwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "ノディリング"
+    ]
   },
   {
     "id": 4317,
@@ -1033,7 +1068,11 @@ export const FISHES: FishMaster[] = [
     "waterType": "saltwater",
     "ebisu": false,
     "taikobou": false,
-    "notes": "昇級認定試験（目録→印可）"
+    "notes": "昇級認定試験（目録→印可）",
+    "harakiriItems": [
+      "海賊の海図",
+      "山師の海図"
+    ]
   },
   {
     "id": 5451,
@@ -1044,7 +1083,10 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "saltwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "錆びた大剣"
+    ]
   },
   {
     "id": 5466,
@@ -1066,7 +1108,10 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "freshwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "シーバードリング"
+    ]
   },
   {
     "id": 5816,
@@ -1088,7 +1133,11 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "freshwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "猛毒素",
+      "パティシエリング"
+    ]
   },
   {
     "id": 4485,
@@ -1156,7 +1205,10 @@ export const FISHES: FishMaster[] = [
     "waterType": "saltwater",
     "ebisu": false,
     "taikobou": false,
-    "notes": "昇級認定試験（印可→高弟）"
+    "notes": "昇級認定試験（印可→高弟）",
+    "harakiriItems": [
+      "ロバー針"
+    ]
   },
   {
     "id": 5808,
@@ -1167,7 +1219,10 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "saltwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "ソロントルク"
+    ]
   },
   {
     "id": 6145,
@@ -1189,7 +1244,10 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "waterType": "freshwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "アイススパイク"
+    ]
   },
   {
     "id": 5130,
@@ -1259,7 +1317,10 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "freshwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "折れたヒューム釣竿"
+    ]
   },
   {
     "id": 4477,
@@ -1270,7 +1331,10 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "freshwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "ドローンイヤリング"
+    ]
   },
   {
     "id": 5809,
@@ -1282,7 +1346,10 @@ export const FISHES: FishMaster[] = [
     "waterType": "saltwater",
     "ebisu": false,
     "taikobou": false,
-    "notes": "昇級認定試験（高弟→皆伝）"
+    "notes": "昇級認定試験（高弟→皆伝）",
+    "harakiriItems": [
+      "マヒ毒素"
+    ]
   },
   {
     "id": 5470,
@@ -1293,7 +1360,12 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "freshwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "ペイストの皮",
+      "鎧竜の角",
+      "飛竜の皮"
+    ]
   },
   {
     "id": 5951,
@@ -1304,7 +1376,11 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "saltwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "猛毒素",
+      "コンフェシネリング"
+    ]
   },
   {
     "id": 5472,
@@ -1360,7 +1436,10 @@ export const FISHES: FishMaster[] = [
     "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false,
-    "notes": "南東の池。最寄りの幽門石は#6。"
+    "notes": "南東の池。最寄りの幽門石は#6。",
+    "harakiriItems": [
+      "ゴールドインゴット"
+    ]
   },
   {
     "id": 4304,
@@ -1371,7 +1450,13 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "saltwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "シルバーリング",
+      "ミスリルリング",
+      "ゴールドリング",
+      "プラチナリング"
+    ]
   },
   {
     "id": 5455,
@@ -1382,7 +1467,11 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "saltwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "朽ちた鋳塊",
+      "崩れた鋳塊"
+    ]
   },
   {
     "id": 4454,
@@ -1409,7 +1498,10 @@ export const FISHES: FishMaster[] = [
     "waterType": "saltwater",
     "ebisu": false,
     "taikobou": false,
-    "notes": "昇級認定試験（皆伝→師範）"
+    "notes": "昇級認定試験（皆伝→師範）",
+    "harakiriItems": [
+      "フレイムシールド"
+    ]
   },
   {
     "id": 5462,
@@ -1420,7 +1512,10 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "freshwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "クイルグローブ"
+    ]
   },
   {
     "id": 5467,
@@ -1431,7 +1526,11 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "saltwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "折れたミスラ式釣竿",
+      "ミスラ式釣竿"
+    ]
   },
   {
     "id": 4384,
@@ -1465,7 +1564,10 @@ export const FISHES: FishMaster[] = [
     "waterType": "saltwater",
     "ebisu": false,
     "taikobou": false,
-    "notes": "昇級認定試験（師範→高級職人）\nだいじなもの「伝説の巨大魚紀聞」"
+    "notes": "昇級認定試験（師範→高級職人）\nだいじなもの「伝説の巨大魚紀聞」",
+    "harakiriItems": [
+      "ダックリング"
+    ]
   },
   {
     "id": 5133,
@@ -1476,7 +1578,10 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "saltwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "ラピスラズリ"
+    ]
   },
   {
     "id": 4463,
@@ -1487,7 +1592,10 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "freshwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "賢者の石"
+    ]
   },
   {
     "id": 4475,
@@ -1498,7 +1606,10 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "saltwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "ドリルカラマリ"
+    ]
   },
   {
     "id": 4476,
@@ -1524,7 +1635,10 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "saltwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "フラットシールド"
+    ]
   },
   {
     "id": 5137,
@@ -1535,7 +1649,12 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "freshwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "水の鉱",
+      "石闇の鉱石",
+      "氷の鉱石"
+    ]
   },
   {
     "id": 4316,
@@ -1546,7 +1665,10 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "freshwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "ストリッドプレート"
+    ]
   },
   {
     "id": 4308,
@@ -1557,7 +1679,10 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "freshwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "玉糸"
+    ]
   },
   {
     "id": 5814,
@@ -1568,7 +1693,10 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "freshwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "パフィンリング"
+    ]
   },
   {
     "id": 5446,
@@ -1590,7 +1718,10 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "saltwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "愛染国俊"
+    ]
   },
   {
     "id": 4319,
@@ -1601,7 +1732,10 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "freshwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "黒鉄鉱"
+    ]
   },
   {
     "id": 4309,
@@ -1612,7 +1746,10 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "freshwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "ドワーフプギル"
+    ]
   },
   {
     "id": 6489,
@@ -1624,7 +1761,10 @@ export const FISHES: FishMaster[] = [
     "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false,
-    "notes": "2015.11.10追加\n醴泉島の水辺に点在する黒い球から釣れる。\nE-10:最寄#1　橋下　ヴァナ時間6:00~11:00出現\nJ-7:最寄#6　渓流　ヴァナ時間16:00~21:00出現"
+    "notes": "2015.11.10追加\n醴泉島の水辺に点在する黒い球から釣れる。\nE-10:最寄#1　橋下　ヴァナ時間6:00~11:00出現\nJ-7:最寄#6　渓流　ヴァナ時間16:00~21:00出現",
+    "harakiriItems": [
+      "腐食したサブリガ"
+    ]
   },
   {
     "id": 5134,
@@ -1635,7 +1775,10 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "saltwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "メリクリウススピア"
+    ]
   },
   {
     "id": 5471,
@@ -1646,7 +1789,10 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "freshwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "リスキーパッチ"
+    ]
   },
   {
     "id": 5127,
@@ -1687,7 +1833,12 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "saltwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "リフトシンダー",
+      "リフトドロス",
+      "真珠"
+    ]
   },
   {
     "id": 5540,
@@ -1806,7 +1957,10 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "saltwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "メルクリウスソード"
+    ]
   },
   {
     "id": 5476,
@@ -1817,7 +1971,11 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "freshwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "harakiriItems": [
+      "オーロラバス",
+      "プラムブーツ"
+    ]
   },
   {
     "id": 6371,
@@ -1841,7 +1999,10 @@ export const FISHES: FishMaster[] = [
     "waterType": "saltwater",
     "ebisu": true,
     "taikobou": false,
-    "notes": "クエスト「勇魚」（真恵比寿釣竿）"
+    "notes": "クエスト「勇魚」（真恵比寿釣竿）",
+    "harakiriItems": [
+      "シェーパーケープ"
+    ]
   },
   {
     "id": 6146,
