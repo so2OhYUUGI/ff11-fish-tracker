@@ -18,7 +18,7 @@
  * 3. 【プログレス表示】
  *    `totalFishCount` が 0 の場合は 0% 計算のゼロ除算防止ロジックを含んでいます。
  * 4. 【スタイルの集約】
- *    Tailwind CSS クラスは `@/styles/filterBarStyles` より定数参照しています。
+ *    Tailwind CSS クラスは `@/styles/feature/FishTrackerStyle` より定数参照しています。
  * 5. 【アクセシビリティ・規約】
  *    すべての `button` タグには `type="button"` を明記しています。
  * ============================================================================
@@ -27,7 +27,7 @@
 import React from 'react';
 import { Search, LayoutGrid, List, Fish, Utensils, MapPin, X } from 'lucide-react';
 import type { ViewMode, MainTab, CharacterProgress } from '@/types/fish';
-import { FILTER_BAR_STYLES } from '@/styles/components/filterBarStyles';
+import { FILTER_BAR_STYLES } from '@/styles/features/FishTrackerStyle';
 
 export type StatusFilter = 'all' | 'checked' | 'unchecked';
 
@@ -71,33 +71,33 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 							type="button"
 							onClick={() => onMainTabChange('fish')}
 							className={`${FILTER_BAR_STYLES.tabButtonBase} ${mainTab === 'fish'
-								? FILTER_BAR_STYLES.tabActive
-								: FILTER_BAR_STYLES.tabInactive
+									? FILTER_BAR_STYLES.tabActive
+									: FILTER_BAR_STYLES.tabInactive
 								}`}
 						>
-							<Fish className="w-3.5 h-3.5" />
+							<Fish className={FILTER_BAR_STYLES.tabIcon} />
 							<span>魚</span>
 						</button>
 						<button
 							type="button"
 							onClick={() => onMainTabChange('bait')}
 							className={`${FILTER_BAR_STYLES.tabButtonBase} ${mainTab === 'bait'
-								? FILTER_BAR_STYLES.tabActive
-								: FILTER_BAR_STYLES.tabInactive
+									? FILTER_BAR_STYLES.tabActive
+									: FILTER_BAR_STYLES.tabInactive
 								}`}
 						>
-							<Utensils className="w-3.5 h-3.5" />
+							<Utensils className={FILTER_BAR_STYLES.tabIcon} />
 							<span>餌</span>
 						</button>
 						<button
 							type="button"
 							onClick={() => onMainTabChange('area')}
 							className={`${FILTER_BAR_STYLES.tabButtonBase} ${mainTab === 'area'
-								? FILTER_BAR_STYLES.tabActive
-								: FILTER_BAR_STYLES.tabInactive
+									? FILTER_BAR_STYLES.tabActive
+									: FILTER_BAR_STYLES.tabInactive
 								}`}
 						>
-							<MapPin className="w-3.5 h-3.5" />
+							<MapPin className={FILTER_BAR_STYLES.tabIcon} />
 							<span>エリア</span>
 						</button>
 					</div>
@@ -109,8 +109,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 								type="button"
 								onClick={() => onStatusFilterChange('all')}
 								className={`${FILTER_BAR_STYLES.statusButtonBase} ${statusFilter === 'all'
-									? FILTER_BAR_STYLES.statusAllActive
-									: FILTER_BAR_STYLES.tabInactive
+										? FILTER_BAR_STYLES.statusAllActive
+										: FILTER_BAR_STYLES.tabInactive
 									}`}
 							>
 								すべて
@@ -119,8 +119,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 								type="button"
 								onClick={() => onStatusFilterChange('unchecked')}
 								className={`${FILTER_BAR_STYLES.statusButtonBase} ${statusFilter === 'unchecked'
-									? FILTER_BAR_STYLES.statusUncheckedActive
-									: FILTER_BAR_STYLES.tabInactive
+										? FILTER_BAR_STYLES.statusUncheckedActive
+										: FILTER_BAR_STYLES.tabInactive
 									}`}
 							>
 								未達成
@@ -129,8 +129,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 								type="button"
 								onClick={() => onStatusFilterChange('checked')}
 								className={`${FILTER_BAR_STYLES.statusButtonBase} ${statusFilter === 'checked'
-									? FILTER_BAR_STYLES.statusCheckedActive
-									: FILTER_BAR_STYLES.tabInactive
+										? FILTER_BAR_STYLES.statusCheckedActive
+										: FILTER_BAR_STYLES.tabInactive
 									}`}
 							>
 								達成済
@@ -162,7 +162,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 				{/* 右側: 検索 & 表示モード切り替え */}
 				<div className={FILTER_BAR_STYLES.rightGroup}>
 					{/* 検索入力フォーム（テキストクリア機能付き） */}
-					<div className={`relative ${FILTER_BAR_STYLES.searchContainer}`}>
+					<div className={FILTER_BAR_STYLES.searchContainer}>
 						<Search className={FILTER_BAR_STYLES.searchIcon} />
 						<input
 							type="text"
@@ -175,16 +175,17 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 							}
 							value={searchQuery}
 							onChange={(e) => onSearchQueryChange(e.target.value)}
-							className={`${FILTER_BAR_STYLES.searchInput} ${searchQuery ? 'pr-8' : ''}`}
+							className={`${FILTER_BAR_STYLES.searchInput} ${searchQuery ? FILTER_BAR_STYLES.searchInputHasValue : ''
+								}`}
 						/>
 						{searchQuery && (
 							<button
 								type="button"
 								onClick={() => onSearchQueryChange('')}
-								className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 focus:outline-none"
+								className={FILTER_BAR_STYLES.searchClearButton}
 								aria-label="検索内容をクリア"
 							>
-								<X className="w-3.5 h-3.5" />
+								<X className={FILTER_BAR_STYLES.searchClearIcon} />
 							</button>
 						)}
 					</div>
@@ -195,23 +196,23 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 							type="button"
 							onClick={() => onViewModeChange('card')}
 							className={`${FILTER_BAR_STYLES.viewModeButtonBase} ${viewMode === 'card'
-								? FILTER_BAR_STYLES.viewModeActive
-								: FILTER_BAR_STYLES.viewModeInactive
+									? FILTER_BAR_STYLES.viewModeActive
+									: FILTER_BAR_STYLES.viewModeInactive
 								}`}
 							title="カード表示"
 						>
-							<LayoutGrid className="w-4 h-4" />
+							<LayoutGrid className={FILTER_BAR_STYLES.viewModeIcon} />
 						</button>
 						<button
 							type="button"
 							onClick={() => onViewModeChange('list')}
 							className={`${FILTER_BAR_STYLES.viewModeButtonBase} ${viewMode === 'list'
-								? FILTER_BAR_STYLES.viewModeActive
-								: FILTER_BAR_STYLES.viewModeInactive
+									? FILTER_BAR_STYLES.viewModeActive
+									: FILTER_BAR_STYLES.viewModeInactive
 								}`}
 							title="リスト表示"
 						>
-							<List className="w-4 h-4" />
+							<List className={FILTER_BAR_STYLES.viewModeIcon} />
 						</button>
 					</div>
 				</div>

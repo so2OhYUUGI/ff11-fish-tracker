@@ -17,7 +17,8 @@ import { ArrowLeft, MapPin, X, Fish } from 'lucide-react';
 import type { ZoneMaster, FishMaster, RegionMaster } from '@/types/fish';
 import { FISH_LOCATIONS } from '@/data';
 import { DETAIL_STYLES } from '@/styles/components/detailStyles';
-import { FISH_STYLES, BADGE_BASE_STYLE } from '@/styles/features/fishStyles';
+import { FISH_STYLES, BADGE_BASE_STYLE } from '@/styles/features/FishTrackerStyle';
+import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 import {
 	SizeBadge,
 	WaterBadge,
@@ -73,7 +74,7 @@ export const AreaDetailView: React.FC<Props> = ({
 						</button>
 					)}
 					<div className={DETAIL_STYLES.stickyHeaderTitleGroup}>
-						<MapPin className="w-5 h-5 text-red-400 shrink-0" />
+						<MapPin className={`w-5 h-5 shrink-0 ${COMMON_TOKENS.entity.area.text}`} />
 						<div className="min-w-0 flex-1">
 							<h2 className={DETAIL_STYLES.stickyHeaderTitle}>
 								{area.ja}
@@ -126,39 +127,43 @@ export const AreaDetailView: React.FC<Props> = ({
 				{/* 釣れる魚一覧（リスト形式） */}
 				<div>
 					<h3 className={DETAIL_STYLES.sectionTitle}>
-						<Fish className="w-4 h-4 text-cyan-400" />
+						<Fish className={`w-4 h-4 ${COMMON_TOKENS.entity.fish.text}`} />
 						<span>生息する魚 ({catchableFishes.length} 種)</span>
 					</h3>
 
 					{catchableFishes.length > 0 ? (
 						<div className={DETAIL_STYLES.relatedList}>
-							{catchableFishes.map((fish) => (
-								<div
-									key={fish.id}
-									onClick={() => onClickFishDetail?.(fish)}
-									className={`${DETAIL_STYLES.relatedRow} ${onClickFishDetail ? DETAIL_STYLES.relatedRowInteractive : ''
-										}`}
-								>
-									{/* 左側：魚名（日本語・英語） */}
-									<div className={DETAIL_STYLES.relatedRowTitleGroup}>
-										<span className={DETAIL_STYLES.relatedRowTitle}>
-											{fish.ja}
-										</span>
-										<span className={DETAIL_STYLES.relatedRowSubTitle}>
-											{fish.en}
-										</span>
-									</div>
+							{catchableFishes.map((fish) => {
+								const RowComponent = onClickFishDetail ? 'button' : 'div';
+								return (
+									<RowComponent
+										key={fish.id}
+										type={onClickFishDetail ? 'button' : undefined}
+										onClick={() => onClickFishDetail?.(fish)}
+										className={`${DETAIL_STYLES.relatedRow} ${onClickFishDetail ? DETAIL_STYLES.relatedRowInteractive : ''
+											}`}
+									>
+										{/* 左側：魚名（日本語・英語） */}
+										<div className={DETAIL_STYLES.relatedRowTitleGroup}>
+											<span className={DETAIL_STYLES.relatedRowTitle}>
+												{fish.ja}
+											</span>
+											<span className={DETAIL_STYLES.relatedRowSubTitle}>
+												{fish.en}
+											</span>
+										</div>
 
-									{/* 右側：属性・上限スキルバッジ群 */}
-									<div className={DETAIL_STYLES.relatedRowBadgeGroup}>
-										<span className={`${BADGE_BASE_STYLE} ${FISH_STYLES.badgeSkill}`}>
-											上限: {fish.maxSkill}
-										</span>
-										<SizeBadge sizeType={fish.sizeType} useShortLabel />
-										<WaterBadge waterType={fish.waterType} />
-									</div>
-								</div>
-							))}
+										{/* 右側：属性・上限スキルバッジ群 */}
+										<div className={DETAIL_STYLES.relatedRowBadgeGroup}>
+											<span className={`${BADGE_BASE_STYLE} ${FISH_STYLES.badgeSkill}`}>
+												上限: {fish.maxSkill}
+											</span>
+											<SizeBadge sizeType={fish.sizeType} useShortLabel />
+											<WaterBadge waterType={fish.waterType} />
+										</div>
+									</RowComponent>
+								);
+							})}
 						</div>
 					) : (
 						<p className={DETAIL_STYLES.emptyText}>このエリアで釣れる魚の情報はありません</p>

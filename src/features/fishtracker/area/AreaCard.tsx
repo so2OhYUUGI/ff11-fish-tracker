@@ -10,6 +10,7 @@
  * - 魚が0件の場合の視覚的表現（減衰スタイル）の適用
  * - 選択中（アクティブ）状態に応じたスタイリング切り替え
  * - スタイル定義を CARD_STYLES に完全集約
+ * - キーボード操作時のアクセシビリティ対応を追加
  * ============================================================================
  */
 
@@ -48,9 +49,19 @@ export const AreaCard: React.FC<Props> = ({
   const displayFishes = matchedFishes.slice(0, maxDisplayCount);
   const remainingCount = totalFishes - maxDisplayCount;
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onClickDetail(area);
+    }
+  };
+
   return (
     <div
+      role="button"
+      tabIndex={0}
       onClick={() => onClickDetail(area)}
+      onKeyDown={handleKeyDown}
       className={`${CARD_STYLES.base} ${isSelected ? CARD_STYLES.selected : CARD_STYLES.default
         } ${!hasFish ? 'opacity-70' : ''}`}
     >
@@ -81,7 +92,7 @@ export const AreaCard: React.FC<Props> = ({
           <div className={CARD_STYLES.targetLabelGroup}>
             <div className={CARD_STYLES.targetLabel}>
               <Fish
-                className={`w-3.5 h-3.5 ${hasFish ? 'text-cyan-400' : 'text-slate-500'
+                className={`w-3.5 h-3.5 shrink-0 ${hasFish ? 'text-cyan-400' : 'text-slate-500'
                   }`}
               />
               <span>釣れる魚 ({totalFishes}):</span>

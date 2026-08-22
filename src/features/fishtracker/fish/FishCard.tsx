@@ -8,6 +8,7 @@
  * - 獲得/達成状態（チェック状態）のインジケーター描画およびトグル操作
  * - 生息エリア（FISH_LOCATIONS参照）・備考情報の表示領域保持
  * - 魚名称の日本語と英語を明示的に改行して視認性と統一感を確保
+ * - スタイル定義（CARD_STYLES, FISH_STYLES）への参照集約
  * ============================================================================
  */
 
@@ -16,7 +17,7 @@ import { Check, Info, MapPin } from 'lucide-react';
 import type { FishMaster, ZoneMaster } from '@/types/fish';
 import { FISH_LOCATIONS } from '@/data';
 import { CARD_STYLES } from '@/styles/components/cardStyles';
-import { FISH_STYLES, BADGE_BASE_STYLE } from '@/styles/features/fishStyles';
+import { FISH_STYLES, BADGE_BASE_STYLE } from '@/styles/features/FishTrackerStyle';
 import {
 	SizeBadge,
 	WaterBadge,
@@ -54,9 +55,19 @@ export const FishCard: React.FC<FishCardProps> = ({
 		(fish.harakiriItems && fish.harakiriItems.length > 0) || fish.harakiriTitle
 	);
 
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			onClickDetail(fish);
+		}
+	};
+
 	return (
 		<div
+			role="button"
+			tabIndex={0}
 			onClick={() => onClickDetail(fish)}
+			onKeyDown={handleKeyDown}
 			className={`${CARD_STYLES.base} ${isSelected ? CARD_STYLES.selected : CARD_STYLES.default}`}
 		>
 			<div className="flex items-start justify-between gap-3">
@@ -64,17 +75,19 @@ export const FishCard: React.FC<FishCardProps> = ({
 					{/* 日本語名と英語名 */}
 					<div className="flex flex-col min-w-0">
 						<h3
-							className={`truncate ${CARD_STYLES.titleJa} ${isSelected ? CARD_STYLES.titleJaSelected : CARD_STYLES.titleJaDefault}`}
+							className={`truncate ${CARD_STYLES.titleJa} ${isSelected ? CARD_STYLES.titleJaSelected : CARD_STYLES.titleJaDefault
+								}`}
 						>
 							{fish.ja}
 						</h3>
-						<span className={`truncate text-xs text-slate-400 font-normal mt-0.5 ${CARD_STYLES.titleEn}`}>
+						<span className={`truncate ${CARD_STYLES.titleEn}`}>
 							{fish.en}
 						</span>
 					</div>
 
+					{/* 説明文 */}
 					{fish.description && (
-						<div className={`mb-3 mt-2 ${CARD_STYLES.boxBlock}`}>
+						<div className={CARD_STYLES.boxBlock}>
 							{fish.description.split('\\n').map((line, index) => (
 								<React.Fragment key={index}>
 									{index > 0 && <br />}
@@ -84,7 +97,7 @@ export const FishCard: React.FC<FishCardProps> = ({
 						</div>
 					)}
 
-					{/* タグ領域 */}
+					{/* タグ・属性バッジ領域 */}
 					<div className="flex flex-wrap items-center gap-1.5 mt-2">
 						<span className={`${BADGE_BASE_STYLE} ${FISH_STYLES.badgeSkill}`}>
 							上限: {fish.maxSkill}
@@ -99,7 +112,7 @@ export const FishCard: React.FC<FishCardProps> = ({
 					{/* 生息エリア */}
 					<div className={CARD_STYLES.targetLabelGroup}>
 						<div className={CARD_STYLES.targetLabel}>
-							<MapPin className="w-3.5 h-3.5 text-slate-400" />
+							<MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
 							<span>生息エリア ({totalZones}):</span>
 						</div>
 
@@ -137,6 +150,7 @@ export const FishCard: React.FC<FishCardProps> = ({
 					)}
 				</div>
 
+				{/* 獲得状態切り替えボタン */}
 				<div className="shrink-0 pt-1">
 					<button
 						type="button"
@@ -144,10 +158,18 @@ export const FishCard: React.FC<FishCardProps> = ({
 							e.stopPropagation();
 							onToggleCheck(fish.id);
 						}}
-						className={`${CARD_STYLES.checkButton.base} ${isChecked ? CARD_STYLES.checkButton.checked : CARD_STYLES.checkButton.unchecked}`}
+						className={`${CARD_STYLES.checkButton.base} ${isChecked
+								? CARD_STYLES.checkButton.checked
+								: CARD_STYLES.checkButton.unchecked
+							}`}
+						title={isChecked ? '未釣獲にする' : '釣獲済みにする'}
 					>
 						<Check
-							className={isChecked ? CARD_STYLES.checkButton.iconChecked : CARD_STYLES.checkButton.iconUnchecked}
+							className={
+								isChecked
+									? CARD_STYLES.checkButton.iconChecked
+									: CARD_STYLES.checkButton.iconUnchecked
+							}
 						/>
 					</button>
 				</div>

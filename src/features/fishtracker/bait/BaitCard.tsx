@@ -8,6 +8,7 @@
  * - `AreaCard` と統一されたカードレイアウト（上段:名称 / 中段:説明文 / 下段:対象魚）
  * - 該当の餌で釣れる魚の抽出および上限数制限付きタグ表示（上位表示＋残り件数バッジ）
  * - 全スタイルの参照を `CARD_STYLES` および `COMMON_TOKENS` へ完全移行
+ * - キーボード操作時のアクセシビリティ対応を追加
  * ============================================================================
  */
 
@@ -45,9 +46,19 @@ export const BaitCard: React.FC<BaitCardProps> = ({
 	const displayFishes = matchedFishes.slice(0, maxDisplayCount);
 	const remainingCount = totalFishes - maxDisplayCount;
 
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			onClickDetail(bait);
+		}
+	};
+
 	return (
 		<div
+			role="button"
+			tabIndex={0}
 			onClick={() => onClickDetail(bait)}
+			onKeyDown={handleKeyDown}
 			className={`${CARD_STYLES.base} ${isSelected ? CARD_STYLES.selected : CARD_STYLES.default
 				} ${CARD_STYLES.cardWrapper}`}
 		>
@@ -77,7 +88,7 @@ export const BaitCard: React.FC<BaitCardProps> = ({
 				{/* 3. 釣れる魚の表示領域 */}
 				<div className={CARD_STYLES.targetLabelGroup}>
 					<div className={CARD_STYLES.targetLabel}>
-						<Fish className="w-3.5 h-3.5 text-slate-400" />
+						<Fish className="w-3.5 h-3.5 text-slate-400 shrink-0" />
 						<span>対象の魚 ({totalFishes}):</span>
 					</div>
 

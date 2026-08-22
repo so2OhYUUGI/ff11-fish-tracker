@@ -9,6 +9,7 @@
  * - ハラキリ対象（アイテム・称号の有無）時の獲得可能アイテムおよび称号の表示
  * - 生息エリアタグや餌タグクリックによる他詳細画面（`AreaDetailView` / `BaitDetailView`）への相互遷移サポート
  * - 釣竿相性一覧、特記事項（`notes`）、説明文（`description`）の表示
+ * - 全スタイルの参照を `DETAIL_STYLES` および `COMMON_TOKENS` へ完全移行
  * ============================================================================
  */
 
@@ -23,7 +24,8 @@ import {
 	RODS,
 } from '@/data';
 import { DETAIL_STYLES } from '@/styles/components/detailStyles';
-import { FISH_STYLES, BADGE_BASE_STYLE } from '@/styles/features/fishStyles';
+import { FISH_STYLES, BADGE_BASE_STYLE } from '@/styles/features/FishTrackerStyle';
+import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 import {
 	SizeBadge,
 	WaterBadge,
@@ -77,7 +79,7 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 	const isHarakiriTarget = hasHarakiriItems || hasHarakiriTitle;
 
 	return (
-		<div className="flex flex-col h-full min-h-0 overflow-hidden">
+		<div className={DETAIL_STYLES.panelBase}>
 			{/* 1. 固定ヘッダー領域 */}
 			<div className={DETAIL_STYLES.stickyHeader}>
 				<div className={DETAIL_STYLES.stickyHeaderLeft}>
@@ -92,13 +94,13 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 							<span>戻る</span>
 						</button>
 					)}
-					<div className={DETAIL_STYLES.stickyHeaderLeft}>
-						<Fish className="w-5 h-5 text-cyan-400 shrink-0" />
-						<div className={DETAIL_STYLES.stickyHeaderTitleGroup}>
-							<h2 className="text-base font-bold text-slate-100 truncate leading-tight">
+					<div className={DETAIL_STYLES.stickyHeaderTitleGroup}>
+						<Fish className={`w-5 h-5 shrink-0 ${COMMON_TOKENS.entity.fish.text}`} />
+						<div className="min-w-0 flex-1">
+							<h2 className={DETAIL_STYLES.stickyHeaderTitle}>
 								{fish.ja}
 							</h2>
-							<p className="text-xs text-slate-400 font-mono truncate">
+							<p className={DETAIL_STYLES.stickyHeaderSubTitle}>
 								{fish.en}
 							</p>
 						</div>
@@ -110,8 +112,8 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 						type="button"
 						onClick={() => onToggleCheck(fish.id)}
 						className={`${DETAIL_STYLES.checkButtonBase} ${isChecked
-							? DETAIL_STYLES.checkButtonChecked
-							: DETAIL_STYLES.checkButtonUnchecked
+								? DETAIL_STYLES.checkButtonChecked
+								: DETAIL_STYLES.checkButtonUnchecked
 							} shrink-0`}
 					>
 						{isChecked ? (
@@ -131,7 +133,7 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 						type="button"
 						onClick={onClose}
 						title="詳細を閉じる"
-						className="p-1.5 text-slate-400 hover:text-slate-100 hover:bg-slate-800 rounded-lg transition-colors shrink-0"
+						className={DETAIL_STYLES.iconCloseButton}
 					>
 						<X className="w-5 h-5" />
 					</button>
@@ -139,7 +141,7 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 			</div>
 
 			{/* 2. 一括スクロール可能なコンテンツ領域 */}
-			<div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-6">
+			<div className={DETAIL_STYLES.scrollContent}>
 				{/* 基本情報ステータス */}
 				<div>
 					<h3 className={DETAIL_STYLES.sectionTitle}>基本ステータス</h3>
@@ -194,16 +196,22 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 					</h3>
 					{targetZones.length > 0 ? (
 						<div className={DETAIL_STYLES.tagList}>
-							{targetZones.map((zone) => (
-								<button
-									key={zone.id}
-									type="button"
-									onClick={() => onClickAreaDetail?.(zone)}
-									className={`${DETAIL_STYLES.tagItem} hover:border-cyan-500 hover:text-cyan-300 transition-colors cursor-pointer`}
-								>
-									{zone.ja}
-								</button>
-							))}
+							{targetZones.map((zone) => {
+								const TagComponent = onClickAreaDetail ? 'button' : 'span';
+								return (
+									<TagComponent
+										key={zone.id}
+										type={onClickAreaDetail ? 'button' : undefined}
+										onClick={() => onClickAreaDetail?.(zone)}
+										className={`${DETAIL_STYLES.tagItem} ${onClickAreaDetail
+												? 'hover:border-cyan-500 hover:text-cyan-300 transition-colors cursor-pointer'
+												: ''
+											}`}
+									>
+										{zone.ja}
+									</TagComponent>
+								);
+							})}
 						</div>
 					) : (
 						<p className={DETAIL_STYLES.emptyText}>生息エリア情報がありません</p>
@@ -217,16 +225,22 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 					</h3>
 					{targetBaits.length > 0 ? (
 						<div className={DETAIL_STYLES.tagList}>
-							{targetBaits.map((bait) => (
-								<button
-									key={bait.id}
-									type="button"
-									onClick={() => onClickBaitDetail?.(bait)}
-									className={`${DETAIL_STYLES.tagItem} hover:border-cyan-500 hover:text-cyan-300 transition-colors cursor-pointer`}
-								>
-									{bait.ja}
-								</button>
-							))}
+							{targetBaits.map((bait) => {
+								const TagComponent = onClickBaitDetail ? 'button' : 'span';
+								return (
+									<TagComponent
+										key={bait.id}
+										type={onClickBaitDetail ? 'button' : undefined}
+										onClick={() => onClickBaitDetail?.(bait)}
+										className={`${DETAIL_STYLES.tagItem} ${onClickBaitDetail
+												? 'hover:border-cyan-500 hover:text-cyan-300 transition-colors cursor-pointer'
+												: ''
+											}`}
+									>
+										{bait.ja}
+									</TagComponent>
+								);
+							})}
 						</div>
 					) : (
 						<p className={DETAIL_STYLES.emptyText}>釣れる餌の情報がありません</p>

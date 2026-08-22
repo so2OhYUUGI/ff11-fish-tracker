@@ -38,7 +38,7 @@ export const DETAIL_STYLES = {
   backButton:
     'lg:hidden flex items-center gap-1.5 text-xs text-cyan-400 hover:text-cyan-300 bg-slate-700/60 px-3 py-1.5 rounded-lg border border-slate-600 transition-colors',
   closeButton:
-    'hidden lg:flex items-center justify-center p-1.5 text-slate-400 hover:text-slate-200 hover:bg-slate-700/60 rounded-lg transition-colors',
+    'flex items-center justify-center p-1.5 text-slate-400 hover:text-slate-100 hover:bg-slate-800 rounded-lg transition-colors shrink-0',
   iconCloseButton:
     'p-1.5 text-slate-400 hover:text-slate-100 hover:bg-slate-800 rounded-lg transition-colors shrink-0',
   headerBackButton:
@@ -75,7 +75,7 @@ export const DETAIL_STYLES = {
   // 関連情報アイテム・リスト行
   relatedList: 'space-y-2',
   relatedRow:
-    'p-3 rounded-lg bg-slate-800/60 border border-slate-700/50 flex flex-wrap items-center justify-between gap-2',
+    'w-full text-left p-3 rounded-lg bg-slate-800/60 border border-slate-700/50 flex flex-wrap items-center justify-between gap-2',
   relatedRowInteractive: 'cursor-pointer hover:bg-slate-800 transition-colors',
   relatedRowTitleGroup: 'flex flex-col min-w-[140px]',
   relatedRowTitle: 'text-sm font-bold text-slate-200',

@@ -15,7 +15,7 @@ import { ArrowLeft, Utensils, Fish, X } from 'lucide-react';
 import type { BaitMaster, FishMaster } from '@/types/fish';
 import { FISH_BAIT_RELATIONS } from '@/data';
 import { DETAIL_STYLES } from '@/styles/components/detailStyles';
-import { FISH_STYLES, BADGE_BASE_STYLE } from '@/styles/features/fishStyles';
+import { FISH_STYLES, BADGE_BASE_STYLE } from '@/styles/features/FishTrackerStyle';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 import {
 	SizeBadge,
@@ -115,40 +115,44 @@ export const BaitDetailView: React.FC<BaitDetailViewProps> = ({
 
 				{/* 釣れる魚一覧 */}
 				<div>
-					<h3 className={`${DETAIL_STYLES.sectionTitle} mb-3 flex items-center gap-2`}>
+					<h3 className={DETAIL_STYLES.sectionTitle}>
 						<Fish className={`w-4 h-4 ${COMMON_TOKENS.entity.fish.text}`} />
 						<span>対象の魚 ({targetFishes.length} 種)</span>
 					</h3>
 
 					{targetFishes.length > 0 ? (
 						<div className={DETAIL_STYLES.relatedList}>
-							{targetFishes.map((fish) => (
-								<div
-									key={fish.id}
-									onClick={() => onClickFishDetail?.(fish)}
-									className={`${DETAIL_STYLES.relatedRow} ${onClickFishDetail ? DETAIL_STYLES.relatedRowInteractive : ''
-										}`}
-								>
-									{/* 左側：魚名（日本語・英語） */}
-									<div className="flex flex-col min-w-[140px]">
-										<span className={DETAIL_STYLES.relatedRowTitle}>
-											{fish.ja}
-										</span>
-										<span className={DETAIL_STYLES.relatedRowSubTitle}>
-											{fish.en}
-										</span>
-									</div>
+							{targetFishes.map((fish) => {
+								const RowComponent = onClickFishDetail ? 'button' : 'div';
+								return (
+									<RowComponent
+										key={fish.id}
+										type={onClickFishDetail ? 'button' : undefined}
+										onClick={() => onClickFishDetail?.(fish)}
+										className={`${DETAIL_STYLES.relatedRow} ${onClickFishDetail ? DETAIL_STYLES.relatedRowInteractive : ''
+											}`}
+									>
+										{/* 左側：魚名（日本語・英語） */}
+										<div className={DETAIL_STYLES.relatedRowTitleGroup}>
+											<span className={DETAIL_STYLES.relatedRowTitle}>
+												{fish.ja}
+											</span>
+											<span className={DETAIL_STYLES.relatedRowSubTitle}>
+												{fish.en}
+											</span>
+										</div>
 
-									{/* 右側：属性・上限スキルバッジ群 */}
-									<div className="flex items-center gap-1.5 flex-wrap shrink-0">
-										<span className={`${BADGE_BASE_STYLE} ${FISH_STYLES.badgeSkill}`}>
-											上限: {fish.maxSkill}
-										</span>
-										<SizeBadge sizeType={fish.sizeType} useShortLabel />
-										<WaterBadge waterType={fish.waterType} />
-									</div>
-								</div>
-							))}
+										{/* 右側：属性・上限スキルバッジ群 */}
+										<div className={DETAIL_STYLES.relatedRowBadgeGroup}>
+											<span className={`${BADGE_BASE_STYLE} ${FISH_STYLES.badgeSkill}`}>
+												上限: {fish.maxSkill}
+											</span>
+											<SizeBadge sizeType={fish.sizeType} useShortLabel />
+											<WaterBadge waterType={fish.waterType} />
+										</div>
+									</RowComponent>
+								);
+							})}
 						</div>
 					) : (
 						<p className={DETAIL_STYLES.emptyText}>対象の魚データがありません</p>
