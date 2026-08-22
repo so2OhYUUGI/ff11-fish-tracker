@@ -1681,7 +1681,10 @@ export const FISHES: FishMaster[] = [
     "waterType": "saltwater",
     "ebisu": false,
     "taikobou": false,
-    "notes": "ハラキリ「ソウリュウの肝」（海竜の肝）\nだいじなもの「サーペントの伝説」\n最寄りの幽門石は#8。"
+    "notes": "だいじなもの「サーペントの伝説」\n最寄りの幽門石は#8。",
+    "harakiriItems": [
+      "ソウリュウの肝"
+    ]
   },
   {
     "id": 5538,
@@ -1707,7 +1710,8 @@ export const FISHES: FishMaster[] = [
     "sizeType": "large",
     "waterType": "saltwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "notes": "だいじなもの「、伝説の巨大魚紀聞」？\nmap 2の地底湖"
   },
   {
     "id": 6373,
