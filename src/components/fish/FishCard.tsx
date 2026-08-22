@@ -15,7 +15,8 @@ import React from 'react';
 import { Check, Info, MapPin } from 'lucide-react';
 import type { FishMaster, ZoneMaster } from '@/types/fish';
 import { FISH_LOCATIONS } from '@/data';
-import { CARD_STYLES } from '@/styles/cardStyles';
+import { CARD_STYLES } from '@/styles/components/cardStyles';
+import { FISH_STYLES } from '@/styles/features/fishStyles';
 
 type FishCardProps = {
 	fish: FishMaster;
@@ -30,11 +31,11 @@ type FishCardProps = {
 const getSizeBadgeInfo = (sizeType: FishMaster['sizeType']) => {
 	switch (sizeType) {
 		case 'large':
-			return { label: '大型魚', style: CARD_STYLES.badgeLarge };
+			return { label: '大型魚', style: FISH_STYLES.badgeLarge };
 		case 'small':
-			return { label: '小型魚', style: CARD_STYLES.badgeSmall };
+			return { label: '小型魚', style: FISH_STYLES.badgeSmall };
 		default:
-			return { label: 'サイズ不明', style: CARD_STYLES.badgeSizeUnknown };
+			return { label: 'サイズ不明', style: FISH_STYLES.badgeSizeUnknown };
 	}
 };
 
@@ -42,13 +43,13 @@ const getSizeBadgeInfo = (sizeType: FishMaster['sizeType']) => {
 const getWaterBadgeInfo = (waterType: FishMaster['waterType']) => {
 	switch (waterType) {
 		case 'freshwater':
-			return { label: '淡水', style: CARD_STYLES.badgeFreshwater };
+			return { label: '淡水', style: FISH_STYLES.badgeFreshwater };
 		case 'saltwater':
-			return { label: '海水', style: CARD_STYLES.badgeSaltwater };
+			return { label: '海水', style: FISH_STYLES.badgeSaltwater };
 		case 'gedou':
-			return { label: '外道', style: CARD_STYLES.badgeGedou };
+			return { label: '外道', style: FISH_STYLES.badgeGedou };
 		default:
-			return { label: '区分不明', style: CARD_STYLES.badgeWaterUnknown };
+			return { label: '区分不明', style: FISH_STYLES.badgeWaterUnknown };
 	}
 };
 
@@ -73,7 +74,6 @@ export const FishCard: React.FC<FishCardProps> = ({
 	const sizeInfo = getSizeBadgeInfo(fish.sizeType);
 	const waterInfo = getWaterBadgeInfo(fish.waterType);
 
-	// ハラキリ対象判定（アイテム配列が存在し1つ以上ある、または称号が存在する）
 	const isHarakiriTarget = Boolean(
 		(fish.harakiriItems && fish.harakiriItems.length > 0) || fish.harakiriTitle
 	);
@@ -86,7 +86,7 @@ export const FishCard: React.FC<FishCardProps> = ({
 		>
 			<div className="flex items-start justify-between gap-3">
 				<div className="flex-1 min-w-0">
-					{/* 日本語名と英語名を明確に縦並び（改行）へ変更 */}
+					{/* 日本語名と英語名 */}
 					<div className="flex flex-col min-w-0">
 						<h3
 							className={`truncate ${CARD_STYLES.titleJa} ${isSelected ? 'text-cyan-300' : CARD_STYLES.titleJaDefault
@@ -122,17 +122,17 @@ export const FishCard: React.FC<FishCardProps> = ({
 							{waterInfo.label}
 						</span>
 						{isHarakiriTarget && (
-							<span className={`${CARD_STYLES.badgeBase} ${CARD_STYLES.badgeHarakiri}`}>
+							<span className={`${CARD_STYLES.badgeBase} ${FISH_STYLES.badgeHarakiri}`}>
 								ハラキリ
 							</span>
 						)}
 						{fish.ebisu && (
-							<span className={`${CARD_STYLES.badgeBase} ${CARD_STYLES.badgeEbisu}`}>
+							<span className={`${CARD_STYLES.badgeBase} ${FISH_STYLES.badgeEbisu}`}>
 								恵比寿
 							</span>
 						)}
 						{fish.taikobou && (
-							<span className={`${CARD_STYLES.badgeBase} ${CARD_STYLES.badgeTaikobou}`}>
+							<span className={`${CARD_STYLES.badgeBase} ${FISH_STYLES.badgeTaikobou}`}>
 								太公望
 							</span>
 						)}

@@ -27,7 +27,7 @@
 import React from 'react';
 import { Search, LayoutGrid, List, Fish, Utensils, MapPin, X } from 'lucide-react';
 import type { ViewMode, MainTab, CharacterProgress } from '@/types/fish';
-import { FILTER_BAR_STYLES } from '@/styles/filterBarStyles';
+import { FILTER_BAR_STYLES } from '@/styles/components/filterBarStyles';
 
 export type StatusFilter = 'all' | 'checked' | 'unchecked';
 

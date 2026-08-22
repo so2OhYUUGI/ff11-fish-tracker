@@ -9,12 +9,14 @@ import React from 'react';
 import { Fish, Database, Settings } from 'lucide-react';
 import type { CharacterProgress } from '@/types/fish';
 import { isDev } from '@/utils/env';
+import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
+import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
 
 type HeaderProps = {
 	characters: CharacterProgress[];
 	activeCharacter: CharacterProgress;
 	onSelectCharacter: (id: string) => void;
-	onOpenSettings: () => void; // 設定画面を開くハンドラー
+	onOpenSettings: () => void;
 	onOpenMasterEditor?: () => void;
 };
 
@@ -26,18 +28,18 @@ export const Header: React.FC<HeaderProps> = ({
 	onOpenMasterEditor,
 }) => {
 	return (
-		<header className="bg-slate-800 text-white shadow-md border-b border-slate-700">
-			<div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+		<header className={LAYOUT_TOKENS.header.container}>
+			<div className={LAYOUT_TOKENS.header.inner}>
 				<div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
 					{/* タイトル */}
 					<div className="flex items-center gap-3">
-						<div className="p-2 bg-blue-600 rounded-lg">
-							<Fish className="w-6 h-6 text-white" />
+						<div className={LAYOUT_TOKENS.header.iconBg}>
+							<Fish className={`w-6 h-6 ${COMMON_TOKENS.color.textMain}`} />
 						</div>
 						<div>
 							<h1 className="text-xl font-bold tracking-tight">FF11 釣魚チェッカー</h1>
-							<p className="text-xs text-slate-400">FF11 Fishing Tracker</p>
+							<p className={COMMON_TOKENS.text.subText}>FF11 Fishing Tracker</p>
 						</div>
 					</div>
 
@@ -45,14 +47,14 @@ export const Header: React.FC<HeaderProps> = ({
 					<div className="flex flex-wrap items-center gap-3">
 						{/* キャラクター切り替え */}
 						<div className="flex items-center gap-2">
-							<label htmlFor="char-select" className="text-sm font-medium text-slate-300">
+							<label htmlFor="char-select" className={COMMON_TOKENS.text.label}>
 								キャラ:
 							</label>
 							<select
 								id="char-select"
 								value={activeCharacter.id}
 								onChange={(e) => onSelectCharacter(e.target.value)}
-								className="bg-slate-700 border border-slate-600 text-white text-sm rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+								className={LAYOUT_TOKENS.control.select}
 							>
 								{characters.map((char) => (
 									<option key={char.id} value={char.id}>
@@ -65,7 +67,7 @@ export const Header: React.FC<HeaderProps> = ({
 						{/* 環境設定ボタン */}
 						<button
 							onClick={onOpenSettings}
-							className="p-1.5 text-slate-300 hover:text-white bg-slate-700 hover:bg-slate-600 border border-slate-600 rounded-lg transition-colors flex items-center gap-1.5 text-xs px-2.5 py-1.5 font-medium"
+							className={LAYOUT_TOKENS.control.button}
 							title="環境設定・データ管理"
 						>
 							<Settings className="w-4 h-4" />
@@ -76,7 +78,7 @@ export const Header: React.FC<HeaderProps> = ({
 						{isDev && (
 							<button
 								onClick={onOpenMasterEditor}
-								className="flex items-center gap-1 bg-red-900/50 hover:bg-red-800/60 border border-red-700 text-red-200 text-xs px-2.5 py-1.5 rounded-lg font-medium transition-colors"
+								className={LAYOUT_TOKENS.control.devButton}
 								title="開発用マスターデータエディタを開く"
 							>
 								<Database className="w-3.5 h-3.5 text-red-400" />

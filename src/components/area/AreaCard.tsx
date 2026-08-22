@@ -9,12 +9,7 @@
  * - 該当エリアで釣れる魚の抽出および上限数制限付きタグ表示（上位表示＋残り件数バッジ）
  * - 魚が0件の場合の視覚的表現（減衰スタイル）の適用
  * - 選択中（アクティブ）状態に応じたスタイリング切り替え
- * 
- * [編集・改修時の注意事項]
- * 1. 【スタイルの参照】
- *    Tailwind CSS クラスは `@/styles/cardStyles` の `CARD_STYLES` を定数参照しています。
- * 2. 【アイコンカラー】
- *    魚アイコン（Fish）は対象が存在する場合は text-cyan-400、0件時は text-slate-500 を使用します。
+ * - スタイル定義を CARD_STYLES に完全集約
  * ============================================================================
  */
 
@@ -22,7 +17,7 @@ import React from 'react';
 import { Fish } from 'lucide-react';
 import type { ZoneMaster, FishMaster } from '@/types/fish';
 import { FISH_LOCATIONS, FISHES } from '@/data';
-import { CARD_STYLES } from '@/styles/cardStyles';
+import { CARD_STYLES } from '@/styles/components/cardStyles';
 
 type Props = {
   area: ZoneMaster;
@@ -56,69 +51,66 @@ export const AreaCard: React.FC<Props> = ({
   return (
     <div
       onClick={() => onClickDetail(area)}
-      className={`${CARD_STYLES.base} ${
-        isSelected ? CARD_STYLES.selected : CARD_STYLES.default
-      } cursor-pointer p-4 flex flex-col justify-between ${
-        !hasFish ? 'opacity-70' : ''
-      }`}
+      className={`${CARD_STYLES.base} ${isSelected ? CARD_STYLES.selected : CARD_STYLES.default
+        } ${!hasFish ? 'opacity-70' : ''}`}
     >
-      <div>
-        {/* 日本語名と英語名を明確に縦並び（改行）へ変更 */}
-        <div className="flex flex-col min-w-0 mb-2">
-          <h3
-            className={`truncate ${CARD_STYLES.titleJa} ${
-              isSelected ? 'text-cyan-300' : CARD_STYLES.titleJaDefault
-            }`}
-          >
-            {area.ja}
-          </h3>
-          <span className="truncate text-xs text-slate-400 font-mono font-normal mt-0.5">
-            {area.en}
-          </span>
-        </div>
-
-        {area.description && (
-          <div className={`${CARD_STYLES.boxBlock} mt-2 text-slate-300`}>
-            {area.description.split('\\n').map((line: string, index: number) => (
-              <p key={index}>{line}</p>
-            ))}
-          </div>
-        )}
-
-        {/* 釣れる魚の表示領域 */}
-        <div className="mt-3 text-xs flex items-center gap-1.5 flex-wrap">
-          <div className="flex items-center gap-1 text-slate-400 shrink-0 font-medium">
-            <Fish
-              className={`w-3.5 h-3.5 ${
-                hasFish ? 'text-cyan-400' : 'text-slate-500'
-              }`}
-            />
-            <span>釣れる魚 ({totalFishes}):</span>
+      <div className={CARD_STYLES.cardWrapper}>
+        <div>
+          {/* 日本語名と英語名 */}
+          <div className={CARD_STYLES.titleGroup}>
+            <h3
+              className={`truncate ${CARD_STYLES.titleJa} ${isSelected ? 'text-cyan-300' : CARD_STYLES.titleJaDefault
+                }`}
+            >
+              {area.ja}
+            </h3>
+            <span className={CARD_STYLES.titleEnSub}>
+              {area.en}
+            </span>
           </div>
 
-          {hasFish ? (
-            <div className="flex items-center gap-1 flex-wrap min-w-0">
-              {displayFishes.map((fish) => (
-                <span
-                  key={fish.id}
-                  className="px-1.5 py-0.5 bg-slate-800 text-slate-300 border border-slate-700/60 rounded text-[11px] truncate max-w-[120px]"
-                  title={fish.ja}
-                >
-                  {fish.ja}
-                </span>
+          {area.description && (
+            <div className={CARD_STYLES.descriptionBox}>
+              {area.description.split('\\n').map((line: string, index: number) => (
+                <p key={index}>{line}</p>
               ))}
-              {remainingCount > 0 && (
-                <span
-                  className="px-1.5 py-0.5 bg-cyan-950/80 text-cyan-300 border border-cyan-800/60 rounded text-[11px] font-semibold"
-                  title={`他 ${remainingCount} 種類`}
-                >
-                  +{remainingCount}
-                </span>
-              )}
             </div>
-          ) : (
-            <span className="text-slate-500 italic">情報なし</span>
           )}
+
+          {/* 釣れる魚の表示領域 */}
+          <div className={CARD_STYLES.targetLabelGroup}>
+            <div className={CARD_STYLES.targetLabel}>
+              <Fish
+                className={`w-3.5 h-3.5 ${hasFish ? 'text-cyan-400' : 'text-slate-500'
+                  }`}
+              />
+              <span>釣れる魚 ({totalFishes}):</span>
+            </div>
+
+            {hasFish ? (
+              <div className={CARD_STYLES.tagContainer}>
+                {displayFishes.map((fish) => (
+                  <span
+                    key={fish.id}
+                    className={CARD_STYLES.tagItem}
+                    title={fish.ja}
+                  >
+                    {fish.ja}
+                  </span>
+                ))}
+                {remainingCount > 0 && (
+                  <span
+                    className={CARD_STYLES.tagOverflow}
+                    title={`他 ${remainingCount} 種類`}
+                  >
+                    +{remainingCount}
+                  </span>
+                )}
+              </div>
+            ) : (
+              <span className={CARD_STYLES.tagEmpty}>情報なし</span>
+            )}
+          </div>
         </div>
       </div>
     </div>

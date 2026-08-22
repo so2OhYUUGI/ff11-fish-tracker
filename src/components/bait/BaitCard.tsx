@@ -7,11 +7,7 @@
  * - 餌の基本情報（和名、英名、説明文）のカード形式表示
  * - `AreaCard` と統一されたカードレイアウト（上段:名称 / 中段:説明文 / 下段:対象魚）
  * - 該当の餌で釣れる魚の抽出および上限数制限付きタグ表示（上位表示＋残り件数バッジ）
- * - 選択中（アクティブ）状態に応じたスタイリング切り替え
- * 
- * [編集・改修時の注意事項]
- * 1. 【スタイルの参照】
- *    Tailwind CSS クラスは `@/styles/cardStyles` の `CARD_STYLES` を定数参照しています。
+ * - 全スタイルの参照を `CARD_STYLES` および `COMMON_TOKENS` へ完全移行
  * ============================================================================
  */
 
@@ -19,7 +15,7 @@ import React from 'react';
 import { Fish } from 'lucide-react';
 import type { BaitMaster, FishMaster } from '@/types/fish';
 import { FISH_BAIT_RELATIONS, FISHES } from '@/data';
-import { CARD_STYLES } from '@/styles/cardStyles';
+import { CARD_STYLES } from '@/styles/components/cardStyles';
 
 type BaitCardProps = {
 	bait: BaitMaster;
@@ -53,44 +49,44 @@ export const BaitCard: React.FC<BaitCardProps> = ({
 		<div
 			onClick={() => onClickDetail(bait)}
 			className={`${CARD_STYLES.base} ${isSelected ? CARD_STYLES.selected : CARD_STYLES.default
-				} cursor-pointer p-4 flex flex-col justify-between`}
+				} ${CARD_STYLES.cardWrapper}`}
 		>
 			<div>
 				{/* 1. 名称表示領域（日本語名・英語名の縦並び） */}
-				<div className="flex flex-col min-w-0 mb-2">
+				<div className={CARD_STYLES.titleGroup}>
 					<h3
-						className={`truncate ${CARD_STYLES.titleJa} ${isSelected ? 'text-cyan-300' : CARD_STYLES.titleJaDefault
+						className={`truncate ${CARD_STYLES.titleJa} ${isSelected ? CARD_STYLES.titleJaSelectedBait : CARD_STYLES.titleJaDefault
 							}`}
 					>
 						{bait.ja}
 					</h3>
-					<span className="truncate text-xs text-slate-400 font-mono font-normal mt-0.5">
+					<span className={`truncate ${CARD_STYLES.titleEnSub}`}>
 						{bait.en}
 					</span>
 				</div>
 
 				{/* 2. 説明文領域 */}
 				{bait.description && (
-					<div className={`${CARD_STYLES.boxBlock} mt-2 text-slate-300`}>
+					<div className={CARD_STYLES.descriptionBox}>
 						{bait.description.split('\\n').map((line: string, index: number) => (
 							<p key={index}>{line}</p>
 						))}
 					</div>
 				)}
 
-				{/* 3. 釣れる魚の表示領域（AreaCardと完全に仕様統一） */}
-				<div className="mt-3 text-xs flex items-center gap-1.5 flex-wrap">
-					<div className="flex items-center gap-1 text-slate-400 shrink-0 font-medium">
+				{/* 3. 釣れる魚の表示領域 */}
+				<div className={CARD_STYLES.targetLabelGroup}>
+					<div className={CARD_STYLES.targetLabel}>
 						<Fish className="w-3.5 h-3.5 text-slate-400" />
 						<span>対象の魚 ({totalFishes}):</span>
 					</div>
 
 					{totalFishes > 0 ? (
-						<div className="flex items-center gap-1 flex-wrap min-w-0">
+						<div className={CARD_STYLES.tagContainer}>
 							{displayFishes.map((fish) => (
 								<span
 									key={fish.id}
-									className="px-1.5 py-0.5 bg-slate-800 text-slate-300 border border-slate-700/60 rounded text-[11px] truncate max-w-[120px]"
+									className={CARD_STYLES.tagItem}
 									title={fish.ja}
 								>
 									{fish.ja}
@@ -98,7 +94,7 @@ export const BaitCard: React.FC<BaitCardProps> = ({
 							))}
 							{remainingCount > 0 && (
 								<span
-									className="px-1.5 py-0.5 bg-cyan-950/80 text-cyan-300 border border-cyan-800/60 rounded text-[11px] font-semibold"
+									className={CARD_STYLES.tagOverflow}
 									title={`他 ${remainingCount} 種類`}
 								>
 									+{remainingCount}
@@ -106,7 +102,7 @@ export const BaitCard: React.FC<BaitCardProps> = ({
 							)}
 						</div>
 					) : (
-						<span className="text-slate-500 italic">情報なし</span>
+						<span className={CARD_STYLES.tagEmpty}>情報なし</span>
 					)}
 				</div>
 			</div>

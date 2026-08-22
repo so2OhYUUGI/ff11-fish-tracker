@@ -22,8 +22,9 @@ import {
 	BAITS,
 	RODS,
 } from '@/data';
-import { DETAIL_STYLES } from '@/styles/detailStyles';
-import { CARD_STYLES } from '@/styles/cardStyles';
+import { DETAIL_STYLES } from '@/styles/components/detailStyles';
+import { CARD_STYLES } from '@/styles/components/cardStyles';
+import { FISH_STYLES } from '@/styles/features/fishStyles';
 
 type FishDetailViewProps = {
 	fish: FishMaster;
@@ -37,29 +38,29 @@ type FishDetailViewProps = {
 	onClickBaitDetail?: (bait: BaitMaster) => void;
 };
 
-// サイズ表記ラベル・スタイル取得ヘルパー
+// サイズ表記ラベル・スタイル取得ヘルパー（FISH_STYLES を参照）
 const getSizeBadgeInfo = (sizeType: FishMaster['sizeType']) => {
 	switch (sizeType) {
 		case 'large':
-			return { label: '大型魚', style: CARD_STYLES.badgeLarge };
+			return { label: '大型魚', style: FISH_STYLES.badgeLarge };
 		case 'small':
-			return { label: '小型魚', style: CARD_STYLES.badgeSmall };
+			return { label: '小型魚', style: FISH_STYLES.badgeSmall };
 		default:
-			return { label: 'サイズ不明', style: CARD_STYLES.badgeSizeUnknown };
+			return { label: 'サイズ不明', style: FISH_STYLES.badgeSizeUnknown };
 	}
 };
 
-// 水質・区分ラベル・スタイル取得ヘルパー
+// 水質・区分ラベル・スタイル取得ヘルパー（FISH_STYLES を参照）
 const getWaterBadgeInfo = (waterType: FishMaster['waterType']) => {
 	switch (waterType) {
 		case 'freshwater':
-			return { label: '淡水', style: CARD_STYLES.badgeFreshwater };
+			return { label: '淡水', style: FISH_STYLES.badgeFreshwater };
 		case 'saltwater':
-			return { label: '海水', style: CARD_STYLES.badgeSaltwater };
+			return { label: '海水', style: FISH_STYLES.badgeSaltwater };
 		case 'gedou':
-			return { label: '外道', style: CARD_STYLES.badgeGedou };
+			return { label: '外道', style: FISH_STYLES.badgeGedou };
 		default:
-			return { label: '区分不明', style: CARD_STYLES.badgeWaterUnknown };
+			return { label: '区分不明', style: FISH_STYLES.badgeWaterUnknown };
 	}
 };
 
@@ -80,7 +81,7 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 		.map((loc) => loc.zoneId);
 	const targetZones = zones.filter((zone) => targetZoneIds.includes(zone.id));
 
-	// 2. 餌情報の抽出（該当するもののみ列挙）
+	// 2. 餌情報の抽出
 	const targetBaitIds = FISH_BAIT_RELATIONS
 		.filter((rel) => rel.fishId === fish.id)
 		.map((rel) => rel.baitId);
@@ -96,31 +97,29 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 	const sizeInfo = getSizeBadgeInfo(fish.sizeType);
 	const waterInfo = getWaterBadgeInfo(fish.waterType);
 
-	// ハラキリ対象の判定（アイテム配列が存在し1つ以上ある、または称号が存在する）
 	const hasHarakiriItems = Boolean(fish.harakiriItems && fish.harakiriItems.length > 0);
 	const hasHarakiriTitle = Boolean(fish.harakiriTitle);
 	const isHarakiriTarget = hasHarakiriItems || hasHarakiriTitle;
 
 	return (
 		<div className="flex flex-col h-full min-h-0 overflow-hidden">
-			{/* 1. 固定ヘッダー領域（幅縮小時・縦表示時の潰れ・押し出しを防止） */}
-			<div className="flex-shrink-0 z-10 bg-slate-900 shadow-md border-b border-slate-800 p-3 flex items-center justify-between gap-2 min-w-0">
-				{/* 左側：戻るボタン ＋ タイトル */}
-				<div className="flex items-center gap-2 min-w-0 flex-1">
+			{/* 1. 固定ヘッダー領域 */}
+			<div className={DETAIL_STYLES.stickyHeader}>
+				<div className={DETAIL_STYLES.stickyHeaderLeft}>
 					{canGoBack && onBack && (
 						<button
 							type="button"
 							onClick={onBack}
-							className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-slate-300 bg-slate-800 hover:bg-slate-700 rounded border border-slate-700 shrink-0 transition-colors"
+							className={DETAIL_STYLES.headerBackButton}
 							title="前の画面へ戻る"
 						>
 							<ArrowLeft className="w-4 h-4 shrink-0" />
 							<span>戻る</span>
 						</button>
 					)}
-					<div className="flex items-center gap-2 min-w-0 flex-1">
+					<div className={DETAIL_STYLES.stickyHeaderLeft}>
 						<Fish className="w-5 h-5 text-cyan-400 shrink-0" />
-						<div className="min-w-0 flex-1">
+						<div className={DETAIL_STYLES.stickyHeaderTitleGroup}>
 							<h2 className="text-base font-bold text-slate-100 truncate leading-tight">
 								{fish.ja}
 							</h2>
@@ -131,8 +130,7 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 					</div>
 				</div>
 
-				{/* 右側：チェックボタン ＋ 閉じるボタン */}
-				<div className="flex items-center gap-1.5 shrink-0">
+				<div className={DETAIL_STYLES.stickyHeaderRight}>
 					<button
 						type="button"
 						onClick={() => onToggleCheck(fish.id)}
@@ -181,17 +179,17 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 							{waterInfo.label}
 						</span>
 						{isHarakiriTarget && (
-							<span className={`${CARD_STYLES.badgeBase} ${CARD_STYLES.badgeHarakiri}`}>
+							<span className={`${CARD_STYLES.badgeBase} ${FISH_STYLES.badgeHarakiri}`}>
 								ハラキリ
 							</span>
 						)}
 						{fish.ebisu && (
-							<span className={`${CARD_STYLES.badgeBase} ${CARD_STYLES.badgeEbisu}`}>
+							<span className={`${CARD_STYLES.badgeBase} ${FISH_STYLES.badgeEbisu}`}>
 								恵比寿関連
 							</span>
 						)}
 						{fish.taikobou && (
-							<span className={`${CARD_STYLES.badgeBase} ${CARD_STYLES.badgeTaikobou}`}>
+							<span className={`${CARD_STYLES.badgeBase} ${FISH_STYLES.badgeTaikobou}`}>
 								太公望関連
 							</span>
 						)}
@@ -346,18 +344,18 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 					</div>
 				</div>
 
-				{/* 特記事項（表データの後に配置） */}
+				{/* 特記事項 */}
 				{fish.notes && (
 					<div>
 						<h3 className={DETAIL_STYLES.sectionTitle}>特記事項</h3>
-						<div className={CARD_STYLES.notesBlock}>
-							<Info className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-							<span className="text-sm text-slate-300 leading-relaxed">{fish.notes}</span>
+						<div className={DETAIL_STYLES.notesBlock}>
+							<Info className={DETAIL_STYLES.notesIcon} />
+							<span className={DETAIL_STYLES.notesText}>{fish.notes}</span>
 						</div>
 					</div>
 				)}
 
-				{/* 説明文（ゲーム内フレーバーテキスト） */}
+				{/* 説明文 */}
 				{fish.description && (
 					<div className={DETAIL_STYLES.descriptionBox}>
 						{fish.description.split('\\n').map((line, index) => (

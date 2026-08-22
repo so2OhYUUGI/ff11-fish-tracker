@@ -19,6 +19,8 @@ import { BaitDetailView } from '@/components/bait/BaitDetailView';
 import type { FishMaster, ViewMode, ZoneMaster } from '@/types/fish';
 import type { useNavigationStack } from '@/hooks/useNavigationStack';
 import { REGIONS } from '@/data';
+import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
+import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
 
 type Props = {
 	fishes: FishMaster[];
@@ -46,8 +48,8 @@ export const FishListView = ({
 
 	if (fishes.length === 0) {
 		return (
-			<div className="text-center py-12 bg-slate-800/30 rounded-xl border border-slate-800">
-				<p className="text-slate-400 text-sm">該当する魚が見つかりませんでした。</p>
+			<div className={`text-center py-12 ${COMMON_TOKENS.box.dark}`}>
+				<p className={`${COMMON_TOKENS.color.textMuted} text-sm`}>該当する魚が見つかりませんでした。</p>
 			</div>
 		);
 	}
@@ -103,7 +105,7 @@ export const FishListView = ({
 
 			{/* 右側：詳細表示領域（スタックの型に応じて動的切り替え） */}
 			{isSelected && (
-				<div className="lg:col-span-5 lg:sticky lg:top-[160px] w-full max-h-[calc(100vh-180px)] flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
+				<div className={LAYOUT_TOKENS.sidebar.stickyContainer}>
 					{current.type === 'fish' && (
 						<FishDetailView
 							fish={current.item}

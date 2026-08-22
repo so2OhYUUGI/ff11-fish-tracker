@@ -8,6 +8,7 @@
  * - `regionList` から `area.regionId` に一致するリージョン情報を参照して描画
  * - 中間データ `FISH_LOCATIONS` を参照し、当該エリア（`area.id`）で釣れる魚を抽出・一覧表示
  * - 生息魚一覧をバッジ形式から属性情報付きのリスト形式へ変更し、視認性と比較の容易性を向上
+ * - 全スタイルの参照を `DETAIL_STYLES` へ完全移行
  * ============================================================================
  */
 
@@ -15,7 +16,7 @@ import React from 'react';
 import { ArrowLeft, MapPin, X, Fish } from 'lucide-react';
 import type { ZoneMaster, FishMaster, RegionMaster, SizeType, WaterType } from '@/types/fish';
 import { FISH_LOCATIONS } from '@/data';
-import { DETAIL_STYLES } from '@/styles/detailStyles';
+import { DETAIL_STYLES } from '@/styles/components/detailStyles';
 
 type Props = {
 	area: ZoneMaster;
@@ -29,17 +30,17 @@ type Props = {
 
 // サイズ表記のラベルとスタイルマッピング
 const SIZE_CONFIG: Record<SizeType, { label: string; style: string }> = {
-	small: { label: '小型', style: 'bg-emerald-950/60 text-emerald-300 border-emerald-800/50' },
-	large: { label: '大型', style: 'bg-amber-950/60 text-amber-300 border-amber-800/50' },
-	unknown: { label: '不明', style: 'bg-slate-800/60 text-slate-400 border-slate-700/50' },
+	small: { label: '小型', style: DETAIL_STYLES.badgeSize.small },
+	large: { label: '大型', style: DETAIL_STYLES.badgeSize.large },
+	unknown: { label: '不明', style: DETAIL_STYLES.badgeSize.unknown },
 };
 
 // 水質表記のラベルとスタイルマッピング
 const WATER_CONFIG: Record<WaterType, { label: string; style: string }> = {
-	freshwater: { label: '淡水', style: 'bg-teal-950/60 text-teal-300 border-teal-800/50' },
-	saltwater: { label: '海水', style: 'bg-blue-950/60 text-blue-300 border-blue-800/50' },
-	gedou: { label: '外道', style: 'bg-purple-950/60 text-purple-300 border-purple-800/50' },
-	unknown: { label: '不明', style: 'bg-slate-800/60 text-slate-400 border-slate-700/50' },
+	freshwater: { label: '淡水', style: DETAIL_STYLES.badgeWater.freshwater },
+	saltwater: { label: '海水', style: DETAIL_STYLES.badgeWater.saltwater },
+	gedou: { label: '外道', style: DETAIL_STYLES.badgeWater.gedou },
+	unknown: { label: '不明', style: DETAIL_STYLES.badgeWater.unknown },
 };
 
 export const AreaDetailView: React.FC<Props> = ({
@@ -65,29 +66,29 @@ export const AreaDetailView: React.FC<Props> = ({
 	);
 
 	return (
-		<div className="flex flex-col h-full min-h-0 overflow-hidden">
+		<div className={DETAIL_STYLES.panelBase}>
 			{/* 1. 固定ヘッダー領域（幅縮小時・縦表示時の潰れ・押し出しを防止） */}
-			<div className="flex-shrink-0 z-10 bg-slate-900 shadow-md border-b border-slate-800 p-3 flex items-center justify-between gap-2 min-w-0">
+			<div className={DETAIL_STYLES.stickyHeader}>
 				{/* 左側：戻るボタン ＋ タイトル */}
-				<div className="flex items-center gap-2 min-w-0 flex-1">
+				<div className={DETAIL_STYLES.stickyHeaderLeft}>
 					{canGoBack && onBack && (
 						<button
 							type="button"
 							onClick={onBack}
-							className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-slate-300 bg-slate-800 hover:bg-slate-700 rounded border border-slate-700 shrink-0 transition-colors"
+							className={DETAIL_STYLES.headerBackButton}
 							title="前の画面へ戻る"
 						>
 							<ArrowLeft className="w-4 h-4 shrink-0" />
 							<span>戻る</span>
 						</button>
 					)}
-					<div className="flex items-center gap-2 min-w-0 flex-1">
+					<div className={DETAIL_STYLES.stickyHeaderTitleGroup}>
 						<MapPin className="w-5 h-5 text-red-400 shrink-0" />
 						<div className="min-w-0 flex-1">
-							<h2 className="text-base font-bold text-slate-100 truncate leading-tight">
+							<h2 className={DETAIL_STYLES.stickyHeaderTitle}>
 								{area.ja}
 							</h2>
-							<p className="text-xs text-slate-400 font-mono truncate">
+							<p className={DETAIL_STYLES.stickyHeaderSubTitle}>
 								{area.en}
 							</p>
 						</div>
@@ -95,12 +96,12 @@ export const AreaDetailView: React.FC<Props> = ({
 				</div>
 
 				{/* 右側：閉じるボタン */}
-				<div className="flex items-center shrink-0">
+				<div className={DETAIL_STYLES.stickyHeaderRight}>
 					<button
 						type="button"
 						onClick={onClose}
 						title="詳細を閉じる"
-						className="p-1.5 text-slate-400 hover:text-slate-100 hover:bg-slate-800 rounded-lg transition-colors shrink-0"
+						className={DETAIL_STYLES.iconCloseButton}
 					>
 						<X className="w-5 h-5" />
 					</button>
@@ -108,14 +109,14 @@ export const AreaDetailView: React.FC<Props> = ({
 			</div>
 
 			{/* 2. 一括スクロール可能なコンテンツ領域 */}
-			<div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-6">
+			<div className={DETAIL_STYLES.scrollContent}>
 				{/* 所属リージョン表示 */}
 				{belongsRegion && (
-					<div className="flex items-center gap-2 text-xs text-slate-300 bg-slate-800/40 p-2.5 rounded-lg border border-slate-700/50">
-						<span className="text-slate-400">リージョン:</span>
-						<span className="font-medium text-slate-200">
+					<div className={DETAIL_STYLES.regionInfo}>
+						<span className={DETAIL_STYLES.regionLabel}>リージョン:</span>
+						<span className={DETAIL_STYLES.regionNameJa}>
 							{belongsRegion.ja}
-							<span className="text-slate-500 font-mono ml-1">({belongsRegion.en})</span>
+							<span className={DETAIL_STYLES.regionNameEn}>({belongsRegion.en})</span>
 						</span>
 					</div>
 				)}
@@ -134,13 +135,13 @@ export const AreaDetailView: React.FC<Props> = ({
 
 				{/* 釣れる魚一覧（リスト形式） */}
 				<div>
-					<h3 className={`${DETAIL_STYLES.sectionTitle} mb-3 flex items-center gap-2`}>
+					<h3 className={DETAIL_STYLES.sectionTitle}>
 						<Fish className="w-4 h-4 text-cyan-400" />
 						<span>生息する魚 ({catchableFishes.length} 種)</span>
 					</h3>
 
 					{catchableFishes.length > 0 ? (
-						<div className="space-y-2">
+						<div className={DETAIL_STYLES.relatedList}>
 							{catchableFishes.map((fish) => {
 								const sizeInfo = SIZE_CONFIG[fish.sizeType] ?? SIZE_CONFIG.unknown;
 								const waterInfo = WATER_CONFIG[fish.waterType] ?? WATER_CONFIG.unknown;
@@ -149,28 +150,28 @@ export const AreaDetailView: React.FC<Props> = ({
 									<div
 										key={fish.id}
 										onClick={() => onClickFishDetail?.(fish)}
-										className={`p-3 rounded-lg bg-slate-800/60 border border-slate-700/50 flex flex-wrap items-center justify-between gap-2 ${onClickFishDetail ? 'cursor-pointer hover:bg-slate-800 transition-colors' : ''
+										className={`${DETAIL_STYLES.relatedRow} ${onClickFishDetail ? DETAIL_STYLES.relatedRowInteractive : ''
 											}`}
 									>
 										{/* 左側：魚名（日本語・英語） */}
-										<div className="flex flex-col min-w-[140px]">
-											<span className="text-sm font-bold text-slate-200">
+										<div className={DETAIL_STYLES.relatedRowTitleGroup}>
+											<span className={DETAIL_STYLES.relatedRowTitle}>
 												{fish.ja}
 											</span>
-											<span className="text-xs text-slate-400 font-mono">
+											<span className={DETAIL_STYLES.relatedRowSubTitle}>
 												{fish.en}
 											</span>
 										</div>
 
 										{/* 右側：属性・上限スキルバッジ群 */}
-										<div className="flex items-center gap-1.5 flex-wrap shrink-0">
-											<span className="px-2 py-0.5 rounded text-xs font-mono bg-slate-900/80 text-cyan-300 border border-slate-700">
+										<div className={DETAIL_STYLES.relatedRowBadgeGroup}>
+											<span className={DETAIL_STYLES.badgeSkill}>
 												上限: {fish.maxSkill}
 											</span>
-											<span className={`px-1.5 py-0.5 rounded text-xs border ${sizeInfo.style}`}>
+											<span className={`${DETAIL_STYLES.badgeBase} ${sizeInfo.style}`}>
 												{sizeInfo.label}
 											</span>
-											<span className={`px-1.5 py-0.5 rounded text-xs border ${waterInfo.style}`}>
+											<span className={`${DETAIL_STYLES.badgeBase} ${waterInfo.style}`}>
 												{waterInfo.label}
 											</span>
 										</div>

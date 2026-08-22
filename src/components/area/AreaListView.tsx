@@ -9,11 +9,7 @@
  * - `useNavigationStack`（`navStack`）の最前面データ（`current`）に基づき、詳細パネルの切り替え・スタック遷移を描画
  * - 選択状態（`current !== null`）に応じた2カラム（一覧＋詳細）レスポンシブレイアウトの制御
  * - 表示モード（`viewMode`: 'card' | 'list'）に基づく `AreaCard` / `AreaListItem` の切替描画
- * - 詳細表示領域に画面高に応じた上限サイズ（calc）と独立スクロール領域を設定
- * 
- * [編集・改修時の注意事項]
- * 1. 【グループ化とソート】
- *    `groupedAreas` 内で FISH_LOCATIONS リレーションを参照し、対象魚数0件のエリアを各リージョンの末尾へソートしています。
+ * - 全レイアウト・スタイルの参照を `LAYOUT_TOKENS` および `CARD_STYLES` へ集約
  * ============================================================================
  */
 
@@ -26,6 +22,8 @@ import { AreaListItem } from './AreaListItem';
 import { AreaDetailView } from './AreaDetailView';
 import { FishDetailView } from '@/components/fish/FishDetailView';
 import { BaitDetailView } from '@/components/bait/BaitDetailView';
+import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
+import { CARD_STYLES } from '@/styles/components/cardStyles';
 
 type Props = {
 	areas: ZoneMaster[];
@@ -98,36 +96,28 @@ export const AreaListView = ({
 	const selectedAreaId = current?.type === 'area' ? current.item.id : null;
 
 	return (
-		<div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+		<div className={LAYOUT_TOKENS.view.mainGrid}>
 			{/* 左側：一覧表示領域 */}
-			<div
-				className={`${isSelected ? 'lg:col-span-7' : 'lg:col-span-12'
-					} ${isSelected ? 'hidden lg:block' : 'block'}`}
-			>
-				<div className="flex flex-col gap-6">
+			<div className={LAYOUT_TOKENS.view.leftColumn(isSelected)}>
+				<div className={LAYOUT_TOKENS.view.groupListContainer}>
 					{groupedAreas.map((group) => (
-						<div key={group.region.id} className="flex flex-col gap-2">
+						<div key={group.region.id} className={LAYOUT_TOKENS.view.sectionGroup}>
 							{/* リージョン見出し */}
-							<div className="flex items-center gap-2 border-b border-slate-700/80 pb-1.5 px-1">
-								<span className="text-sm font-bold text-cyan-400">
+							<div className={CARD_STYLES.sectionHeader.container}>
+								<span className={CARD_STYLES.sectionHeader.titleJa}>
 									{group.region.ja}
 								</span>
-								<span className="text-xs text-slate-400 font-mono">
+								<span className={CARD_STYLES.sectionHeader.titleEn}>
 									({group.region.en})
 								</span>
-								<span className="text-xs text-slate-500 ml-auto font-mono">
+								<span className={CARD_STYLES.sectionHeader.countBadge}>
 									{group.areas.length} 件
 								</span>
 							</div>
 
 							{/* カード表示モード */}
 							{viewMode === 'card' ? (
-								<div
-									className={`grid grid-cols-1 gap-3 ${isSelected
-											? 'sm:grid-cols-2 md:grid-cols-3'
-											: 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
-										}`}
-								>
+								<div className={LAYOUT_TOKENS.view.cardGrid(isSelected)}>
 									{group.areas.map((area) => (
 										<AreaCard
 											key={area.id}
@@ -139,7 +129,7 @@ export const AreaListView = ({
 								</div>
 							) : (
 								/* リスト表示モード */
-								<div className="flex flex-col gap-2">
+								<div className={LAYOUT_TOKENS.view.listContainer}>
 									{group.areas.map((area) => (
 										<AreaListItem
 											key={area.id}
@@ -157,7 +147,7 @@ export const AreaListView = ({
 
 			{/* 右側：詳細表示領域 */}
 			{isSelected && (
-				<div className="lg:col-span-5 lg:sticky lg:top-[160px] w-full max-h-[calc(100vh-180px)] flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
+				<div className={LAYOUT_TOKENS.sidebar.stickyContainer}>
 					{current.type === 'area' && (
 						<AreaDetailView
 							area={current.item}

@@ -10,10 +10,6 @@
  * - サイズ（大型/小型/不明）および水質（淡水/海水/外道/不明）のバッジ表示
  * - 獲得/達成状態（チェック状態）のチェックボックス描画およびトグル操作
  * - チェック済・選択中（アクティブ）・デフォルト状態に応じた行全体のスタイリング切り替え
- * 
- * [編集・改修時の注意事項]
- * 1. 【スタイルの参照】
- *    Tailwind CSS クラスは `@/styles/listStyles` の `LIST_STYLES` を定数参照しています。
  * ============================================================================
  */
 
@@ -21,7 +17,8 @@ import React from 'react';
 import { Check, MapPin } from 'lucide-react';
 import type { FishMaster, ZoneMaster, SizeType, WaterType } from '@/types/fish';
 import { FISH_LOCATIONS } from '@/data';
-import { LIST_STYLES } from '@/styles/listStyles';
+import { LIST_STYLES } from '@/styles/components/listStyles';
+import { FISH_STYLES } from '@/styles/features/fishStyles';
 
 type Props = {
 	fish: FishMaster;
@@ -32,19 +29,19 @@ type Props = {
 	onClickDetail: (fish: FishMaster) => void;
 };
 
-// サイズ表記のラベルとスタイルマッピング
+// サイズ表記のラベルとスタイルマッピング（FISH_STYLES を参照）
 const SIZE_CONFIG: Record<SizeType, { label: string; style: string }> = {
-	small: { label: '小型', style: 'bg-emerald-950/60 text-emerald-300 border-emerald-800/50' },
-	large: { label: '大型', style: 'bg-amber-950/60 text-amber-300 border-amber-800/50' },
-	unknown: { label: '不明', style: 'bg-slate-800/60 text-slate-400 border-slate-700/50' },
+	small: { label: '小型', style: FISH_STYLES.badgeSmall },
+	large: { label: '大型', style: FISH_STYLES.badgeLarge },
+	unknown: { label: '不明', style: FISH_STYLES.badgeSizeUnknown },
 };
 
-// 水質表記のラベルとスタイルマッピング
+// 水質表記のラベルとスタイルマッピング（FISH_STYLES を参照）
 const WATER_CONFIG: Record<WaterType, { label: string; style: string }> = {
-	freshwater: { label: '淡水', style: 'bg-teal-950/60 text-teal-300 border-teal-800/50' },
-	saltwater: { label: '海水', style: 'bg-blue-950/60 text-blue-300 border-blue-800/50' },
-	gedou: { label: '外道', style: 'bg-purple-950/60 text-purple-300 border-purple-800/50' },
-	unknown: { label: '不明', style: 'bg-slate-800/60 text-slate-400 border-slate-700/50' },
+	freshwater: { label: '淡水', style: FISH_STYLES.badgeFreshwater },
+	saltwater: { label: '海水', style: FISH_STYLES.badgeSaltwater },
+	gedou: { label: '外道', style: FISH_STYLES.badgeGedou },
+	unknown: { label: '不明', style: FISH_STYLES.badgeWaterUnknown },
 };
 
 export const FishListItem: React.FC<Props> = ({
@@ -55,17 +52,16 @@ export const FishListItem: React.FC<Props> = ({
 	onToggleCheck,
 	onClickDetail,
 }) => {
-	// FishCard と同じロジックで生息エリア数を算出
+	// 生息エリア数を算出
 	const targetZoneIds = FISH_LOCATIONS
 		.filter((loc) => loc.fishId === fish.id)
 		.map((loc) => loc.zoneId);
 
-	// propsのzonesがある場合はIDの一致を確認、ない場合は抽出結果の長さをそのまま採用
 	const totalZones = zones.length > 0
 		? zones.filter((zone) => targetZoneIds.includes(zone.id)).length
 		: targetZoneIds.length;
 
-	// スタイルの判定を分離・整理
+	// 行全体のスタイル適用
 	const containerStyle = isSelected
 		? `${LIST_STYLES.selected} ${isChecked ? 'opacity-90' : ''}`
 		: isChecked
@@ -94,11 +90,11 @@ export const FishListItem: React.FC<Props> = ({
 					{isChecked && <Check className="w-4 h-4 stroke-[3]" />}
 				</button>
 
-				{/* 魚名表示領域：縦並び */}
+				{/* 魚名表示領域（縦並び） */}
 				<div className="flex flex-col min-w-0 flex-1">
 					<span
 						className={`truncate ${LIST_STYLES.titleJa} ${isSelected
-							? 'text-cyan-300 font-extrabold'
+							? LIST_STYLES.titleJaSelected
 							: isChecked
 								? LIST_STYLES.titleJaChecked
 								: LIST_STYLES.titleJaDefault
@@ -106,7 +102,7 @@ export const FishListItem: React.FC<Props> = ({
 					>
 						{fish.ja}
 					</span>
-					<span className="truncate text-xs text-slate-400 font-mono font-normal">
+					<span className={LIST_STYLES.titleEn}>
 						{fish.en}
 					</span>
 				</div>
@@ -114,11 +110,10 @@ export const FishListItem: React.FC<Props> = ({
 
 			{/* 右端属性表示領域（生息エリア数・サイズ・水質） */}
 			<div className="flex items-center gap-1.5 shrink-0">
-				{/* 生息エリア数バッジ（エリア定義カラー text-emerald-400 を適用） */}
 				{totalZones > 0 && (
 					<span
 						className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium border shrink-0 ${totalZones === 1
-							? 'bg-amber-950/50 text-amber-300 border-amber-800/40' // 1箇所固有種のアクセントカラー
+							? 'bg-amber-950/50 text-amber-300 border-amber-800/40'
 							: 'bg-slate-800/80 text-slate-300 border-slate-700/60'
 							}`}
 						title={`生息エリア: ${totalZones}箇所`}

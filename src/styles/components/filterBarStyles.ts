@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * [FilePath] src/styles/filterBarStyles.ts
+ * [FilePath] src/styles/components/filterBarStyles.ts
  * [Role] FilterBarコンポーネント用共通Tailwind CSSクラス定義
  * 
  * [概要]
@@ -8,6 +8,8 @@
  *   表示切替ボタン等のスタイルを集約定義
  * ============================================================================
  */
+
+import { COMMON_TOKENS } from '../tokens/commonTokens';
 
 export const FILTER_BAR_STYLES = {
 	container: 'bg-slate-800 border-b border-slate-700 py-3 px-4 sm:px-6 lg:px-8',
@@ -32,7 +34,7 @@ export const FILTER_BAR_STYLES = {
 	// プログレス表示領域
 	progressGroup: 'flex flex-col sm:flex-row sm:items-center gap-2 w-full lg:flex-1 lg:max-w-xs px-2',
 	progressTextContainer: 'flex justify-between items-center text-xs font-semibold text-slate-300 whitespace-nowrap gap-2',
-	progressSubText: 'text-slate-400 font-normal',
+	progressSubText: COMMON_TOKENS.text.subText,
 	progressBarTrack: 'w-full bg-slate-700 rounded-full h-2 overflow-hidden',
 	progressBarFill: 'bg-blue-500 h-2 rounded-full transition-all duration-300 ease-out',
 	progressSpacer: 'hidden lg:block lg:flex-1',
