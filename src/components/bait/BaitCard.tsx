@@ -5,9 +5,9 @@
  * 
  * [概要]
  * - 餌の基本情報（和名、英名、説明文）のカード形式表示
- * - 餌名称の日本語と英語を明示的に改行して視認性と統一感を確保
- * - 選択状態（`isSelected`）に応じたカード枠線・背景のハイライト表示切り替え
- * - 改行コード（\n）を含む説明文の複数行レンダリング対応
+ * - `AreaCard` と統一されたカードレイアウト（上段:名称 / 中段:説明文 / 下段:対象魚）
+ * - 該当の餌で釣れる魚の抽出および上限数制限付きタグ表示（上位表示＋残り件数バッジ）
+ * - 選択中（アクティブ）状態に応じたスタイリング切り替え
  * 
  * [編集・改修時の注意事項]
  * 1. 【スタイルの参照】
@@ -16,52 +16,99 @@
  */
 
 import React from 'react';
-import type { BaitMaster } from '@/types/fish';
+import { Fish } from 'lucide-react';
+import type { BaitMaster, FishMaster } from '@/types/fish';
+import { FISH_BAIT_RELATIONS, FISHES } from '@/data';
 import { CARD_STYLES } from '@/styles/cardStyles';
 
 type BaitCardProps = {
 	bait: BaitMaster;
+	fishes?: FishMaster[]; // 外部から渡される場合はそれを使用し、未渡しの場合は FISHES を参照
 	isSelected?: boolean;
 	onClickDetail: (bait: BaitMaster) => void;
 };
 
 export const BaitCard: React.FC<BaitCardProps> = ({
 	bait,
+	fishes = FISHES,
 	isSelected = false,
 	onClickDetail,
 }) => {
+	// 該当する餌 (bait.id) で釣れる魚の ID 一覧を抽出
+	const targetFishIds = FISH_BAIT_RELATIONS
+		.filter((rel) => rel.baitId === bait.id)
+		.map((rel) => rel.fishId);
+
+	// 重複を除外して魚データと紐付け
+	const uniqueFishIds = Array.from(new Set(targetFishIds));
+	const matchedFishes = fishes.filter((fish) => uniqueFishIds.includes(fish.id));
+	const totalFishes = matchedFishes.length;
+
+	// カード表示用：最大2件を表示、溢れた分は +N 表示
+	const maxDisplayCount = 2;
+	const displayFishes = matchedFishes.slice(0, maxDisplayCount);
+	const remainingCount = totalFishes - maxDisplayCount;
+
 	return (
 		<div
-			className={`${CARD_STYLES.base} ${isSelected ? CARD_STYLES.selected : CARD_STYLES.default
-				}`}
 			onClick={() => onClickDetail(bait)}
+			className={`${CARD_STYLES.base} ${isSelected ? CARD_STYLES.selected : CARD_STYLES.default
+				} cursor-pointer p-4 flex flex-col justify-between`}
 		>
 			<div>
-				{/* 日本語名と英語名を明確に縦並び（改行）へ変更 */}
-				<div className="flex flex-col min-w-0">
+				{/* 1. 名称表示領域（日本語名・英語名の縦並び） */}
+				<div className="flex flex-col min-w-0 mb-2">
 					<h3
-						className={`truncate ${CARD_STYLES.titleJa} ${isSelected ? 'text-cyan-300' : 'text-slate-100'
+						className={`truncate ${CARD_STYLES.titleJa} ${isSelected ? 'text-cyan-300' : CARD_STYLES.titleJaDefault
 							}`}
 					>
 						{bait.ja}
 					</h3>
-					<span
-						className={`truncate text-xs font-normal mt-0.5 ${isSelected ? 'text-cyan-300/80' : 'text-slate-400'
-							} ${CARD_STYLES.titleEn}`}
-					>
+					<span className="truncate text-xs text-slate-400 font-mono font-normal mt-0.5">
 						{bait.en}
 					</span>
 				</div>
 
+				{/* 2. 説明文領域 */}
 				{bait.description && (
-					<div className={`mt-3 ${CARD_STYLES.boxBlock}`}>
-						{bait.description.split('\\n').map((line, index) => (
-							<span key={index} className="block">
-								{line}
-							</span>
+					<div className={`${CARD_STYLES.boxBlock} mt-2 text-slate-300`}>
+						{bait.description.split('\\n').map((line: string, index: number) => (
+							<p key={index}>{line}</p>
 						))}
 					</div>
 				)}
+
+				{/* 3. 釣れる魚の表示領域（AreaCardと完全に仕様統一） */}
+				<div className="mt-3 text-xs flex items-center gap-1.5 flex-wrap">
+					<div className="flex items-center gap-1 text-slate-400 shrink-0 font-medium">
+						<Fish className="w-3.5 h-3.5 text-slate-400" />
+						<span>対象の魚 ({totalFishes}):</span>
+					</div>
+
+					{totalFishes > 0 ? (
+						<div className="flex items-center gap-1 flex-wrap min-w-0">
+							{displayFishes.map((fish) => (
+								<span
+									key={fish.id}
+									className="px-1.5 py-0.5 bg-slate-800 text-slate-300 border border-slate-700/60 rounded text-[11px] truncate max-w-[120px]"
+									title={fish.ja}
+								>
+									{fish.ja}
+								</span>
+							))}
+							{remainingCount > 0 && (
+								<span
+									className="px-1.5 py-0.5 bg-cyan-950/80 text-cyan-300 border border-cyan-800/60 rounded text-[11px] font-semibold"
+									title={`他 ${remainingCount} 種類`}
+								>
+									+{remainingCount}
+								</span>
+							)}
+						</div>
+					) : (
+						<span className="text-slate-500 italic">情報なし</span>
+					)}
+				</div>
 			</div>
 		</div>
 	);

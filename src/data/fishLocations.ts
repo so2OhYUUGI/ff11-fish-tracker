@@ -2935,5 +2935,45 @@ export const FISH_LOCATIONS: FishLocation[] = [
     "id": "6338-268",
     "fishId": 6338,
     "zoneId": 268
+  },
+  {
+    "id": "6373-269",
+    "fishId": 6373,
+    "zoneId": 269
+  },
+  {
+    "id": "5539-111",
+    "fishId": 5539,
+    "zoneId": 111
+  },
+  {
+    "id": "5539-136",
+    "fishId": 5539,
+    "zoneId": 136
+  },
+  {
+    "id": "6376-272",
+    "fishId": 6376,
+    "zoneId": 272
+  },
+  {
+    "id": "6375-216",
+    "fishId": 6375,
+    "zoneId": 216
+  },
+  {
+    "id": "4305-3",
+    "fishId": 4305,
+    "zoneId": 3
+  },
+  {
+    "id": "4305-160",
+    "fishId": 4305,
+    "zoneId": 160
+  },
+  {
+    "id": "4305--221",
+    "fishId": 4305,
+    "zoneId": -221
   }
 ];

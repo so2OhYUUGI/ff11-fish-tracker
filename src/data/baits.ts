@@ -174,5 +174,11 @@ export const BAITS: BaitMaster[] = [
     "ja": "ロバー針",
     "en": "Robber Rig",
     "description": "発光する鉤を無数に組み合わせた釣りの仕掛け。\\n魚に引っ掛けて釣る。"
+  },
+  {
+    "id": 19326,
+    "ja": "海竜の肝",
+    "en": "sea dragon liver",
+    "description": "釣り餌。"
   }
 ];

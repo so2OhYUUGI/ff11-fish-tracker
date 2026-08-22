@@ -182,7 +182,7 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 						</span>
 						{isHarakiriTarget && (
 							<span className={`${CARD_STYLES.badgeBase} ${CARD_STYLES.badgeHarakiri}`}>
-								ハラキリ対象
+								ハラキリ
 							</span>
 						)}
 						{fish.ebisu && (
