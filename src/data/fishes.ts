@@ -717,7 +717,7 @@ export const FISHES: FishMaster[] = [
     "description": "グスタベルグの河川に生息する淡水魚。\\n",
     "maxSkill": 47,
     "sizeType": "small",
-    "waterType": "unknown",
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false
   },

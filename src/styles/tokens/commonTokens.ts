@@ -28,9 +28,9 @@ export const COMMON_TOKENS = {
       badge: 'bg-cyan-950/80 text-cyan-300 border-cyan-800/60',
     },
     area: {
-      text: 'text-emerald-400',
-      textActive: 'text-emerald-300',
-      badge: 'bg-emerald-950/80 text-emerald-300 border-emerald-800/60',
+      text: 'text-red-400',
+      textActive: 'text-red-300',
+      badge: 'bg-red-950/80 text-red-300 border-red-800/60',
     },
     bait: {
       text: 'text-amber-400',

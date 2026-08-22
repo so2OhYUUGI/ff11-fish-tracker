@@ -25,7 +25,7 @@ export const FISH_STYLES = {
 	badgeSkill: 'bg-slate-800/80 text-slate-300 border-slate-700/80 font-medium font-mono',
 
 	// サイズ区分バッジ
-	badgeLarge: 'bg-indigo-950/80 text-indigo-300 border-indigo-800/60',
+	badgeLarge: 'bg-orange-950/100 text-orange-300 border-orange-800/80',
 	badgeSmall: 'bg-sky-950/80 text-sky-300 border-sky-800/60',
 	badgeSizeUnknown: 'bg-slate-800/80 text-slate-400 border-slate-700/60',
 
@@ -59,7 +59,7 @@ export const FISH_WATER_CONFIG: Record<
 	freshwater: { label: '淡水', style: FISH_STYLES.badgeFreshwater },
 	saltwater: { label: '海水', style: FISH_STYLES.badgeSaltwater },
 	gedou: { label: '外道', style: FISH_STYLES.badgeGedou },
-	unknown: { label: '区分不明', style: FISH_STYLES.badgeWaterUnknown },
+	unknown: { label: '不明', style: FISH_STYLES.badgeWaterUnknown },
 };
 
 // 特殊フラグバッジの統一ラベル＆スタイル設定
@@ -85,7 +85,7 @@ export const FILTER_BAR_STYLES = {
 	tabActive: 'bg-blue-600 text-white shadow',
 	tabInactive: 'text-slate-400 hover:text-slate-200',
 	tabIcon: 'w-3.5 h-3.5 shrink-0',
-	
+
 	// ステータスフィルターボタン類
 	statusButtonBase: 'flex-1 sm:flex-none px-3 py-1.5 text-xs font-medium rounded-md transition-colors',
 	statusAllActive: 'bg-slate-700 text-white shadow',
