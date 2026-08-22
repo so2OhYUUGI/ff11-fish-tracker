@@ -12,6 +12,8 @@
  * [編集・改修時の注意事項]
  * 1. 【スタイルの参照】
  *    Tailwind CSS クラスは `@/styles/listStyles` の `LIST_STYLES` を定数参照しています。
+ * 2. 【アイコンカラー】
+ *    魚アイコン（Fish）はガイドラインに従い text-cyan-400 を使用します。
  * ============================================================================
  */
 
@@ -71,7 +73,7 @@ export const BaitListItem: React.FC<Props> = ({
 
 			{/* 3. 右端：釣れる魚の総数インジケーター */}
 			<div className="shrink-0 flex items-center gap-1 text-xs px-2 py-1 bg-slate-800/80 border border-slate-700/60 rounded text-slate-300">
-				<Fish className="w-3.5 h-3.5 text-slate-400" />
+				<Fish className="w-3.5 h-3.5 text-cyan-400" />
 				<span className="font-medium">{totalFishes}</span>
 			</div>
 		</div>

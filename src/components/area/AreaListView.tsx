@@ -5,17 +5,22 @@
  * 
  * [概要]
  * - エリア（ZoneMaster）を所属リージョン（RegionMaster）ごとにグループ化して表示
+ * - 各リージョン内において、釣れる魚が0件のエリアを末尾にソート表示
  * - `useNavigationStack`（`navStack`）の最前面データ（`current`）に基づき、詳細パネルの切り替え・スタック遷移を描画
  * - 選択状態（`current !== null`）に応じた2カラム（一覧＋詳細）レスポンシブレイアウトの制御
  * - 表示モード（`viewMode`: 'card' | 'list'）に基づく `AreaCard` / `AreaListItem` の切替描画
  * - 詳細表示領域に画面高に応じた上限サイズ（calc）と独立スクロール領域を設定
+ * 
+ * [編集・改修時の注意事項]
+ * 1. 【グループ化とソート】
+ *    `groupedAreas` 内で FISH_LOCATIONS リレーションを参照し、対象魚数0件のエリアを各リージョンの末尾へソートしています。
  * ============================================================================
  */
 
 import { useMemo } from 'react';
 import type { ZoneMaster, FishMaster, ViewMode, RegionMaster } from '@/types/fish';
 import type { useNavigationStack } from '@/hooks/useNavigationStack';
-import { REGIONS, ZONES } from '@/data/';
+import { REGIONS, ZONES, FISH_LOCATIONS } from '@/data/';
 import { AreaCard } from './AreaCard';
 import { AreaListItem } from './AreaListItem';
 import { AreaDetailView } from './AreaDetailView';
@@ -42,9 +47,19 @@ export const AreaListView = ({
 }: Props) => {
 	const { current, push, replace, pop, clear, canGoBack } = navStack;
 
-	// リージョンごとにエリアをグループ化（リージョン未設定のエリアは除外）
+	// リージョンごとにエリアをグループ化＆各リージョン内で魚0件エリアを末尾にソート
 	const groupedAreas = useMemo(() => {
 		const groups: RegionGroup[] = [];
+
+		// エリアIDごとの釣れる魚の総数をあらかじめ算出
+		const fishCountMap = new Map<number, number>();
+		areas.forEach((area) => {
+			const targetFishIds = FISH_LOCATIONS
+				.filter((loc) => loc.zoneId === area.id)
+				.map((loc) => loc.fishId);
+			const uniqueFishCount = new Set(targetFishIds).size;
+			fishCountMap.set(area.id, uniqueFishCount);
+		});
 
 		REGIONS.forEach((region) => {
 			const regionAreas = areas.filter(
@@ -52,9 +67,24 @@ export const AreaListView = ({
 			);
 
 			if (regionAreas.length > 0) {
+				// リージョン内で「魚がいるエリア(>0)」を前に、「0件のエリア」を後ろへソート
+				const sortedRegionAreas = [...regionAreas].sort((a, b) => {
+					const countA = fishCountMap.get(a.id) || 0;
+					const countB = fishCountMap.get(b.id) || 0;
+
+					const hasFishA = countA > 0 ? 1 : 0;
+					const hasFishB = countB > 0 ? 1 : 0;
+
+					if (hasFishA !== hasFishB) {
+						return hasFishB - hasFishA; // 魚あり(1)を優先
+					}
+
+					return 0; // 同条件同士は元の並びを維持
+				});
+
 				groups.push({
 					region,
-					areas: regionAreas,
+					areas: sortedRegionAreas,
 				});
 			}
 		});
@@ -71,8 +101,8 @@ export const AreaListView = ({
 		<div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 			{/* 左側：一覧表示領域 */}
 			<div
-				className={`${isSelected ? 'lg:col-span-7' : 'lg:col-span-12'} ${isSelected ? 'hidden lg:block' : 'block'
-					}`}
+				className={`${isSelected ? 'lg:col-span-7' : 'lg:col-span-12'
+					} ${isSelected ? 'hidden lg:block' : 'block'}`}
 			>
 				<div className="flex flex-col gap-6">
 					{groupedAreas.map((group) => (
@@ -94,8 +124,8 @@ export const AreaListView = ({
 							{viewMode === 'card' ? (
 								<div
 									className={`grid grid-cols-1 gap-3 ${isSelected
-										? 'sm:grid-cols-2 md:grid-cols-3'
-										: 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
+											? 'sm:grid-cols-2 md:grid-cols-3'
+											: 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
 										}`}
 								>
 									{group.areas.map((area) => (
