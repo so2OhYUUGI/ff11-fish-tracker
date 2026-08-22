@@ -7,7 +7,8 @@
  * - BAITS および RODS の生データを直接参照し、全種類の餌と竿を描画
  * - 中間データ（`FishBaitRelation`, `FishRodRelation`）を介してリレーション編集を制御
  * - 限界スキルレベル (maxSkill) の数値入力領域に対応
- * - サイズ区分 (sizeType)、水質区分 (waterType) のセグメントコントロール（小型・等幅トグルボタン）編集に対応
+ * - サイズ区分 (sizeType)、水質区分 (waterType) のセグメントコントロール編集に対応
+ * - ハラキリ領域（得られるアイテム・称号）の編集に対応（釣竿設定の下、備考の上に配置）
  * - 左パネルの魚一覧に検索フィルター窓を追加（日本語・英語・ID検索対応）
  * ============================================================================
  */
@@ -96,6 +97,17 @@ export const FishEditTab: React.FC<Props> = ({
 		const updated = { ...selectedFish, [field]: value };
 		setSelectedFish(updated);
 		onFishChange(updated);
+	};
+
+	// ハラキリ用アイテム（カンマ区切り文字列 ⇔ 配列の相互変換）
+	const handleHarakiriItemsChange = (textValue: string) => {
+		if (!selectedFish) return;
+		const items = textValue
+			.split(',')
+			.map((item) => item.trim())
+			.filter((item) => item !== '');
+
+		handleFieldChange('harakiriItems', items.length > 0 ? items : undefined);
 	};
 
 	// エリア（ゾーン）のトグル
@@ -242,7 +254,7 @@ export const FishEditTab: React.FC<Props> = ({
 		onRodRelationChange(updatedRelations);
 	};
 
-	// ゾーンエンティティの生成（一元化処理と型安全性を確保）
+	// ゾーンエンティティの生成
 	const regionMap = new Map((regionList || []).map((r) => [r.id, r.ja]));
 
 	const zoneEntityItems: EntityItem[] = (zoneList || []).map((z) => {
@@ -419,7 +431,7 @@ export const FishEditTab: React.FC<Props> = ({
 							</label>
 						</div>
 
-						{/* サイズ区分・水質区分 (段分け配置・小型等幅ボタン) */}
+						{/* サイズ区分・水質区分 */}
 						<div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
 							{/* 上段: サイズ区分 */}
 							<div>
@@ -593,6 +605,40 @@ export const FishEditTab: React.FC<Props> = ({
 									})}
 								</tbody>
 							</table>
+						</div>
+
+						{/* ハラキリ関連設定 */}
+						<div
+							style={{
+								display: 'grid',
+								gridTemplateColumns: '1fr 1fr',
+								gap: '10px',
+								padding: '10px',
+								border: '1px solid #e2e8f0',
+								borderRadius: '6px',
+								backgroundColor: '#f8fafc',
+							}}
+						>
+							<label>
+								ハラキリ得られるアイテム (カンマ区切り):
+								<input
+									type="text"
+									placeholder="例: 光のクリスタル, 黒ハガネ"
+									value={selectedFish.harakiriItems ? selectedFish.harakiriItems.join(', ') : ''}
+									onChange={(e) => handleHarakiriItemsChange(e.target.value)}
+									style={{ width: '100%', padding: '4px', marginTop: '4px', boxSizing: 'border-box' }}
+								/>
+							</label>
+							<label>
+								ハラキリ得られる称号:
+								<input
+									type="text"
+									placeholder="例: 伝説の太公望"
+									value={selectedFish.harakiriTitle || ''}
+									onChange={(e) => handleFieldChange('harakiriTitle', e.target.value || undefined)}
+									style={{ width: '100%', padding: '4px', marginTop: '4px', boxSizing: 'border-box' }}
+								/>
+							</label>
 						</div>
 
 						<label>

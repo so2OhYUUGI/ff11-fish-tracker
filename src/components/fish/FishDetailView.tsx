@@ -6,6 +6,7 @@
  * [概要]
  * - ヘッダー（魚名・チェック状態）を固定し、コンテンツ部分全体を独立スクロール表示
  * - 基本情報（スキル上限、サイズ区分、水質区分、各種関連属性フラグ）のステータス表示
+ * - ハラキリ対象時の獲得可能アイテム一覧表示
  * - 生息エリアタグや餌タグクリックによる他詳細画面（`AreaDetailView` / `BaitDetailView`）への相互遷移サポート
  * ============================================================================
  */
@@ -127,8 +128,8 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 						type="button"
 						onClick={() => onToggleCheck(fish.id)}
 						className={`${DETAIL_STYLES.checkButtonBase} ${isChecked
-								? DETAIL_STYLES.checkButtonChecked
-								: DETAIL_STYLES.checkButtonUnchecked
+							? DETAIL_STYLES.checkButtonChecked
+							: DETAIL_STYLES.checkButtonUnchecked
 							} shrink-0`}
 					>
 						{isChecked ? (
@@ -186,6 +187,29 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 							</span>
 						)}
 					</div>
+				</div>
+
+				{/* ハラキリ情報 */}
+				<div>
+					<h3 className={DETAIL_STYLES.sectionTitle}>ハラキリ</h3>
+					{fish.harakiri ? (
+						fish.harakiriItems && fish.harakiriItems.length > 0 ? (
+							<div className="flex flex-wrap gap-2">
+								{fish.harakiriItems.map((item, index) => (
+									<span
+										key={index}
+										className="px-2.5 py-1 rounded bg-slate-800 text-slate-200 border border-slate-700 text-xs font-medium"
+									>
+										{item}
+									</span>
+								))}
+							</div>
+						) : (
+							<p className="text-xs text-amber-400">ハラキリ対象（入手アイテム情報なし）</p>
+						)
+					) : (
+						<p className={DETAIL_STYLES.emptyText}>ハラキリ非対象</p>
+					)}
 				</div>
 
 				{/* 生息エリア・釣り場 */}
