@@ -6,7 +6,7 @@
  * [概要]
  * - 魚の基本情報（和名、英名）のリスト形式（高密度レイアウト）表示
  * - 魚名称の日本語・英語表記を縦並び（カッコ外し）へ統一
- * - FISH_LOCATIONS から生息エリア数を算出し、英語名横にバッジ表示
+ * - FISH_LOCATIONS から生息エリア数を算出し、右端属性領域にバッジ表示
  * - サイズ（大型/小型/不明）および水質（淡水/海水/外道/不明）のバッジ表示
  * - 獲得/達成状態（チェック状態）のチェックボックス描画およびトグル操作
  * - チェック済・選択中（アクティブ）・デフォルト状態に応じた行全体のスタイリング切り替え
@@ -94,40 +94,39 @@ export const FishListItem: React.FC<Props> = ({
 					{isChecked && <Check className="w-4 h-4 stroke-[3]" />}
 				</button>
 
-				{/* 魚名表示領域：縦並び ＋ 英語名横にエリア数バッジ */}
+				{/* 魚名表示領域：縦並び */}
 				<div className="flex flex-col min-w-0 flex-1">
 					<span
 						className={`truncate ${LIST_STYLES.titleJa} ${isSelected
-								? 'text-cyan-300 font-extrabold'
-								: isChecked
-									? LIST_STYLES.titleJaChecked
-									: LIST_STYLES.titleJaDefault
+							? 'text-cyan-300 font-extrabold'
+							: isChecked
+								? LIST_STYLES.titleJaChecked
+								: LIST_STYLES.titleJaDefault
 							}`}
 					>
 						{fish.ja}
 					</span>
-					<div className="flex items-center gap-2 min-w-0">
-						<span className="truncate text-xs text-slate-400 font-mono font-normal">
-							{fish.en}
-						</span>
-						{totalZones > 0 && (
-							<span
-								className={`inline-flex items-center gap-0.5 px-1 py-0.2 rounded text-[10px] font-medium border shrink-0 ${totalZones === 1
-										? 'bg-amber-950/50 text-amber-300 border-amber-800/40' // 1箇所固有種のアクセントカラー
-										: 'bg-slate-800/80 text-slate-300 border-slate-700/60'
-									}`}
-								title={`生息エリア: ${totalZones}箇所`}
-							>
-								<MapPin className="w-2.5 h-2.5 opacity-70" />
-								{totalZones}
-							</span>
-						)}
-					</div>
+					<span className="truncate text-xs text-slate-400 font-mono font-normal">
+						{fish.en}
+					</span>
 				</div>
 			</div>
 
-			{/* バッジ表示（サイズ・水質） */}
+			{/* 右端属性表示領域（生息エリア数・サイズ・水質） */}
 			<div className="flex items-center gap-1.5 shrink-0">
+				{/* 生息エリア数バッジ（エリア定義カラー text-emerald-400 を適用） */}
+				{totalZones > 0 && (
+					<span
+						className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium border shrink-0 ${totalZones === 1
+							? 'bg-amber-950/50 text-amber-300 border-amber-800/40' // 1箇所固有種のアクセントカラー
+							: 'bg-slate-800/80 text-slate-300 border-slate-700/60'
+							}`}
+						title={`生息エリア: ${totalZones}箇所`}
+					>
+						<MapPin className="w-3 h-3 text-red-400 opacity-90" />
+						<span>{totalZones}</span>
+					</span>
+				)}
 				<span
 					className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium border ${sizeInfo.style}`}
 				>
