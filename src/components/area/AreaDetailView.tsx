@@ -82,7 +82,7 @@ export const AreaDetailView: React.FC<Props> = ({
 						</button>
 					)}
 					<div className="flex items-center gap-2 min-w-0 flex-1">
-						<MapPin className="w-5 h-5 text-cyan-400 shrink-0" />
+						<MapPin className="w-5 h-5 text-red-400 shrink-0" />
 						<div className="min-w-0 flex-1">
 							<h2 className="text-base font-bold text-slate-100 truncate leading-tight">
 								{area.ja}
@@ -173,11 +173,6 @@ export const AreaDetailView: React.FC<Props> = ({
 											<span className={`px-1.5 py-0.5 rounded text-xs border ${waterInfo.style}`}>
 												{waterInfo.label}
 											</span>
-											{fish.harakiri && (
-												<span className="px-1.5 py-0.5 rounded text-xs bg-red-950/60 text-red-300 border border-red-800/50">
-													ハラキリ
-												</span>
-											)}
 										</div>
 									</div>
 								);
