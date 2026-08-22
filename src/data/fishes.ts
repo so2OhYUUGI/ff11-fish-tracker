@@ -9,7 +9,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 3,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -21,7 +20,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 3,
     "sizeType": "small",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -33,7 +31,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 4,
     "sizeType": "small",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -45,7 +42,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 5,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -57,7 +53,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 5,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -69,7 +64,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 7,
     "sizeType": "small",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -81,7 +75,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 7,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -93,7 +86,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 8,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -105,7 +97,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 9,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -116,8 +107,7 @@ export const FISHES: FishMaster[] = [
     "description": "偃月海峡に生息する海水魚。\\n",
     "maxSkill": 9,
     "sizeType": "small",
-    "waterType": "unknown",
-    "harakiri": false,
+    "waterType": "saltwater",
     "ebisu": false,
     "taikobou": false
   },
@@ -129,7 +119,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 9,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -141,7 +130,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 11,
     "sizeType": "small",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false,
     "notes": "昇級認定試験（素人→見習）"
@@ -154,7 +142,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 12,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -166,7 +153,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 12,
     "sizeType": "small",
     "waterType": "unknown",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -178,7 +164,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 13,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -190,7 +175,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 14,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -202,7 +186,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 16,
     "sizeType": "small",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -214,7 +197,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 16,
     "sizeType": "small",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -226,7 +208,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 17,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -238,7 +219,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 18,
     "sizeType": "small",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -250,7 +230,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 18,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -262,7 +241,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 18,
     "sizeType": "small",
     "waterType": "unknown",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -274,7 +252,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 19,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -286,7 +263,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 20,
     "sizeType": "small",
     "waterType": "unknown",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -298,7 +274,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 20,
     "sizeType": "small",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -310,7 +285,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 20,
     "sizeType": "small",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -322,7 +296,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 21,
     "sizeType": "small",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false,
     "notes": "昇級認定試験（見習→徒弟）"
@@ -335,7 +308,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 22,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -347,7 +319,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 22,
     "sizeType": "small",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -359,7 +330,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 22,
     "sizeType": "small",
     "waterType": "unknown",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -371,7 +341,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 24,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -383,7 +352,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 26,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -395,7 +363,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 26,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -407,7 +374,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 27,
     "sizeType": "small",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -419,7 +385,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 27,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -431,7 +396,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 27,
     "sizeType": "small",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -443,7 +407,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 29,
     "sizeType": "small",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -455,7 +418,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 29,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -467,7 +429,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 30,
     "sizeType": "small",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -479,7 +440,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 30,
     "sizeType": "small",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -491,7 +451,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 30,
     "sizeType": "small",
     "waterType": "unknown",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -503,7 +462,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 31,
     "sizeType": "large",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false,
     "notes": "昇級認定試験（徒弟→下級職人）"
@@ -516,7 +474,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 31,
     "sizeType": "large",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -528,7 +485,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 31,
     "sizeType": "small",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -540,7 +496,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 32,
     "sizeType": "small",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -552,7 +507,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 32,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -564,7 +518,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 33,
     "sizeType": "small",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -576,7 +529,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 35,
     "sizeType": "small",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -588,7 +540,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 35,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -600,7 +551,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 36,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -612,7 +562,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 37,
     "sizeType": "small",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -624,7 +573,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 37,
     "sizeType": "small",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -636,7 +584,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 37,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -647,8 +594,7 @@ export const FISHES: FishMaster[] = [
     "description": "無数の棘が特徴の淡水魚。\\n",
     "maxSkill": 38,
     "sizeType": "small",
-    "waterType": "unknown",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false
   },
@@ -660,7 +606,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 39,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -672,7 +617,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 40,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -684,7 +628,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 41,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false,
     "notes": "昇級認定試験（下級職人→名取）"
@@ -697,7 +640,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 41,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -708,8 +650,7 @@ export const FISHES: FishMaster[] = [
     "description": "グロウベルグの沼沢に生息していた淡水魚。\\n",
     "maxSkill": 42,
     "sizeType": "small",
-    "waterType": "unknown",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false
   },
@@ -721,7 +662,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 43,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -732,8 +672,7 @@ export const FISHES: FishMaster[] = [
     "description": "エヌティエル水林に生息する\\n猛毒を持つ淡水魚。",
     "maxSkill": 44,
     "sizeType": "small",
-    "waterType": "unknown",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false
   },
@@ -745,7 +684,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 46,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -757,7 +695,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 46,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -769,7 +706,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 47,
     "sizeType": "small",
     "waterType": "unknown",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -780,8 +716,7 @@ export const FISHES: FishMaster[] = [
     "description": "近東の河川に生息する淡水魚。\\n",
     "maxSkill": 47,
     "sizeType": "small",
-    "waterType": "unknown",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false
   },
@@ -793,7 +728,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 48,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -805,7 +739,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 48,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -816,8 +749,7 @@ export const FISHES: FishMaster[] = [
     "description": "フォルガンディの氷の下に生息する淡水魚。\\n",
     "maxSkill": 49,
     "sizeType": "small",
-    "waterType": "unknown",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false
   },
@@ -828,8 +760,7 @@ export const FISHES: FishMaster[] = [
     "description": "ウルブカ大陸の氷河湖に生息する淡水魚。 \\n",
     "maxSkill": 49,
     "sizeType": "small",
-    "waterType": "unknown",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false
   },
@@ -840,8 +771,7 @@ export const FISHES: FishMaster[] = [
     "description": "アルテパ砂漠の地底に生息する淡水魚。\\n",
     "maxSkill": 50,
     "sizeType": "small",
-    "waterType": "unknown",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false
   },
@@ -853,7 +783,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 50,
     "sizeType": "large",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -864,8 +793,7 @@ export const FISHES: FishMaster[] = [
     "description": "エスカの影響を受けた淡水魚。",
     "maxSkill": 50,
     "sizeType": "small",
-    "waterType": "unknown",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false,
     "notes": "2015.5.14追加"
@@ -877,8 +805,7 @@ export const FISHES: FishMaster[] = [
     "description": "エスカの影響を受けた甲殻類。\\n",
     "maxSkill": 50,
     "sizeType": "small",
-    "waterType": "saltwater",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false,
     "notes": "2015.8.5追加"
@@ -891,7 +818,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 51,
     "sizeType": "large",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false,
     "notes": "昇級認定試験（名取→目録）"
@@ -903,8 +829,7 @@ export const FISHES: FishMaster[] = [
     "description": "汽水域にも生息する鱗の美しい淡水魚。\\nアドゥリンでは観賞用として珍重される。",
     "maxSkill": 52,
     "sizeType": "small",
-    "waterType": "unknown",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false
   },
@@ -915,8 +840,7 @@ export const FISHES: FishMaster[] = [
     "description": "クォン大陸の湖沼に生息する獰猛なカメ。\\n",
     "maxSkill": 53,
     "sizeType": "small",
-    "waterType": "unknown",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false
   },
@@ -928,7 +852,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 53,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -940,7 +863,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 53,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -952,7 +874,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 53,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -963,8 +884,7 @@ export const FISHES: FishMaster[] = [
     "description": "近東の湖沼に生息する鈍重なカメ。\\n",
     "maxSkill": 53,
     "sizeType": "small",
-    "waterType": "unknown",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false
   },
@@ -976,7 +896,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 54,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -988,7 +907,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 55,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1000,7 +918,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 55,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1011,11 +928,10 @@ export const FISHES: FishMaster[] = [
     "description": "空虚な存在とされる魚。",
     "maxSkill": 55,
     "sizeType": "small",
-    "waterType": "unknown",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false,
-    "notes": "2015.11.10追加"
+    "notes": "2015.11.10追加\nE-10:最寄#1or2　橋下　ヴァナ時間6:00～11:00出現\nJ-7:最寄#6　渓流　ヴァナ時間16:00～21:00出現\nG-9:最寄#2　池　ヴァナ時間23:00～04:00出現"
   },
   {
     "id": 4427,
@@ -1024,8 +940,7 @@ export const FISHES: FishMaster[] = [
     "description": "クォン大陸の河川に生息する淡水魚。\\nウィンダスでは観賞用として珍重される。",
     "maxSkill": 56,
     "sizeType": "small",
-    "waterType": "unknown",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false
   },
@@ -1036,8 +951,7 @@ export const FISHES: FishMaster[] = [
     "description": "近東の河川に生息する淡水魚。\\n",
     "maxSkill": 56,
     "sizeType": "small",
-    "waterType": "unknown",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false
   },
@@ -1048,8 +962,7 @@ export const FISHES: FishMaster[] = [
     "description": "清流に生息する淡水魚。\\n",
     "maxSkill": 57,
     "sizeType": "small",
-    "waterType": "unknown",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false,
     "notes": "2015.11.10追加"
@@ -1062,7 +975,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 58,
     "sizeType": "large",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1074,7 +986,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 59,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1086,7 +997,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 59,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1097,8 +1007,7 @@ export const FISHES: FishMaster[] = [
     "description": "エルシモ島の湖沼に生息するイモリ。\\n",
     "maxSkill": 60,
     "sizeType": "small",
-    "waterType": "unknown",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false
   },
@@ -1110,7 +1019,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 61,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false,
     "notes": "昇級認定試験（目録→印可）"
@@ -1123,7 +1031,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 61,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1135,7 +1042,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 63,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1145,9 +1051,8 @@ export const FISHES: FishMaster[] = [
     "en": "Yawning Catfish",
     "description": "ウルブカ大陸の地下深くに生息する珍しい\\n巨大淡水魚。",
     "maxSkill": 64,
-    "sizeType": "small",
-    "waterType": "unknown",
-    "harakiri": false,
+    "sizeType": "large",
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false
   },
@@ -1159,7 +1064,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 65,
     "sizeType": "large",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1171,7 +1075,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 65,
     "sizeType": "large",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1183,7 +1086,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 66,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1194,8 +1096,7 @@ export const FISHES: FishMaster[] = [
     "description": "艶やかな美しさと強い闘争本能を備えた淡水魚。\\n観賞魚として、あるいは闘魚として飼育される。",
     "maxSkill": 66,
     "sizeType": "small",
-    "waterType": "unknown",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false
   },
@@ -1206,8 +1107,7 @@ export const FISHES: FishMaster[] = [
     "description": "電気を発する珍しい淡水魚。\\n",
     "maxSkill": 67,
     "sizeType": "small",
-    "waterType": "unknown",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false,
     "notes": "2015.11.10追加"
@@ -1219,8 +1119,7 @@ export const FISHES: FishMaster[] = [
     "description": "ミンダルシア大陸の湖沼に生息する淡水魚。\\nウィンダスでは観賞用として珍重される。",
     "maxSkill": 69,
     "sizeType": "small",
-    "waterType": "unknown",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false
   },
@@ -1232,7 +1131,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 70,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1244,7 +1142,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 71,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false,
     "notes": "昇級認定試験（印可→高弟）"
@@ -1257,7 +1154,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 73,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1268,8 +1164,7 @@ export const FISHES: FishMaster[] = [
     "description": "古代魚の幼魚。\\n",
     "maxSkill": 73,
     "sizeType": "small",
-    "waterType": "unknown",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false
   },
@@ -1280,8 +1175,7 @@ export const FISHES: FishMaster[] = [
     "description": "マリアミ渓谷に生息するアプカルに\\nよく似た淡水魚。\\nアドゥリンでは観賞用として珍重される。",
     "maxSkill": 74,
     "sizeType": "small",
-    "waterType": "unknown",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false
   },
@@ -1292,8 +1186,7 @@ export const FISHES: FishMaster[] = [
     "description": "旧タブナジア領の川底に生息する淡水魚。\\n体色はオレンジとシルバーの鮮やかなストライプ。",
     "maxSkill": 75,
     "sizeType": "small",
-    "waterType": "unknown",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false
   },
@@ -1304,8 +1197,7 @@ export const FISHES: FishMaster[] = [
     "description": "近東の川底に生息する淡水魚。\\n体色はオレンジとシルバーの鮮やかなストライプ。",
     "maxSkill": 75,
     "sizeType": "small",
-    "waterType": "unknown",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false
   },
@@ -1317,7 +1209,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 76,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1328,8 +1219,7 @@ export const FISHES: FishMaster[] = [
     "description": "環境に適応して熱に強くなった\\nスライム族の亜種「クロット」の小型の分身。",
     "maxSkill": 77,
     "sizeType": "small",
-    "waterType": "unknown",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false
   },
@@ -1340,8 +1230,7 @@ export const FISHES: FishMaster[] = [
     "description": "グロウベルグの沼沢に生息していた水棲の肉食虫。\\n",
     "maxSkill": 78,
     "sizeType": "small",
-    "waterType": "unknown",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false
   },
@@ -1353,7 +1242,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 80,
     "sizeType": "large",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1364,8 +1252,7 @@ export const FISHES: FishMaster[] = [
     "description": "大きな顎を持つ凶暴な巨大淡水魚。\\n",
     "maxSkill": 81,
     "sizeType": "large",
-    "waterType": "unknown",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false
   },
@@ -1377,7 +1264,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 81,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false,
     "notes": "昇級認定試験（高弟→皆伝）"
@@ -1390,7 +1276,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 81,
     "sizeType": "large",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1402,7 +1287,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 82,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1414,7 +1298,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 83,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1426,7 +1309,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 86,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1438,7 +1320,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 86,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1449,8 +1330,7 @@ export const FISHES: FishMaster[] = [
     "description": "体内に発電器官をもつ淡水魚。\\n",
     "maxSkill": 88,
     "sizeType": "small",
-    "waterType": "unknown",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false
   },
@@ -1462,9 +1342,9 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 89,
     "sizeType": "large",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "notes": "南東の池。最寄りの幽門石は#6。"
   },
   {
     "id": 4304,
@@ -1474,7 +1354,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 90,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1486,7 +1365,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 90,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1498,7 +1376,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 91,
     "sizeType": "large",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1510,7 +1387,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 91,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false,
     "notes": "昇級認定試験（皆伝→師範）"
@@ -1523,7 +1399,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 91,
     "sizeType": "large",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1535,7 +1410,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 93,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1547,7 +1421,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 96,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1559,7 +1432,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 96,
     "sizeType": "small",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1571,10 +1443,9 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 98,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false,
-    "notes": "昇級認定試験（師範→高級職人）"
+    "notes": "昇級認定試験（師範→高級職人）\nだいじなもの「伝説の巨大魚紀聞」"
   },
   {
     "id": 5133,
@@ -1584,7 +1455,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 99,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1596,7 +1466,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 101,
     "sizeType": "large",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1608,7 +1477,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 101,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1620,7 +1488,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 101,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1632,7 +1499,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 105,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1644,7 +1510,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 105,
     "sizeType": "large",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1656,7 +1521,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 108,
     "sizeType": "large",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1668,7 +1532,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 120,
     "sizeType": "large",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1680,7 +1543,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 120,
     "sizeType": "large",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1691,8 +1553,7 @@ export const FISHES: FishMaster[] = [
     "description": "東方伝来の高級観賞魚。眼球の一部が風船状に\\n膨らんだ、ユーモラスな顔をしている。",
     "maxSkill": 120,
     "sizeType": "small",
-    "waterType": "saltwater",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false
   },
@@ -1704,7 +1565,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 120,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1716,7 +1576,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 120,
     "sizeType": "large",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1728,7 +1587,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 120,
     "sizeType": "large",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1739,11 +1597,10 @@ export const FISHES: FishMaster[] = [
     "description": "誰も見たことがないと云う伝説の巨大淡水魚。\\n",
     "maxSkill": 120,
     "sizeType": "small",
-    "waterType": "unknown",
-    "harakiri": false,
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false,
-    "notes": "2015.11.10追加"
+    "notes": "2015.11.10追加\n醴泉島の水辺に点在する黒い球から釣れる。\nE-10:最寄#1　橋下　ヴァナ時間6:00~11:00出現\nJ-7:最寄#6　渓流　ヴァナ時間16:00~21:00出現"
   },
   {
     "id": 5134,
@@ -1753,7 +1610,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 120,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1765,7 +1621,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 120,
     "sizeType": "large",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1777,7 +1632,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 120,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": true,
     "ebisu": true,
     "taikobou": false,
     "notes": "ハラキリ「剣の枝」（恵比寿釣竿）"
@@ -1790,7 +1644,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 120,
     "sizeType": "large",
     "waterType": "freshwater",
-    "harakiri": true,
     "ebisu": true,
     "taikobou": false,
     "notes": "ハラキリ「五色の糸」（恵比寿釣竿）"
@@ -1803,7 +1656,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 120,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1815,10 +1667,9 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 120,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": true,
     "ebisu": false,
     "taikobou": false,
-    "notes": "ハラキリ「コクリュウの肝」（海竜の肝）"
+    "notes": "ハラキリ「コクリュウの肝」（海竜の肝）\nだいじなもの「サーペントの伝説」\n点在する橋の上。幽門石#2からが近い。"
   },
   {
     "id": 5537,
@@ -1828,10 +1679,9 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 120,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": true,
     "ebisu": false,
     "taikobou": false,
-    "notes": "ハラキリ「ソウリュウの肝」（海竜の肝）"
+    "notes": "ハラキリ「ソウリュウの肝」（海竜の肝）\nだいじなもの「サーペントの伝説」\n最寄りの幽門石は#8。"
   },
   {
     "id": 5538,
@@ -1841,10 +1691,12 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 120,
     "sizeType": "large",
     "waterType": "freshwater",
-    "harakiri": true,
     "ebisu": false,
     "taikobou": false,
-    "notes": "ハラキリ「セキリュウの肝」（海竜の肝）"
+    "notes": "だいじなもの「サーペントの伝説」\n最寄りの幽門石は#6。",
+    "harakiriItems": [
+      "セキリュウの肝"
+    ]
   },
   {
     "id": 6338,
@@ -1854,7 +1706,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 120,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1866,7 +1717,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 120,
     "sizeType": "small",
     "waterType": "unknown",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1878,7 +1728,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 120,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": true,
     "ebisu": false,
     "taikobou": false,
     "notes": "ハラキリ「ハクリュウの肝」（海竜の肝）"
@@ -1891,7 +1740,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 120,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1903,7 +1751,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 120,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": true,
     "taikobou": false,
     "notes": "クエスト「勇魚」（真恵比寿釣竿）"
@@ -1916,7 +1763,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 120,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1928,7 +1774,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 120,
     "sizeType": "large",
     "waterType": "freshwater",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1940,7 +1785,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 120,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": true,
     "taikobou": false,
     "notes": "クエスト「勇魚」（真恵比寿釣竿）"
@@ -1953,7 +1797,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 120,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": true,
     "taikobou": false,
     "notes": "クエスト「勇魚」（真恵比寿釣竿）"
@@ -1966,7 +1809,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 120,
     "sizeType": "small",
     "waterType": "unknown",
-    "harakiri": false,
     "ebisu": false,
     "taikobou": false
   },
@@ -1978,7 +1820,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 120,
     "sizeType": "large",
     "waterType": "saltwater",
-    "harakiri": false,
     "ebisu": true,
     "taikobou": false,
     "notes": "クエスト「勇魚」（真恵比寿釣竿）"
@@ -1991,7 +1832,6 @@ export const FISHES: FishMaster[] = [
     "maxSkill": 120,
     "sizeType": "small",
     "waterType": "unknown",
-    "harakiri": false,
     "ebisu": true,
     "taikobou": false,
     "notes": "クエスト「勇魚」（真恵比寿釣竿）"

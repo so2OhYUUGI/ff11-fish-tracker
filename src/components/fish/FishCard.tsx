@@ -73,6 +73,11 @@ export const FishCard: React.FC<FishCardProps> = ({
 	const sizeInfo = getSizeBadgeInfo(fish.sizeType);
 	const waterInfo = getWaterBadgeInfo(fish.waterType);
 
+	// ハラキリ対象判定（アイテム配列が存在し1つ以上ある、または称号が存在する）
+	const isHarakiriTarget = Boolean(
+		(fish.harakiriItems && fish.harakiriItems.length > 0) || fish.harakiriTitle
+	);
+
 	return (
 		<div
 			onClick={() => onClickDetail(fish)}
@@ -116,7 +121,7 @@ export const FishCard: React.FC<FishCardProps> = ({
 						<span className={`${CARD_STYLES.badgeBase} ${waterInfo.style}`}>
 							{waterInfo.label}
 						</span>
-						{fish.harakiri && (
+						{isHarakiriTarget && (
 							<span className={`${CARD_STYLES.badgeBase} ${CARD_STYLES.badgeHarakiri}`}>
 								ハラキリ
 							</span>

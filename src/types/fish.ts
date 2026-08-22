@@ -50,7 +50,11 @@ export type FishMaster = {
 	maxSkill: number;      // 限界スキルレベル (例: 10)
 	sizeType: SizeType;       // 'small' | 'large' | 'unknown'
 	waterType: WaterType;     // 'freshwater' (淡水) | 'saltwater' (海水) | 'gedou' (外道) | 'unknown' (不明)
-	harakiri: boolean;     // ハラキリ対象フラグ
+
+	// ハラキリ関連（アイテム名配列または称号が存在すればハラキリ対象とみなす）
+	harakiriItems?: string[]; // 得られるアイテム名リスト (例: ["光のクリスタル", "黒ハガネ"])
+	harakiriTitle?: string;   // 得られる称号 (例: "伝説の太公望")
+
 	ebisu: boolean;        // 恵比寿の竿関連（腹切り/クエスト対象等）
 	taikobou: boolean;     // 太公望の竿関連（10万匹・湾曲針対象等）
 

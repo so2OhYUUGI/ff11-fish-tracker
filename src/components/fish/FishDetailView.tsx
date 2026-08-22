@@ -6,7 +6,7 @@
  * [概要]
  * - ヘッダー（魚名・チェック状態）を固定し、コンテンツ部分全体を独立スクロール表示
  * - 基本情報（スキル上限、サイズ区分、水質区分、各種関連属性フラグ）のステータス表示
- * - ハラキリ対象時の獲得可能アイテム一覧表示
+ * - ハラキリ対象（アイテム・称号の有無）時の獲得可能アイテムおよび称号の表示
  * - 生息エリアタグや餌タグクリックによる他詳細画面（`AreaDetailView` / `BaitDetailView`）への相互遷移サポート
  * ============================================================================
  */
@@ -95,6 +95,11 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 	const sizeInfo = getSizeBadgeInfo(fish.sizeType);
 	const waterInfo = getWaterBadgeInfo(fish.waterType);
 
+	// ハラキリ対象の判定（アイテム配列が存在し1つ以上ある、または称号が存在する）
+	const hasHarakiriItems = Boolean(fish.harakiriItems && fish.harakiriItems.length > 0);
+	const hasHarakiriTitle = Boolean(fish.harakiriTitle);
+	const isHarakiriTarget = hasHarakiriItems || hasHarakiriTitle;
+
 	return (
 		<div className="flex flex-col h-full min-h-0 overflow-hidden">
 			{/* 1. 固定ヘッダー領域（幅縮小時・縦表示時の潰れ・押し出しを防止） */}
@@ -171,7 +176,7 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 						<span className={`${CARD_STYLES.badgeBase} ${waterInfo.style}`}>
 							{waterInfo.label}
 						</span>
-						{fish.harakiri && (
+						{isHarakiriTarget && (
 							<span className={`${CARD_STYLES.badgeBase} ${CARD_STYLES.badgeHarakiri}`}>
 								ハラキリ対象
 							</span>
@@ -192,21 +197,30 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 				{/* ハラキリ情報 */}
 				<div>
 					<h3 className={DETAIL_STYLES.sectionTitle}>ハラキリ</h3>
-					{fish.harakiri ? (
-						fish.harakiriItems && fish.harakiriItems.length > 0 ? (
-							<div className="flex flex-wrap gap-2">
-								{fish.harakiriItems.map((item, index) => (
-									<span
-										key={index}
-										className="px-2.5 py-1 rounded bg-slate-800 text-slate-200 border border-slate-700 text-xs font-medium"
-									>
-										{item}
+					{isHarakiriTarget ? (
+						<div className="space-y-2">
+							{hasHarakiriItems && (
+								<div className="flex flex-wrap items-center gap-2">
+									<span className="text-xs text-slate-400">入手アイテム:</span>
+									{fish.harakiriItems!.map((item, index) => (
+										<span
+											key={index}
+											className="px-2.5 py-1 rounded bg-slate-800 text-slate-200 border border-slate-700 text-xs font-medium"
+										>
+											{item}
+										</span>
+									))}
+								</div>
+							)}
+							{hasHarakiriTitle && (
+								<div className="flex items-center gap-2 text-xs">
+									<span className="text-slate-400">獲得称号:</span>
+									<span className="px-2.5 py-1 rounded bg-amber-950/40 text-amber-300 border border-amber-800/60 font-medium">
+										{fish.harakiriTitle}
 									</span>
-								))}
-							</div>
-						) : (
-							<p className="text-xs text-amber-400">ハラキリ対象（入手アイテム情報なし）</p>
-						)
+								</div>
+							)}
+						</div>
 					) : (
 						<p className={DETAIL_STYLES.emptyText}>ハラキリ非対象</p>
 					)}
