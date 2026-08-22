@@ -9,6 +9,7 @@ import React, { useState, useEffect } from 'react';
 import type { ZoneMaster, RegionMaster } from '@/types/fish';
 import { RelationEditor } from '../RelationEditor';
 import type { EntityItem } from '../types';
+import { EDITOR_STYLES } from '@/styles/components/editorStyles';
 
 type Props = {
 	zoneList?: ZoneMaster[];
@@ -71,63 +72,46 @@ export const ZoneEditTab: React.FC<Props> = ({
 		};
 	});
 
+	const styles = EDITOR_STYLES.fishEdit;
+
 	return (
-		<div style={{ display: 'flex', gap: '15px', height: '100%', width: '100%' }}>
+		<div className="flex gap-3.5 h-full w-full">
 			{/* 左パネル: リージョン選択リスト */}
-			<div
-				style={{
-					width: '260px',
-					overflowY: 'auto',
-					border: '1px solid #ccc',
-					background: '#fff',
-					flexShrink: 0,
-				}}
-			>
-				<div style={{ padding: '8px', fontWeight: 'bold', borderBottom: '1px solid #ccc', background: '#f7fafc', fontSize: '12px' }}>
+			<div className={styles.sidebar}>
+				<div className="p-2 font-bold border-b border-slate-300 bg-slate-50 text-xs">
 					リージョン一覧
 				</div>
-				{regionList.map((region) => {
-					// 該当リージョンに紐づくエリア数をカウント
-					const count = zoneList.filter((z) => z.regionId === region.id).length;
+				<div className={styles.listContainer}>
+					{regionList.map((region) => {
+						// 該当リージョンに紐づくエリア数をカウント
+						const count = zoneList.filter((z) => z.regionId === region.id).length;
+						const isSelected = selectedRegionId === region.id;
 
-					return (
-						<div
-							key={region.id}
-							onClick={() => setSelectedRegionId(region.id)}
-							style={{
-								padding: '8px',
-								cursor: 'pointer',
-								fontSize: '13px',
-								backgroundColor: selectedRegionId === region.id ? '#e2e8f0' : 'transparent',
-								borderBottom: '1px solid #eee',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'space-between',
-							}}
-						>
-							<span>[{region.id}] {region.ja}</span>
-							<span
-								style={{
-									fontSize: '11px',
-									color: count > 0 ? '#2b6cb0' : '#a0aec0',
-									fontWeight: count > 0 ? 'bold' : 'normal',
-									backgroundColor: count > 0 ? '#ebf8ff' : '#edf2f7',
-									padding: '2px 6px',
-									borderRadius: '10px',
-								}}
+						return (
+							<div
+								key={region.id}
+								onClick={() => setSelectedRegionId(region.id)}
+								className={`${styles.listItemBase} ${isSelected ? styles.listItemActive : styles.listItemInactive
+									}`}
 							>
-								{count}件
-							</span>
-						</div>
-					);
-				})}
+								<span>[{region.id}] {region.ja}</span>
+								<span
+									className={`${styles.badgeBase} ${count > 0 ? styles.badgeActive : styles.badgeInactive
+										}`}
+								>
+									{count}件
+								</span>
+							</div>
+						);
+					})}
+				</div>
 			</div>
 
 			{/* 右パネル: 選択中リージョンに紐づくエリア（ゾーン）チェック設定 */}
-			<div style={{ flex: 1, background: '#fff', padding: '15px', border: '1px solid #ccc', overflowY: 'auto' }}>
+			<div className={styles.formPanel}>
 				{selectedRegion ? (
-					<div style={{ display: 'grid', gap: '15px', fontSize: '13px' }}>
-						<h3 style={{ margin: 0 }}>
+					<div className="grid gap-3.5 text-xs">
+						<h3 className={styles.title}>
 							[{selectedRegion.id}] {selectedRegion.ja} ({selectedRegion.en}) に所属するエリア
 						</h3>
 
@@ -140,7 +124,9 @@ export const ZoneEditTab: React.FC<Props> = ({
 						/>
 					</div>
 				) : (
-					<p style={{ color: '#666', margin: 0 }}>左側のリストからリージョンを選択してください。</p>
+					<p className={styles.emptyFormText}>
+						左側のリストからリージョンを選択してください。
+					</p>
 				)}
 			</div>
 		</div>

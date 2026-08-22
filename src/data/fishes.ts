@@ -10,7 +10,8 @@ export const FISHES: FishMaster[] = [
     "sizeType": "small",
     "waterType": "saltwater",
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "notes": ""
   },
   {
     "id": 2216,

@@ -2,11 +2,16 @@
  * ============================================================================
  * [FilePath] src/components/dev/masterEditor/RelationEditor.tsx
  * [Role] 汎用マスターデータリレーション編集コンポーネント
+ * 
+ * [概要]
+ * - 魚・エリア・餌などの1対1、1対多リレーション編集用コンポーネント
+ * - インラインスタイルを徹底的に排除し EDITOR_STYLES.relation へ集約
  * ============================================================================
  */
 
 import React, { useState } from 'react';
 import type { EntityItem } from './types';
+import { EDITOR_STYLES } from '@/styles/components/editorStyles';
 
 type SingleRelationProps = {
 	mode: 'single';
@@ -56,41 +61,36 @@ export const RelationEditor: React.FC<RelationEditorProps> = (props) => {
 		return true; // 'all'
 	});
 
+	const isSearchActive = Boolean(search.trim());
+
 	return (
-		<div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+		<div className={EDITOR_STYLES.relation.container}>
 			{/* ヘッダー領域 */}
-			<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-				<span style={{ fontWeight: 'bold', fontSize: '13px' }}>
+			<div className={EDITOR_STYLES.relation.header}>
+				<span className={EDITOR_STYLES.relation.title}>
 					{title}
 					{props.mode === 'multiple' && ` (${props.selectedTargetIds.length}件選択中)`}
 				</span>
 
-				<div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+				<div className={EDITOR_STYLES.relation.controls}>
 					{/* 状態フィルターボタン (検索窓が空の時のみ切り替え有効) */}
-					<div style={{ display: 'flex', gap: '2px' }}>
+					<div className={EDITOR_STYLES.relation.filterGroup}>
 						{[
 							{ key: 'all', label: 'すべて' },
 							{ key: 'selected', label: '選択済み' },
 							{ key: 'unselected', label: '未選択' },
 						].map((btn) => {
-							const isActive = filterMode === btn.key && !search.trim();
+							const isActive = filterMode === btn.key && !isSearchActive;
 							return (
 								<button
 									key={btn.key}
 									type="button"
-									disabled={Boolean(search.trim())}
+									disabled={isSearchActive}
 									onClick={() => setFilterMode(btn.key as FilterMode)}
-									style={{
-										padding: '2px 6px',
-										fontSize: '10px',
-										borderRadius: '3px',
-										border: isActive ? '1px solid #3182ce' : '1px solid #cbd5e0',
-										backgroundColor: isActive ? '#ebf8ff' : '#f7fafc',
-										color: isActive ? '#2b6cb0' : '#4a5568',
-										fontWeight: isActive ? 'bold' : 'normal',
-										cursor: search.trim() ? 'not-allowed' : 'pointer',
-										opacity: search.trim() ? 0.5 : 1,
-									}}
+									className={`${EDITOR_STYLES.relation.filterBtnBase} ${isActive
+											? EDITOR_STYLES.relation.filterBtnActive
+											: EDITOR_STYLES.relation.filterBtnInactive
+										}`}
 								>
 									{btn.label}
 								</button>
@@ -104,37 +104,16 @@ export const RelationEditor: React.FC<RelationEditorProps> = (props) => {
 						placeholder={placeholder}
 						value={search}
 						onChange={(e) => setSearch(e.target.value)}
-						style={{ padding: '2px 6px', fontSize: '12px', width: '140px' }}
+						className={EDITOR_STYLES.relation.searchInput}
 					/>
 				</div>
 			</div>
 
 			{/* リスト表示エリア */}
-			<div
-				style={{
-					height: '160px',
-					overflowY: 'auto',
-					border: '1px solid #ccc',
-					padding: '8px',
-					background: '#f9f9f9',
-					display: 'grid',
-					gridTemplateColumns: 'repeat(2, 1fr)',
-					gap: '4px 10px',
-				}}
-			>
+			<div className={EDITOR_STYLES.relation.listContainer}>
 				{props.mode === 'single' && (
 					<>
-						<label
-							style={{
-								fontSize: '12px',
-								display: 'flex',
-								alignItems: 'center',
-								gap: '4px',
-								cursor: 'pointer',
-								color: '#888',
-								gridColumn: 'span 2',
-							}}
-						>
+						<label className={EDITOR_STYLES.relation.unsetLabel}>
 							<input
 								type="radio"
 								name="single-relation"
@@ -146,13 +125,7 @@ export const RelationEditor: React.FC<RelationEditorProps> = (props) => {
 						{filteredTargets.map((item) => (
 							<label
 								key={item.id}
-								style={{
-									fontSize: '12px',
-									display: 'flex',
-									alignItems: 'center',
-									gap: '4px',
-									cursor: 'pointer',
-								}}
+								className={EDITOR_STYLES.relation.itemLabel}
 							>
 								<input
 									type="radio"
@@ -172,13 +145,7 @@ export const RelationEditor: React.FC<RelationEditorProps> = (props) => {
 						return (
 							<label
 								key={item.id}
-								style={{
-									fontSize: '12px',
-									display: 'flex',
-									alignItems: 'center',
-									gap: '4px',
-									cursor: 'pointer',
-								}}
+								className={EDITOR_STYLES.relation.itemLabel}
 							>
 								<input
 									type="checkbox"
@@ -191,15 +158,7 @@ export const RelationEditor: React.FC<RelationEditorProps> = (props) => {
 					})}
 
 				{filteredTargets.length === 0 && (
-					<div
-						style={{
-							gridColumn: 'span 2',
-							padding: '12px',
-							textAlign: 'center',
-							color: '#888',
-							fontSize: '12px',
-						}}
-					>
+					<div className={EDITOR_STYLES.relation.emptyText}>
 						該当する項目がありません
 					</div>
 				)}

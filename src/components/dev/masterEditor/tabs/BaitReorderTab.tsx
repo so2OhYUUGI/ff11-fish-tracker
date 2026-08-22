@@ -2,6 +2,10 @@
  * ============================================================================
  * [FilePath] src/components/dev/masterEditor/tabs/BaitReorderTab.tsx
  * [Role] 餌の並び順変更用ドラッグ＆ドロップタブ
+ * 
+ * [概要]
+ * - ドラッグ＆ドロップ操作による餌マスターの並び順編集タブ
+ * - hello-pangea/dnd の位置スタイル補正を除き、Tailwindクラスへ完全移行
  * ============================================================================
  */
 
@@ -9,6 +13,7 @@ import React from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import type { DropResult } from '@hello-pangea/dnd';
 import type { BaitMaster } from '@/types/fish';
+import { EDITOR_STYLES } from '@/styles/components/editorStyles';
 
 interface BaitReorderTabProps {
 	baitList?: BaitMaster[];
@@ -30,15 +35,17 @@ export const BaitReorderTab: React.FC<BaitReorderTabProps> = ({
 	};
 
 	return (
-		<div style={{ padding: '10px', width: '100%', overflowY: 'auto', backgroundColor: '#f7fafc', borderRadius: '4px' }}>
-			<h3 style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#2d3748' }}>🪱 餌の並び順変更 (ドラッグ＆ドロップ)</h3>
+		<div className={EDITOR_STYLES.baitReorder.container}>
+			<h3 className={EDITOR_STYLES.baitReorder.title}>
+				🪱 餌の並び順変更 (ドラッグ＆ドロップ)
+			</h3>
 			<DragDropContext onDragEnd={handleOnDragEnd}>
 				<Droppable droppableId="baits">
 					{(provided) => (
 						<div
 							{...provided.droppableProps}
 							ref={provided.innerRef}
-							style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}
+							className={EDITOR_STYLES.baitReorder.list}
 						>
 							{baitList.map((bait, index) => (
 								<Draggable key={String(bait.id)} draggableId={String(bait.id)} index={index}>
@@ -47,32 +54,26 @@ export const BaitReorderTab: React.FC<BaitReorderTabProps> = ({
 											ref={provided.innerRef}
 											{...provided.draggableProps}
 											{...provided.dragHandleProps}
-											style={{
-												...provided.draggableProps.style,
-												padding: '10px 14px',
-												backgroundColor: snapshot.isDragging ? '#e2e8f0' : '#ffffff',
-												border: '1px solid #cbd5e0',
-												borderRadius: '4px',
-												display: 'flex',
-												alignItems: 'center',
-												justifyContent: 'space-between',
-												cursor: 'grab',
-												userSelect: 'none',
-												boxShadow: snapshot.isDragging ? '0 4px 8px rgba(0,0,0,0.1)' : 'none',
-											}}
+											style={provided.draggableProps.style}
+											className={`${EDITOR_STYLES.baitReorder.itemBase} ${snapshot.isDragging
+													? EDITOR_STYLES.baitReorder.itemDragging
+													: EDITOR_STYLES.baitReorder.itemNormal
+												}`}
 										>
-											<div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-												<span style={{ color: '#a0aec0', fontSize: '12px', width: '30px', fontWeight: 'bold' }}>
+											<div className={EDITOR_STYLES.baitReorder.itemMetaGroup}>
+												<span className={EDITOR_STYLES.baitReorder.itemIndex}>
 													#{index + 1}
 												</span>
-												<span style={{ fontWeight: 'bold', fontSize: '13px', color: '#2d3748' }}>
+												<span className={EDITOR_STYLES.baitReorder.itemName}>
 													{bait.ja || bait.en}
 												</span>
-												<span style={{ fontSize: '11px', color: '#a0aec0' }}>
+												<span className={EDITOR_STYLES.baitReorder.itemId}>
 													(ID: {bait.id})
 												</span>
 											</div>
-											<span style={{ color: '#a0aec0', fontSize: '12px' }}>⋮⋮ ドラッグで移動</span>
+											<span className={EDITOR_STYLES.baitReorder.dragHint}>
+												⋮⋮ ドラッグで移動
+											</span>
 										</div>
 									)}
 								</Draggable>
