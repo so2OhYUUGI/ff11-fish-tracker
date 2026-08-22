@@ -1449,7 +1449,7 @@ export const FISHES: FishMaster[] = [
     "description": "体内に発電器官をもつ淡水魚。\\n",
     "maxSkill": 88,
     "sizeType": "small",
-    "waterType": "unknown",
+    "waterType": "freshwater",
     "harakiri": false,
     "ebisu": false,
     "taikobou": false
@@ -1464,7 +1464,8 @@ export const FISHES: FishMaster[] = [
     "waterType": "freshwater",
     "harakiri": false,
     "ebisu": false,
-    "taikobou": false
+    "taikobou": false,
+    "notes": "南東の池。最寄りの幽門石は#6。"
   },
   {
     "id": 4304,
@@ -1574,7 +1575,7 @@ export const FISHES: FishMaster[] = [
     "harakiri": false,
     "ebisu": false,
     "taikobou": false,
-    "notes": "昇級認定試験（師範→高級職人）"
+    "notes": "昇級認定試験（師範→高級職人）\nだいじなもの「伝説の巨大魚紀聞」"
   },
   {
     "id": 5133,
@@ -1691,7 +1692,7 @@ export const FISHES: FishMaster[] = [
     "description": "東方伝来の高級観賞魚。眼球の一部が風船状に\\n膨らんだ、ユーモラスな顔をしている。",
     "maxSkill": 120,
     "sizeType": "small",
-    "waterType": "saltwater",
+    "waterType": "freshwater",
     "harakiri": false,
     "ebisu": false,
     "taikobou": false
@@ -1739,11 +1740,11 @@ export const FISHES: FishMaster[] = [
     "description": "誰も見たことがないと云う伝説の巨大淡水魚。\\n",
     "maxSkill": 120,
     "sizeType": "small",
-    "waterType": "unknown",
+    "waterType": "freshwater",
     "harakiri": false,
     "ebisu": false,
     "taikobou": false,
-    "notes": "2015.11.10追加"
+    "notes": "2015.11.10追加\n醴泉島の水辺に点在する黒い球から釣れる。\nE-10:最寄#1　橋下　ヴァナ時間6:00~11:00出現\nJ-7:最寄#6　渓流　ヴァナ時間16:00~21:00出現"
   },
   {
     "id": 5134,
@@ -1818,7 +1819,7 @@ export const FISHES: FishMaster[] = [
     "harakiri": true,
     "ebisu": false,
     "taikobou": false,
-    "notes": "ハラキリ「コクリュウの肝」（海竜の肝）"
+    "notes": "ハラキリ「コクリュウの肝」（海竜の肝）\nだいじなもの「サーペントの伝説」\n点在する橋の上。幽門石#2からが近い。"
   },
   {
     "id": 5537,
@@ -1831,7 +1832,7 @@ export const FISHES: FishMaster[] = [
     "harakiri": true,
     "ebisu": false,
     "taikobou": false,
-    "notes": "ハラキリ「ソウリュウの肝」（海竜の肝）"
+    "notes": "ハラキリ「ソウリュウの肝」（海竜の肝）\nだいじなもの「サーペントの伝説」\n最寄りの幽門石は#8。"
   },
   {
     "id": 5538,
@@ -1844,7 +1845,7 @@ export const FISHES: FishMaster[] = [
     "harakiri": true,
     "ebisu": false,
     "taikobou": false,
-    "notes": "ハラキリ「セキリュウの肝」（海竜の肝）"
+    "notes": "ハラキリ「セキリュウの肝」（海竜の肝）\nだいじなもの「サーペントの伝説」\n最寄りの幽門石は#6。"
   },
   {
     "id": 6338,
