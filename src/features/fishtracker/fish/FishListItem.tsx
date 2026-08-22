@@ -6,7 +6,7 @@
  * [概要]
  * - 魚の基本情報（和名、英名）のリスト形式（高密度レイアウト）表示
  * - 魚名称の日本語・英語表記を縦並び（カッコ外し）へ統一
- * - FISH_LOCATIONS から生息エリア数を算出し、右端属性領域にバッジ表示
+ * - FISH_LOCATIONS から生息エリア数を算出し、MapPin アイコンとともに右端属性領域にバッジ表示
  * - 属性情報（生息エリア数・上限スキル・サイズ・水質）の全表示を統一
  * - `variant` Props（'default' | 'inline'）によりメイン一覧用と詳細画面インライン用のスタイル切替に対応
  * - 獲得/達成状態（チェック状態）のチェックボックス描画およびトグル操作
@@ -19,10 +19,11 @@ import { Check, MapPin } from 'lucide-react';
 import type { FishMaster, ZoneMaster } from '@/types/fishtracker';
 import { FISH_LOCATIONS } from '@/data';
 import { LIST_STYLES } from '@/styles/components/listStyles';
-import { FISH_STYLES, BADGE_BASE_STYLE } from '@/styles/features/FishTrackerStyle';
+import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 import {
 	SizeBadge,
 	WaterBadge,
+	SkillBadge,
 } from '@/features/fishtracker/common/FishBadges';
 
 type Props = {
@@ -83,10 +84,7 @@ export const FishListItem: React.FC<Props> = ({
 				: LIST_STYLES.titleJaDefault;
 
 	return (
-		<div
-			onClick={() => onClickDetail?.(fish)}
-			className={containerStyle}
-		>
+		<div onClick={() => onClickDetail?.(fish)} className={containerStyle}>
 			{/* 左側：チェックボックス ＋ 魚名（日本語・英語） */}
 			<div className="flex items-center gap-2.5 min-w-0 flex-1">
 				{onToggleCheck && (
@@ -105,9 +103,7 @@ export const FishListItem: React.FC<Props> = ({
 				)}
 
 				<div className="flex flex-col min-w-0 flex-1">
-					<span className={`truncate ${titleStyle}`}>
-						{fish.ja}
-					</span>
+					<span className={`truncate ${titleStyle}`}>{fish.ja}</span>
 					<span className={isInline ? LIST_STYLES.titleInlineEn : LIST_STYLES.titleEn}>
 						{fish.en}
 					</span>
@@ -119,19 +115,19 @@ export const FishListItem: React.FC<Props> = ({
 				{/* 生息エリア数 */}
 				{totalZones > 0 && (
 					<span
-						className={`${LIST_STYLES.zoneCountBase} ${totalZones === 1 ? LIST_STYLES.zoneCountSingle : LIST_STYLES.zoneCountMultiple
+						className={`${LIST_STYLES.zoneCountBase} ${totalZones === 1
+								? LIST_STYLES.zoneCountSingle
+								: LIST_STYLES.zoneCountMultiple
 							}`}
 						title={`生息エリア: ${totalZones}箇所`}
 					>
-						<MapPin className="w-3 h-3 text-red-400 opacity-90 shrink-0" />
+						<MapPin className={`w-3 h-3 shrink-0 ${COMMON_TOKENS.entity.area.text}`} />
 						<span>{totalZones}</span>
 					</span>
 				)}
 
-				{/* 上限スキル */}
-				<span className={`${BADGE_BASE_STYLE} ${FISH_STYLES.badgeSkill}`}>
-					上限: {fish.maxSkill}
-				</span>
+				{/* 上限スキル（共通化された SkillBadge を使用） */}
+				<SkillBadge maxSkill={fish.maxSkill} useShortLabel />
 
 				{/* サイズ & 水質 */}
 				<SizeBadge sizeType={fish.sizeType} useShortLabel />

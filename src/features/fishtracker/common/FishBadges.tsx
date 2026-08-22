@@ -4,7 +4,7 @@
  * [Role] 魚の属性（サイズ、水質、スキル、ハラキリ、各種フラグ、判定ステータス）を表示する共通バッジ群
  * 
  * [概要]
- * - `FishTrackerStyle.ts` に定義された設定オブジェクト（ラベル・スタイルトークン）を参照してバッジを描画
+ * - `FishTrackerStyle.ts` に定義された設定オブジェクトを参照してバッジを描画
  * - 未定義の値が渡された場合もフォールバック表示により画面崩れを防止
  * ============================================================================
  */
@@ -23,7 +23,7 @@ import {
 type SizeBadgeProps = {
 	/** サイズ区分 */
 	sizeType: SizeType;
-	/** 一覧リストなどで表示を簡略化（例: "小型" -> "小"）するかどうか */
+	/** 一覧リストなどで表示を簡略化（例: "小型魚" -> "小型"）するかどうか */
 	useShortLabel?: boolean;
 };
 
@@ -84,15 +84,20 @@ export const FlagBadge: React.FC<FlagBadgeProps> = ({ type }) => {
 type SkillBadgeProps = {
 	/** 上限スキル値 */
 	maxSkill: number;
+	/** 一覧リストなどで表示を簡略化（例: "上限スキル: 100" -> "上限: 100"）するかどうか */
+	useShortLabel?: boolean;
 };
 
 /**
  * 上限スキル値表示バッジ
  */
-export const SkillBadge: React.FC<SkillBadgeProps> = ({ maxSkill }) => {
+export const SkillBadge: React.FC<SkillBadgeProps> = ({
+	maxSkill,
+	useShortLabel = false,
+}) => {
 	return (
 		<span className={`${BADGE_BASE_STYLE} ${FISH_STYLES.badgeSkill}`}>
-			上限スキル: {maxSkill}
+			{useShortLabel ? `上限: ${maxSkill}` : `上限スキル: ${maxSkill}`}
 		</span>
 	);
 };
