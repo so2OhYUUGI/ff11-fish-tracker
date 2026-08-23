@@ -1,15 +1,28 @@
 /**
  * ============================================================================
  * [FilePath] src/App.tsx
- * [Role] アプリケーションのルートコンポーネント
+ * [Role] アプリケーションのルートコンポーネント（パスベースルーティング版）
  * ============================================================================
  */
 
 import { useState, useEffect } from 'react';
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useParams,
+  useNavigate,
+  useSearchParams,
+} from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import { toast, Toaster } from 'sonner';
+
 import { useUserData } from '@/hooks/useUserData';
 import { useNavigationStack, type NavItem } from '@/hooks/useNavigationStack';
-import { FISHES } from '@/data/';
+import { FISHES, ZONES, BAITS } from '@/data/';
+import { toSlug, findBySlug } from '@/utils/slug';
+
 import { Header } from '@/components/Header';
 import { SettingsModal } from '@/components/settings/SettingsModal';
 import { FilterBar, type StatusFilter } from '@/features/fishtracker/FilterBar';
@@ -17,10 +30,10 @@ import { FishTrackerContent } from '@/features/fishtracker/FishTrackerContent';
 import { AdBanner } from '@/components/AdBanner';
 import { Footer } from '@/components/Footer';
 import { LandingPage } from '@/components/LandingPage';
+import { SeoHead } from '@/components/common/SeoHead';
 import { MasterDataEditorModal } from '@/components/dev/MasterDataEditorModal';
 import { LAYOUT_TOKENS } from './styles/tokens/layoutTokens';
 import type { MainTab } from '@/types/fishtracker';
-
 
 const useIsMobileLayout = () => {
   const [isMobile, setIsMobile] = useState(() => {
@@ -42,33 +55,106 @@ const useIsMobileLayout = () => {
   return isMobile;
 };
 
-export default function App() {
-  const {
-    userData,
-    activeCharacter,
-    viewMode,
-    setViewMode,
-    setActiveCharacter,
-    addCharacter,
-    renameCharacter,
-    deleteCharacter,
-    toggleFishCheck,
-    exportData,
-    importData,
-  } = useUserData();
+function FishTrackerContainer({
+  userData,
+  activeCharacter,
+  viewMode,
+  setViewMode,
+  setActiveCharacter,
+  toggleFishCheck,
+  onOpenSettings,
+  onOpenMasterEditor,
+}: any) {
+  const navigate = useNavigate();
+  const { type, slug } = useParams<{ type?: string; slug?: string }>();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const navStack = useNavigationStack();
+  const navStack = useNavigationStack(type, slug);
   const isMobileLayout = useIsMobileLayout();
 
-  const [mainTab, setMainTab] = useState<MainTab>('fish');
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isEditorOpen, setIsEditorOpen] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  // パス (:type) からタブを決定。指定がない場合は 'fish'
+  const validTabs: MainTab[] = ['fish', 'bait', 'area'];
+  const mainTab = validTabs.includes(type as MainTab) ? (type as MainTab) : 'fish';
 
-  if (userData.characters.length === 0 || !activeCharacter) {
-    return <LandingPage onCreateCharacter={addCharacter} />;
-  }
+  const statusFilter = (searchParams.get('status') as StatusFilter) || 'all';
+  const searchQuery = searchParams.get('q') || '';
+
+  // タブ切り替え時はクエリパラメータを介さずパスのみ更新
+  const handleMainTabChange = (tab: MainTab) => {
+    navStack.clear();
+    navigate(`/fishtracker/${tab}`);
+  };
+
+  const handleStatusFilterChange = (status: StatusFilter) => {
+    setSearchParams((prev) => {
+      prev.set('status', status);
+      return prev;
+    });
+  };
+
+  const handleSearchQueryChange = (query: string) => {
+    setSearchParams((prev) => {
+      if (query) {
+        prev.set('q', query);
+      } else {
+        prev.delete('q');
+      }
+      return prev;
+    });
+  };
+
+  const currentFish = type === 'fish' ? findBySlug(FISHES, slug) : undefined;
+  const currentArea = type === 'area' ? findBySlug(ZONES, slug) : undefined;
+  const currentBait = type === 'bait' ? findBySlug(BAITS, slug) : undefined;
+
+  const handleSelectFromList = (item: NavItem) => {
+    const itemSlug = toSlug(item.item.en);
+    const targetPath = `/fishtracker/${item.type}/${itemSlug}`;
+
+    if (isMobileLayout) {
+      navStack.push(item);
+    } else {
+      navStack.replace(item);
+    }
+    navigate(targetPath);
+  };
+
+  const handlePop = () => {
+    if (navStack.stack.length > 1) {
+      const previousItem = navStack.stack[navStack.stack.length - 2];
+      const itemSlug = toSlug(previousItem.item.en);
+      navStack.pop();
+      navigate(`/fishtracker/${previousItem.type}/${itemSlug}`);
+    } else {
+      navStack.clear();
+      navigate(`/fishtracker/${mainTab}`);
+    }
+  };
+
+  const canGoBackEffective = isMobileLayout
+    ? navStack.stack.length > 0
+    : navStack.stack.length > 1;
+
+  const effectiveNavStack = {
+    ...navStack,
+    push: (item: NavItem) => {
+      navStack.push(item);
+      const itemSlug = toSlug(item.item.en);
+      navigate(`/fishtracker/${item.type}/${itemSlug}`);
+    },
+    replace: (item: NavItem) => {
+      navStack.replace(item);
+      const itemSlug = toSlug(item.item.en);
+      navigate(`/fishtracker/${item.type}/${itemSlug}`);
+    },
+    pop: handlePop,
+    clear: () => {
+      navStack.clear();
+      navigate(`/fishtracker/${mainTab}`);
+    },
+    selectFromList: handleSelectFromList,
+    canGoBack: canGoBackEffective,
+  };
 
   const handleToggleCheck = (fishId: number) => {
     const isCurrentlyChecked = activeCharacter.checkedFishIds.includes(fishId);
@@ -87,31 +173,28 @@ export default function App() {
     }
   };
 
-  const handleMainTabChange = (tab: MainTab) => {
-    setMainTab(tab);
-    navStack.clear();
-  };
+  let pageTitle = 'FF11 釣獲管理チェッカー';
+  let pageDescription = 'FF11（ファイナルファンタジー11）の釣りデータベース＆釣獲管理ツール。';
 
-  const handleSelectFromList = (item: NavItem) => {
-    if (isMobileLayout) {
-      navStack.push(item);
-    } else {
-      navStack.replace(item);
-    }
-  };
-
-  const canGoBackEffective = isMobileLayout
-    ? navStack.stack.length > 0
-    : navStack.stack.length > 1;
-
-  const effectiveNavStack = {
-    ...navStack,
-    selectFromList: handleSelectFromList,
-    canGoBack: canGoBackEffective,
-  };
+  if (currentFish) {
+    pageTitle = `${currentFish.ja} (${currentFish.en}) の釣り方・生息地`;
+    pageDescription = `${currentFish.ja}が釣れるエリア、使用する餌、スキル上限などの詳細データ一覧です。`;
+  } else if (currentArea) {
+    pageTitle = `${currentArea.ja} (${currentArea.en}) で釣れる魚一覧`;
+    pageDescription = `${currentArea.ja}で釣れる魚の生息情報やスキル上限のまとめです。`;
+  } else if (currentBait) {
+    pageTitle = `${currentBait.ja} (${currentBait.en}) で釣れる魚一覧`;
+    pageDescription = `${currentBait.ja}を使って釣ることができる魚一覧データです。`;
+  }
 
   return (
     <div className={LAYOUT_TOKENS.page.appWrapper}>
+      <SeoHead
+        title={pageTitle}
+        description={pageDescription}
+        path={window.location.pathname}
+      />
+
       <Toaster position="bottom-right" theme="dark" />
 
       <div className={LAYOUT_TOKENS.header.stickyWrapper}>
@@ -119,17 +202,17 @@ export default function App() {
           characters={userData.characters}
           activeCharacter={activeCharacter}
           onSelectCharacter={setActiveCharacter}
-          onOpenSettings={() => setIsSettingsOpen(true)}
-          onOpenMasterEditor={() => setIsEditorOpen(true)}
+          onOpenSettings={onOpenSettings}
+          onOpenMasterEditor={onOpenMasterEditor}
         />
         <FilterBar
           mainTab={mainTab}
           activeCharacter={activeCharacter}
           onMainTabChange={handleMainTabChange}
           statusFilter={statusFilter}
-          onStatusFilterChange={setStatusFilter}
+          onStatusFilterChange={handleStatusFilterChange}
           searchQuery={searchQuery}
-          onSearchQueryChange={setSearchQuery}
+          onSearchQueryChange={handleSearchQueryChange}
           viewMode={viewMode}
           onViewModeChange={setViewMode}
           totalFishCount={FISHES.length}
@@ -153,24 +236,75 @@ export default function App() {
       <AdBanner slotId="bottom-banner" />
 
       <Footer />
-
-      <SettingsModal
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
-        characters={userData.characters}
-        activeCharacterId={activeCharacter.id}
-        onSelectCharacter={setActiveCharacter}
-        onAddCharacter={addCharacter}
-        onRenameCharacter={renameCharacter}
-        onDeleteCharacter={deleteCharacter}
-        onExport={exportData}
-        onImport={importData}
-      />
-
-      <MasterDataEditorModal
-        isOpen={isEditorOpen}
-        onClose={() => setIsEditorOpen(false)}
-      />
     </div>
+  );
+}
+
+export default function App() {
+  const userDataProps = useUserData();
+  const { userData, activeCharacter, addCharacter } = userDataProps;
+
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  if (userData.characters.length === 0 || !activeCharacter) {
+    return <LandingPage onCreateCharacter={addCharacter} />;
+  }
+
+  return (
+    <HelmetProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Navigate to="/fishtracker/fish" replace />} />
+
+          {/* ルート直下へのアクセスはデフォルトタブ (/fishtracker/fish) へリダイレクト */}
+          <Route path="/fishtracker" element={<Navigate to="/fishtracker/fish" replace />} />
+
+          {/* 各カテゴリ・タブ一覧 (/fishtracker/fish, /fishtracker/area, /fishtracker/bait) */}
+          <Route
+            path="/fishtracker/:type"
+            element={
+              <FishTrackerContainer
+                {...userDataProps}
+                onOpenSettings={() => setIsSettingsOpen(true)}
+                onOpenMasterEditor={() => setIsEditorOpen(true)}
+              />
+            }
+          />
+
+          {/* 個別詳細パーマリンク (/fishtracker/fish/giant-catfish 等) */}
+          <Route
+            path="/fishtracker/:type/:slug"
+            element={
+              <FishTrackerContainer
+                {...userDataProps}
+                onOpenSettings={() => setIsSettingsOpen(true)}
+                onOpenMasterEditor={() => setIsEditorOpen(true)}
+              />
+            }
+          />
+
+          <Route path="*" element={<Navigate to="/fishtracker/fish" replace />} />
+        </Routes>
+
+        <SettingsModal
+          isOpen={isSettingsOpen}
+          onClose={() => setIsSettingsOpen(false)}
+          characters={userData.characters}
+          activeCharacterId={activeCharacter.id}
+          onSelectCharacter={userDataProps.setActiveCharacter}
+          onAddCharacter={userDataProps.addCharacter}
+          onRenameCharacter={userDataProps.renameCharacter}
+          onDeleteCharacter={userDataProps.deleteCharacter}
+          onExport={userDataProps.exportData}
+          onImport={userDataProps.importData}
+        />
+
+        <MasterDataEditorModal
+          isOpen={isEditorOpen}
+          onClose={() => setIsEditorOpen(false)}
+        />
+      </BrowserRouter>
+    </HelmetProvider>
   );
 }

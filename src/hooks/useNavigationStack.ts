@@ -4,18 +4,53 @@
  * ============================================================================
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import type { FishMaster, ZoneMaster, BaitMaster } from '@/types/fishtracker';
+import { FISHES, ZONES, BAITS } from '@/data/';
+import { findBySlug } from '@/utils/slug';
 
 export type NavItem =
 	| { type: 'fish'; item: FishMaster }
 	| { type: 'area'; item: ZoneMaster }
 	| { type: 'bait'; item: BaitMaster };
 
-export const useNavigationStack = () => {
+export const useNavigationStack = (type?: string, slug?: string) => {
 	const [stack, setStack] = useState<NavItem[]>([]);
 
-	// 詳細画面内からのドリルダウン用（履歴を追加）
+	// URLパラメータ (:type / :slug) の変更を検知してスタックを同期
+	useEffect(() => {
+		if (!type || !slug) {
+			setStack([]);
+			return;
+		}
+
+		let foundItem: NavItem | null = null;
+
+		if (type === 'fish') {
+			const fish = findBySlug(FISHES, slug);
+			if (fish) foundItem = { type: 'fish', item: fish };
+		} else if (type === 'area') {
+			const area = findBySlug(ZONES, slug);
+			if (area) foundItem = { type: 'area', item: area };
+		} else if (type === 'bait') {
+			const bait = findBySlug(BAITS, slug);
+			if (bait) foundItem = { type: 'bait', item: bait };
+		}
+
+		if (foundItem) {
+			setStack((prev) => {
+				const last = prev[prev.length - 1];
+				if (last && last.type === foundItem!.type && last.item.id === foundItem!.item.id) {
+					return prev;
+				}
+				if (prev.length === 0) {
+					return [foundItem!];
+				}
+				return [...prev, foundItem!];
+			});
+		}
+	}, [type, slug]);
+
 	const push = useCallback((navItem: NavItem) => {
 		setStack((prev) => {
 			const last = prev[prev.length - 1];
@@ -26,7 +61,6 @@ export const useNavigationStack = () => {
 		});
 	}, []);
 
-	// 一覧リストからの選択用（履歴を新しい1件で置き換え）
 	const replace = useCallback((navItem: NavItem) => {
 		setStack([navItem]);
 	}, []);
@@ -48,15 +82,12 @@ export const useNavigationStack = () => {
 		replace,
 		pop,
 		clear,
-		// スタックが2個以上あれば、元画面に関わらず「戻る」を有効化
 		canGoBack: stack.length > 1,
 	};
 };
 
-// フックの基本戻り値型
 export type UseNavigationStackReturn = ReturnType<typeof useNavigationStack>;
 
-// App.tsx 等で selectFromList などを拡張して渡す場合の統一型定義
 export type NavigationStackHandle = UseNavigationStackReturn & {
 	selectFromList?: (item: NavItem) => void;
 };
