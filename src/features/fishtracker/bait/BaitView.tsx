@@ -16,7 +16,7 @@
 
 import type { BaitMaster, FishMaster, ViewMode } from '@/types/fishtracker';
 import { useMemo } from 'react';
-import { SEO } from '@/components/SEO';
+import { SEO } from '@/components/common/SEO';
 import type { useNavigationStack, NavItem } from '@/hooks/useNavigationStack';
 import { BaitCard } from './BaitCard';
 import { BaitListItem } from './BaitListItem';

@@ -26,7 +26,7 @@
 
 import React, { useMemo } from 'react';
 import { FISHES, ZONES, BAITS } from '@/data/';
-import { SEO } from '@/components/SEO';
+import { SEO } from '@/components/common/SEO';
 import { FishView } from './fish/FishView';
 import { BaitView } from './bait/BaitView';
 import { AreaView } from './area/AreaView';

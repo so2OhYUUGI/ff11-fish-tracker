@@ -22,7 +22,7 @@
  */
 
 import { useMemo } from 'react';
-import { SEO } from '@/components/SEO';
+import { SEO } from '@/components/common/SEO';
 import { FishCard } from './FishCard';
 import { FishListItem } from '../fish/FishListItem';
 import { FishDetailView } from './FishDetailView';

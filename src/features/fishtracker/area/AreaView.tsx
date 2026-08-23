@@ -17,7 +17,7 @@
  */
 
 import { useMemo } from 'react';
-import { SEO } from '@/components/SEO';
+import { SEO } from '@/components/common/SEO';
 import type { ZoneMaster, FishMaster, ViewMode, RegionMaster } from '@/types/fishtracker';
 import type { useNavigationStack, NavItem } from '@/hooks/useNavigationStack';
 import { REGIONS, ZONES, FISH_LOCATIONS } from '@/data/';

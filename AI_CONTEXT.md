@@ -24,6 +24,8 @@
 ---
 
 ## 3. データ構造（src/types/fish.ts）
+### **データ宣言**
+- `src/types/`以下にあるファイルの宣言に従うこと
 
 ### **リレーションデータ**
 - `FISH_LOCATIONS`: 魚ID (`fishId`) と エリアID (`zoneId`) の紐付け
@@ -38,14 +40,33 @@
 
 ## 4. コンポーネント・ファイル構成と役割
 
+### **src/components/ ディレクトリ構成**
+
+```text
+src/components/
+├── common/                  # 汎用UI・全ページ共通要素
+│   ├── SEO.tsx              # SEOメタ情報設定（Head管理）
+│   ├── SeoHead.tsx          # ページ個別ヘッダーメタ定義
+│   ├── AdBanner.tsx         # 広告エリア（プレースホルダー / AdSense枠）
+│   └── ShareProgressButton.tsx # 釣獲進捗のSNS共有ボタン
+├── layout/                  # レイアウト構成要素
+│   ├── Header.tsx           # アプリタイトル、キャラ切替UI、開発用ツール導線
+│   └── Footer.tsx           # 権利表記・ライセンス注記・著作権表示
+├── settings/                # 設定関連モーダル
+│   └── SettingsModal.tsx    # 各種設定モーダルダイアログ
+├── dev/                     # 開発・データ編集ツール
+│   └── MasterDataEditorModal.tsx # マスターデータ編集・テスト用モーダル
+└── LandingPage.tsx          # ランディングページコンポーネント
+```
+
+### **機能別コンポーネント一覧**
+
 | ファイル | 役割 |
 |---|---|
 | `src/types/fishtracker.ts` | 型定義（Windower互換データ、アプリ拡張、進捗構造） |
 | `src/hooks/useNavigationStack.ts` | ページ遷移の管理 |
 | `src/hooks/useUserData.ts` | LocalStorage永続化、キャラ追加/削除/切替、魚チェックON/OFFロジック |
-| `src/components/Header.tsx` | アプリタイトル、キャラ切替UI、開発用ツール導線（`isDev`制御） |
-| `src/components/Footer.tsx` | 権利表記・ライセンス注記・著作権表示コンポーネント |
-| `src/components/AdBanner.tsx` | 広告エリア（プレースホルダー / AdSense枠）コンポーネント |
+| `src/utils/share.ts` | Web Share APIおよびクリップボードコピー処理ユーティリティ |
 | `src/features/fishtracker/FilterBar.tsx` | メインナビゲーション（魚/エリア/餌切替）、達成状態フィルター、プログレス表示、検索フォーム |
 | `src/features/fishtracker/FishTrackerContent.tsx` | 魚チェッカーメイン領域の表示切替（魚/エリア/餌）、ルーティング |
 | `src/features/fishtracker/fish/FishCard.tsx` | 個別魚カード（スペック表示、エリア情報の表示と+Nバッジ表示） |

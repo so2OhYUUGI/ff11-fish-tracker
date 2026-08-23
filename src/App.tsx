@@ -23,15 +23,15 @@ import { useNavigationStack, type NavItem } from '@/hooks/useNavigationStack';
 import { FISHES, ZONES, BAITS } from '@/data/';
 import { toSlug, findBySlug } from '@/utils/slug';
 
-import { Header } from '@/components/Header';
+import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
+import { LandingPage } from '@/components/LandingPage';
+import { AdBanner } from '@/components/common/AdBanner';
+import { SeoHead } from '@/components/common/SeoHead';
 import { SettingsModal } from '@/components/settings/SettingsModal';
+import { MasterDataEditorModal } from '@/components/dev/MasterDataEditorModal';
 import { FilterBar, type StatusFilter } from '@/features/fishtracker/FilterBar';
 import { FishTrackerContent } from '@/features/fishtracker/FishTrackerContent';
-import { AdBanner } from '@/components/AdBanner';
-import { Footer } from '@/components/Footer';
-import { LandingPage } from '@/components/LandingPage';
-import { SeoHead } from '@/components/common/SeoHead';
-import { MasterDataEditorModal } from '@/components/dev/MasterDataEditorModal';
 import { LAYOUT_TOKENS } from './styles/tokens/layoutTokens';
 import type { MainTab } from '@/types/fishtracker';
 
