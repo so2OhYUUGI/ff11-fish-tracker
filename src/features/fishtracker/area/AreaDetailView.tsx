@@ -6,7 +6,7 @@
  * [概要]
  * - ヘッダー（エリア名）を固定し、コンテンツ部分全体を独立スクロール表示
  * - `regionList` から `area.regionId` に一致するリージョン情報を参照して描画
- * - 中間データ `FISH_LOCATIONS` を参照し、当該エリア（`area.id`）で釣れる魚を抽出・一覧表示
+ * - 中間データ `FISH_LOCATIONS` を参照し、当該エリア（`area.id`）で釣れる魚を抽出・スキル昇順ソートして表示
  * - 釣れる魚一覧の各行を統合作成した FishListItem（variant="inline"）へ置き換え
  * - 全スタイルの参照を `DETAIL_STYLES` および `COMMON_TOKENS` へ完全集約
  * ============================================================================
@@ -43,7 +43,7 @@ export const AreaDetailView: React.FC<Props> = ({
 	onToggleCheck,
 	onClickFishDetail,
 }) => {
-	// FISH_LOCATIONS から当該エリア (area.id) で釣れる魚のデータリストを取得
+	// FISH_LOCATIONS から当該エリア (area.id) で釣れる魚のデータリストを取得（maxSkill昇順ソート）
 	const catchableFishes = useMemo(() => {
 		if (!area) return [];
 		const targetFishIds = new Set(
@@ -51,8 +51,13 @@ export const AreaDetailView: React.FC<Props> = ({
 				.filter((loc) => loc.zoneId === area.id)
 				.map((loc) => loc.fishId)
 		);
-		return allFishes.filter((fish) => targetFishIds.has(fish.id));
+		return allFishes
+			.filter((fish) => targetFishIds.has(fish.id))
+			.sort((a, b) => (a.maxSkill ?? 0) - (b.maxSkill ?? 0));
 	}, [area, allFishes]);
+
+	// チェック済み魚IDの高速判定用 Set
+	const checkedSet = useMemo(() => new Set(checkedFishIds), [checkedFishIds]);
 
 	// area.regionId に一致するリージョン情報を検索
 	const belongsRegion = useMemo(() => {
@@ -62,9 +67,15 @@ export const AreaDetailView: React.FC<Props> = ({
 		);
 	}, [area.regionId, regionList]);
 
+	// 改行コードで分割した説明文行リスト
+	const descriptionLines = useMemo(() => {
+		if (!area.description) return [];
+		return area.description.split(/\r?\n|\\n/);
+	}, [area.description]);
+
 	return (
 		<div className={DETAIL_STYLES.panelBase}>
-			{/* 1. 固定ヘッダー領域（幅縮小時・縦表示時の潰れ・押し出しを防止） */}
+			{/* 1. 固定ヘッダー領域 */}
 			<div className={DETAIL_STYLES.stickyHeader}>
 				{/* 左側：戻るボタン ＋ タイトル */}
 				<div className={DETAIL_STYLES.stickyHeaderLeft}>
@@ -119,9 +130,9 @@ export const AreaDetailView: React.FC<Props> = ({
 				)}
 
 				{/* 説明文 */}
-				{area.description && (
+				{descriptionLines.length > 0 && (
 					<div className={DETAIL_STYLES.descriptionBox}>
-						{area.description.split(/\r?\n|\\n/).map((line: string, index: number) => (
+						{descriptionLines.map((line: string, index: number) => (
 							<React.Fragment key={index}>
 								{index > 0 && <br />}
 								{line}
@@ -144,7 +155,7 @@ export const AreaDetailView: React.FC<Props> = ({
 									key={fish.id}
 									fish={fish}
 									variant="inline"
-									isChecked={checkedFishIds.includes(fish.id)}
+									isChecked={checkedSet.has(fish.id)}
 									onToggleCheck={onToggleCheck}
 									onClickDetail={onClickFishDetail}
 								/>

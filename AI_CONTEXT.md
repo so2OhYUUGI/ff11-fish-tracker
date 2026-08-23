@@ -25,20 +25,6 @@
 
 ## 3. データ構造（src/types/fish.ts）
 
-### **魚マスターデータ (FishMaster)**
-- `id`: Windower items.lua 準拠のアイテムID（数値）
-- `ja` / `en`: 日本語名 / 英語名
-- `maxSkill`: 限界スキルレベル
-- `sizeType`: `'small'` | `'large'`
-- `harakiri`: ハラキリ対象フラグ (`boolean`)
-- `ebisu`: 恵比寿の竿関連フラグ (`boolean`)
-- `taikobou`: 太公望の竿関連フラグ (`boolean`)
-
-### **エリアマスターデータ (ZoneMaster) & 餌マスターデータ (BaitMaster)**
-- `id`: ゾーンID / アイテムID
-- `ja` / `en`: 日本語名 / 英語名
-- `description`: 簡略説明文（改行コード `\n` または `\\n` を含む）
-
 ### **リレーションデータ**
 - `FISH_LOCATIONS`: 魚ID (`fishId`) と エリアID (`zoneId`) の紐付け
 - `FISH_BAIT_RELATIONS`: 魚ID (`fishId`) と 餌ID (`baitId`) の紐付け

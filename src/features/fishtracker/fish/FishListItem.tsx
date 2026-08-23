@@ -44,7 +44,7 @@ export const FishListItem: React.FC<Props> = ({
 	onToggleCheck,
 	onClickDetail,
 }) => {
-	// 生息エリア数を算出（重複を除外して正確にカウント）
+	// 生息エリア数を算出（重複を除外して正確にカウント、メモ化）
 	const totalZones = useMemo(() => {
 		const targetZoneIds = new Set(
 			FISH_LOCATIONS

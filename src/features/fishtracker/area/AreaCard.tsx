@@ -14,7 +14,7 @@
  * ============================================================================
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Fish } from 'lucide-react';
 import type { ZoneMaster, FishMaster } from '@/types/fish';
 import { FISH_LOCATIONS, FISHES } from '@/data';
@@ -22,7 +22,7 @@ import { CARD_STYLES } from '@/styles/components/cardStyles';
 
 type Props = {
   area: ZoneMaster;
-  fishes?: FishMaster[]; // 外部から渡される場合はそれを使用し、未渡しの場合は FISHES を参照
+  fishes?: FishMaster[];
   isSelected?: boolean;
   onClickDetail: (area: ZoneMaster) => void;
 };
@@ -33,21 +33,32 @@ export const AreaCard: React.FC<Props> = ({
   isSelected,
   onClickDetail,
 }) => {
-  // 該当エリア (area.id) で釣れる魚の ID 一覧を抽出
-  const targetFishIds = FISH_LOCATIONS
-    .filter((loc) => loc.zoneId === area.id)
-    .map((loc) => loc.fishId);
+  // 該当エリア (area.id) で釣れる魚の一覧を算出（重複排除・メモ化）
+  const matchedFishes = useMemo(() => {
+    const uniqueFishIds = new Set(
+      FISH_LOCATIONS
+        .filter((loc) => loc.zoneId === area.id)
+        .map((loc) => loc.fishId)
+    );
+    return fishes.filter((fish) => uniqueFishIds.has(fish.id));
+  }, [area.id, fishes]);
 
-  // 重複を除外して魚データと紐付け
-  const uniqueFishIds = Array.from(new Set(targetFishIds));
-  const matchedFishes = fishes.filter((fish) => uniqueFishIds.includes(fish.id));
   const totalFishes = matchedFishes.length;
   const hasFish = totalFishes > 0;
 
   // カード表示用：最大2件を表示、溢れた分は +N 表示
   const maxDisplayCount = 2;
-  const displayFishes = matchedFishes.slice(0, maxDisplayCount);
+  const displayFishes = useMemo(
+    () => matchedFishes.slice(0, maxDisplayCount),
+    [matchedFishes]
+  );
   const remainingCount = totalFishes - maxDisplayCount;
+
+  // 改行コード（\n および \n）で分割した説明文行リスト
+  const descriptionLines = useMemo(() => {
+    if (!area.description) return [];
+    return area.description.split(/\r?\n|\\n/);
+  }, [area.description]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -80,9 +91,9 @@ export const AreaCard: React.FC<Props> = ({
             </span>
           </div>
 
-          {area.description && (
+          {descriptionLines.length > 0 && (
             <div className={CARD_STYLES.descriptionBox}>
-              {area.description.split('\\n').map((line: string, index: number) => (
+              {descriptionLines.map((line: string, index: number) => (
                 <p key={index}>{line}</p>
               ))}
             </div>

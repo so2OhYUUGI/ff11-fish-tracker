@@ -8,9 +8,21 @@
  * - `useNavigationStack`（`navStack`）の最前面データ（`current`）に基づき、詳細パネルの切り替え・スタック遷移を描画
  * - モバイルおよびデスクトップ（sticky追従）でのレスポンシブ切り替え
  * - 詳細表示領域に画面高に応じた上限サイズ（calc）と独立スクロール領域を設定
+ * - スタック選択状態（`current`）に応じたSEOメタデータ（`<SEO />`）の動的書き換え
+ * 
+ * [依存関係・関連ファイル]
+ * - コンポーネント : SEO (src/components/SEO.tsx)
+ * - スタイル     : src/styles/tokens/commonTokens, layoutTokens
+ * - 型定義       : src/types/fish (FishMaster, ZoneMaster, ViewMode 等), useNavigationStack
+ * 
+ * [編集・改修時の注意事項（AI/エンジニア共通指示）]
+ * 1. 【SEO連動】 navStack.current の選択内容に応じて詳細用SEOメタデータを割り当てること。ハラキリ判定は harakiriItems / harakiriTitle の存在を参照すること。
+ * 2. 【レイアウト維持】 2カラム/1カラムの切り替えロジックおよびレスポンシブ用のCSSクラス指定を変更しないこと。
  * ============================================================================
  */
 
+import { useMemo } from 'react';
+import { SEO } from '@/components/SEO';
 import { FishCard } from './FishCard';
 import { FishListItem } from '../fish/FishListItem';
 import { FishDetailView } from './FishDetailView';
@@ -41,10 +53,56 @@ export const FishView = ({
 }: Props) => {
 	const { current, push, replace, pop, clear, canGoBack } = navStack;
 
+	// チェック済み魚IDの高速判定用 Set
+	const checkedSet = useMemo(() => new Set(checkedFishIds), [checkedFishIds]);
+
 	// チェック操作ハンドラ
 	const handleToggleCheck = (fishId: number) => {
 		onToggleCheck(fishId);
 	};
+
+	// 詳細表示中のスタックデータに応じたSEO情報動的算出
+	const detailSeo = useMemo(() => {
+		if (!current) return null;
+
+		if (current.type === 'fish') {
+			const fish = current.item;
+			const isHarakiri =
+				(fish.harakiriItems && fish.harakiriItems.length > 0) ||
+				Boolean(fish.harakiriTitle);
+
+			const sizeLabel =
+				fish.sizeType === 'large'
+					? '大型魚'
+					: fish.sizeType === 'small'
+						? '小型魚'
+						: '不明';
+
+			return {
+				title: `${fish.ja} (${fish.en}) - 限界スキル ${fish.maxSkill}`,
+				description: `FF11の「${fish.ja}」の釣りデータ。限界スキル: ${fish.maxSkill} / サイズ: ${sizeLabel} / ハラキリ: ${isHarakiri ? '対象' : '対象外'
+					}`,
+			};
+		}
+
+		if (current.type === 'area') {
+			const area = current.item;
+			return {
+				title: `${area.ja} (${area.en}) の釣魚データ`,
+				description: `FF11の「${area.ja}」で釣れる魚の一覧および各種攻略情報。`,
+			};
+		}
+
+		if (current.type === 'bait') {
+			const bait = current.item;
+			return {
+				title: `${bait.ja} (${bait.en}) の釣魚データ`,
+				description: `FF11の釣りエサ「${bait.ja}」で釣れる対象魚の一覧データ。`,
+			};
+		}
+
+		return null;
+	}, [current]);
 
 	if (fishes.length === 0) {
 		return (
@@ -61,93 +119,100 @@ export const FishView = ({
 	const selectedFishId = current?.type === 'fish' ? current.item.id : null;
 
 	return (
-		<div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-			{/* 左側：一覧表示領域 */}
-			<div
-				className={`${isSelected ? 'lg:col-span-7' : 'lg:col-span-12'
-					} ${isSelected ? 'hidden lg:block' : 'block'}`}
-			>
-				{viewMode === 'card' ? (
-					<div
-						className={`grid grid-cols-1 gap-4 ${isSelected
-							? 'sm:grid-cols-2 md:grid-cols-3'
-							: 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
-							}`}
-					>
-						{fishes.map((fish) => (
-							<FishCard
-								key={fish.id}
-								fish={fish}
+		<>
+			{/* 詳細表示中の場合は詳細用のSEOメタデータで上書き */}
+			{detailSeo && (
+				<SEO title={detailSeo.title} description={detailSeo.description} />
+			)}
+
+			<div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+				{/* 左側：一覧表示領域 */}
+				<div
+					className={`${isSelected ? 'lg:col-span-7' : 'lg:col-span-12'
+						} ${isSelected ? 'hidden lg:block' : 'block'}`}
+				>
+					{viewMode === 'card' ? (
+						<div
+							className={`grid grid-cols-1 gap-4 ${isSelected
+									? 'sm:grid-cols-2 md:grid-cols-3'
+									: 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
+								}`}
+						>
+							{fishes.map((fish) => (
+								<FishCard
+									key={fish.id}
+									fish={fish}
+									zones={zones}
+									isChecked={checkedSet.has(fish.id)}
+									isSelected={selectedFishId === fish.id}
+									onToggleCheck={handleToggleCheck}
+									onClickDetail={(f) => replace({ type: 'fish', item: f })}
+								/>
+							))}
+						</div>
+					) : (
+						<div className="flex flex-col gap-2">
+							{fishes.map((fish) => (
+								<FishListItem
+									key={fish.id}
+									fish={fish}
+									zones={zones}
+									isChecked={checkedSet.has(fish.id)}
+									isSelected={selectedFishId === fish.id}
+									onToggleCheck={handleToggleCheck}
+									onClickDetail={(f) => replace({ type: 'fish', item: f })}
+								/>
+							))}
+						</div>
+					)}
+				</div>
+
+				{/* 右側：詳細表示領域（スタックの型に応じて動的切り替え） */}
+				{isSelected && (
+					<div className={LAYOUT_TOKENS.sidebar.stickyContainer}>
+						{current.type === 'fish' && (
+							<FishDetailView
+								fish={current.item}
 								zones={zones}
-								isChecked={checkedFishIds.includes(fish.id)}
-								isSelected={selectedFishId === fish.id}
+								isChecked={checkedSet.has(current.item.id)}
 								onToggleCheck={handleToggleCheck}
-								onClickDetail={(f) => replace({ type: 'fish', item: f })}
+								onClose={clear}
+								onBack={pop}
+								canGoBack={canGoBack}
+								onClickAreaDetail={(area) => push({ type: 'area', item: area })}
+								onClickBaitDetail={(bait) => push({ type: 'bait', item: bait })}
 							/>
-						))}
-					</div>
-				) : (
-					<div className="flex flex-col gap-2">
-						{fishes.map((fish) => (
-							<FishListItem
-								key={fish.id}
-								fish={fish}
-								zones={zones}
-								isChecked={checkedFishIds.includes(fish.id)}
-								isSelected={selectedFishId === fish.id}
+						)}
+
+						{current.type === 'area' && (
+							<AreaDetailView
+								area={current.item}
+								allFishes={fishes}
+								regionList={REGIONS}
+								checkedFishIds={checkedFishIds}
 								onToggleCheck={handleToggleCheck}
-								onClickDetail={(f) => replace({ type: 'fish', item: f })}
+								onClose={clear}
+								onBack={pop}
+								canGoBack={canGoBack}
+								onClickFishDetail={(fish) => push({ type: 'fish', item: fish })}
 							/>
-						))}
+						)}
+
+						{current.type === 'bait' && (
+							<BaitDetailView
+								bait={current.item}
+								allFishes={fishes}
+								checkedFishIds={checkedFishIds}
+								onToggleCheck={handleToggleCheck}
+								onClose={clear}
+								onBack={pop}
+								canGoBack={canGoBack}
+								onClickFishDetail={(fish) => push({ type: 'fish', item: fish })}
+							/>
+						)}
 					</div>
 				)}
 			</div>
-
-			{/* 右側：詳細表示領域（スタックの型に応じて動的切り替え） */}
-			{isSelected && (
-				<div className={LAYOUT_TOKENS.sidebar.stickyContainer}>
-					{current.type === 'fish' && (
-						<FishDetailView
-							fish={current.item}
-							zones={zones}
-							isChecked={checkedFishIds.includes(current.item.id)}
-							onToggleCheck={handleToggleCheck}
-							onClose={clear}
-							onBack={pop}
-							canGoBack={canGoBack}
-							onClickAreaDetail={(area) => push({ type: 'area', item: area })}
-							onClickBaitDetail={(bait) => push({ type: 'bait', item: bait })}
-						/>
-					)}
-
-					{current.type === 'area' && (
-						<AreaDetailView
-							area={current.item}
-							allFishes={fishes}
-							regionList={REGIONS}
-							checkedFishIds={checkedFishIds}
-							onToggleCheck={handleToggleCheck}
-							onClose={clear}
-							onBack={pop}
-							canGoBack={canGoBack}
-							onClickFishDetail={(fish) => push({ type: 'fish', item: fish })}
-						/>
-					)}
-
-					{current.type === 'bait' && (
-						<BaitDetailView
-							bait={current.item}
-							allFishes={fishes}
-							checkedFishIds={checkedFishIds}
-							onToggleCheck={handleToggleCheck}
-							onClose={clear}
-							onBack={pop}
-							canGoBack={canGoBack}
-							onClickFishDetail={(fish) => push({ type: 'fish', item: fish })}
-						/>
-					)}
-				</div>
-			)}
-		</div>
+		</>
 	);
 };

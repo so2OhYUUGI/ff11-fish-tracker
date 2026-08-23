@@ -13,7 +13,7 @@
  * ============================================================================
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ArrowLeft, CheckSquare, Info, Square, X, Fish } from 'lucide-react';
 import type { FishMaster, ZoneMaster, BaitMaster } from '@/types/fish';
 import {
@@ -58,19 +58,33 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 	onClickAreaDetail,
 	onClickBaitDetail,
 }) => {
-	// 1. エリア情報の抽出
-	const targetZoneIds = FISH_LOCATIONS
-		.filter((loc) => loc.fishId === fish.id)
-		.map((loc) => loc.zoneId);
-	const targetZones = zones.filter((zone) => targetZoneIds.includes(zone.id));
+	// 1. エリア情報の抽出（メモ化）
+	const targetZones = useMemo(() => {
+		const targetZoneIds = new Set(
+			FISH_LOCATIONS
+				.filter((loc) => loc.fishId === fish.id)
+				.map((loc) => loc.zoneId)
+		);
+		return zones.filter((zone) => targetZoneIds.has(zone.id));
+	}, [fish.id, zones]);
 
-	// 2. 餌情報の抽出
-	const targetBaitIds = FISH_BAIT_RELATIONS
-		.filter((rel) => rel.fishId === fish.id)
-		.map((rel) => rel.baitId);
-	const targetBaits = BAITS.filter((bait) => targetBaitIds.includes(bait.id));
+	// 2. 餌情報の抽出（メモ化）
+	const targetBaits = useMemo(() => {
+		const targetBaitIds = new Set(
+			FISH_BAIT_RELATIONS
+				.filter((rel) => rel.fishId === fish.id)
+				.map((rel) => rel.baitId)
+		);
+		return BAITS.filter((bait) => targetBaitIds.has(bait.id));
+	}, [fish.id]);
 
-	// 3. 竿情報の参照用ヘルパー関数
+	// 3. 改行コード（\n および \n）で分割した説明文行リスト
+	const descriptionLines = useMemo(() => {
+		if (!fish.description) return [];
+		return fish.description.split(/\r?\n|\\n/);
+	}, [fish.description]);
+
+	// 4. 竿情報の参照用ヘルパー関数
 	const getRodRelation = (rodId: number) => {
 		return FISH_ROD_RELATIONS.find(
 			(rel) => rel.fishId === fish.id && rel.rodId === rodId
@@ -115,8 +129,8 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 						type="button"
 						onClick={() => onToggleCheck(fish.id)}
 						className={`${DETAIL_STYLES.checkButtonBase} ${isChecked
-							? DETAIL_STYLES.checkButtonChecked
-							: DETAIL_STYLES.checkButtonUnchecked
+								? DETAIL_STYLES.checkButtonChecked
+								: DETAIL_STYLES.checkButtonUnchecked
 							} shrink-0`}
 					>
 						{isChecked ? (
@@ -319,9 +333,9 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 				)}
 
 				{/* 説明文 */}
-				{fish.description && (
+				{descriptionLines.length > 0 && (
 					<div className={DETAIL_STYLES.descriptionBox}>
-						{fish.description.split('\\n').map((line, index) => (
+						{descriptionLines.map((line: string, index: number) => (
 							<React.Fragment key={index}>
 								{index > 0 && <br />}
 								{line}
