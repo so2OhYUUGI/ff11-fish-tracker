@@ -289,7 +289,7 @@ export const ZONES: ZoneMaster[] = [
   {
     "id": 10047,
     "ja": "外洋航路：マウラ - アルザビ",
-    "en": "Open sea route to Mhaura",
+    "en": "Open sea route",
     "regionId": 100
   },
   {
@@ -359,7 +359,7 @@ export const ZONES: ZoneMaster[] = [
   {
     "id": 10059,
     "ja": "銀海航路：アルザビ - ナシュモ",
-    "en": "Silver Sea route to Al Zahbi",
+    "en": "Silver Sea route",
     "regionId": 100
   },
   {
@@ -1308,7 +1308,7 @@ export const ZONES: ZoneMaster[] = [
   {
     "id": 10221,
     "ja": "機船航路：セルビナ - マウラ",
-    "en": "Ship bound for Mhaura",
+    "en": "Ship",
     "regionId": 100
   },
   {

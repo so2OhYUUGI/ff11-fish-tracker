@@ -45,7 +45,7 @@ export default function App() {
           <Route path="/" element={<Navigate to="/fishtracker/fish" replace />} />
           <Route path="/fishtracker" element={<Navigate to="/fishtracker/fish" replace />} />
 
-          {/* 一覧ページ：未登録の場合はオンボーディング（LandingPage）を表示 */}
+          {/* メインルート：未登録の場合はオンボーディングを表示 */}
           <Route
             path="/fishtracker/:type"
             element={

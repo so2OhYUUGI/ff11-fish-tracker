@@ -41,7 +41,8 @@ export const useTrackerNavigation = ({
 			}
 
 			const itemSlug = toSlug(item.item.en);
-			const targetPath = `/fishtracker/${item.type}/${itemSlug}`;
+			// item.type ではなく、現在の親タブ(mainTab)のパスを固定して引き継ぐ
+			const targetPath = `/fishtracker/${mainTab}/${itemSlug}`;
 
 			if (isMobileLayout) {
 				navStack.push(item);
@@ -50,7 +51,7 @@ export const useTrackerNavigation = ({
 			}
 			navigate(targetPath);
 		},
-		[isMobileLayout, navStack, navigate, isRegistered, activeCharacter, onRequestRegistration]
+		[isMobileLayout, navStack, navigate, mainTab, isRegistered, activeCharacter, onRequestRegistration]
 	);
 
 	const handlePop = useCallback(() => {
@@ -58,9 +59,10 @@ export const useTrackerNavigation = ({
 			const previousItem = navStack.stack[navStack.stack.length - 2];
 			const itemSlug = toSlug(previousItem.item.en);
 			navStack.pop();
-			navigate(`/fishtracker/${previousItem.type}/${itemSlug}`);
+			// 戻る際も親タブ(mainTab)のパスを維持
+			navigate(`/fishtracker/${mainTab}/${itemSlug}`);
 		} else {
-			navStack.clear();
+			navClear();
 			navigate(`/fishtracker/${mainTab}`);
 		}
 	}, [navStack, navigate, mainTab]);
@@ -81,7 +83,8 @@ export const useTrackerNavigation = ({
 				}
 				navPush(item);
 				const itemSlug = toSlug(item.item.en);
-				navigate(`/fishtracker/${item.type}/${itemSlug}`);
+				// item.type ではなく mainTab を使用
+				navigate(`/fishtracker/${mainTab}/${itemSlug}`);
 			},
 			replace: (item: NavItem) => {
 				if (!isRegistered || !activeCharacter) {
@@ -90,7 +93,8 @@ export const useTrackerNavigation = ({
 				}
 				navReplace(item);
 				const itemSlug = toSlug(item.item.en);
-				navigate(`/fishtracker/${item.type}/${itemSlug}`);
+				// item.type ではなく mainTab を使用
+				navigate(`/fishtracker/${mainTab}/${itemSlug}`);
 			},
 			pop: handlePop,
 			clear: () => {

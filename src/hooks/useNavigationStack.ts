@@ -17,24 +17,31 @@ export type NavItem =
 export const useNavigationStack = (type?: string, slug?: string) => {
 	const [stack, setStack] = useState<NavItem[]>([]);
 
-	// URLパラメータ (:type / :slug) の変更を検知してスタックを同期
+	// URLパラメータ (:slug) の変更を検知して全マスターデータから該当アイテムを判定・スタック同期
 	useEffect(() => {
-		if (!type || !slug) {
+		if (!slug) {
 			setStack([]);
 			return;
 		}
 
 		let foundItem: NavItem | null = null;
 
-		if (type === 'fish') {
-			const fish = findBySlug(FISHES, slug);
-			if (fish) foundItem = { type: 'fish', item: fish };
-		} else if (type === 'area') {
+		// 1. 魚マスターから検索
+		const fish = findBySlug(FISHES, slug);
+		if (fish) {
+			foundItem = { type: 'fish', item: fish };
+		} else {
+			// 2. エリアマスターから検索
 			const area = findBySlug(ZONES, slug);
-			if (area) foundItem = { type: 'area', item: area };
-		} else if (type === 'bait') {
-			const bait = findBySlug(BAITS, slug);
-			if (bait) foundItem = { type: 'bait', item: bait };
+			if (area) {
+				foundItem = { type: 'area', item: area };
+			} else {
+				// 3. 餌マスターから検索
+				const bait = findBySlug(BAITS, slug);
+				if (bait) {
+					foundItem = { type: 'bait', item: bait };
+				}
+			}
 		}
 
 		if (foundItem) {
@@ -49,7 +56,7 @@ export const useNavigationStack = (type?: string, slug?: string) => {
 				return [...prev, foundItem!];
 			});
 		}
-	}, [type, slug]);
+	}, [slug]); // type への依存を外し、slug の変更のみ監視
 
 	const push = useCallback((navItem: NavItem) => {
 		setStack((prev) => {
