@@ -75,7 +75,7 @@ export const FISHES: FishMaster[] = [
     "description": "ウルブカ大陸に生息する甲殻類。\\n毒に強い。",
     "maxSkill": 7,
     "sizeType": "small",
-    "waterType": "saltwater",
+    "waterType": "freshwater",
     "ebisu": false,
     "taikobou": false
   },
