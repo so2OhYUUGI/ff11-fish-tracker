@@ -8,28 +8,28 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 
+// 本番ドメインを直接指定（または環境変数から取得）
+const SITE_DOMAIN = import.meta.env.VITE_SITE_URL || 'http://localhost:5173';
+
 type SeoHeadProps = {
 	title: string;
 	description: string;
 	path?: string;
-	ogImage?: string; // OGP用画像のパス指定を追加
+	ogImage?: string;
 };
 
 export const SeoHead: React.FC<SeoHeadProps> = ({
 	title,
 	description,
 	path = '',
-	ogImage = '/ogp-default.png', // デフォルト画像（public/ogp-default.png）
+	ogImage = '/ogp-default.png',
 }) => {
 	const siteName = 'FF11 Fish Tracker';
 	const fullTitle = `${title} | ${siteName}`;
 
-	// 開発時・本番環境に合わせてドメインを設定
-	const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
-	const pageUrl = `${baseUrl}${path}`;
-
-	// 絶対パスの画像URLを作成
-	const imageUrl = ogImage.startsWith('http') ? ogImage : `${baseUrl}${ogImage}`;
+	// 常に完全な絶対URL（https://...）を生成
+	const pageUrl = `${SITE_DOMAIN}${path}`;
+	const imageUrl = ogImage.startsWith('http') ? ogImage : `${SITE_DOMAIN}${ogImage}`;
 
 	return (
 		<Helmet>
