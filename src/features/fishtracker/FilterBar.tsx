@@ -8,19 +8,6 @@
  * - 魚表示時の状態絞り込み（すべて / 未達成 / 達成済）および進捗率（プログレスバー）の描画
  * - 名称検索インプット（魚名 / 餌名 / エリア名の自動切替・テキストクリア機能付き）
  * - 表示モード切替（カード表示 / リスト表示）
- * 
- * [編集・改修時の注意事項]
- * 1. 【吸着レイアウト（Sticky）】
- *    本コンポーネントは `App.tsx` 内で `sticky top-[75px]` として配置されます。
- *    上下幅（padding）等の調整を行う場合は、`App.tsx` 側の位置設定との整合性を考慮してください。
- * 2. 【条件付きレンダリング】
- *    ステータスフィルターおよび達成率表示領域は `mainTab === 'fish'` の場合のみ描画されます。
- * 3. 【プログレス表示】
- *    `totalFishCount` が 0 の場合は 0% 計算のゼロ除算防止ロジックを含んでいます。
- * 4. 【スタイルの集約】
- *    Tailwind CSS クラスは `@/styles/features/FishTrackerStyle` より定数参照しています。
- * 5. 【アクセシビリティ・規約】
- *    すべての `button` タグには `type="button"` を明記しています。
  * ============================================================================
  */
 
@@ -113,7 +100,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 								onClick={() => onStatusFilterChange('all')}
 								className={`${FILTER_BAR_STYLES.statusButtonBase} ${statusFilter === 'all'
 										? FILTER_BAR_STYLES.statusAllActive
-										: FILTER_BAR_STYLES.tabInactive
+										: FILTER_BAR_STYLES.statusInactive
 									}`}
 							>
 								すべて
@@ -123,7 +110,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 								onClick={() => onStatusFilterChange('unchecked')}
 								className={`${FILTER_BAR_STYLES.statusButtonBase} ${statusFilter === 'unchecked'
 										? FILTER_BAR_STYLES.statusUncheckedActive
-										: FILTER_BAR_STYLES.tabInactive
+										: FILTER_BAR_STYLES.statusInactive
 									}`}
 							>
 								未達成
@@ -133,7 +120,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 								onClick={() => onStatusFilterChange('checked')}
 								className={`${FILTER_BAR_STYLES.statusButtonBase} ${statusFilter === 'checked'
 										? FILTER_BAR_STYLES.statusCheckedActive
-										: FILTER_BAR_STYLES.tabInactive
+										: FILTER_BAR_STYLES.statusInactive
 									}`}
 							>
 								達成済
@@ -164,7 +151,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 
 				{/* 右側: 検索 & 表示モード切り替え */}
 				<div className={FILTER_BAR_STYLES.rightGroup}>
-					{/* 検索入力フォーム（テキストクリア機能付き） */}
+					{/* 検索入力フォーム */}
 					<div className={FILTER_BAR_STYLES.searchContainer}>
 						<Search className={FILTER_BAR_STYLES.searchIcon} />
 						<input
