@@ -75,4 +75,24 @@ export const COMMON_TOKENS = {
     shareIcon: 'p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors flex items-center justify-center shrink-0',
     shareProgress: 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600/20 text-indigo-300 hover:bg-indigo-600/30 transition-colors text-sm font-medium',
   },
+
+  // (既存の定義の末尾などに追加)
+
+  // アラート・通知メッセージUI
+  alert: {
+    // 💡メッセージ用
+    warningBox: 'flex items-start gap-2.5 px-3.5 py-2.5 rounded-xl text-left bg-amber-500/15 border border-amber-500/30 shadow-inner',
+    warningText: 'text-amber-200 text-xs leading-relaxed font-medium',
+    warningIcon: 'text-amber-400 text-base leading-none shrink-0',
+    // アプリ内ブラウザ警告パネル用
+    infoPanel: 'p-4 bg-amber-950/50 border border-amber-600/50 rounded-xl text-xs text-amber-200 space-y-2',
+    infoPanelTitle: 'font-bold',
+    infoPanelText: 'leading-relaxed',
+    actionButton: 'w-full py-2 px-3 bg-amber-600 hover:bg-amber-500 text-white font-medium rounded-lg transition text-center',
+  },
+
+  // リンク・テキストボタン系
+  actionText: {
+    cancelLink: 'text-xs text-slate-400 hover:text-slate-200 underline underline-offset-4 transition-colors',
+  },
 } as const;

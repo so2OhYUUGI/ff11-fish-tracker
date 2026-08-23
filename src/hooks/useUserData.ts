@@ -55,6 +55,9 @@ export const useUserData = () => {
 		userData.characters.find((c) => c.id === userData.activeCharacterId) ||
 		userData.characters[0];
 
+	// キャラクター登録済み（1個以上のキャラが存在する）かどうか
+	const isRegistered = userData.characters.length > 0;
+
 	const setActiveCharacter = (characterId: string) => {
 		setUserData((prev) => ({
 			...prev,
@@ -192,6 +195,7 @@ export const useUserData = () => {
 	return {
 		userData,
 		activeCharacter,
+		isRegistered,
 		viewMode: userData.viewMode ?? 'card',
 		setViewMode,
 		setActiveCharacter,

@@ -26,6 +26,7 @@ import { toSlug, findBySlug } from '@/utils/slug';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { LandingPage } from '@/components/LandingPage';
+import { OnboardingModal } from '@/components/common/OnboardingModal';
 import { AdBanner } from '@/components/common/AdBanner';
 import { SeoHead } from '@/components/common/SeoHead';
 import { SettingsModal } from '@/components/settings/SettingsModal';
@@ -57,24 +58,28 @@ const useIsMobileLayout = () => {
 
 type FishTrackerContainerProps = {
   userData: ReturnType<typeof useUserData>['userData'];
-  activeCharacter: CharacterProgress;
+  activeCharacter: CharacterProgress | undefined;
+  isRegistered: boolean;
   viewMode: ViewMode;
   setViewMode: (mode: ViewMode) => void;
   setActiveCharacter: (characterId: string) => void;
   toggleFishCheck: (fishId: number) => void;
   onOpenSettings: () => void;
   onOpenMasterEditor: () => void;
+  onRequestRegistration: (message: string) => void;
 };
 
 function FishTrackerContainer({
   userData,
   activeCharacter,
+  isRegistered,
   viewMode,
   setViewMode,
   setActiveCharacter,
   toggleFishCheck,
   onOpenSettings,
   onOpenMasterEditor,
+  onRequestRegistration,
 }: FishTrackerContainerProps) {
   const navigate = useNavigate();
   const { type, slug } = useParams<{ type?: string; slug?: string }>();
@@ -90,6 +95,10 @@ function FishTrackerContainer({
   const searchQuery = searchParams.get('q') || '';
 
   const handleMainTabChange = (tab: MainTab) => {
+    if (!isRegistered || !activeCharacter) {
+      onRequestRegistration('キャラクターを登録すると機能を利用できます');
+      return;
+    }
     navStack.clear();
     navigate(`/fishtracker/${tab}`);
   };
@@ -118,6 +127,11 @@ function FishTrackerContainer({
 
   const handleSelectFromList = useCallback(
     (item: NavItem) => {
+      if (!isRegistered || !activeCharacter) {
+        onRequestRegistration('キャラクターを登録すると詳細の回遊や記録が行えます');
+        return;
+      }
+
       const itemSlug = toSlug(item.item.en);
       const targetPath = `/fishtracker/${item.type}/${itemSlug}`;
 
@@ -128,7 +142,7 @@ function FishTrackerContainer({
       }
       navigate(targetPath);
     },
-    [isMobileLayout, navStack, navigate]
+    [isMobileLayout, navStack, navigate, isRegistered, activeCharacter, onRequestRegistration]
   );
 
   const handlePop = useCallback(() => {
@@ -153,11 +167,19 @@ function FishTrackerContainer({
     () => ({
       ...navStack,
       push: (item: NavItem) => {
+        if (!isRegistered || !activeCharacter) {
+          onRequestRegistration('キャラクターを登録すると詳細の回遊や記録が行えます');
+          return;
+        }
         navPush(item);
         const itemSlug = toSlug(item.item.en);
         navigate(`/fishtracker/${item.type}/${itemSlug}`);
       },
       replace: (item: NavItem) => {
+        if (!isRegistered || !activeCharacter) {
+          onRequestRegistration('キャラクターを登録すると詳細の回遊や記録が行えます');
+          return;
+        }
         navReplace(item);
         const itemSlug = toSlug(item.item.en);
         navigate(`/fishtracker/${item.type}/${itemSlug}`);
@@ -180,10 +202,18 @@ function FishTrackerContainer({
       handleSelectFromList,
       mainTab,
       canGoBackEffective,
+      isRegistered,
+      activeCharacter,
+      onRequestRegistration,
     ]
   );
 
   const handleToggleCheck = (fishId: number) => {
+    if (!isRegistered || !activeCharacter) {
+      onRequestRegistration('キャラクターを登録すると釣獲状況を記録できます');
+      return;
+    }
+
     const isCurrentlyChecked = activeCharacter.checkedFishIds.includes(fishId);
     const targetFish = FISHES.find((f) => f.id === fishId);
 
@@ -214,6 +244,14 @@ function FishTrackerContainer({
     pageDescription = `${currentBait.ja}を使って釣ることができる魚一覧データです。`;
   }
 
+  const effectiveActiveCharacter: CharacterProgress = activeCharacter || {
+    id: 'guest',
+    name: 'ゲスト',
+    checkedFishIds: [],
+    createdAt: 0,
+    updatedAt: 0,
+  };
+
   return (
     <div className={LAYOUT_TOKENS.page.appWrapper}>
       <SeoHead
@@ -227,14 +265,14 @@ function FishTrackerContainer({
       <div className={LAYOUT_TOKENS.header.stickyWrapper}>
         <Header
           characters={userData.characters}
-          activeCharacter={activeCharacter}
+          activeCharacter={effectiveActiveCharacter}
           onSelectCharacter={setActiveCharacter}
           onOpenSettings={onOpenSettings}
           onOpenMasterEditor={onOpenMasterEditor}
         />
         <FilterBar
           mainTab={mainTab}
-          activeCharacter={activeCharacter}
+          activeCharacter={effectiveActiveCharacter}
           onMainTabChange={handleMainTabChange}
           statusFilter={statusFilter}
           onStatusFilterChange={handleStatusFilterChange}
@@ -254,7 +292,7 @@ function FishTrackerContainer({
           statusFilter={statusFilter}
           searchQuery={searchQuery}
           viewMode={viewMode}
-          activeCharacter={activeCharacter}
+          activeCharacter={effectiveActiveCharacter}
           onToggleCheck={handleToggleCheck}
           navStack={effectiveNavStack}
         />
@@ -269,14 +307,20 @@ function FishTrackerContainer({
 
 export default function App() {
   const userDataProps = useUserData();
-  const { userData, activeCharacter, addCharacter } = userDataProps;
+  const { userData, activeCharacter, isRegistered, addCharacter } = userDataProps;
 
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [registrationMessage, setRegistrationMessage] = useState<string | null>(null);
 
-  if (userData.characters.length === 0 || !activeCharacter) {
-    return <LandingPage onCreateCharacter={addCharacter} />;
-  }
+  const handleRequestRegistration = (msg: string) => {
+    setRegistrationMessage(msg);
+  };
+
+  const handleCreateCharacterAndClose = (name: string) => {
+    addCharacter(name);
+    setRegistrationMessage(null);
+  };
 
   return (
     <HelmetProvider>
@@ -285,17 +329,24 @@ export default function App() {
           <Route path="/" element={<Navigate to="/fishtracker/fish" replace />} />
           <Route path="/fishtracker" element={<Navigate to="/fishtracker/fish" replace />} />
 
+          {/* 一覧ページ：未登録の場合はオンボーディング（LandingPage）を表示 */}
           <Route
             path="/fishtracker/:type"
             element={
-              <FishTrackerContainer
-                {...userDataProps}
-                onOpenSettings={() => setIsSettingsOpen(true)}
-                onOpenMasterEditor={() => setIsEditorOpen(true)}
-              />
+              !isRegistered || !activeCharacter ? (
+                <LandingPage onCreateCharacter={addCharacter} />
+              ) : (
+                <FishTrackerContainer
+                  {...userDataProps}
+                  onOpenSettings={() => setIsSettingsOpen(true)}
+                  onOpenMasterEditor={() => setIsEditorOpen(true)}
+                  onRequestRegistration={handleRequestRegistration}
+                />
+              )
             }
           />
 
+          {/* 詳細ページ（シェアリンク等）：未登録状態であっても閲覧を許可 */}
           <Route
             path="/fishtracker/:type/:slug"
             element={
@@ -303,6 +354,7 @@ export default function App() {
                 {...userDataProps}
                 onOpenSettings={() => setIsSettingsOpen(true)}
                 onOpenMasterEditor={() => setIsEditorOpen(true)}
+                onRequestRegistration={handleRequestRegistration}
               />
             }
           />
@@ -310,11 +362,19 @@ export default function App() {
           <Route path="*" element={<Navigate to="/fishtracker/fish" replace />} />
         </Routes>
 
+        {/* 閲覧中ユーザーが回遊・アクションしようとした際の登録モーダル */}
+        <OnboardingModal
+          isOpen={(!isRegistered || !activeCharacter) && registrationMessage !== null}
+          onClose={() => setRegistrationMessage(null)}
+          onCreateCharacter={handleCreateCharacterAndClose}
+          message={registrationMessage}
+        />
+
         <SettingsModal
           isOpen={isSettingsOpen}
           onClose={() => setIsSettingsOpen(false)}
           characters={userData.characters}
-          activeCharacterId={activeCharacter.id}
+          activeCharacterId={activeCharacter?.id || ''}
           onSelectCharacter={userDataProps.setActiveCharacter}
           onAddCharacter={userDataProps.addCharacter}
           onRenameCharacter={userDataProps.renameCharacter}

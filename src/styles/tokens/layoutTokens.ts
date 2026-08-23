@@ -59,4 +59,14 @@ export const LAYOUT_TOKENS = {
 				: 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
 			}`,
 	},
+
+	// (既存の定義の末尾などに追加)
+
+	// モーダル・オーバーレイ構造
+	modal: {
+		overlay: 'fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm',
+		contentWrapper: 'w-full max-w-md max-h-[90vh] overflow-y-auto p-6 border border-slate-700 rounded-2xl shadow-2xl relative',
+		closeButton: 'absolute top-4 right-4 text-slate-400 hover:text-white transition z-10',
+	},
 } as const;
+
