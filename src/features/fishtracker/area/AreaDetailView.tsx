@@ -86,6 +86,7 @@ export const AreaDetailView: React.FC<AreaDetailViewProps> = ({
 							onClick={onBack}
 							className={DETAIL_STYLES.headerBackButton}
 							title="前の画面へ戻る"
+							aria-label="前の画面へ戻る"
 						>
 							<ArrowLeft className="w-4 h-4 shrink-0" />
 							<span>戻る</span>
@@ -115,6 +116,7 @@ export const AreaDetailView: React.FC<AreaDetailViewProps> = ({
 						type="button"
 						onClick={onClose}
 						title="詳細を閉じる"
+						aria-label="詳細を閉じる"
 						className={DETAIL_STYLES.iconCloseButton}
 					>
 						<X className="w-5 h-5" />
@@ -139,7 +141,7 @@ export const AreaDetailView: React.FC<AreaDetailViewProps> = ({
 				{descriptionLines.length > 0 && (
 					<div className={DETAIL_STYLES.descriptionBox}>
 						{descriptionLines.map((line, index) => (
-							<React.Fragment key={index}>
+							<React.Fragment key={`${index}-${line.slice(0, 10)}`}>
 								{index > 0 && <br />}
 								{line}
 							</React.Fragment>

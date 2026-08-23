@@ -23,7 +23,7 @@
 
 ---
 
-## 3. データ構造（src/types/fish.ts）
+## 3. データ構造（src/types/fishtracker.ts）
 ### **データ宣言**
 - `src/types/`以下にあるファイルの宣言に従うこと
 
@@ -48,6 +48,7 @@ src/components/
 │   ├── SEO.tsx              # SEOメタ情報設定（Head管理）
 │   ├── SeoHead.tsx          # ページ個別ヘッダーメタ定義
 │   ├── AdBanner.tsx         # 広告エリア（プレースホルダー / AdSense枠）
+│   ├── ShareDetailButton.tsx# 詳細画面用共有ボタン
 │   └── ShareProgressButton.tsx # 釣獲進捗のSNS共有ボタン
 ├── layout/                  # レイアウト構成要素
 │   ├── Header.tsx           # アプリタイトル、キャラ切替UI、開発用ツール導線
@@ -69,15 +70,15 @@ src/components/
 | `src/utils/share.ts` | Web Share APIおよびクリップボードコピー処理ユーティリティ |
 | `src/features/fishtracker/FilterBar.tsx` | メインナビゲーション（魚/エリア/餌切替）、達成状態フィルター、プログレス表示、検索フォーム |
 | `src/features/fishtracker/FishTrackerContent.tsx` | 魚チェッカーメイン領域の表示切替（魚/エリア/餌）、ルーティング |
-| `src/features/fishtracker/fish/FishCard.tsx` | 個別魚カード（スペック表示、エリア情報の表示と+Nバッジ表示） |
-| `src/features/fishtracker/fish/FishListItem.tsx` | リスト表示用個別魚行コンポーネント（詳細パネル内での `variant="inline"` 対応） |
-| `src/features/fishtracker/fish/FishDetailView.tsx` | 魚詳細情報表示コンポーネント |
-| `src/features/fishtracker/area/AreaCard.tsx` | 個別エリアカード（基本情報および釣れる魚のタグ一覧＋+Nバッジ表示） |
-| `src/features/fishtracker/area/AreaListItem.tsx` | リスト表示用個別エリア行コンポーネント（対象魚の総数バッジ表示、`useMemo`・改行エスケープ最適化） |
-| `src/features/fishtracker/area/AreaDetailView.tsx` | エリア詳細情報表示コンポーネント（魚チェック・スタック遷移連携） |
-| `src/features/fishtracker/bait/BaitCard.tsx` | 個別餌カード（基本情報および釣れる魚のタグ一覧＋+Nバッジ表示） |
-| `src/features/fishtracker/bait/BaitListItem.tsx` | リスト表示用個別餌行コンポーネント（説明文横並び＋対象魚の総数バッジ表示、`useMemo`・改行エスケープ最適化） |
-| `src/features/fishtracker/bait/BaitDetailView.tsx` | 餌詳細情報表示コンポーネント（魚チェック・スタック遷移連携） |
+| `src/features/fishtracker/fish/FishCard.tsx` | 個別魚カード（スペック表示、エリア情報の表示と+Nバッジ表示、アクセシビリティ対応） |
+| `src/features/fishtracker/fish/FishListItem.tsx` | リスト表示用個別魚行コンポーネント（詳細パネル内での `variant="inline"` 対応、アクセシビリティ対応） |
+| `src/features/fishtracker/fish/FishDetailView.tsx` | 魚詳細情報表示コンポーネント（アクセシビリティ・ユニークキー対応） |
+| `src/features/fishtracker/area/AreaCard.tsx` | 個別エリアカード（基本情報および釣れる魚のタグ一覧＋+Nバッジ表示、アクセシビリティ・ユニークキー対応） |
+| `src/features/fishtracker/area/AreaListItem.tsx` | リスト表示用個別エリア行コンポーネント（対象魚の総数バッジ表示、`useMemo`・改行エスケープ最適化、アクセシビリティ対応） |
+| `src/features/fishtracker/area/AreaDetailView.tsx` | エリア詳細情報表示コンポーネント（魚チェック・スタック遷移連携、アクセシビリティ・ユニークキー対応） |
+| `src/features/fishtracker/bait/BaitCard.tsx` | 個別餌カード（基本情報および釣れる魚のタグ一覧＋+Nバッジ表示、アクセシビリティ対応） |
+| `src/features/fishtracker/bait/BaitListItem.tsx` | リスト表示用個別餌行コンポーネント（説明文横並び＋対象魚の総数バッジ表示、`useMemo`・改行エスケープ最適化、アクセシビリティ対応） |
+| `src/features/fishtracker/bait/BaitDetailView.tsx` | 餌詳細情報表示コンポーネント（魚チェック・スタック遷移連携、アクセシビリティ対応） |
 | `src/styles/components/cardStyles.ts` | カードUI用共通Tailwind CSSクラス定義（`CARD_STYLES`） |
 | `src/styles/components/listStyles.ts` | リストUI用共通Tailwind CSSクラス定義（`LIST_STYLES`） |
 | `src/styles/components/detailStyles.ts` | 詳細ビュー用共通Tailwind CSSクラス定義（`DETAIL_STYLES`） |
@@ -93,13 +94,17 @@ src/components/
 ### **カード表示 (`AreaCard`, `BaitCard`, `FishCard`)**
 - カードの垂直高さを適正に保ちつつ、情報網羅性を高める **3段構成** を採用する。
   1. **上段:** 名称表示領域（日本語名・英語名の縦並び）
-  2. **中段:** 説明文領域 (`CARD_STYLES.boxBlock`)
-  3. **下段:** 関連データ一覧表示（`Fish`アイコン + 「対象の魚 (N):」 + タグ最大2件 + 超過分の `+N` バッジ）
+  2. **中段:** 説明文領域 (`CARD_STYLES.descriptionBox`)
+  3. **下段:** 関連データ一覧表示（`Fish`アイコン + 「釣れる魚 (N):」 + タグ最大2件 + 超過分の `+N` バッジ）
 
 ### **リスト表示 (`AreaListItem`, `BaitListItem`, `FishListItem`)**
 - 垂直方向への高速スキャンと高密度表示を実現する **横並び構成** を採用する。
   - 縦に段数を増やさず（3段目の追加を禁止）、1行（高密度2段）の垂直高さを維持する。
   - **構成:** 左側:名称（縦並び） / 中央:説明文（1行 truncate・右寄せ） / 右端:総数インジケーター（`Fish`アイコン + 件数バッジ）。
+
+### **アクセシビリティ・キーボード操作対応**
+- カードおよびリスト要素などのクリック可能領域 (`div`) には、必ず `role="button"`、`tabIndex={0}`、および `onKeyDown`（Enter / Spaceキー判定）を付与する。
+- 戻るボタンや閉じるボタンなどのアイコン操作部には、`title` と同時に `aria-label` を明記してスクリーンリーダーへ配慮する。
 
 ### **ヘッダーアイコンのカラー定義**
 - **魚（Fish）:** シアン (`text-cyan-400`)
@@ -162,11 +167,12 @@ src/components/
 - **カード内要素の溢れ制限デザイン**:
   - カード内に可変長の関連要素（エリア名や魚名）をタグ表示する場合は、原則として上位2件を表示し、超過分は `+N` のバッジ形式でカウント表示してカードの高さを保持すること。
 - **UIスタイルの集約**:
-  - カード、リスト、詳細表示等、再利用性の高い共通コンポーネントの Tailwind CSS クラス群は `src/styles/*Styles.ts` に定数（`as const`）として定義して参照する。
+  - カード、リスト、詳細表示等、再利用性の高い共通コンポーネントの Tailwind CSS クラス群は `src/styles/*Styles.ts` や `src/styles/tokens/*` に定数（`as const`）として定義して参照する。
 - **ボタン要素の定義**:
   - `button` タグを配置する際は、必ず `type="button"`（フォーム送信用の場合は `type="submit"`）を明記すること。
-- **テキストデータの改行処理**:
+- **テキストデータの改行処理とレンダリングのキー厳格化**:
   - マスターデータ内のテキスト改行は `\n`（または `\\n`）で混在しうるため、表示側（React）では `/\r?\n|\\n/` の正規表現等を用いて安全に分割・置換・レンダリングを行うこと。
+  - JSXで配列を `map` 描画する際、テキスト行などのキーには配列インデックス単体（`key={index}`）を避け、文字列の一部やユニークなIDを組み合わせたキー（`key={`${index}-${line.slice(0, 10)}`}`）を使用すること。
 
 ---
 

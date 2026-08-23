@@ -9,6 +9,7 @@ import React from 'react';
 import { Share2 } from 'lucide-react';
 import { shareContent } from '@/utils/share';
 import type { CharacterProgress } from '@/types/fishtracker';
+import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 
 type ShareProgressButtonProps = {
 	activeCharacter: CharacterProgress;
@@ -35,8 +36,9 @@ export const ShareProgressButton: React.FC<ShareProgressButtonProps> = ({
 
 	return (
 		<button
+			type="button"
 			onClick={handleShare}
-			className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600/20 text-indigo-300 hover:bg-indigo-600/30 transition-colors text-sm font-medium"
+			className={COMMON_TOKENS.button.shareProgress}
 			title="釣獲進捗を共有"
 		>
 			<Share2 className="w-4 h-4" />

@@ -8,6 +8,7 @@
 import React from 'react';
 import { Share } from 'lucide-react';
 import { shareContent } from '@/utils/share';
+import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 
 type ShareDetailButtonProps = {
 	categoryName: string;
@@ -32,11 +33,11 @@ export const ShareDetailButton: React.FC<ShareDetailButtonProps> = ({
 		<button
 			type="button"
 			onClick={handleShare}
-			className="p-2 rounded-lg bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700 transition-colors flex items-center justify-center shrink-0"
+			className={COMMON_TOKENS.button.shareIcon}
 			title="このページを共有"
 			aria-label="このページを共有"
 		>
-			<Share className="w-5 h-5 text-cyan-400" />
+			<Share className={`w-5 h-5 ${COMMON_TOKENS.entity.fish.text}`} />
 		</button>
 	);
 };

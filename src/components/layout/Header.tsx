@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * [FilePath] src/components/Header.tsx
+ * [FilePath] src/components/layout/Header.tsx
  * [Role] アプリケーションの固定ヘッダー・キャラクター切り替え・設定/開発用ツール導線コンポーネント
  * ============================================================================
  */
@@ -68,7 +68,7 @@ export const Header: React.FC<HeaderProps> = ({
 							</label>
 							<select
 								id="char-select"
-								value={activeCharacter.id}
+								value={activeCharacter?.id ?? ''}
 								onChange={(e) => onSelectCharacter(e.target.value)}
 								className={LAYOUT_TOKENS.control.select}
 							>
@@ -112,7 +112,9 @@ export const Header: React.FC<HeaderProps> = ({
 							aria-haspopup="true"
 						>
 							<User className="w-4 h-4 text-slate-400 shrink-0" />
-							<span className={LAYOUT_TOKENS.header.collapsedButtonText}>{activeCharacter.name}</span>
+							<span className={LAYOUT_TOKENS.header.collapsedButtonText}>
+								{activeCharacter?.name ?? 'キャラ未選択'}
+							</span>
 							<ChevronDown className={LAYOUT_TOKENS.header.collapsedChevron(isOpen)} />
 						</button>
 
@@ -126,7 +128,7 @@ export const Header: React.FC<HeaderProps> = ({
 										キャラクター切替
 									</div>
 									{characters.map((char) => {
-										const isSelected = char.id === activeCharacter.id;
+										const isSelected = char.id === activeCharacter?.id;
 										return (
 											<button
 												key={char.id}

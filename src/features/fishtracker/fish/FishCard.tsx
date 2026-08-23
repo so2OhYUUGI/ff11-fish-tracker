@@ -12,7 +12,7 @@
  * ============================================================================
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Check, Info, MapPin } from 'lucide-react';
 import type { FishMaster, ZoneMaster } from '@/types/fishtracker';
 import { FISH_LOCATIONS } from '@/data';
@@ -41,11 +41,19 @@ export const FishCard: React.FC<FishCardProps> = ({
 	onToggleCheck,
 	onClickDetail,
 }) => {
-	const targetZoneIds = FISH_LOCATIONS
-		.filter((loc) => loc.fishId === fish.id)
-		.map((loc) => loc.zoneId);
-	const matchedZones = zones.filter((zone) => targetZoneIds.includes(zone.id));
-	const totalZones = matchedZones.length;
+	// 生息エリア情報の抽出（メモ化）
+	const { matchedZones, totalZones } = useMemo(() => {
+		const targetZoneIds = new Set(
+			FISH_LOCATIONS
+				.filter((loc) => loc.fishId === fish.id)
+				.map((loc) => loc.zoneId)
+		);
+		const matched = zones.filter((zone) => targetZoneIds.has(zone.id));
+		return {
+			matchedZones: matched,
+			totalZones: matched.length,
+		};
+	}, [fish.id, zones]);
 
 	const maxDisplayCount = 2;
 	const displayZones = matchedZones.slice(0, maxDisplayCount);
@@ -54,6 +62,12 @@ export const FishCard: React.FC<FishCardProps> = ({
 	const isHarakiriTarget = Boolean(
 		(fish.harakiriItems && fish.harakiriItems.length > 0) || fish.harakiriTitle
 	);
+
+	// 改行コード（\n および \\n）で分割した説明文行リスト
+	const descriptionLines = useMemo(() => {
+		if (!fish.description) return [];
+		return fish.description.split(/\r?\n|\\n/);
+	}, [fish.description]);
 
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
 		if (e.key === 'Enter' || e.key === ' ') {
@@ -68,14 +82,17 @@ export const FishCard: React.FC<FishCardProps> = ({
 			tabIndex={0}
 			onClick={() => onClickDetail(fish)}
 			onKeyDown={handleKeyDown}
-			className={`${CARD_STYLES.base} ${isSelected ? CARD_STYLES.selected : CARD_STYLES.default}`}
+			className={`${CARD_STYLES.base} ${isSelected ? CARD_STYLES.selected : CARD_STYLES.default
+				}`}
 		>
 			<div className="flex items-start justify-between gap-3">
 				<div className="flex-1 min-w-0">
 					{/* 日本語名と英語名 */}
 					<div className="flex flex-col min-w-0">
 						<h3
-							className={`truncate ${CARD_STYLES.titleJa} ${isSelected ? CARD_STYLES.titleJaSelected : CARD_STYLES.titleJaDefault
+							className={`truncate ${CARD_STYLES.titleJa} ${isSelected
+									? CARD_STYLES.titleJaSelected
+									: CARD_STYLES.titleJaDefault
 								}`}
 						>
 							{fish.ja}
@@ -86,10 +103,10 @@ export const FishCard: React.FC<FishCardProps> = ({
 					</div>
 
 					{/* 説明文 */}
-					{fish.description && (
+					{descriptionLines.length > 0 && (
 						<div className={CARD_STYLES.boxBlock}>
-							{fish.description.split('\\n').map((line, index) => (
-								<React.Fragment key={index}>
+							{descriptionLines.map((line, index) => (
+								<React.Fragment key={`${index}-${line.slice(0, 10)}`}>
 									{index > 0 && <br />}
 									{line}
 								</React.Fragment>
@@ -159,10 +176,12 @@ export const FishCard: React.FC<FishCardProps> = ({
 							onToggleCheck(fish.id);
 						}}
 						className={`${CARD_STYLES.checkButton.base} ${isChecked
-							? CARD_STYLES.checkButton.checked
-							: CARD_STYLES.checkButton.unchecked
+								? CARD_STYLES.checkButton.checked
+								: CARD_STYLES.checkButton.unchecked
 							}`}
 						title={isChecked ? '未釣獲にする' : '釣獲済みにする'}
+						aria-label={`${fish.ja}の獲得状態の切り替え（現在: ${isChecked ? '釣獲済み' : '未釣獲'
+							}）`}
 					>
 						<Check
 							className={

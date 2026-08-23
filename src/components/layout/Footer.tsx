@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * [FilePath] src/components/Footer.tsx
+ * [FilePath] src/components/layout/Footer.tsx
  * [Role] アプリケーション共通フッターコンポーネント
  * 
  * [概要]

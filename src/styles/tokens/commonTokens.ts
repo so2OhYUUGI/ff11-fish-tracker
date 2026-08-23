@@ -69,4 +69,10 @@ export const COMMON_TOKENS = {
     input: 'w-full bg-slate-700 border border-slate-600 text-white placeholder-slate-400 text-sm rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors',
     primaryButton: 'w-full py-3 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-sm rounded-lg shadow-md transition-colors',
   },
+
+  // 共有ボタン用スタイル定義
+  button: {
+    shareIcon: 'p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors flex items-center justify-center shrink-0',
+    shareProgress: 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600/20 text-indigo-300 hover:bg-indigo-600/30 transition-colors text-sm font-medium',
+  },
 } as const;

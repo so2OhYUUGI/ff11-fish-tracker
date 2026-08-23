@@ -54,7 +54,7 @@ export const AreaCard: React.FC<Props> = ({
   );
   const remainingCount = totalFishes - maxDisplayCount;
 
-  // 改行コード（\n および \n）で分割した説明文行リスト
+  // 改行コード（\n および \\n）で分割した説明文行リスト
   const descriptionLines = useMemo(() => {
     if (!area.description) return [];
     return area.description.split(/\r?\n|\\n/);
@@ -81,7 +81,9 @@ export const AreaCard: React.FC<Props> = ({
           {/* 日本語名と英語名 */}
           <div className={CARD_STYLES.titleGroup}>
             <h3
-              className={`truncate ${CARD_STYLES.titleJa} ${isSelected ? CARD_STYLES.titleJaSelectedArea : CARD_STYLES.titleJaDefault
+              className={`truncate ${CARD_STYLES.titleJa} ${isSelected
+                  ? CARD_STYLES.titleJaSelectedArea
+                  : CARD_STYLES.titleJaDefault
                 }`}
             >
               {area.ja}
@@ -94,7 +96,7 @@ export const AreaCard: React.FC<Props> = ({
           {descriptionLines.length > 0 && (
             <div className={CARD_STYLES.descriptionBox}>
               {descriptionLines.map((line: string, index: number) => (
-                <p key={index}>{line}</p>
+                <p key={`${index}-${line.slice(0, 10)}`}>{line}</p>
               ))}
             </div>
           )}

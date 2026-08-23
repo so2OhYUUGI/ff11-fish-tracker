@@ -92,10 +92,14 @@ export const useUserData = () => {
 		if (userData.characters.length <= 1) return;
 		setUserData((prev) => {
 			const nextChars = prev.characters.filter((c) => c.id !== characterId);
+			const currentActiveId =
+				prev.characters.find((c) => c.id === prev.activeCharacterId)?.id ||
+				prev.characters[0]?.id;
+
 			return {
 				...prev,
 				activeCharacterId:
-					prev.activeCharacterId === characterId ? nextChars[0].id : prev.activeCharacterId,
+					currentActiveId === characterId ? nextChars[0].id : currentActiveId,
 				characters: nextChars,
 			};
 		});
@@ -103,8 +107,14 @@ export const useUserData = () => {
 
 	const toggleFishCheck = (fishId: number) => {
 		setUserData((prev) => {
+			const targetActiveId =
+				prev.characters.find((c) => c.id === prev.activeCharacterId)?.id ||
+				prev.characters[0]?.id;
+
+			if (!targetActiveId) return prev;
+
 			const updatedChars = prev.characters.map((char) => {
-				if (char.id !== prev.activeCharacterId) return char;
+				if (char.id !== targetActiveId) return char;
 
 				const isChecked = char.checkedFishIds.includes(fishId);
 				const nextChecked = isChecked
@@ -125,7 +135,6 @@ export const useUserData = () => {
 		});
 	};
 
-	// 表示モード（カード / リスト）の変更関数
 	const setViewMode = (viewMode: ViewMode) => {
 		setUserData((prev) => ({
 			...prev,
@@ -134,10 +143,15 @@ export const useUserData = () => {
 	};
 
 	const exportData = () => {
-		const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(userData, null, 2));
+		const dataStr =
+			'data:text/json;charset=utf-8,' +
+			encodeURIComponent(JSON.stringify(userData, null, 2));
 		const downloadAnchor = document.createElement('a');
 		downloadAnchor.setAttribute('href', dataStr);
-		downloadAnchor.setAttribute('download', `ff11_fish_tracker_backup_${new Date().toISOString().slice(0, 10)}.json`);
+		downloadAnchor.setAttribute(
+			'download',
+			`ff11_fish_tracker_backup_${new Date().toISOString().slice(0, 10)}.json`
+		);
 		document.body.appendChild(downloadAnchor);
 		downloadAnchor.click();
 		downloadAnchor.remove();
@@ -169,7 +183,8 @@ export const useUserData = () => {
 					reject(err);
 				}
 			};
-			reader.onerror = () => reject(new Error('ファイルの読み込みに失敗しました。'));
+			reader.onerror = () =>
+				reject(new Error('ファイルの読み込みに失敗しました。'));
 			reader.readAsText(file);
 		});
 	};

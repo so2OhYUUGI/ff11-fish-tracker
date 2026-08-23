@@ -7,7 +7,7 @@
  * - 餌の基本情報（和名、英名、説明文）のカード形式表示
  * - `AreaCard` と統一されたカードレイアウト（上段:名称 / 中段:説明文 / 下段:対象魚）
  * - 該当の餌で釣れる魚の抽出および上限数制限付きタグ表示（上位表示＋残り件数バッジ）
- * - 全スタイルの参照を `CARD_STYLES` および `COMMON_TOKENS` へ完全移行
+ * - 全スタイルの参照を `CARD_STYLES` へ完全移行
  * - キーボード操作時のアクセシビリティ対応を追加
  * ============================================================================
  */
@@ -51,7 +51,7 @@ export const BaitCard: React.FC<BaitCardProps> = ({
 	);
 	const remainingCount = totalFishes - maxDisplayCount;
 
-	// 改行コード（\n および \n）で分割した説明文行リスト
+	// 改行コード（\n および \\n）で分割した説明文行リスト
 	const descriptionLines = useMemo(() => {
 		if (!bait.description) return [];
 		return bait.description.split(/\r?\n|\\n/);
@@ -77,7 +77,9 @@ export const BaitCard: React.FC<BaitCardProps> = ({
 				{/* 1. 名称表示領域（日本語名・英語名の縦並び） */}
 				<div className={CARD_STYLES.titleGroup}>
 					<h3
-						className={`truncate ${CARD_STYLES.titleJa} ${isSelected ? CARD_STYLES.titleJaSelectedBait : CARD_STYLES.titleJaDefault
+						className={`truncate ${CARD_STYLES.titleJa} ${isSelected
+								? CARD_STYLES.titleJaSelectedBait
+								: CARD_STYLES.titleJaDefault
 							}`}
 					>
 						{bait.ja}
@@ -91,7 +93,7 @@ export const BaitCard: React.FC<BaitCardProps> = ({
 				{descriptionLines.length > 0 && (
 					<div className={CARD_STYLES.descriptionBox}>
 						{descriptionLines.map((line: string, index: number) => (
-							<p key={index}>{line}</p>
+							<p key={`${index}-${line.slice(0, 10)}`}>{line}</p>
 						))}
 					</div>
 				)}

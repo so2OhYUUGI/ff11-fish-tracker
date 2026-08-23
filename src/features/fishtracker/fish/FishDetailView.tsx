@@ -79,7 +79,7 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 		return BAITS.filter((bait) => targetBaitIds.has(bait.id));
 	}, [fish.id]);
 
-	// 3. 改行コード（\n および \n）で分割した説明文行リスト
+	// 3. 改行コード（\n および \\n）で分割した説明文行リスト
 	const descriptionLines = useMemo(() => {
 		if (!fish.description) return [];
 		return fish.description.split(/\r?\n|\\n/);
@@ -107,6 +107,7 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 							onClick={onBack}
 							className={DETAIL_STYLES.headerBackButton}
 							title="前の画面へ戻る"
+							aria-label="前の画面へ戻る"
 						>
 							<ArrowLeft className="w-4 h-4 shrink-0" />
 							<span>戻る</span>
@@ -130,9 +131,10 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 						type="button"
 						onClick={() => onToggleCheck(fish.id)}
 						className={`${DETAIL_STYLES.checkButtonBase} ${isChecked
-							? DETAIL_STYLES.checkButtonChecked
-							: DETAIL_STYLES.checkButtonUnchecked
+								? DETAIL_STYLES.checkButtonChecked
+								: DETAIL_STYLES.checkButtonUnchecked
 							} shrink-0`}
+						aria-label={`${fish.ja}を${isChecked ? '未釣獲' : '釣獲済み'}に変更`}
 					>
 						{isChecked ? (
 							<>
@@ -158,6 +160,7 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 						type="button"
 						onClick={onClose}
 						title="詳細を閉じる"
+						aria-label="詳細を閉じる"
 						className={DETAIL_STYLES.iconCloseButton}
 					>
 						<X className="w-5 h-5" />
@@ -354,7 +357,7 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 				{descriptionLines.length > 0 && (
 					<div className={DETAIL_STYLES.descriptionBox}>
 						{descriptionLines.map((line, index) => (
-							<React.Fragment key={index}>
+							<React.Fragment key={`${index}-${line.slice(0, 10)}`}>
 								{index > 0 && <br />}
 								{line}
 							</React.Fragment>

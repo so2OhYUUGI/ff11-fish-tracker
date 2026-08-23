@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * [FilePath] src/features/fishtracker/components/lists/FishListItem.tsx
+ * [FilePath] src/features/fishtracker/fish/FishListItem.tsx
  * [Role] 魚データ（個別）のリスト表示コンポーネント
  * 
  * [概要]
@@ -83,8 +83,21 @@ export const FishListItem: React.FC<Props> = ({
 				? LIST_STYLES.titleJaChecked
 				: LIST_STYLES.titleJaDefault;
 
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+		if (onClickDetail && (e.key === 'Enter' || e.key === ' ')) {
+			e.preventDefault();
+			onClickDetail(fish);
+		}
+	};
+
 	return (
-		<div onClick={() => onClickDetail?.(fish)} className={containerStyle}>
+		<div
+			onClick={() => onClickDetail?.(fish)}
+			onKeyDown={handleKeyDown}
+			role={onClickDetail ? 'button' : undefined}
+			tabIndex={onClickDetail ? 0 : undefined}
+			className={containerStyle}
+		>
 			{/* 左側：チェックボックス ＋ 魚名（日本語・英語） */}
 			<div className="flex items-center gap-2.5 min-w-0 flex-1">
 				{onToggleCheck && (
@@ -97,6 +110,7 @@ export const FishListItem: React.FC<Props> = ({
 						className={`${LIST_STYLES.checkboxBase} ${isChecked ? LIST_STYLES.checkboxChecked : LIST_STYLES.checkboxDefault
 							}`}
 						title={isChecked ? '未獲得にする' : '獲得済みにする'}
+						aria-label={`${fish.ja}の獲得状態の切り替え（現在: ${isChecked ? '獲得済み' : '未獲得'}）`}
 					>
 						{isChecked && <Check className="w-4 h-4 stroke-[3]" />}
 					</button>

@@ -8,12 +8,13 @@
  * - 餌名称（縦並び）、説明文（中央横並び）、釣れる魚の総数バッジ（右端）を配置
  * - 親から受け取った `fishCount`（釣れる魚の件数）をバッジ描画
  * - 全スタイルの参照を `LIST_STYLES` / `COMMON_TOKENS` へ完全移行
+ * - アクセシビリティ（キーボード操作対応）の強化
  * ============================================================================
  */
 
 import React, { useMemo } from 'react';
 import { Fish } from 'lucide-react';
-import type { BaitMaster,  } from '@/types/fishtracker';
+import type { BaitMaster } from '@/types/fishtracker';
 import { LIST_STYLES } from '@/styles/components/listStyles';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 
@@ -36,9 +37,19 @@ export const BaitListItem: React.FC<Props> = ({
 		return bait.description.replace(/\r?\n|\\n/g, ' ');
 	}, [bait.description]);
 
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			onClickDetail(bait);
+		}
+	};
+
 	return (
 		<div
+			role="button"
+			tabIndex={0}
 			onClick={() => onClickDetail(bait)}
+			onKeyDown={handleKeyDown}
 			className={`${LIST_STYLES.base} ${LIST_STYLES.itemRow} ${isSelected ? LIST_STYLES.selected : LIST_STYLES.default
 				}`}
 		>

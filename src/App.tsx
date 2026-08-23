@@ -5,7 +5,7 @@
  * ============================================================================
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   BrowserRouter,
   Routes,
@@ -33,7 +33,7 @@ import { MasterDataEditorModal } from '@/components/dev/MasterDataEditorModal';
 import { FilterBar, type StatusFilter } from '@/features/fishtracker/FilterBar';
 import { FishTrackerContent } from '@/features/fishtracker/FishTrackerContent';
 import { LAYOUT_TOKENS } from './styles/tokens/layoutTokens';
-import type { MainTab } from '@/types/fishtracker';
+import type { MainTab, ViewMode, CharacterProgress } from '@/types/fishtracker';
 
 const useIsMobileLayout = () => {
   const [isMobile, setIsMobile] = useState(() => {
@@ -55,6 +55,17 @@ const useIsMobileLayout = () => {
   return isMobile;
 };
 
+type FishTrackerContainerProps = {
+  userData: ReturnType<typeof useUserData>['userData'];
+  activeCharacter: CharacterProgress;
+  viewMode: ViewMode;
+  setViewMode: (mode: ViewMode) => void;
+  setActiveCharacter: (characterId: string) => void;
+  toggleFishCheck: (fishId: number) => void;
+  onOpenSettings: () => void;
+  onOpenMasterEditor: () => void;
+};
+
 function FishTrackerContainer({
   userData,
   activeCharacter,
@@ -64,7 +75,7 @@ function FishTrackerContainer({
   toggleFishCheck,
   onOpenSettings,
   onOpenMasterEditor,
-}: any) {
+}: FishTrackerContainerProps) {
   const navigate = useNavigate();
   const { type, slug } = useParams<{ type?: string; slug?: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -72,14 +83,12 @@ function FishTrackerContainer({
   const navStack = useNavigationStack(type, slug);
   const isMobileLayout = useIsMobileLayout();
 
-  // パス (:type) からタブを決定。指定がない場合は 'fish'
   const validTabs: MainTab[] = ['fish', 'bait', 'area'];
   const mainTab = validTabs.includes(type as MainTab) ? (type as MainTab) : 'fish';
 
   const statusFilter = (searchParams.get('status') as StatusFilter) || 'all';
   const searchQuery = searchParams.get('q') || '';
 
-  // タブ切り替え時はクエリパラメータを介さずパスのみ更新
   const handleMainTabChange = (tab: MainTab) => {
     navStack.clear();
     navigate(`/fishtracker/${tab}`);
@@ -135,26 +144,29 @@ function FishTrackerContainer({
     ? navStack.stack.length > 0
     : navStack.stack.length > 1;
 
-  const effectiveNavStack = {
-    ...navStack,
-    push: (item: NavItem) => {
-      navStack.push(item);
-      const itemSlug = toSlug(item.item.en);
-      navigate(`/fishtracker/${item.type}/${itemSlug}`);
-    },
-    replace: (item: NavItem) => {
-      navStack.replace(item);
-      const itemSlug = toSlug(item.item.en);
-      navigate(`/fishtracker/${item.type}/${itemSlug}`);
-    },
-    pop: handlePop,
-    clear: () => {
-      navStack.clear();
-      navigate(`/fishtracker/${mainTab}`);
-    },
-    selectFromList: handleSelectFromList,
-    canGoBack: canGoBackEffective,
-  };
+  const effectiveNavStack = useMemo(
+    () => ({
+      ...navStack,
+      push: (item: NavItem) => {
+        navStack.push(item);
+        const itemSlug = toSlug(item.item.en);
+        navigate(`/fishtracker/${item.type}/${itemSlug}`);
+      },
+      replace: (item: NavItem) => {
+        navStack.replace(item);
+        const itemSlug = toSlug(item.item.en);
+        navigate(`/fishtracker/${item.type}/${itemSlug}`);
+      },
+      pop: handlePop,
+      clear: () => {
+        navStack.clear();
+        navigate(`/fishtracker/${mainTab}`);
+      },
+      selectFromList: handleSelectFromList,
+      canGoBack: canGoBackEffective,
+    }),
+    [navStack, mainTab, isMobileLayout, canGoBackEffective]
+  );
 
   const handleToggleCheck = (fishId: number) => {
     const isCurrentlyChecked = activeCharacter.checkedFishIds.includes(fishId);
@@ -256,11 +268,8 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Navigate to="/fishtracker/fish" replace />} />
-
-          {/* ルート直下へのアクセスはデフォルトタブ (/fishtracker/fish) へリダイレクト */}
           <Route path="/fishtracker" element={<Navigate to="/fishtracker/fish" replace />} />
 
-          {/* 各カテゴリ・タブ一覧 (/fishtracker/fish, /fishtracker/area, /fishtracker/bait) */}
           <Route
             path="/fishtracker/:type"
             element={
@@ -272,7 +281,6 @@ export default function App() {
             }
           />
 
-          {/* 個別詳細パーマリンク (/fishtracker/fish/giant-catfish 等) */}
           <Route
             path="/fishtracker/:type/:slug"
             element={

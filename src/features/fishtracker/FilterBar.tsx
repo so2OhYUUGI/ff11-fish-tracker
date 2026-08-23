@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * [FilePath] src/components/FilterBar.tsx
+ * [FilePath] src/features/fishtracker/FilterBar.tsx
  * [Role] メインナビゲーション・絞り込み条件・検索・プログレス表示コンポーネント
  * 
  * [概要]
@@ -18,7 +18,7 @@
  * 3. 【プログレス表示】
  *    `totalFishCount` が 0 の場合は 0% 計算のゼロ除算防止ロジックを含んでいます。
  * 4. 【スタイルの集約】
- *    Tailwind CSS クラスは `@/styles/feature/FishTrackerStyle` より定数参照しています。
+ *    Tailwind CSS クラスは `@/styles/features/FishTrackerStyle` より定数参照しています。
  * 5. 【アクセシビリティ・規約】
  *    すべての `button` タグには `type="button"` を明記しています。
  * ============================================================================
@@ -56,7 +56,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 	viewMode,
 	onViewModeChange,
 }) => {
-	const checkedCount = activeCharacter.checkedFishIds.length;
+	const checkedCount = activeCharacter?.checkedFishIds?.length ?? 0;
 	const progressPercent =
 		totalFishCount > 0 ? Math.round((checkedCount / totalFishCount) * 100) : 0;
 
@@ -74,6 +74,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 									? FILTER_BAR_STYLES.tabActive
 									: FILTER_BAR_STYLES.tabInactive
 								}`}
+							aria-label="魚一覧タブ"
 						>
 							<Fish className={FILTER_BAR_STYLES.tabIcon} />
 							<span>魚</span>
@@ -85,6 +86,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 									? FILTER_BAR_STYLES.tabActive
 									: FILTER_BAR_STYLES.tabInactive
 								}`}
+							aria-label="餌一覧タブ"
 						>
 							<Utensils className={FILTER_BAR_STYLES.tabIcon} />
 							<span>餌</span>
@@ -96,6 +98,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 									? FILTER_BAR_STYLES.tabActive
 									: FILTER_BAR_STYLES.tabInactive
 								}`}
+							aria-label="エリア一覧タブ"
 						>
 							<MapPin className={FILTER_BAR_STYLES.tabIcon} />
 							<span>エリア</span>
@@ -200,6 +203,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 									: FILTER_BAR_STYLES.viewModeInactive
 								}`}
 							title="カード表示"
+							aria-label="カード表示に切り替え"
 						>
 							<LayoutGrid className={FILTER_BAR_STYLES.viewModeIcon} />
 						</button>
@@ -211,6 +215,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 									: FILTER_BAR_STYLES.viewModeInactive
 								}`}
 							title="リスト表示"
+							aria-label="リスト表示に切り替え"
 						>
 							<List className={FILTER_BAR_STYLES.viewModeIcon} />
 						</button>
