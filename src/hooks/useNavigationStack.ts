@@ -14,7 +14,7 @@ export type NavItem =
 	| { type: 'area'; item: ZoneMaster }
 	| { type: 'bait'; item: BaitMaster };
 
-export const useNavigationStack = (type?: string, slug?: string) => {
+export const useNavigationStack = (_type?: string, slug?: string) => {
 	const [stack, setStack] = useState<NavItem[]>([]);
 
 	// URLパラメータ (:slug) の変更を検知して全マスターデータから該当アイテムを判定・スタック同期
