@@ -5,7 +5,7 @@
  * ============================================================================
  */
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   BrowserRouter,
   Routes,
@@ -116,19 +116,22 @@ function FishTrackerContainer({
   const currentArea = type === 'area' ? findBySlug(ZONES, slug) : undefined;
   const currentBait = type === 'bait' ? findBySlug(BAITS, slug) : undefined;
 
-  const handleSelectFromList = (item: NavItem) => {
-    const itemSlug = toSlug(item.item.en);
-    const targetPath = `/fishtracker/${item.type}/${itemSlug}`;
+  const handleSelectFromList = useCallback(
+    (item: NavItem) => {
+      const itemSlug = toSlug(item.item.en);
+      const targetPath = `/fishtracker/${item.type}/${itemSlug}`;
 
-    if (isMobileLayout) {
-      navStack.push(item);
-    } else {
-      navStack.replace(item);
-    }
-    navigate(targetPath);
-  };
+      if (isMobileLayout) {
+        navStack.push(item);
+      } else {
+        navStack.replace(item);
+      }
+      navigate(targetPath);
+    },
+    [isMobileLayout, navStack, navigate]
+  );
 
-  const handlePop = () => {
+  const handlePop = useCallback(() => {
     if (navStack.stack.length > 1) {
       const previousItem = navStack.stack[navStack.stack.length - 2];
       const itemSlug = toSlug(previousItem.item.en);
@@ -138,34 +141,46 @@ function FishTrackerContainer({
       navStack.clear();
       navigate(`/fishtracker/${mainTab}`);
     }
-  };
+  }, [navStack, navigate, mainTab]);
 
   const canGoBackEffective = isMobileLayout
     ? navStack.stack.length > 0
     : navStack.stack.length > 1;
 
+  const { push: navPush, replace: navReplace, clear: navClear } = navStack;
+
   const effectiveNavStack = useMemo(
     () => ({
       ...navStack,
       push: (item: NavItem) => {
-        navStack.push(item);
+        navPush(item);
         const itemSlug = toSlug(item.item.en);
         navigate(`/fishtracker/${item.type}/${itemSlug}`);
       },
       replace: (item: NavItem) => {
-        navStack.replace(item);
+        navReplace(item);
         const itemSlug = toSlug(item.item.en);
         navigate(`/fishtracker/${item.type}/${itemSlug}`);
       },
       pop: handlePop,
       clear: () => {
-        navStack.clear();
+        navClear();
         navigate(`/fishtracker/${mainTab}`);
       },
       selectFromList: handleSelectFromList,
       canGoBack: canGoBackEffective,
     }),
-    [navStack, mainTab, isMobileLayout, canGoBackEffective]
+    [
+      navStack,
+      navPush,
+      navReplace,
+      navClear,
+      navigate,
+      handlePop,
+      handleSelectFromList,
+      mainTab,
+      canGoBackEffective,
+    ]
   );
 
   const handleToggleCheck = (fishId: number) => {
