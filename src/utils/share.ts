@@ -1,55 +1,71 @@
 /**
  * ============================================================================
  * [FilePath] src/utils/share.ts
- * [Role] 共有・クリップボード操作ユーティリティ
+ * [Role]     Web Share API および クリップボードコピー処理の共通ユーティリティ
  * ============================================================================
  */
 
-import { toast } from 'sonner';
-
-export type ShareData = {
+type ShareData = {
 	title: string;
-	text?: string;
-	url?: string;
+	text: string;
+	url: string;
 };
 
 /**
- * Web Share API またはクリップボードへのコピーを実行する
+ * 共有処理を実行する（Web Share API -> クリップボードコピー）
  */
-export const shareContent = async (data: ShareData) => {
-	const shareUrl = data.url || window.location.href;
-
-	// モバイル等で Web Share API が利用可能な場合
+export const shareContent = async (data: ShareData): Promise<void> => {
+	// 1. Web Share API に対応している場合（スマホ・対応ブラウザ）
 	if (navigator.share) {
 		try {
-			await navigator.share({
-				title: data.title,
-				text: data.text,
-				url: shareUrl,
-			});
+			await navigator.share(data);
 			return;
 		} catch (error) {
-			// ユーザーが共有ダイアログを閉じた場合は何も処理しない
-			if ((error as Error).name === 'AbortError') return;
+			if ((error as Error).name === 'AbortError') {
+				return;
+			}
 		}
 	}
 
-	// Web Share API 非対応環境（PCブラウザ等）の場合はクリップボードへコピー
-	try {
-		await navigator.clipboard.writeText(shareUrl);
-		toast.success('URLをクリップボードにコピーしました');
-	} catch (error) {
-		toast.error('URLのコピーに失敗しました');
+	// 2. クリップボードへテキストをコピー（フォールバック）
+	const textToCopy = `${data.text}\n${data.url}`;
+	const success = await copyToClipboard(textToCopy);
+
+	if (success) {
+		alert('共有リンクとテキストをクリップボードにコピーしました。');
+	} else {
+		alert('コピーに失敗しました。お使いのブラウザの権限設定を確認してください。');
 	}
 };
 
 /**
- * X (旧Twitter) 投稿画面を開く用のURLを生成する
+ * HTTP環境や古いブラウザにも対応したクリップボードコピー処理
  */
-export const createXShareUrl = (text: string, url: string) => {
-	const params = new URLSearchParams({
-		text: text,
-		url: url,
-	});
-	return `https://x.com/intent/post?${params.toString()}`;
+const copyToClipboard = async (text: string): Promise<boolean> => {
+	if (navigator.clipboard && window.isSecureContext) {
+		try {
+			await navigator.clipboard.writeText(text);
+			return true;
+		} catch {
+			// フォールバックへ移行
+		}
+	}
+
+	try {
+		const textArea = document.createElement('textarea');
+		textArea.value = text;
+		textArea.style.position = 'fixed';
+		textArea.style.left = '-999999px';
+		textArea.style.top = '-999999px';
+		document.body.appendChild(textArea);
+
+		textArea.focus();
+		textArea.select();
+
+		const successful = document.execCommand('copy');
+		document.body.removeChild(textArea);
+		return successful;
+	} catch {
+		return false;
+	}
 };

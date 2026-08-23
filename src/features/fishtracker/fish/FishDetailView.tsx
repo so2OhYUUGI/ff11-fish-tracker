@@ -4,7 +4,7 @@
  * [Role] 魚詳細情報表示コンポーネント
  * 
  * [概要]
- * - ヘッダー（魚名・チェック状態）を固定し、コンテンツ部分全体を独立スクロール表示
+ * - ヘッダー（魚名・チェック状態・共有）を固定し、コンテンツ部分全体を独立スクロール表示
  * - 基本情報（スキル上限、サイズ区分、水質区分、各種関連属性フラグ）のステータス表示
  * - ハラキリ対象（アイテム・称号の有無）時の獲得可能アイテムおよび称号の表示
  * - 生息エリアタグや餌タグクリックによる他詳細画面（`AreaDetailView` / `BaitDetailView`）への相互遷移サポート
@@ -25,6 +25,7 @@ import {
 } from '@/data';
 import { DETAIL_STYLES, DETAIL_TABLE_STYLES } from '@/styles/components/detailStyles';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
+import { ShareDetailButton } from '@/components/common/ShareDetailButton';
 import {
 	SizeBadge,
 	WaterBadge,
@@ -145,6 +146,13 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 							</>
 						)}
 					</button>
+
+					{/* 個別ページ共有ボタン */}
+					<ShareDetailButton
+						categoryName="魚"
+						nameJa={fish.ja}
+						nameEn={fish.en}
+					/>
 
 					<button
 						type="button"

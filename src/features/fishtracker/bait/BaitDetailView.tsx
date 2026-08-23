@@ -4,7 +4,7 @@
  * [Role] 餌の詳細情報表示コンポーネント
  * 
  * [概要]
- * - ヘッダー（餌名）を固定し、コンテンツ部分全体を独立スクロール表示
+ * - ヘッダー（餌名・共有）を固定し、コンテンツ部分全体を独立スクロール表示
  * - `@/data` の中間マスタを参照し、その餌で釣れる魚の一覧を抽出・描画
  * - 釣れる魚一覧の各行を統合作成した FishListItem（variant="inline"）へ置き換え
  * - 全スタイルの参照を `DETAIL_STYLES` および `COMMON_TOKENS` へ完全集約
@@ -18,6 +18,7 @@ import { FISH_BAIT_RELATIONS } from '@/data';
 import { DETAIL_STYLES } from '@/styles/components/detailStyles';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 import { FishListItem } from '@/features/fishtracker/fish/FishListItem';
+import { ShareDetailButton } from '@/components/common/ShareDetailButton';
 
 type BaitDetailViewProps = {
 	bait: BaitMaster | null;
@@ -40,7 +41,6 @@ export const BaitDetailView: React.FC<BaitDetailViewProps> = ({
 	onToggleCheck,
 	onClickFishDetail,
 }) => {
-	// FISH_BAIT_RELATIONS から対象の餌(bait.id)で釣れる魚のデータオブジェクトリストを取得
 	const targetFishes = useMemo(() => {
 		if (!bait) return [];
 		const targetFishIds = new Set(
@@ -90,8 +90,13 @@ export const BaitDetailView: React.FC<BaitDetailViewProps> = ({
 					</div>
 				</div>
 
-				{/* 右側：閉じるボタン */}
+				{/* 右側：共有ボタン ＋ 閉じるボタン */}
 				<div className={DETAIL_STYLES.stickyHeaderRight}>
+					<ShareDetailButton
+						categoryName="エサ"
+						nameJa={bait.ja}
+						nameEn={bait.en}
+					/>
 					<button
 						type="button"
 						onClick={onClose}

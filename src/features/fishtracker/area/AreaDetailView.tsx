@@ -4,7 +4,7 @@
  * [Role] 選択されたエリアの詳細情報および釣れる魚一覧の表示コンポーネント
  * 
  * [概要]
- * - ヘッダー（エリア名）を固定し、コンテンツ部分全体を独立スクロール表示
+ * - ヘッダー（エリア名・共有）を固定し、コンテンツ部分全体を独立スクロール表示
  * - `regionList` から `area.regionId` に一致するリージョン情報を参照して描画
  * - 中間データ `FISH_LOCATIONS` を参照し、当該エリア（`area.id`）で釣れる魚を抽出・スキル昇順ソートして表示
  * - 釣れる魚一覧の各行を統合作成した FishListItem（variant="inline"）へ置き換え
@@ -19,6 +19,7 @@ import { FISH_LOCATIONS } from '@/data';
 import { DETAIL_STYLES } from '@/styles/components/detailStyles';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 import { FishListItem } from '@/features/fishtracker/fish/FishListItem';
+import { ShareDetailButton } from '@/components/common/ShareDetailButton';
 
 type AreaDetailViewProps = {
 	area: ZoneMaster;
@@ -103,8 +104,13 @@ export const AreaDetailView: React.FC<AreaDetailViewProps> = ({
 					</div>
 				</div>
 
-				{/* 右側：閉じるボタン */}
+				{/* 右側：共有ボタン ＋ 閉じるボタン */}
 				<div className={DETAIL_STYLES.stickyHeaderRight}>
+					<ShareDetailButton
+						categoryName="エリア"
+						nameJa={area.ja}
+						nameEn={area.en}
+					/>
 					<button
 						type="button"
 						onClick={onClose}
