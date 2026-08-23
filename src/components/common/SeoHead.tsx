@@ -8,9 +8,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 
-// 本番ドメインを直接指定（または環境変数から取得）
-const SITE_DOMAIN = import.meta.env.VITE_SITE_URL || 'http://localhost:5173';
-
 type SeoHeadProps = {
 	title: string;
 	description: string;
@@ -27,9 +24,19 @@ export const SeoHead: React.FC<SeoHeadProps> = ({
 	const siteName = 'FF11 Fish Tracker';
 	const fullTitle = `${title} | ${siteName}`;
 
-	// 常に完全な絶対URL（https://...）を生成
-	const pageUrl = `${SITE_DOMAIN}${path}`;
-	const imageUrl = ogImage.startsWith('http') ? ogImage : `${SITE_DOMAIN}${ogImage}`;
+	// 末尾のスラッシュを除去して標準化
+	const rawDomain = import.meta.env.VITE_SITE_URL || 'http://localhost:5173';
+	const cleanDomain = rawDomain.replace(/\/+$/, '');
+
+	// パス整形（先頭のスラッシュを担保）
+	const cleanPath = path ? (path.startsWith('/') ? path : `/${path}`) : '';
+	const cleanOgImage = ogImage.startsWith('/') ? ogImage : `/${ogImage}`;
+
+	// 絶対URL生成
+	const pageUrl = `${cleanDomain}${cleanPath}`;
+	const imageUrl = ogImage.startsWith('http')
+		? ogImage
+		: `${cleanDomain}${cleanOgImage}`;
 
 	return (
 		<Helmet>
