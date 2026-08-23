@@ -12,7 +12,7 @@
  * ============================================================================
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Fish } from 'lucide-react';
 import type { BaitMaster, FishMaster } from '@/types/fishtracker';
 import { FISH_BAIT_RELATIONS, FISHES } from '@/data';
@@ -20,7 +20,7 @@ import { CARD_STYLES } from '@/styles/components/cardStyles';
 
 type BaitCardProps = {
 	bait: BaitMaster;
-	fishes?: FishMaster[]; // 外部から渡される場合はそれを使用し、未渡しの場合は FISHES を参照
+	fishes?: FishMaster[];
 	isSelected?: boolean;
 	onClickDetail: (bait: BaitMaster) => void;
 };
@@ -31,20 +31,31 @@ export const BaitCard: React.FC<BaitCardProps> = ({
 	isSelected = false,
 	onClickDetail,
 }) => {
-	// 該当する餌 (bait.id) で釣れる魚の ID 一覧を抽出
-	const targetFishIds = FISH_BAIT_RELATIONS
-		.filter((rel) => rel.baitId === bait.id)
-		.map((rel) => rel.fishId);
+	// 該当する餌 (bait.id) で釣れる魚の一覧を算出（重複排除・メモ化）
+	const matchedFishes = useMemo(() => {
+		const uniqueFishIds = new Set(
+			FISH_BAIT_RELATIONS
+				.filter((rel) => rel.baitId === bait.id)
+				.map((rel) => rel.fishId)
+		);
+		return fishes.filter((fish) => uniqueFishIds.has(fish.id));
+	}, [bait.id, fishes]);
 
-	// 重複を除外して魚データと紐付け
-	const uniqueFishIds = Array.from(new Set(targetFishIds));
-	const matchedFishes = fishes.filter((fish) => uniqueFishIds.includes(fish.id));
 	const totalFishes = matchedFishes.length;
 
 	// カード表示用：最大2件を表示、溢れた分は +N 表示
 	const maxDisplayCount = 2;
-	const displayFishes = matchedFishes.slice(0, maxDisplayCount);
+	const displayFishes = useMemo(
+		() => matchedFishes.slice(0, maxDisplayCount),
+		[matchedFishes]
+	);
 	const remainingCount = totalFishes - maxDisplayCount;
+
+	// 改行コード（\n および \n）で分割した説明文行リスト
+	const descriptionLines = useMemo(() => {
+		if (!bait.description) return [];
+		return bait.description.split(/\r?\n|\\n/);
+	}, [bait.description]);
 
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
 		if (e.key === 'Enter' || e.key === ' ') {
@@ -77,9 +88,9 @@ export const BaitCard: React.FC<BaitCardProps> = ({
 				</div>
 
 				{/* 2. 説明文領域 */}
-				{bait.description && (
+				{descriptionLines.length > 0 && (
 					<div className={CARD_STYLES.descriptionBox}>
-						{bait.description.split('\\n').map((line: string, index: number) => (
+						{descriptionLines.map((line: string, index: number) => (
 							<p key={index}>{line}</p>
 						))}
 					</div>

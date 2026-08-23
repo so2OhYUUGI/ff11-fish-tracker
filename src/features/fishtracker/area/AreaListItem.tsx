@@ -6,7 +6,7 @@
  * [概要]
  * - エリアの基本情報（和名、英名、簡略説明文）のリスト形式（高密度レイアウト）表示
  * - エリア名称の日本語・英語表記を縦並びへ統一
- * - 釣れる魚の総数バッジを追加し、一覧でのスキャン性と比較容易性を向上
+ * - 親（AreaView）から受け取った `fishCount`（釣れる魚の件数）をバッジ描画
  * - 魚が0件の場合の視覚的表現（減衰スタイル）の適用
  * - 選択中（アクティブ）状態に応じたスタイリング切り替え
  * - 全スタイルの参照を `LIST_STYLES` へ完全移行
@@ -15,34 +15,23 @@
 
 import React, { useMemo } from 'react';
 import { Fish } from 'lucide-react';
-import type { ZoneMaster, FishMaster } from '@/types/fishtracker';
-import { FISH_LOCATIONS, FISHES } from '@/data';
+import type { ZoneMaster } from '@/types/fishtracker';
 import { LIST_STYLES } from '@/styles/components/listStyles';
 
 type Props = {
   area: ZoneMaster;
-  fishes?: FishMaster[];
+  fishCount?: number;
   isSelected?: boolean;
   onClickDetail: (area: ZoneMaster) => void;
 };
 
 export const AreaListItem: React.FC<Props> = ({
   area,
-  fishes = FISHES,
+  fishCount = 0,
   isSelected,
   onClickDetail,
 }) => {
-  // 該当エリア (area.id) で釣れる魚の総数を算出（重複排除・メモ化）
-  const totalFishes = useMemo(() => {
-    const uniqueFishIds = new Set(
-      FISH_LOCATIONS
-        .filter((loc) => loc.zoneId === area.id)
-        .map((loc) => loc.fishId)
-    );
-    return fishes.filter((fish) => uniqueFishIds.has(fish.id)).length;
-  }, [area.id, fishes]);
-
-  const hasFish = totalFishes > 0;
+  const hasFish = fishCount > 0;
 
   // 説明文の改行エスケープ（\n または \\n をスペース1つに置換）
   const formattedDescription = useMemo(() => {
@@ -85,7 +74,7 @@ export const AreaListItem: React.FC<Props> = ({
             hasFish ? LIST_STYLES.indicatorIconActive : LIST_STYLES.indicatorIconEmpty
           }
         />
-        <span className="font-medium">{totalFishes}</span>
+        <span className="font-medium">{fishCount}</span>
       </div>
     </div>
   );

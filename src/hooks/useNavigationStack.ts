@@ -52,3 +52,11 @@ export const useNavigationStack = () => {
 		canGoBack: stack.length > 1,
 	};
 };
+
+// フックの基本戻り値型
+export type UseNavigationStackReturn = ReturnType<typeof useNavigationStack>;
+
+// App.tsx 等で selectFromList などを拡張して渡す場合の統一型定義
+export type NavigationStackHandle = UseNavigationStackReturn & {
+	selectFromList?: (item: NavItem) => void;
+};

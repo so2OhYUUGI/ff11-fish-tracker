@@ -159,8 +159,8 @@ export const FishCard: React.FC<FishCardProps> = ({
 							onToggleCheck(fish.id);
 						}}
 						className={`${CARD_STYLES.checkButton.base} ${isChecked
-								? CARD_STYLES.checkButton.checked
-								: CARD_STYLES.checkButton.unchecked
+							? CARD_STYLES.checkButton.checked
+							: CARD_STYLES.checkButton.unchecked
 							}`}
 						title={isChecked ? '未釣獲にする' : '釣獲済みにする'}
 					>
