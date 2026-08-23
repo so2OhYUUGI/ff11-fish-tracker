@@ -5,7 +5,7 @@
  * ============================================================================
  */
 
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { toast, Toaster } from 'sonner';
 
