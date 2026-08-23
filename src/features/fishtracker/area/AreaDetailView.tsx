@@ -20,7 +20,7 @@ import { DETAIL_STYLES } from '@/styles/components/detailStyles';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 import { FishListItem } from '@/features/fishtracker/fish/FishListItem';
 
-type Props = {
+type AreaDetailViewProps = {
 	area: ZoneMaster;
 	allFishes: FishMaster[];
 	regionList: RegionMaster[];
@@ -32,7 +32,7 @@ type Props = {
 	onClickFishDetail?: (fish: FishMaster) => void;
 };
 
-export const AreaDetailView: React.FC<Props> = ({
+export const AreaDetailView: React.FC<AreaDetailViewProps> = ({
 	area,
 	allFishes,
 	regionList,
@@ -132,7 +132,7 @@ export const AreaDetailView: React.FC<Props> = ({
 				{/* 説明文 */}
 				{descriptionLines.length > 0 && (
 					<div className={DETAIL_STYLES.descriptionBox}>
-						{descriptionLines.map((line: string, index: number) => (
+						{descriptionLines.map((line, index) => (
 							<React.Fragment key={index}>
 								{index > 0 && <br />}
 								{line}
@@ -143,8 +143,8 @@ export const AreaDetailView: React.FC<Props> = ({
 
 				{/* 釣れる魚一覧（リスト形式） */}
 				<div>
-					<h3 className={DETAIL_STYLES.sectionTitle}>
-						<Fish className={`w-4 h-4 ${COMMON_TOKENS.entity.fish.text}`} />
+					<h3 className={`${DETAIL_STYLES.sectionTitle} flex items-center gap-2`}>
+						<Fish className={`w-4 h-4 shrink-0 ${COMMON_TOKENS.entity.fish.text}`} />
 						<span>生息する魚 ({catchableFishes.length} 種)</span>
 					</h3>
 

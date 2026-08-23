@@ -129,8 +129,8 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 						type="button"
 						onClick={() => onToggleCheck(fish.id)}
 						className={`${DETAIL_STYLES.checkButtonBase} ${isChecked
-								? DETAIL_STYLES.checkButtonChecked
-								: DETAIL_STYLES.checkButtonUnchecked
+							? DETAIL_STYLES.checkButtonChecked
+							: DETAIL_STYLES.checkButtonUnchecked
 							} shrink-0`}
 					>
 						{isChecked ? (
@@ -180,8 +180,8 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 							{hasHarakiriItems && (
 								<div className="flex flex-wrap items-center gap-2">
 									<span className="text-xs text-slate-400">入手アイテム:</span>
-									{fish.harakiriItems!.map((item, index) => (
-										<HarakiriItemBadge key={index} itemName={item} />
+									{fish.harakiriItems!.map((item) => (
+										<HarakiriItemBadge key={item} itemName={item} />
 									))}
 								</div>
 							)}
@@ -205,17 +205,22 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 					{targetZones.length > 0 ? (
 						<div className={DETAIL_STYLES.tagList}>
 							{targetZones.map((zone) => {
-								const TagComponent = onClickAreaDetail ? 'button' : 'span';
+								if (onClickAreaDetail) {
+									return (
+										<button
+											key={zone.id}
+											type="button"
+											onClick={() => onClickAreaDetail(zone)}
+											className={`${DETAIL_STYLES.tagItem} ${DETAIL_STYLES.tagItemInteractive}`}
+										>
+											{zone.ja}
+										</button>
+									);
+								}
 								return (
-									<TagComponent
-										key={zone.id}
-										type={onClickAreaDetail ? 'button' : undefined}
-										onClick={() => onClickAreaDetail?.(zone)}
-										className={`${DETAIL_STYLES.tagItem} ${onClickAreaDetail ? DETAIL_STYLES.tagItemInteractive : ''
-											}`}
-									>
+									<span key={zone.id} className={DETAIL_STYLES.tagItem}>
 										{zone.ja}
-									</TagComponent>
+									</span>
 								);
 							})}
 						</div>
@@ -232,17 +237,22 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 					{targetBaits.length > 0 ? (
 						<div className={DETAIL_STYLES.tagList}>
 							{targetBaits.map((bait) => {
-								const TagComponent = onClickBaitDetail ? 'button' : 'span';
+								if (onClickBaitDetail) {
+									return (
+										<button
+											key={bait.id}
+											type="button"
+											onClick={() => onClickBaitDetail(bait)}
+											className={`${DETAIL_STYLES.tagItem} ${DETAIL_STYLES.tagItemInteractive}`}
+										>
+											{bait.ja}
+										</button>
+									);
+								}
 								return (
-									<TagComponent
-										key={bait.id}
-										type={onClickBaitDetail ? 'button' : undefined}
-										onClick={() => onClickBaitDetail?.(bait)}
-										className={`${DETAIL_STYLES.tagItem} ${onClickBaitDetail ? DETAIL_STYLES.tagItemInteractive : ''
-											}`}
-									>
+									<span key={bait.id} className={DETAIL_STYLES.tagItem}>
 										{bait.ja}
-									</TagComponent>
+									</span>
 								);
 							})}
 						</div>
@@ -335,7 +345,7 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 				{/* 説明文 */}
 				{descriptionLines.length > 0 && (
 					<div className={DETAIL_STYLES.descriptionBox}>
-						{descriptionLines.map((line: string, index: number) => (
+						{descriptionLines.map((line, index) => (
 							<React.Fragment key={index}>
 								{index > 0 && <br />}
 								{line}

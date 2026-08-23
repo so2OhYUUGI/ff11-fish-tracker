@@ -119,8 +119,8 @@ export const BaitDetailView: React.FC<BaitDetailViewProps> = ({
 
 				{/* 釣れる魚一覧 */}
 				<div>
-					<h3 className={DETAIL_STYLES.sectionTitle}>
-						<Fish className={`w-4 h-4 ${COMMON_TOKENS.entity.fish.text}`} />
+					<h3 className={`${DETAIL_STYLES.sectionTitle} flex items-center gap-2`}>
+						<Fish className={`w-4 h-4 shrink-0 ${COMMON_TOKENS.entity.fish.text}`} />
 						<span>対象の魚 ({targetFishes.length} 種)</span>
 					</h3>
 
