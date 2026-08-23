@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "staging": " npx wrangler deploy --env staging",
+    "staging": "npx wrangler deploy --env staging",
     "lint": "eslint .",
     "preview": "vite preview"
   },
