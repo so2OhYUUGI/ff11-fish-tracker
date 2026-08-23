@@ -64,8 +64,8 @@ export const FishView = ({
 
 	if (fishes.length === 0) {
 		return (
-			<div className={`text-center py-12 ${COMMON_TOKENS.box.dark}`}>
-				<p className={`${COMMON_TOKENS.color.textMuted} text-sm`}>該当する魚が見つかりませんでした。</p>
+			<div className={LAYOUT_TOKENS.view.emptyContainer}>
+				<p className={LAYOUT_TOKENS.view.emptyText}>該当する魚が見つかりませんでした。</p>
 			</div>
 		);
 	}
@@ -77,19 +77,11 @@ export const FishView = ({
 	const selectedFishId = current?.type === 'fish' ? current.item.id : null;
 
 	return (
-		<div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+		<div className={LAYOUT_TOKENS.view.mainGrid}>
 			{/* 左側：一覧表示領域 */}
-			<div
-				className={`${isSelected ? 'lg:col-span-7' : 'lg:col-span-12'
-					} ${isSelected ? 'hidden lg:block' : 'block'}`}
-			>
+			<div className={LAYOUT_TOKENS.view.leftColumn(isSelected)}>
 				{viewMode === 'card' ? (
-					<div
-						className={`grid grid-cols-1 gap-4 ${isSelected
-								? 'sm:grid-cols-2 md:grid-cols-3'
-								: 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
-							}`}
-					>
+					<div className={LAYOUT_TOKENS.view.cardGrid(isSelected)}>
 						{fishes.map((fish) => (
 							<FishCard
 								key={fish.id}
@@ -103,7 +95,7 @@ export const FishView = ({
 						))}
 					</div>
 				) : (
-					<div className="flex flex-col gap-2">
+					<div className={LAYOUT_TOKENS.view.listContainer}>
 						{fishes.map((fish) => (
 							<FishListItem
 								key={fish.id}

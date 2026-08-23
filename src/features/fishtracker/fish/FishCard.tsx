@@ -182,6 +182,7 @@ export const FishCard: React.FC<FishCardProps> = ({
 						title={isChecked ? '未釣獲にする' : '釣獲済みにする'}
 						aria-label={`${fish.ja}の獲得状態の切り替え（現在: ${isChecked ? '釣獲済み' : '未釣獲'
 							}）`}
+						aria-pressed={isChecked}
 					>
 						<Check
 							className={

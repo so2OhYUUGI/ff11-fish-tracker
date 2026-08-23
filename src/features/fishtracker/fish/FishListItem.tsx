@@ -110,7 +110,9 @@ export const FishListItem: React.FC<Props> = ({
 						className={`${LIST_STYLES.checkboxBase} ${isChecked ? LIST_STYLES.checkboxChecked : LIST_STYLES.checkboxDefault
 							}`}
 						title={isChecked ? '未獲得にする' : '獲得済みにする'}
-						aria-label={`${fish.ja}の獲得状態の切り替え（現在: ${isChecked ? '獲得済み' : '未獲得'}）`}
+						aria-label={`${fish.ja}の獲得状態の切り替え（現在: ${isChecked ? '獲得済み' : '未獲得'
+							}）`}
+						aria-pressed={isChecked}
 					>
 						{isChecked && <Check className="w-4 h-4 stroke-[3]" />}
 					</button>

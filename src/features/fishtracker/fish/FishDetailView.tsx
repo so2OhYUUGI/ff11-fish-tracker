@@ -135,6 +135,7 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 								: DETAIL_STYLES.checkButtonUnchecked
 							} shrink-0`}
 						aria-label={`${fish.ja}を${isChecked ? '未釣獲' : '釣獲済み'}に変更`}
+						aria-pressed={isChecked}
 					>
 						{isChecked ? (
 							<>
