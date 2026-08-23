@@ -13,7 +13,7 @@
  * [依存関係・関連ファイル]
  * - コンポーネント : SEO (src/components/SEO.tsx)
  * - スタイル     : src/styles/tokens/commonTokens, layoutTokens
- * - 型定義       : src/types/fish (FishMaster, ZoneMaster, ViewMode 等), useNavigationStack
+ * - 型定義       : src/types/fish (FishMaster, ZoneMaster, ViewMode 等), useNavigationStack (NavItem)
  * 
  * [編集・改修時の注意事項（AI/エンジニア共通指示）]
  * 1. 【SEO連動】 navStack.current の選択内容に応じて詳細用SEOメタデータを割り当てること。ハラキリ判定は harakiriItems / harakiriTitle の存在を参照すること。
@@ -29,8 +29,8 @@ import { FishDetailView } from './FishDetailView';
 import { AreaDetailView } from '../area/AreaDetailView';
 import { BaitDetailView } from '../bait/BaitDetailView';
 import type { FishMaster, ViewMode, ZoneMaster } from '@/types/fish';
-import type { useNavigationStack } from '@/hooks/useNavigationStack';
-import { REGIONS } from '@/data';
+import type { useNavigationStack, NavItem } from '@/hooks/useNavigationStack';
+import { FISHES, REGIONS } from '@/data';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
 
@@ -40,7 +40,9 @@ type Props = {
 	checkedFishIds: number[];
 	viewMode: ViewMode;
 	onToggleCheck: (fishId: number) => void;
-	navStack: ReturnType<typeof useNavigationStack>;
+	navStack: ReturnType<typeof useNavigationStack> & {
+		selectFromList?: (item: NavItem) => void;
+	};
 };
 
 export const FishView = ({
@@ -51,7 +53,10 @@ export const FishView = ({
 	onToggleCheck,
 	navStack,
 }: Props) => {
-	const { current, push, replace, pop, clear, canGoBack } = navStack;
+	const { current, selectFromList, replace, push, pop, clear, canGoBack } = navStack;
+
+	// 一覧選択時のハンドラ（selectFromList が無ければ replace を使用）
+	const handleSelectFromList = selectFromList ?? replace;
 
 	// チェック済み魚IDの高速判定用 Set
 	const checkedSet = useMemo(() => new Set(checkedFishIds), [checkedFishIds]);
@@ -134,8 +139,8 @@ export const FishView = ({
 					{viewMode === 'card' ? (
 						<div
 							className={`grid grid-cols-1 gap-4 ${isSelected
-									? 'sm:grid-cols-2 md:grid-cols-3'
-									: 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
+								? 'sm:grid-cols-2 md:grid-cols-3'
+								: 'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
 								}`}
 						>
 							{fishes.map((fish) => (
@@ -146,7 +151,7 @@ export const FishView = ({
 									isChecked={checkedSet.has(fish.id)}
 									isSelected={selectedFishId === fish.id}
 									onToggleCheck={handleToggleCheck}
-									onClickDetail={(f) => replace({ type: 'fish', item: f })}
+									onClickDetail={(f) => handleSelectFromList({ type: 'fish', item: f })}
 								/>
 							))}
 						</div>
@@ -160,7 +165,7 @@ export const FishView = ({
 									isChecked={checkedSet.has(fish.id)}
 									isSelected={selectedFishId === fish.id}
 									onToggleCheck={handleToggleCheck}
-									onClickDetail={(f) => replace({ type: 'fish', item: f })}
+									onClickDetail={(f) => handleSelectFromList({ type: 'fish', item: f })}
 								/>
 							))}
 						</div>
@@ -187,7 +192,7 @@ export const FishView = ({
 						{current.type === 'area' && (
 							<AreaDetailView
 								area={current.item}
-								allFishes={fishes}
+								allFishes={FISHES}
 								regionList={REGIONS}
 								checkedFishIds={checkedFishIds}
 								onToggleCheck={handleToggleCheck}
@@ -201,7 +206,7 @@ export const FishView = ({
 						{current.type === 'bait' && (
 							<BaitDetailView
 								bait={current.item}
-								allFishes={fishes}
+								allFishes={FISHES}
 								checkedFishIds={checkedFishIds}
 								onToggleCheck={handleToggleCheck}
 								onClose={clear}

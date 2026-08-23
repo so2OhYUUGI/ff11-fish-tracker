@@ -19,7 +19,7 @@
 import { useMemo } from 'react';
 import { SEO } from '@/components/SEO';
 import type { ZoneMaster, FishMaster, ViewMode, RegionMaster } from '@/types/fish';
-import type { useNavigationStack } from '@/hooks/useNavigationStack';
+import type { useNavigationStack, NavItem } from '@/hooks/useNavigationStack';
 import { REGIONS, ZONES, FISH_LOCATIONS } from '@/data/';
 import { AreaCard } from './AreaCard';
 import { AreaListItem } from './AreaListItem';
@@ -35,7 +35,9 @@ type Props = {
 	checkedFishIds: number[];
 	viewMode: ViewMode;
 	onToggleCheck: (fishId: number) => void;
-	navStack: ReturnType<typeof useNavigationStack>;
+	navStack: ReturnType<typeof useNavigationStack> & {
+		selectFromList?: (item: NavItem) => void;
+	};
 };
 
 type RegionGroup = {
@@ -51,7 +53,10 @@ export const AreaView = ({
 	onToggleCheck,
 	navStack,
 }: Props) => {
-	const { current, push, replace, pop, clear, canGoBack } = navStack;
+	const { current, selectFromList, push, replace, pop, clear, canGoBack } = navStack;
+
+	// 一覧選択時のハンドラ（selectFromList が無ければ replace を使用）
+	const handleSelectFromList = selectFromList ?? replace;
 
 	// チェック操作ハンドラ
 	const handleToggleCheck = (fishId: number) => {
@@ -189,7 +194,7 @@ export const AreaView = ({
 												area={area}
 												fishes={allFishes}
 												isSelected={selectedAreaId === area.id}
-												onClickDetail={(a) => replace({ type: 'area', item: a })}
+												onClickDetail={(a) => handleSelectFromList({ type: 'area', item: a })}
 											/>
 										))}
 									</div>
@@ -202,7 +207,7 @@ export const AreaView = ({
 												area={area}
 												fishCount={fishCountMap.get(area.id) || 0}
 												isSelected={selectedAreaId === area.id}
-												onClickDetail={(a) => replace({ type: 'area', item: a })}
+												onClickDetail={(a) => handleSelectFromList({ type: 'area', item: a })}
 											/>
 										))}
 									</div>

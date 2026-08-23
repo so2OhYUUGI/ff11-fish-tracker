@@ -19,7 +19,7 @@
  * - 型定義       : src/types/fish, FilterBar
  * 
  * [編集・改修時の注意事項（AI/エンジニア共通指示）]
- * 1. 【SEO連動】 タブ選択（mainTab）および検索・フィルター状態に合わせた適切なタイトルとメタ説明文を SEO コンポーネントへ渡すこと。
+ * 1. 【SEO連動】 タブ選択（mainTab）および検索・フィルター状態に合わせた適切なタイトルとメタ説明文を SEO コンポーネントへ渡すこと。詳細スタック選択時は子ビュー側のSEO設定を優先すること。
  * 2. 【メモ化維持】 useMemo によるフィルタリング最適化を崩さないこと。
  * ============================================================================
  */
@@ -111,9 +111,14 @@ export const FishTrackerContent: React.FC<FishTrackerContentProps> = ({
 		? `${seoConfig.title} (検索: "${searchQuery}")`
 		: seoConfig.title;
 
+	// 詳細表示中（navStack.current が存在）の場合は子ビュー側の詳細用SEO設定に委ねる
+	const isDetailActive = navStack.current !== null;
+
 	return (
 		<>
-			<SEO title={seoTitle} description={seoConfig.description} />
+			{!isDetailActive && (
+				<SEO title={seoTitle} description={seoConfig.description} />
+			)}
 			{(() => {
 				switch (mainTab) {
 					case 'fish':

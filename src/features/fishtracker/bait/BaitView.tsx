@@ -17,7 +17,7 @@
 import { useMemo } from 'react';
 import { SEO } from '@/components/SEO';
 import type { BaitMaster, FishMaster, ViewMode } from '@/types/fish';
-import type { useNavigationStack } from '@/hooks/useNavigationStack';
+import type { useNavigationStack, NavItem } from '@/hooks/useNavigationStack';
 import { BaitCard } from './BaitCard';
 import { BaitListItem } from './BaitListItem';
 import { BaitDetailView } from './BaitDetailView';
@@ -32,7 +32,9 @@ type Props = {
 	checkedFishIds: number[];
 	viewMode: ViewMode;
 	onToggleCheck: (fishId: number) => void;
-	navStack: ReturnType<typeof useNavigationStack>;
+	navStack: ReturnType<typeof useNavigationStack> & {
+		selectFromList?: (item: NavItem) => void;
+	};
 };
 
 export const BaitView = ({
@@ -43,7 +45,10 @@ export const BaitView = ({
 	onToggleCheck,
 	navStack,
 }: Props) => {
-	const { current, push, replace, pop, clear, canGoBack } = navStack;
+	const { current, selectFromList, push, replace, pop, clear, canGoBack } = navStack;
+
+	// 一覧選択時のハンドラ（selectFromList が無ければ replace を使用）
+	const handleSelectFromList = selectFromList ?? replace;
 
 	// チェック操作ハンドラ
 	const handleToggleCheck = (fishId: number) => {
@@ -144,7 +149,7 @@ export const BaitView = ({
 									bait={bait}
 									fishes={allFishes}
 									isSelected={selectedBaitId === bait.id}
-									onClickDetail={(b) => replace({ type: 'bait', item: b })}
+									onClickDetail={(b) => handleSelectFromList({ type: 'bait', item: b })}
 								/>
 							))}
 						</div>
@@ -156,7 +161,7 @@ export const BaitView = ({
 									bait={bait}
 									fishCount={fishCountMap.get(bait.id) || 0}
 									isSelected={selectedBaitId === bait.id}
-									onClickDetail={(b) => replace({ type: 'bait', item: b })}
+									onClickDetail={(b) => handleSelectFromList({ type: 'bait', item: b })}
 								/>
 							))}
 						</div>
