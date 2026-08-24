@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * [FilePath] src/types/fish.ts
+ * [FilePath] src/types/fishtracker.ts
  * [Role] 釣りコンプリートチェッカーの型定義（型システム・データモデル）
  * 
  * [概要]
@@ -83,15 +83,12 @@ export type ViewMode = 'card' | 'list';
 
 // --- 中間データ（リレーション） ---
 
-// 釣り場タイプ
-export type FishingSubArea = 'sea' | 'river' | 'lake' | 'pond' | 'ship' | 'all';
-
 // 生息情報（Fish ↔ Zone の中間エンティティ）
 export type FishLocation = {
 	id: string;            // 一意の識別子（例: "4353-248"）
 	fishId: number;        // FishMaster.id
 	zoneId: number;        // ZoneMaster.id
-	subArea?: FishingSubArea; // 淡水/海水/船など
+	subLocationId?: number;// SubLocationMaster.id（特定航路・限定便など）
 	notes?: string;        // エリア限定の補足（例: "S-10付近の池"、"天候：雨のみ" など）
 };
 
@@ -124,3 +121,10 @@ export type RegionMaster = {
 	ja: string;            // 日本語名 (例: "サンドリア王国")
 };
 
+// src/data/subLocations.ts
+export type SubLocationMaster = {
+	id: number;      
+	zoneId: number;  // 親となる Zone ID
+	ja: string;      // 表示名（例: "まりも航路"）
+	en: string;
+};
