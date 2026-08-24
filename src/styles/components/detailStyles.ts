@@ -17,13 +17,13 @@
 export const DETAIL_STYLES = {
   // コンテナ
   container:
-    'bg-slate-800 border border-slate-700 rounded-xl p-4 sm:p-5 md:p-6 flex flex-col gap-4 sm:gap-6 h-full relative',
-  panelBase: 'flex flex-col h-full min-h-0 overflow-hidden',
+    'w-full bg-slate-800 border border-slate-700 rounded-xl md:p-6 flex flex-col gap-4 sm:gap-6 h-full relative',
+  panelBase: 'w-full flex flex-col h-full min-h-0 overflow-hidden',
   scrollContent: 'flex-1 min-h-0 overflow-y-auto p-3 sm:p-4 space-y-4 sm:space-y-6',
 
   // 未選択（データ無し）表示領域
   emptyDetailContainer:
-    'h-full min-h-[250px] sm:min-h-[300px] flex flex-col items-center justify-center p-6 sm:p-8 bg-slate-800/50 border border-slate-700/60 rounded-xl text-slate-400 text-center',
+    'w-full h-full min-h-[250px] sm:min-h-[300px] flex flex-col items-center justify-center p-6 sm:p-8 bg-slate-800/50 border border-slate-700/60 rounded-xl text-slate-400 text-center',
   emptyIcon: 'w-10 h-10 sm:w-12 sm:h-12 mb-2.5 sm:mb-3 text-slate-600',
   emptyText: 'text-xs sm:text-sm font-medium text-slate-400 leading-relaxed',
 

@@ -8,12 +8,13 @@
  * - 事前計算した `fishCountMap` をコンポーネント間で共有し、走査処理を最適化
  * - 表示モード（`viewMode`: 'card' | 'list'）に基づく `BaitCard` / `BaitListItem` の切替描画
  * - モバイル表示時の画面切替（一覧/詳細）およびPC表示時の `sticky` 追従レイアウト制御
+ * - モバイル詳細オープン時の `body` スクロールロック制御を追加
  * - 詳細ビュー内の魚達成チェック操作を判定・実行可能に拡張
  * - スタイル記述はすべて `LAYOUT_TOKENS` へ完全集約済み
  * ============================================================================
  */
 
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import type { BaitMaster, FishMaster, ViewMode } from '@/types/fishtracker';
 import type { useNavigationStack, NavItem } from '@/hooks/useNavigationStack';
 import { BaitCard } from './BaitCard';
@@ -72,6 +73,24 @@ export const BaitView = ({
 		return map;
 	}, []);
 
+	// 選択中のアイテムが存在するかどうか
+	const isSelected = current !== null;
+
+	// lg (1024px) 未満のモバイル表示時、詳細オープン中は body スクロールをロック
+	useEffect(() => {
+		const isMobile = window.innerWidth < 1024;
+
+		if (isSelected && isMobile) {
+			document.body.style.overflow = 'hidden';
+		} else {
+			document.body.style.overflow = '';
+		}
+
+		return () => {
+			document.body.style.overflow = '';
+		};
+	}, [isSelected]);
+
 	if (baits.length === 0) {
 		return (
 			<div className={LAYOUT_TOKENS.view.emptyContainer}>
@@ -79,9 +98,6 @@ export const BaitView = ({
 			</div>
 		);
 	}
-
-	// 選択中のアイテムが存在するかどうか
-	const isSelected = current !== null;
 
 	// 現在選択中の餌（スタックの最前面が餌の場合）
 	const selectedBaitId = current?.type === 'bait' ? current.item.id : null;

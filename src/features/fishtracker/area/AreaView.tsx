@@ -11,11 +11,12 @@
  * - 選択状態（`current !== null`）に応じた2カラム（一覧＋詳細）レスポンシブレイアウトの制御
  * - 表示モード（`viewMode`: 'card' | 'list'）に基づく `AreaCard` / `AreaListItem` の切替描画
  * - 詳細ビュー内の魚達成チェック操作を判定・実行可能に拡張
+ * - モバイル詳細オープン時の `body` スクロールロック制御を追加
  * - 全レイアウト・スタイルの参照を `LAYOUT_TOKENS` および `CARD_STYLES` へ集約
  * ============================================================================
  */
 
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import type { ZoneMaster, FishMaster, ViewMode, RegionMaster } from '@/types/fishtracker';
 import type { useNavigationStack, NavItem } from '@/hooks/useNavigationStack';
 import { REGIONS, ZONES, FISH_LOCATIONS } from '@/data/';
@@ -110,6 +111,21 @@ export const AreaView = ({
 	}, [areas, fishCountMap]);
 
 	const isSelected = current !== null;
+
+	// lg (1024px) 未満のモバイル表示時、詳細オープン中は body スクロールをロック
+	useEffect(() => {
+		const isMobile = window.innerWidth < 1024;
+
+		if (isSelected && isMobile) {
+			document.body.style.overflow = 'hidden';
+		} else {
+			document.body.style.overflow = '';
+		}
+
+		return () => {
+			document.body.style.overflow = '';
+		};
+	}, [isSelected]);
 
 	// 現在選択中のエリア（スタックの最前面がエリアの場合）
 	const selectedAreaId = current?.type === 'area' ? current.item.id : null;

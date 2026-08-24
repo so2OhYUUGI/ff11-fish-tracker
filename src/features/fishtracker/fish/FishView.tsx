@@ -18,7 +18,7 @@
  * ============================================================================
  */
 
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { FishCard } from './FishCard';
 import { FishListItem } from '../fish/FishListItem';
 import { FishDetailView } from './FishDetailView';
@@ -61,6 +61,25 @@ export const FishView = ({
 		onToggleCheck(fishId);
 	};
 
+	// 詳細領域が表示中かどうか
+	const isSelected = current !== null;
+
+	// モバイルモーダル表示時に背景（body）のスクロールを制御
+	useEffect(() => {
+		// lg (1024px) 未満のモバイル表示時のみ body スクロールをロック
+		const isMobile = window.innerWidth < 1024;
+
+		if (isSelected && isMobile) {
+			document.body.style.overflow = 'hidden';
+		} else {
+			document.body.style.overflow = '';
+		}
+
+		return () => {
+			document.body.style.overflow = '';
+		};
+	}, [isSelected]);
+
 	if (fishes.length === 0) {
 		return (
 			<div className={LAYOUT_TOKENS.view.emptyContainer}>
@@ -68,9 +87,6 @@ export const FishView = ({
 			</div>
 		);
 	}
-
-	// 詳細領域が表示中かどうか
-	const isSelected = current !== null;
 
 	// 現在選択中の魚（スタックの最前面が魚の場合）
 	const selectedFishId = current?.type === 'fish' ? current.item.id : null;
