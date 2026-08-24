@@ -4,6 +4,7 @@
  * [Role] 餌の詳細情報表示コンポーネント
  * 
  * [概要]
+ * - 共通ヘッダーコンポーネント（`DetailHeader`）を利用してヘッダー部分を統一
  * - ヘッダー（餌名・共有）を固定し、コンテンツ部分全体を独立スクロール表示
  * - `@/data` の中間マスタを参照し、その餌で釣れる魚の一覧を抽出・描画
  * - 釣れる魚一覧の各行を統合作成した FishListItem（variant="inline"）へ置き換え
@@ -12,13 +13,13 @@
  */
 
 import React, { useMemo } from 'react';
-import { ArrowLeft, Utensils, Fish, X } from 'lucide-react';
+import { Utensils, Fish } from 'lucide-react';
 import type { BaitMaster, FishMaster } from '@/types/fishtracker';
 import { FISH_BAIT_RELATIONS } from '@/data';
 import { DETAIL_STYLES } from '@/styles/components/detailStyles';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
+import { DetailHeader } from '@/features/fishtracker/common/DetailHeader';
 import { FishListItem } from '@/features/fishtracker/fish/FishListItem';
-import { ShareDetailButton } from '@/components/common/ShareDetailButton';
 
 type BaitDetailViewProps = {
 	bait: BaitMaster | null;
@@ -62,53 +63,16 @@ export const BaitDetailView: React.FC<BaitDetailViewProps> = ({
 
 	return (
 		<div className={DETAIL_STYLES.panelBase}>
-			{/* 1. 固定ヘッダー領域 */}
-			<div className={DETAIL_STYLES.stickyHeader}>
-				{/* 左側：戻るボタン ＋ タイトル */}
-				<div className={DETAIL_STYLES.stickyHeaderLeft}>
-					{canGoBack && onBack && (
-						<button
-							type="button"
-							onClick={onBack}
-							className={DETAIL_STYLES.headerBackButton}
-							title="前の画面へ戻る"
-							aria-label="前の画面へ戻る"
-						>
-							<ArrowLeft className="w-4 h-4 shrink-0" />
-							<span>戻る</span>
-						</button>
-					)}
-					<div className={DETAIL_STYLES.stickyHeaderTitleGroup}>
-						<Utensils className={`w-5 h-5 shrink-0 ${COMMON_TOKENS.entity.bait.text}`} />
-						<div className="min-w-0 flex-1">
-							<h2 className={DETAIL_STYLES.stickyHeaderTitle}>
-								{bait.ja}
-							</h2>
-							<p className={DETAIL_STYLES.stickyHeaderSubTitle}>
-								{bait.en}
-							</p>
-						</div>
-					</div>
-				</div>
-
-				{/* 右側：共有ボタン ＋ 閉じるボタン */}
-				<div className={DETAIL_STYLES.stickyHeaderRight}>
-					<ShareDetailButton
-						categoryName="エサ"
-						nameJa={bait.ja}
-						nameEn={bait.en}
-					/>
-					<button
-						type="button"
-						onClick={onClose}
-						title="詳細を閉じる"
-						aria-label="詳細を閉じる"
-						className={DETAIL_STYLES.iconCloseButton}
-					>
-						<X className="w-5 h-5" />
-					</button>
-				</div>
-			</div>
+			{/* 1. 共通固定ヘッダー */}
+			<DetailHeader
+				titleJa={bait.ja}
+				titleEn={bait.en}
+				categoryName="エサ"
+				icon={<Utensils className={`w-5 h-5 shrink-0 ${COMMON_TOKENS.entity.bait.text}`} />}
+				canGoBack={canGoBack}
+				onBack={onBack}
+				onClose={onClose}
+			/>
 
 			{/* 2. 一括スクロール可能なコンテンツ領域 */}
 			<div className={DETAIL_STYLES.scrollContent}>

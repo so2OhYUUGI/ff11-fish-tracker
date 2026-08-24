@@ -4,6 +4,7 @@
  * [Role] 魚詳細情報表示コンポーネント
  * 
  * [概要]
+ * - 共通ヘッダーコンポーネント（`DetailHeader`）を利用してヘッダー部分を統一
  * - ヘッダー（魚名・チェック状態・共有）を固定し、コンテンツ部分全体を独立スクロール表示
  * - 基本情報（スキル上限、サイズ区分、水質区分、各種関連属性フラグ）のステータス表示
  * - ハラキリ対象（アイテム・称号の有無）時の獲得可能アイテムおよび称号の表示
@@ -14,7 +15,7 @@
  */
 
 import React, { useMemo } from 'react';
-import { ArrowLeft, CheckSquare, Info, Square, X, Fish } from 'lucide-react';
+import { CheckSquare, Info, Square, Fish } from 'lucide-react';
 import type { FishMaster, ZoneMaster, BaitMaster } from '@/types/fishtracker';
 import {
 	FISH_LOCATIONS,
@@ -25,7 +26,7 @@ import {
 } from '@/data';
 import { DETAIL_STYLES, DETAIL_TABLE_STYLES } from '@/styles/components/detailStyles';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
-import { ShareDetailButton } from '@/components/common/ShareDetailButton';
+import { DetailHeader } from '@/features/fishtracker/common/DetailHeader';
 import {
 	SizeBadge,
 	WaterBadge,
@@ -96,78 +97,45 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 	const hasHarakiriTitle = Boolean(fish.harakiriTitle);
 	const isHarakiriTarget = hasHarakiriItems || hasHarakiriTitle;
 
+	// ヘッダーに配置する固有アクション（チェックボタン）
+	const headerActions = (
+		<button
+			type="button"
+			onClick={() => onToggleCheck(fish.id)}
+			className={`${DETAIL_STYLES.checkButtonBase} ${isChecked
+					? DETAIL_STYLES.checkButtonChecked
+					: DETAIL_STYLES.checkButtonUnchecked
+				} shrink-0`}
+			aria-label={`${fish.ja}を${isChecked ? '未釣獲' : '釣獲済み'}に変更`}
+			aria-pressed={isChecked}
+		>
+			{isChecked ? (
+				<>
+					<CheckSquare className="w-4 h-4 text-emerald-400 shrink-0" />
+					<span className="hidden sm:inline">釣獲済み</span>
+				</>
+			) : (
+				<>
+					<Square className="w-4 h-4 text-slate-400 shrink-0" />
+					<span className="hidden sm:inline">未釣獲</span>
+				</>
+			)}
+		</button>
+	);
+
 	return (
 		<div className={DETAIL_STYLES.panelBase}>
-			{/* 1. 固定ヘッダー領域 */}
-			<div className={DETAIL_STYLES.stickyHeader}>
-				<div className={DETAIL_STYLES.stickyHeaderLeft}>
-					{canGoBack && onBack && (
-						<button
-							type="button"
-							onClick={onBack}
-							className={DETAIL_STYLES.headerBackButton}
-							title="前の画面へ戻る"
-							aria-label="前の画面へ戻る"
-						>
-							<ArrowLeft className="w-4 h-4 shrink-0" />
-							<span>戻る</span>
-						</button>
-					)}
-					<div className={DETAIL_STYLES.stickyHeaderTitleGroup}>
-						<Fish className={`w-5 h-5 shrink-0 ${COMMON_TOKENS.entity.fish.text}`} />
-						<div className="min-w-0 flex-1">
-							<h2 className={DETAIL_STYLES.stickyHeaderTitle}>
-								{fish.ja}
-							</h2>
-							<p className={DETAIL_STYLES.stickyHeaderSubTitle}>
-								{fish.en}
-							</p>
-						</div>
-					</div>
-				</div>
-
-				<div className={DETAIL_STYLES.stickyHeaderRight}>
-					<button
-						type="button"
-						onClick={() => onToggleCheck(fish.id)}
-						className={`${DETAIL_STYLES.checkButtonBase} ${isChecked
-								? DETAIL_STYLES.checkButtonChecked
-								: DETAIL_STYLES.checkButtonUnchecked
-							} shrink-0`}
-						aria-label={`${fish.ja}を${isChecked ? '未釣獲' : '釣獲済み'}に変更`}
-						aria-pressed={isChecked}
-					>
-						{isChecked ? (
-							<>
-								<CheckSquare className="w-4 h-4 text-emerald-400 shrink-0" />
-								<span className="hidden sm:inline">釣獲済み</span>
-							</>
-						) : (
-							<>
-								<Square className="w-4 h-4 text-slate-400 shrink-0" />
-								<span className="hidden sm:inline">未釣獲</span>
-							</>
-						)}
-					</button>
-
-					{/* 個別ページ共有ボタン */}
-					<ShareDetailButton
-						categoryName="魚"
-						nameJa={fish.ja}
-						nameEn={fish.en}
-					/>
-
-					<button
-						type="button"
-						onClick={onClose}
-						title="詳細を閉じる"
-						aria-label="詳細を閉じる"
-						className={DETAIL_STYLES.iconCloseButton}
-					>
-						<X className="w-5 h-5" />
-					</button>
-				</div>
-			</div>
+			{/* 1. 共通固定ヘッダー */}
+			<DetailHeader
+				titleJa={fish.ja}
+				titleEn={fish.en}
+				categoryName="魚"
+				icon={<Fish className={`w-5 h-5 shrink-0 ${COMMON_TOKENS.entity.fish.text}`} />}
+				canGoBack={canGoBack}
+				onBack={onBack}
+				onClose={onClose}
+				actions={headerActions}
+			/>
 
 			{/* 2. 一括スクロール可能なコンテンツ領域 */}
 			<div className={DETAIL_STYLES.scrollContent}>

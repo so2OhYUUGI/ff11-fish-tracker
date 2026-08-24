@@ -67,9 +67,7 @@ export const useTrackerNavigation = ({
 		}
 	}, [navStack, navigate, mainTab]);
 
-	const canGoBackEffective = isMobileLayout
-		? navStack.stack.length > 0
-		: navStack.stack.length > 1;
+	const canGoBackEffective = navStack.stack.length > 1;
 
 	const { push: navPush, replace: navReplace, clear: navClear } = navStack;
 
