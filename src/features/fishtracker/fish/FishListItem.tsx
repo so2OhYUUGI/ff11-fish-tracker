@@ -66,7 +66,7 @@ export const FishListItem: React.FC<Props> = ({
 		? `${LIST_STYLES.inlineBase} ${onClickDetail ? LIST_STYLES.inlineInteractive : ''} ${isChecked ? LIST_STYLES.dimmed : ''
 		}`
 		: `${LIST_STYLES.base} ${LIST_STYLES.fishRow} ${isSelected
-			? `${LIST_STYLES.selected} ${isChecked ? 'opacity-90' : ''}`
+			? `${LIST_STYLES.selected} ${isChecked ? LIST_STYLES.selectedCheckedOpacity : ''}`
 			: isChecked
 				? LIST_STYLES.checked
 				: LIST_STYLES.default
@@ -99,7 +99,7 @@ export const FishListItem: React.FC<Props> = ({
 			className={containerStyle}
 		>
 			{/* 左側：チェックボックス ＋ 魚名（日本語・英語） */}
-			<div className="flex items-center gap-2.5 min-w-0 flex-1">
+			<div className={LIST_STYLES.leftGroupContainer}>
 				{onToggleCheck && (
 					<button
 						type="button"
@@ -114,11 +114,11 @@ export const FishListItem: React.FC<Props> = ({
 							}）`}
 						aria-pressed={isChecked}
 					>
-						{isChecked && <Check className="w-4 h-4 stroke-[3]" />}
+						{isChecked && <Check className="w-4 h-4 stroke-3" />}
 					</button>
 				)}
 
-				<div className="flex flex-col min-w-0 flex-1">
+				<div className={LIST_STYLES.titleGroup}>
 					<span className={`truncate ${titleStyle}`}>{fish.ja}</span>
 					<span className={isInline ? LIST_STYLES.titleInlineEn : LIST_STYLES.titleEn}>
 						{fish.en}
@@ -127,13 +127,13 @@ export const FishListItem: React.FC<Props> = ({
 			</div>
 
 			{/* 右側：属性バッジ群（狭い領域での自動折り返しに対応） */}
-			<div className="flex flex-wrap items-center justify-end gap-1 shrink-0 max-w-[50%]">
+			<div className={LIST_STYLES.badgeGroupContainer}>
 				{/* 生息エリア数 */}
 				{totalZones > 0 && (
 					<span
 						className={`${LIST_STYLES.zoneCountBase} ${totalZones === 1
-								? LIST_STYLES.zoneCountSingle
-								: LIST_STYLES.zoneCountMultiple
+							? LIST_STYLES.zoneCountSingle
+							: LIST_STYLES.zoneCountMultiple
 							}`}
 						title={`生息エリア: ${totalZones}箇所`}
 					>

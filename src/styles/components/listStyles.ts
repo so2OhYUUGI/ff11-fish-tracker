@@ -26,14 +26,17 @@ export const LIST_STYLES = {
 	selected: COMMON_TOKENS.state.selected,
 	checked: COMMON_TOKENS.state.checked,
 	empty: COMMON_TOKENS.state.empty,
+	selectedCheckedOpacity: 'opacity-90',
 
 	// 1b. インライン用リスト行（詳細パネル等で利用）
 	inlineBase: 'w-full text-left p-2.5 sm:p-3 rounded-lg bg-slate-800/60 border border-slate-700/50 flex items-center justify-between gap-2 min-h-[40px]',
 	inlineInteractive: 'cursor-pointer hover:bg-slate-800 transition-colors',
 
-	// 2. レイアウトグループ（幅変動に対応した幅幅調整）
+	// 2. レイアウトグループ（幅変動に対応した幅調整およびコンテナ）
+	leftGroupContainer: 'flex items-center gap-2.5 min-w-0 flex-1',
+	badgeGroupContainer: 'flex flex-wrap items-center justify-end gap-1 shrink-0 max-w-[50%]',
 	nameGroup: 'flex flex-col min-w-[100px] sm:min-w-[130px] max-w-[140px] sm:max-w-[180px] shrink-0',
-	titleGroup: 'flex flex-col min-w-0',
+	titleGroup: 'flex flex-col min-w-0 flex-1',
 	description: `${COMMON_TOKENS.text.subText} truncate text-right flex-1 min-w-0 text-xs`,
 	descriptionSub: `${COMMON_TOKENS.text.subText} truncate mt-0.5 text-[11px] sm:text-xs`,
 	spacer: 'flex-1 min-w-0',
