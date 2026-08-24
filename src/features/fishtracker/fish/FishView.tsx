@@ -27,7 +27,6 @@ import { BaitDetailView } from '../bait/BaitDetailView';
 import type { FishMaster, ViewMode, ZoneMaster } from '@/types/fishtracker';
 import type { useNavigationStack, NavItem } from '@/hooks/useNavigationStack';
 import { FISHES, REGIONS } from '@/data';
-import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
 
 type Props = {
