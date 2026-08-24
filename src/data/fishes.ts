@@ -11,15 +11,7 @@ export const FISHES: FishMaster[] = [
     "waterType": "saltwater",
     "ebisu": false,
     "taikobou": false,
-    "notes": "",
-    "subLocationMap": {
-      "3": 2
-    },
-    "subLocationsMap": {
-      "3": [
-        2
-      ]
-    }
+    "notes": ""
   },
   {
     "id": 2216,
