@@ -88,7 +88,7 @@ export type FishLocation = {
 	id: string;            // 一意の識別子（例: "4353-248"）
 	fishId: number;        // FishMaster.id
 	zoneId: number;        // ZoneMaster.id
-	subLocationId?: number;// SubLocationMaster.id（特定航路・限定便など）
+	subLocationIds?: number[];// SubLocationMaster.id（特定航路・限定便など）
 	notes?: string;        // エリア限定の補足（例: "S-10付近の池"、"天候：雨のみ" など）
 };
 

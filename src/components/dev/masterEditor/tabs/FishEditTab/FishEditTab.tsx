@@ -1,18 +1,32 @@
 /**
  * ============================================================================
- * [FilePath] src/components/dev/masterEditor/tabs/FishEditTab.tsx
- * [Role] 魚マスターデータの編集タブメインコンポーネント
- * [Specifications]
- *   - 画面レイアウト構築（サイドバー ＋ メイン編集フォーム）
- *   - 各種サブコンポーネントおよび RelationEditor の統合
- *   - ハラキリ（アイテム・称号）、備考の編集管理
- * [Notes]
- *   - サブコンポーネントやロジックは同階層のフォルダ（fishEdit/）に分割・整理されています。
+ * [FilePath] src/components/dev/masterEditor/tabs/FishEditTab/FishEditTab.tsx
+ * [Role]     魚マスターデータの編集タブメインコンポーネント
+ * 
+ * [概要]
+ * - 画面レイアウト構築（サイドバー ＋ メイン編集フォーム）
+ * - 各種サブコンポーネント、RelationEditor の統合
+ * - エリアおよび特定航路（サブロケーション）を同列でトグル選択するUIの提供
+ * - 「全域（subLocationIdsが空）」および「特定ルート限定」の相互切り替えロジック
+ * - ハラキリ（アイテム・称号）、備考の編集管理
+ * 
+ * [依存関係・関連ファイル]
+ * - スタイル : src/styles/components/editorStyles.ts
+ * - 型定義   : src/types/fishtracker.ts, ./types.ts
+ * - データ   : src/data/baits.ts, src/data/subLocations.ts
+ * - 親・関連 : src/components/dev/MasterDataEditorModal.tsx
+ * 
+ * [編集・改修時の注意事項（AI/エンジニア共通指示）]
+ * 1. 【レイアウト/構造上の制約】 フォームパネルの縦幅を超過しないようスクロール領域を維持すること
+ * 2. 【スタイルの集約】        直接Tailwindを書かず、EDITOR_STYLESを使用すること
+ * 3. 【ロジック・例外処理】    「全域」トグル時は対象ゾーンのサブロケーションIDを解除し、ゾーン自体が削除された場合は配下のサブロケーションIDも一括削除すること
+ * 4. 【アクセシビリティ・作法】 button には type="button" を明記すること
  * ============================================================================
  */
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { BAITS } from '@/data/baits';
+import { SUB_LOCATIONS } from '@/data/subLocations';
 import { RelationEditor } from '../../RelationEditor';
 import type { EntityItem } from '../../types';
 import { EDITOR_STYLES } from '@/styles/components/editorStyles';
@@ -90,18 +104,81 @@ export const FishEditTab: React.FC<FishEditTabProps> = ({
 		[selectedFish, handleFieldChange]
 	);
 
-	// ゾーン選択トグル
-	const handleZoneToggle = useCallback(
-		(zoneId: number | string) => {
+	// ゾーンおよびサブロケーション（特定航路）統合トグルハンドラー
+	const handleZoneOrSubLocationToggle = useCallback(
+		(targetId: number | string) => {
 			if (!selectedFish) return;
+
 			const currentZoneIds = selectedFish.zoneIds || [];
-			const targetId = Number(zoneId);
-			const updatedZoneIds = currentZoneIds.includes(targetId)
-				? currentZoneIds.filter((id) => id !== targetId)
-				: [...currentZoneIds, targetId];
-			handleFieldChange('zoneIds', updatedZoneIds);
+			const currentSubIds = selectedFish.subLocationIds || [];
+
+			if (typeof targetId === 'string' && targetId.startsWith('sub-')) {
+				// --- 特定サブロケーション（特定ルート）のトグル処理 ---
+				const subId = Number(targetId.replace('sub-', ''));
+				const subLoc = SUB_LOCATIONS.find((s) => s.id === subId);
+				if (!subLoc) return;
+
+				const zoneId = subLoc.zoneId;
+
+				// 親ゾーンが未選択の場合は自動追加
+				const updatedZoneIds = currentZoneIds.includes(zoneId)
+					? currentZoneIds
+					: [...currentZoneIds, zoneId];
+
+				const isRemoving = currentSubIds.includes(subId);
+				const updatedSubIds = isRemoving
+					? currentSubIds.filter((id) => id !== subId)
+					: [...currentSubIds, subId];
+
+				const updated = {
+					...selectedFish,
+					zoneIds: updatedZoneIds,
+					subLocationIds: updatedSubIds.length > 0 ? updatedSubIds : undefined,
+				};
+				setSelectedFish(updated);
+				onFishChange(updated);
+			} else {
+				// --- 通常ゾーン / サブロケーション存在ゾーンの「全域」トグル処理 ---
+				const zoneId = Number(targetId);
+				const zoneSubLocations = SUB_LOCATIONS.filter((s) => s.zoneId === zoneId);
+				const zoneSubIds = zoneSubLocations.map((s) => s.id);
+				const hasSubLocations = zoneSubLocations.length > 0;
+
+				const isZoneSelected = currentZoneIds.includes(zoneId);
+				const hasActiveSubIds = currentSubIds.some((id) => zoneSubIds.includes(id));
+
+				let updatedZoneIds = [...currentZoneIds];
+				let updatedSubIds = [...currentSubIds];
+
+				if (hasSubLocations) {
+					// サブロケーションが存在するゾーンの場合
+					if (isZoneSelected && !hasActiveSubIds) {
+						// 現在「全域」選択中 -> ゾーン選択解除
+						updatedZoneIds = updatedZoneIds.filter((id) => id !== zoneId);
+					} else {
+						// 現在「非選択」または「特定ルート限定」 -> 「全域」に設定（対象ゾーン配下の個別サブロケ選択を解除）
+						if (!isZoneSelected) updatedZoneIds.push(zoneId);
+						updatedSubIds = updatedSubIds.filter((id) => !zoneSubIds.includes(id));
+					}
+				} else {
+					// サブロケーションが存在しない通常ゾーンの場合
+					if (isZoneSelected) {
+						updatedZoneIds = updatedZoneIds.filter((id) => id !== zoneId);
+					} else {
+						updatedZoneIds.push(zoneId);
+					}
+				}
+
+				const updated = {
+					...selectedFish,
+					zoneIds: updatedZoneIds,
+					subLocationIds: updatedSubIds.length > 0 ? updatedSubIds : undefined,
+				};
+				setSelectedFish(updated);
+				onFishChange(updated);
+			}
 		},
-		[selectedFish, handleFieldChange]
+		[selectedFish, onFishChange]
 	);
 
 	// 餌選択トグル
@@ -132,21 +209,81 @@ export const FishEditTab: React.FC<FishEditTabProps> = ({
 		[selectedFish, fishBaitRelations, onBaitRelationChange]
 	);
 
-	// エンティティ生成のメモ化
+	// ゾーンおよびサブロケーションを同列に統合した EntityItem 一覧の作成
 	const zoneEntityItems: EntityItem[] = useMemo(() => {
 		const regionMap = new Map((regionList || []).map((r) => [r.id, r.ja]));
-		return (zoneList || []).map((z) => {
+		const items: EntityItem[] = [];
+
+		(zoneList || []).forEach((z) => {
 			const regionName =
 				z.regionId !== undefined && z.regionId !== null && regionMap.has(z.regionId)
 					? regionMap.get(z.regionId)
 					: 'その他';
-			return {
-				id: z.id,
-				label: z.ja,
-				subLabel: `[${regionName}] ${z.en}`,
-			};
+
+			const subLocations = SUB_LOCATIONS.filter((sub) => sub.zoneId === z.id);
+
+			if (subLocations.length > 0) {
+				// サブロケーションが存在するゾーンの場合：動的に「全域」項目を挿入
+				items.push({
+					id: z.id,
+					label: `${z.ja} - 全域`,
+					subLabel: `[${regionName}] ${z.en} (All Area)`,
+				});
+
+				subLocations.forEach((sub) => {
+					items.push({
+						id: `sub-${sub.id}`,
+						label: `${z.ja} - ${sub.ja}`,
+						subLabel: `[${regionName} / 航路] ${sub.en}`,
+					});
+				});
+			} else {
+				// サブロケーションが存在しない通常ゾーン
+				items.push({
+					id: z.id,
+					label: z.ja,
+					subLabel: `[${regionName}] ${z.en}`,
+				});
+			}
 		});
+
+		return items;
 	}, [zoneList, regionList]);
+
+	// 現在選択されているゾーンIDおよびサブロケーションIDのターゲットID一覧（"sub-{id}" 形式含む）
+	const selectedZoneAndSubTargetIds = useMemo(() => {
+		if (!selectedFish) return [];
+		const selectedIds: (number | string)[] = [];
+		const fishZoneIds = selectedFish.zoneIds || [];
+		const fishSubIds = selectedFish.subLocationIds || [];
+
+		(zoneList || []).forEach((z) => {
+			if (!fishZoneIds.includes(z.id)) return;
+
+			const zoneSubLocations = SUB_LOCATIONS.filter((sub) => sub.zoneId === z.id);
+
+			if (zoneSubLocations.length > 0) {
+				const activeSubIdsInZone = fishSubIds.filter((subId) =>
+					zoneSubLocations.some((s) => s.id === subId)
+				);
+
+				if (activeSubIdsInZone.length > 0) {
+					// 特定ルート限定の場合
+					activeSubIdsInZone.forEach((subId) => {
+						selectedIds.push(`sub-${subId}`);
+					});
+				} else {
+					// ルール未指定（空）のため「全域」選択状態
+					selectedIds.push(z.id);
+				}
+			} else {
+				// サブロケーションを持たないゾーン
+				selectedIds.push(z.id);
+			}
+		});
+
+		return selectedIds;
+	}, [selectedFish, zoneList]);
 
 	const baitEntityItems: EntityItem[] = useMemo(
 		() =>
@@ -187,10 +324,10 @@ export const FishEditTab: React.FC<FishEditTabProps> = ({
 
 						<RelationEditor
 							mode="multiple"
-							title="釣れるエリア（ゾーン）"
+							title="釣れるエリア（ゾーン・特定航路）"
 							targets={zoneEntityItems}
-							selectedTargetIds={selectedFish.zoneIds || []}
-							onToggle={handleZoneToggle}
+							selectedTargetIds={selectedZoneAndSubTargetIds}
+							onToggle={handleZoneOrSubLocationToggle}
 						/>
 
 						<RelationEditor

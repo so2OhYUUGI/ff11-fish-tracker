@@ -6,6 +6,7 @@
  * [概要]
  * - 開発環境限定で動作するマスターデータ統合編集コンテナ
  * - インラインスタイルを排除し、EDITOR_STYLES に定義を集約
+ * - FISH_LOCATIONS から zoneIds および subLocationIds を抽出し EditableFish を初期化
  * ============================================================================
  */
 
@@ -16,6 +17,7 @@ import {
 	ZONES,
 	BAITS,
 	FISH_LOCATIONS,
+	SUB_LOCATIONS,
 	REGIONS,
 	FISH_BAIT_RELATIONS,
 	FISH_ROD_RELATIONS,
@@ -39,10 +41,19 @@ export const MasterDataEditor: React.FC = () => {
 	const [activeTab, setActiveTab] = useState<EditTab>('fish');
 
 	const [fishList, setFishList] = useState<EditableFish[]>(() =>
-		FISHES.map((fish) => ({
-			...fish,
-			zoneIds: FISH_LOCATIONS.filter((loc) => loc.fishId === fish.id).map((loc) => loc.zoneId),
-		}))
+		FISHES.map((fish) => {
+			const matchedLocs = FISH_LOCATIONS.filter((loc) => loc.fishId === fish.id);
+			const zoneIds = Array.from(new Set(matchedLocs.map((loc) => loc.zoneId)));
+			const subLocationIds = Array.from(
+				new Set(matchedLocs.flatMap((loc) => loc.subLocationIds || []))
+			);
+
+			return {
+				...fish,
+				zoneIds,
+				subLocationIds: subLocationIds.length > 0 ? subLocationIds : undefined,
+			};
+		})
 	);
 
 	const [zoneList, setZoneList] = useState<ZoneMaster[]>(() => ZONES);
@@ -92,13 +103,22 @@ export const MasterDataEditor: React.FC = () => {
 	};
 
 	const handleExport = () => {
-		const exportFishes = fishList.map(({ zoneIds, ...fish }) => fish);
+		const exportFishes = fishList.map(({ zoneIds, subLocationIds, ...fish }) => fish);
 		const exportLocations: FishLocation[] = fishList.flatMap((fish) =>
-			(fish.zoneIds || []).map((zoneId) => ({
-				id: `${fish.id}-${zoneId}`,
-				fishId: fish.id,
-				zoneId,
-			}))
+			(fish.zoneIds || []).map((zoneId) => {
+				// 該当ゾーンに対応する subLocationIds の抽出
+				const zoneSubLocationIds = (fish.subLocationIds || []).filter((subId) => {
+					const subLoc = SUB_LOCATIONS.find((s) => s.id === subId);
+					return subLoc?.zoneId === zoneId;
+				});
+
+				return {
+					id: `${fish.id}-${zoneId}`,
+					fishId: fish.id,
+					zoneId,
+					...(zoneSubLocationIds.length > 0 ? { subLocationIds: zoneSubLocationIds } : {}),
+				};
+			})
 		);
 
 		const exportData = {
@@ -137,8 +157,8 @@ export const MasterDataEditor: React.FC = () => {
 						type="button"
 						onClick={() => setActiveTab('fish')}
 						className={`${EDITOR_STYLES.tabButtonBase} ${activeTab === 'fish'
-								? EDITOR_STYLES.tabButtonActive
-								: EDITOR_STYLES.tabButtonInactive
+							? EDITOR_STYLES.tabButtonActive
+							: EDITOR_STYLES.tabButtonInactive
 							}`}
 					>
 						🐟 魚データ編集
@@ -147,8 +167,8 @@ export const MasterDataEditor: React.FC = () => {
 						type="button"
 						onClick={() => setActiveTab('zone')}
 						className={`${EDITOR_STYLES.tabButtonBase} ${activeTab === 'zone'
-								? EDITOR_STYLES.tabButtonActive
-								: EDITOR_STYLES.tabButtonInactive
+							? EDITOR_STYLES.tabButtonActive
+							: EDITOR_STYLES.tabButtonInactive
 							}`}
 					>
 						🗺️ ゾーン（エリア）編集
@@ -157,8 +177,8 @@ export const MasterDataEditor: React.FC = () => {
 						type="button"
 						onClick={() => setActiveTab('bait')}
 						className={`${EDITOR_STYLES.tabButtonBase} ${activeTab === 'bait'
-								? EDITOR_STYLES.tabButtonActive
-								: EDITOR_STYLES.tabButtonInactive
+							? EDITOR_STYLES.tabButtonActive
+							: EDITOR_STYLES.tabButtonInactive
 							}`}
 					>
 						🪱 餌並び順編集

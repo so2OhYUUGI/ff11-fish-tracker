@@ -1,12 +1,18 @@
 /**
  * ============================================================================
  * [FilePath] src/components/dev/masterEditor/tabs/fishEdit/types.ts
- * [Role] 魚マスター編集タブに関連する型定義および選択肢定数
- * [Specifications]
- *   - EditableFish 型の定義（FishMasterにzoneIds拡張）
- *   - サイズ区分（SIZE_OPTIONS）および水質区分（WATER_OPTIONS）の定数定義
- * [Notes]
- *   - @/types/fish の各種型に依存しています。
+ * [Role]     魚マスター編集タブに関連する型定義および選択肢定数
+ * 
+ * [概要]
+ * - EditableFish 型の定義（FishMasterにzoneIdsおよびsubLocationIds拡張）
+ * - サイズ区分（SIZE_OPTIONS）および水質区分（WATER_OPTIONS）の定数定義
+ * 
+ * [依存関係・関連ファイル]
+ * - 型定義   : src/types/fishtracker.ts
+ * - 親・関連 : src/components/dev/masterEditor/tabs/FishEditTab.tsx
+ * 
+ * [編集・改修時の注意事項（AI/エンジニア共通指示）]
+ * 1. 【型の互換性】         EditableFish は FishMaster を継承し、編集専用プロパティ（zoneIds, subLocationIds）のみ拡張すること
  * ============================================================================
  */
 
@@ -22,6 +28,7 @@ import type {
 
 export type EditableFish = FishMaster & {
 	zoneIds?: number[];
+	subLocationIds?: number[]; // 特定サブロケーションID配列（空・未指定時はゾーン全域）
 };
 
 export type FishEditTabProps = {

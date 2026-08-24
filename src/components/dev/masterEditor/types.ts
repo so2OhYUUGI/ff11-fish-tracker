@@ -5,6 +5,7 @@
  * 
  * [概要]
  * - マスターエディタ内で使用する編集用データ型およびタブ・エンティティ定義
+ * - EditableFish に subLocationIds を追加
  * ============================================================================
  */
 
@@ -14,6 +15,7 @@ export type EditTab = 'fish' | 'zone' | 'bait';
 
 export type EditableFish = FishMaster & {
 	zoneIds?: number[];
+	subLocationIds?: number[];
 };
 
 export type EntityItem = {

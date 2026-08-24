@@ -50,14 +50,32 @@ export function saveFishDataPlugin(): Plugin {
                 fishRodRelations,
               } = JSON.parse(body);
 
-              // 1. 中間リレーションデータの抽出 (FishLocation)
-              const locations: Array<{ id: string; fishId: number; zoneId: number }> = [];
+              // 1. サブロケーションとゾーンの紐付けマップを取得
+              const subLocationsFilePath = path.resolve(process.cwd(), 'src/data/subLocations.ts');
+              const subLocationToZoneMap: Record<number, number> = {};
+
+              if (fs.existsSync(subLocationsFilePath)) {
+                const subLocContent = fs.readFileSync(subLocationsFilePath, 'utf-8');
+                const matches = subLocContent.matchAll(/id:\s*(\d+).*?zoneId:\s*(\d+)/gs);
+                for (const match of matches) {
+                  subLocationToZoneMap[Number(match[1])] = Number(match[2]);
+                }
+              }
+
+              // 2. 中間リレーションデータの抽出 (FishLocation)
+              const locations: Array<{
+                id: string;
+                fishId: number;
+                zoneId: number;
+                subLocationIds?: number[];
+              }> = [];
               let cleanFishList = [];
 
               if (Array.isArray(fishList)) {
                 cleanFishList = fishList.map((fish: any) => {
                   const {
                     zoneIds,
+                    subLocationIds,
                     impossibleRodIds,
                     brokenRodIds,
                     brokenLineRodIds,
@@ -66,50 +84,68 @@ export function saveFishDataPlugin(): Plugin {
                   } = fish;
 
                   if (Array.isArray(zoneIds)) {
+                    const fishSubIds: number[] = Array.isArray(subLocationIds) ? subLocationIds : [];
+
                     zoneIds.forEach((zoneId: number) => {
-                      locations.push({
+                      // 対象ゾーンに所属する subLocationId を抽出
+                      const relevantSubIds = fishSubIds.filter(
+                        (subId) => subLocationToZoneMap[subId] === zoneId
+                      );
+
+                      const locationRecord: {
+                        id: string;
+                        fishId: number;
+                        zoneId: number;
+                        subLocationIds?: number[];
+                      } = {
                         id: `${fish.id}-${zoneId}`,
                         fishId: fish.id,
                         zoneId,
-                      });
+                      };
+
+                      if (relevantSubIds.length > 0) {
+                        locationRecord.subLocationIds = relevantSubIds;
+                      }
+
+                      locations.push(locationRecord);
                     });
                   }
                   return restFish;
                 });
 
-                // 2. src/data/fishLocations.ts の保存
+                // 3. src/data/fishLocations.ts の保存
                 const locationsFilePath = path.resolve(process.cwd(), 'src/data/fishLocations.ts');
                 const locationsContent = `import type { FishLocation } from '@/types/fishtracker';\n\nexport const FISH_LOCATIONS: FishLocation[] = ${JSON.stringify(locations, null, 2)};\n`;
                 fs.writeFileSync(locationsFilePath, locationsContent, 'utf-8');
 
-                // 3. src/data/fishes.ts の保存（純粋な魚マスター）
+                // 4. src/data/fishes.ts の保存（純粋な魚マスター）
                 const fishesFilePath = path.resolve(process.cwd(), 'src/data/fishes.ts');
                 const fishesContent = `import type { FishMaster } from '@/types/fishtracker';\n\nexport const FISHES: FishMaster[] = ${JSON.stringify(cleanFishList, null, 2)};\n`;
                 fs.writeFileSync(fishesFilePath, fishesContent, 'utf-8');
               }
 
-              // 4. src/data/zones.ts の保存
+              // 5. src/data/zones.ts の保存
               if (zoneList) {
                 const zonesFilePath = path.resolve(process.cwd(), 'src/data/zones.ts');
                 const zonesContent = `import type { ZoneMaster } from '@/types/fishtracker';\n\nexport const ZONES: ZoneMaster[] = ${JSON.stringify(zoneList, null, 2)};\n`;
                 fs.writeFileSync(zonesFilePath, zonesContent, 'utf-8');
               }
 
-              // 5. src/data/baits.ts の保存（餌マスター）
+              // 6. src/data/baits.ts の保存（餌マスター）
               if (baitList) {
                 const baitsFilePath = path.resolve(process.cwd(), 'src/data/baits.ts');
                 const baitsContent = `import type { BaitMaster } from '@/types/fishtracker';\n\nexport const BAITS: BaitMaster[] = ${JSON.stringify(baitList, null, 2)};\n`;
                 fs.writeFileSync(baitsFilePath, baitsContent, 'utf-8');
               }
 
-              // 6. src/data/fishBaitRelations.ts の保存
+              // 7. src/data/fishBaitRelations.ts の保存
               if (fishBaitRelations) {
                 const baitRelFilePath = path.resolve(process.cwd(), 'src/data/fishBaitRelations.ts');
                 const baitRelContent = `import type { FishBaitRelation } from '@/types/fishtracker';\n\nexport const FISH_BAIT_RELATIONS: FishBaitRelation[] = ${JSON.stringify(fishBaitRelations, null, 2)};\n`;
                 fs.writeFileSync(baitRelFilePath, baitRelContent, 'utf-8');
               }
 
-              // 7. src/data/fishRodRelations.ts の保存
+              // 8. src/data/fishRodRelations.ts の保存
               if (fishRodRelations) {
                 const rodRelFilePath = path.resolve(process.cwd(), 'src/data/fishRodRelations.ts');
                 const rodRelContent = `import type { FishRodRelation } from '@/types/fishtracker';\n\nexport const FISH_ROD_RELATIONS: FishRodRelation[] = ${JSON.stringify(fishRodRelations, null, 2)};\n`;
