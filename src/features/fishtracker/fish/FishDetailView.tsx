@@ -103,21 +103,21 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 			type="button"
 			onClick={() => onToggleCheck(fish.id)}
 			className={`${DETAIL_STYLES.checkButtonBase} ${isChecked
-					? DETAIL_STYLES.checkButtonChecked
-					: DETAIL_STYLES.checkButtonUnchecked
+				? DETAIL_STYLES.checkButtonChecked
+				: DETAIL_STYLES.checkButtonUnchecked
 				} shrink-0`}
 			aria-label={`${fish.ja}を${isChecked ? '未釣獲' : '釣獲済み'}に変更`}
 			aria-pressed={isChecked}
 		>
 			{isChecked ? (
 				<>
-					<CheckSquare className="w-4 h-4 text-emerald-400 shrink-0" />
-					<span className="hidden sm:inline">釣獲済み</span>
+					<CheckSquare className={DETAIL_STYLES.checkIconChecked} />
+					<span className={DETAIL_STYLES.checkButtonText}>釣獲済み</span>
 				</>
 			) : (
 				<>
-					<Square className="w-4 h-4 text-slate-400 shrink-0" />
-					<span className="hidden sm:inline">未釣獲</span>
+					<Square className={DETAIL_STYLES.checkIconUnchecked} />
+					<span className={DETAIL_STYLES.checkButtonText}>未釣獲</span>
 				</>
 			)}
 		</button>
@@ -142,7 +142,7 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 				{/* 基本情報ステータス */}
 				<div>
 					<h3 className={DETAIL_STYLES.sectionTitle}>基本ステータス</h3>
-					<div className="flex flex-wrap items-center gap-2">
+					<div className={DETAIL_STYLES.badgeGroup}>
 						<SkillBadge maxSkill={fish.maxSkill} />
 						<SizeBadge sizeType={fish.sizeType} />
 						<WaterBadge waterType={fish.waterType} />
@@ -156,18 +156,18 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 				<div>
 					<h3 className={DETAIL_STYLES.sectionTitle}>ハラキリ</h3>
 					{isHarakiriTarget ? (
-						<div className="space-y-2">
+						<div className={DETAIL_STYLES.harakiriGroup}>
 							{hasHarakiriItems && (
-								<div className="flex flex-wrap items-center gap-2">
-									<span className="text-xs text-slate-400">入手アイテム:</span>
+								<div className={DETAIL_STYLES.harakiriItemRow}>
+									<span className={DETAIL_STYLES.harakiriLabel}>入手アイテム:</span>
 									{fish.harakiriItems!.map((item) => (
 										<HarakiriItemBadge key={item} itemName={item} />
 									))}
 								</div>
 							)}
 							{hasHarakiriTitle && (
-								<div className="flex items-center gap-2 text-xs">
-									<span className="text-slate-400">獲得称号:</span>
+								<div className={DETAIL_STYLES.harakiriTitleRow}>
+									<span className={DETAIL_STYLES.harakiriLabel}>獲得称号:</span>
 									<HarakiriTitleBadge titleName={fish.harakiriTitle!} />
 								</div>
 							)}

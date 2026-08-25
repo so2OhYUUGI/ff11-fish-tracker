@@ -5,7 +5,7 @@
  * 
  * [概要]
  * - メイン表示タブ（魚 / 餌 / エリア）の切替
- * - 魚表示時の状態絞り込み（すべて / 未達成 / 達成済）および進捗率（プログレスバー）の描画
+ * - 魚表示時の状態絞り込み（すべて / 未釣獲 / 釣獲済み）および進捗率（プログレスバー）の描画
  * - 名称検索インプット（魚名 / 餌名 / エリア名の自動切替・テキストクリア機能付き）
  * - 表示モード切替（カード表示 / リスト表示）
  * ============================================================================
@@ -113,7 +113,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 										: FILTER_BAR_STYLES.statusInactive
 									}`}
 							>
-								未達成
+								未釣獲
 							</button>
 							<button
 								type="button"
@@ -123,7 +123,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 										: FILTER_BAR_STYLES.statusInactive
 									}`}
 							>
-								達成済
+								釣獲済み
 							</button>
 						</div>
 					)}

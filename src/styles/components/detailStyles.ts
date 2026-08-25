@@ -59,6 +59,16 @@ export const DETAIL_STYLES = {
     'bg-emerald-950/80 border-emerald-500/50 text-emerald-300 hover:bg-emerald-900/80',
   checkButtonUnchecked:
     'bg-slate-700/60 border-slate-600 text-slate-300 hover:bg-slate-700',
+  checkIconChecked: 'w-4 h-4 text-emerald-400 shrink-0',
+  checkIconUnchecked: 'w-4 h-4 text-slate-400 shrink-0',
+  checkButtonText: 'hidden sm:inline',
+
+  // バッジ・ハラキリレイアウト
+  badgeGroup: 'flex flex-wrap items-center gap-2',
+  harakiriGroup: 'space-y-2',
+  harakiriItemRow: 'flex flex-wrap items-center gap-2',
+  harakiriTitleRow: 'flex items-center gap-2 text-xs',
+  harakiriLabel: 'text-xs text-slate-400',
 
   // セクション・コンテンツ
   sectionTitle:
