@@ -1,18 +1,18 @@
 {
-	"name": "ff11-fish-tracker",
-	"compatibility_date": "2026-08-15",
-	"main": "./functions/ogp.ts",
-	"assets": {
-		"directory": "./dist",
-		"binding": "ASSETS",
-		"not_found_handling": "single-page-application",
-		"run_worker_first": [
-			"/api/*"
-		]
-	},
-	"env": {
-		"staging": {
-			"name": "ff11-fish-tracker-staging"
-		}
-	}
+  "name": "ff11-fish-tracker",
+  "compatibility_date": "2026-08-15",
+  "main": "./functions/[[path]].ts",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": [
+      "/api/*"
+    ]
+  },
+  "env": {
+    "staging": {
+      "name": "ff11-fish-tracker-staging"
+    }
+  }
 }
