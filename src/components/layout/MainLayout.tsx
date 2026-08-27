@@ -2,10 +2,6 @@
  * ============================================================================
  * [FilePath] src/components/layout/MainLayout.tsx
  * [Role] アプリケーション全体の共通レイアウトコンポーネント
- * 
- * [概要]
- * - Header, Footer, AdBanner, Toaster などの全画面共通UI枠組みを提供
- * - React Router の Outlet を使用し、配下のルートコンポーネントをメイン領域内に描画
  * ============================================================================
  */
 
@@ -54,13 +50,15 @@ export function MainLayout({
 		<div className={LAYOUT_TOKENS.page.appWrapper}>
 			<Toaster position="bottom-right" theme="dark" />
 
-			<Header
-				characters={characters}
-				activeCharacter={effectiveActiveCharacter}
-				onSelectCharacter={onSelectCharacter}
-				onOpenSettings={onOpenSettings}
-				onOpenMasterEditor={onOpenMasterEditor}
-			/>
+			<div className={LAYOUT_TOKENS.header.stickyWrapper}>
+				<Header
+					characters={characters}
+					activeCharacter={effectiveActiveCharacter}
+					onSelectCharacter={onSelectCharacter}
+					onOpenSettings={onOpenSettings}
+					onOpenMasterEditor={onOpenMasterEditor}
+				/>
+			</div>
 
 			<AdBanner slotId="top-banner" />
 

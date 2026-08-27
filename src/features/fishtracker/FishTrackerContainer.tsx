@@ -177,7 +177,7 @@ export function FishTrackerContainer({
 				path={location.pathname}
 			/>
 
-			<div className={LAYOUT_TOKENS.header.stickyWrapper}>
+			<div className={LAYOUT_TOKENS.header.stickyFilterBar}>
 				<FilterBar
 					mainTab={mainTab}
 					activeCharacter={effectiveActiveCharacter}

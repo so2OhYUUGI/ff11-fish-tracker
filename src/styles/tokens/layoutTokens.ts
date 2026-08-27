@@ -27,6 +27,7 @@ export const LAYOUT_TOKENS = {
   // ヘッダー領域
   header: {
     stickyWrapper: 'sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 shadow-md transition-all',
+    stickyFilterBar: 'sticky top-[81px] z-30 bg-slate-900/95 backdrop-blur-md pb-3 p-0 transition-all',
     container: 'bg-slate-800 text-white shadow-md border-b border-slate-700',
     inner: 'max-w-7xl mx-auto px-3 py-3 sm:px-6 sm:py-4 lg:px-8',
     iconBg: 'p-1.5 sm:p-2 bg-blue-600 rounded-lg shrink-0 flex items-center justify-center',
