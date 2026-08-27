@@ -3,13 +3,9 @@
  * [FilePath] src/hooks/useSharedProgress.ts
  * [Role]     URLパラメータに基づく共有進捗データの読み込み・状態管理フック
  * 
- * [概要]
- * - URLクエリ（`?share=...`）の変更を検知し、共有進捗データ（SharedProgress）を復元・保持
- * - 閲覧者の既存データ（useUserData/LocalStorage）と共有データを完全に分離して管理
- * - 共有閲覧モードの解除（通常表示モードへの復帰）処理を提供
- * 
  * [調整内容]
- * - clearSharedMode 内の setSearchParams で new URLSearchParams(prev) を生成し、参照同一性による更新スキップを防止
+ * - decodeSharedProgress 呼び出し時の try-catch による保護を追加
+ * - clearSharedMode におけるパラメータ存在判定による不要な再描画の防止
  * ============================================================================
  */
 
@@ -29,14 +25,20 @@ export function useSharedProgress(): UseSharedProgressReturn {
 
 	const shareParam = searchParams.get('share');
 
-	// share パラメータの変化に応じて共有進捗データを復元
+	// share パラメータの変化に応じて共有進捗データを復元（安全策として例外をキャッチ）
 	const sharedProgress = useMemo(() => {
 		if (!shareParam) return null;
-		return decodeSharedProgress(shareParam);
+		try {
+			return decodeSharedProgress(shareParam);
+		} catch {
+			return null;
+		}
 	}, [shareParam]);
 
 	// 共有表示モードの解除（URLから share パラメータを除去）
 	const clearSharedMode = useCallback(() => {
+		if (!searchParams.has('share')) return;
+
 		setSearchParams(
 			(prev) => {
 				const nextParams = new URLSearchParams(prev);
@@ -45,7 +47,7 @@ export function useSharedProgress(): UseSharedProgressReturn {
 			},
 			{ replace: true }
 		);
-	}, [setSearchParams]);
+	}, [searchParams, setSearchParams]);
 
 	return {
 		sharedProgress,

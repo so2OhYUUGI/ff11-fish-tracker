@@ -4,7 +4,9 @@
  * [Role] 釣魚チェッカーのメイン画面用コンテナコンポーネント（共有キャラ対応版）
  * 
  * [調整内容]
- * - FilterBar 周囲に stickyWrapper を再配置し、スクロール時の追従位置を補正
+ * - タブ切り替え（handleMainTabChange）時の URL クエリパラメータ（location.search）保持
+ * - checkedFishIds の数値化・正規化ロジックの最適化と型安全性の向上
+ * - 閲覧専用状態および未登録ガード判定のロジックを整理
  * ============================================================================
  */
 
@@ -50,25 +52,31 @@ export function FishTrackerContainer({
 	const statusFilter = (searchParams.get('status') as StatusFilter) || 'all';
 	const searchQuery = searchParams.get('q') || '';
 
-	// activeCharacter 内の checkedFishIds を確実に number[] へ正規化
+	// activeCharacter 内の checkedFishIds を数値配列へ安全に正規化
 	const effectiveActiveCharacter: DisplayCharacterProgress = useMemo(() => {
-		const rawChar = activeCharacter || {
-			id: 'guest',
-			name: 'ゲスト',
-			checkedFishIds: [],
-			createdAt: 0,
-			updatedAt: 0,
-		};
+		if (!activeCharacter) {
+			return {
+				id: 'guest',
+				name: 'ゲスト',
+				checkedFishIds: [],
+				createdAt: 0,
+				updatedAt: 0,
+			};
+		}
+
+		const normalizedIds = Array.isArray(activeCharacter.checkedFishIds)
+			? activeCharacter.checkedFishIds
+				.map((id) => (typeof id === 'number' ? id : Number(id)))
+			: []
+				.filter((id) => Number.isInteger(id) && !Number.isNaN(id));
 
 		return {
-			...rawChar,
-			checkedFishIds: Array.isArray(rawChar.checkedFishIds)
-				? rawChar.checkedFishIds.map((id) => Number(id)).filter((id) => !isNaN(id))
-				: [],
+			...activeCharacter,
+			checkedFishIds: normalizedIds,
 		};
 	}, [activeCharacter]);
 
-	// カスタムフックによるSEO管理とナビゲーション制御の分離
+	// SEOおよびナビゲーション管理フック
 	const { pageTitle, pageDescription } = useTrackerSeo(type, slug);
 	const { effectiveNavStack } = useTrackerNavigation({
 		type,
@@ -79,16 +87,18 @@ export function FishTrackerContainer({
 		onRequestRegistration,
 	});
 
+	// タブ切り替え処理（クエリパラメータを保持して遷移）
 	const handleMainTabChange = useCallback(
 		(tab: MainTab) => {
-			if (!isRegistered && !effectiveActiveCharacter?.isShared) {
+			const canAccess = isRegistered || !!effectiveActiveCharacter.isShared;
+			if (!canAccess) {
 				onRequestRegistration('キャラクターを登録すると機能を利用できます');
 				return;
 			}
 			effectiveNavStack.clear();
-			navigate(`/fishtracker/${tab}`);
+			navigate(`/fishtracker/${tab}${location.search}`);
 		},
-		[isRegistered, effectiveActiveCharacter, onRequestRegistration, effectiveNavStack, navigate]
+		[isRegistered, effectiveActiveCharacter.isShared, onRequestRegistration, effectiveNavStack, navigate, location.search]
 	);
 
 	const handleStatusFilterChange = useCallback(
@@ -96,7 +106,11 @@ export function FishTrackerContainer({
 			setSearchParams(
 				(prev) => {
 					const nextParams = new URLSearchParams(prev);
-					nextParams.set('status', status);
+					if (status === 'all') {
+						nextParams.delete('status');
+					} else {
+						nextParams.set('status', status);
+					}
 					return nextParams;
 				},
 				{ replace: true }
@@ -110,8 +124,8 @@ export function FishTrackerContainer({
 			setSearchParams(
 				(prev) => {
 					const nextParams = new URLSearchParams(prev);
-					if (query) {
-						nextParams.set('q', query);
+					if (query.trim()) {
+						nextParams.set('q', query.trim());
 					} else {
 						nextParams.delete('q');
 					}
@@ -125,11 +139,13 @@ export function FishTrackerContainer({
 
 	const handleToggleCheck = useCallback(
 		(fishId: number) => {
-			if (effectiveActiveCharacter?.isShared) {
+			// 共有キャラの閲覧時はチェック操作不可
+			if (effectiveActiveCharacter.isShared) {
 				toast.info('共有キャラクターの釣獲状況は変更できません（閲覧専用）');
 				return;
 			}
 
+			// 未登録かつ非共有時のガード
 			if (!isRegistered || !activeCharacter) {
 				onRequestRegistration('キャラクターを登録すると釣獲状況を記録できます');
 				return;

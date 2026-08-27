@@ -20,43 +20,42 @@ export const useNavigationStack = (_type?: string, slug?: string) => {
 	// URLパラメータ (:slug) の変更を検知して全マスターデータから該当アイテムを判定・スタック同期
 	useEffect(() => {
 		if (!slug) {
-			setStack([]);
+			setStack((prev) => (prev.length === 0 ? prev : []));
 			return;
 		}
 
-		let foundItem: NavItem | null = null;
-
-		// 1. 魚マスターから検索
+		// 1. 魚、2. エリア、3. 餌の順で検索
 		const fish = findBySlug(FISHES, slug);
+		const area = !fish ? findBySlug(ZONES, slug) : null;
+		const bait = !fish && !area ? findBySlug(BAITS, slug) : null;
+
+		let foundItem: NavItem | null = null;
 		if (fish) {
 			foundItem = { type: 'fish', item: fish };
-		} else {
-			// 2. エリアマスターから検索
-			const area = findBySlug(ZONES, slug);
-			if (area) {
-				foundItem = { type: 'area', item: area };
-			} else {
-				// 3. 餌マスターから検索
-				const bait = findBySlug(BAITS, slug);
-				if (bait) {
-					foundItem = { type: 'bait', item: bait };
-				}
-			}
+		} else if (area) {
+			foundItem = { type: 'area', item: area };
+		} else if (bait) {
+			foundItem = { type: 'bait', item: bait };
 		}
 
-		if (foundItem) {
-			setStack((prev) => {
-				const last = prev[prev.length - 1];
-				if (last && last.type === foundItem!.type && last.item.id === foundItem!.item.id) {
-					return prev;
-				}
-				if (prev.length === 0) {
-					return [foundItem!];
-				}
-				return [...prev, foundItem!];
-			});
+		if (!foundItem) {
+			setStack((prev) => (prev.length === 0 ? prev : []));
+			return;
 		}
-	}, [slug]); // type への依存を外し、slug の変更のみ監視
+
+		const targetItem = foundItem;
+
+		setStack((prev) => {
+			const last = prev[prev.length - 1];
+			if (last && last.type === targetItem.type && last.item.id === targetItem.item.id) {
+				return prev;
+			}
+			if (prev.length === 0) {
+				return [targetItem];
+			}
+			return [...prev, targetItem];
+		});
+	}, [slug]);
 
 	const push = useCallback((navItem: NavItem) => {
 		setStack((prev) => {
@@ -77,7 +76,7 @@ export const useNavigationStack = (_type?: string, slug?: string) => {
 	}, []);
 
 	const clear = useCallback(() => {
-		setStack([]);
+		setStack((prev) => (prev.length === 0 ? prev : []));
 	}, []);
 
 	const current = stack.length > 0 ? stack[stack.length - 1] : null;

@@ -4,8 +4,7 @@
  * [Role] アプリケーションのルートコンポーネント（パスベースルーティング版）
  * 
  * [調整内容]
- * - MainLayout 導入に伴う Layout Route 構造の適用
- * - 未登録時の LandingPage と MainLayout 配下ルートの重複定義を解消
+ * - 共有キャラ選択時に詳細ページへ遷移しても選択コンテキストが解除されないよう、ステート維持ロジックを補正
  * ============================================================================
  */
 
@@ -48,17 +47,17 @@ function AppRoutes() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [registrationMessage, setRegistrationMessage] = useState<string | null>(null);
 
-  // 初回読み込みフラグ
+  // 初回読み込み・自動選択制御フラグ
   const hasAutoSelectedSharedRef = useRef(false);
 
   // 画面上で選択中のキャラクターID
   const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(null);
 
-  // 共有データが存在する場合、インメモリキャラとして一覧末尾に追加
-  const displayCharacters = useMemo<DisplayCharacterProgress[]>(() => {
-    if (!sharedProgress) return userData.characters;
+  // 共有キャラクターデータのキャッシュ（URLパラメータ変化時も表示コンテキストを維持）
+  const lastSharedCharRef = useRef<DisplayCharacterProgress | null>(null);
 
-    const sharedChar: DisplayCharacterProgress = {
+  if (sharedProgress) {
+    lastSharedCharRef.current = {
       id: 'shared-guest-character',
       name: sharedProgress.characterName,
       checkedFishIds: sharedProgress.checkedFishIds,
@@ -66,20 +65,22 @@ function AppRoutes() {
       updatedAt: sharedProgress.createdAt,
       isShared: true,
     };
+  }
 
-    return [...userData.characters, sharedChar];
-  }, [userData.characters, sharedProgress]);
+  // 共有データが存在する場合、または選択中の場合はインメモリキャラとして一覧末尾に追加
+  const displayCharacters = useMemo<DisplayCharacterProgress[]>(() => {
+    const activeShared = sharedProgress ? lastSharedCharRef.current : null;
+    const targetShared = activeShared || (selectedCharacterId === 'shared-guest-character' ? lastSharedCharRef.current : null);
 
-  // 共有データの初回自動選択および解除時のステートクリーンアップ
+    if (!targetShared) return userData.characters;
+    return [...userData.characters, targetShared];
+  }, [userData.characters, sharedProgress, selectedCharacterId]);
+
+  // 共有データの初回自動選択処理
   useEffect(() => {
-    if (sharedProgress) {
-      if (!hasAutoSelectedSharedRef.current) {
-        setSelectedCharacterId('shared-guest-character');
-        hasAutoSelectedSharedRef.current = true;
-      }
-    } else {
-      hasAutoSelectedSharedRef.current = false;
-      setSelectedCharacterId((prev) => (prev === 'shared-guest-character' ? null : prev));
+    if (sharedProgress && !hasAutoSelectedSharedRef.current) {
+      setSelectedCharacterId('shared-guest-character');
+      hasAutoSelectedSharedRef.current = true;
     }
   }, [sharedProgress]);
 
@@ -105,8 +106,8 @@ function AppRoutes() {
     }
   };
 
-  // 閲覧可能判定（登録済み、または共有データが存在する場合）
-  const canViewContainer = isRegistered || !!sharedProgress;
+  // 閲覧可能判定（登録済み、共有データが存在する、または共有キャラ選択中）
+  const canViewContainer = isRegistered || !!sharedProgress || selectedCharacterId === 'shared-guest-character';
 
   const handleRequestRegistration = (msg: string) => {
     setRegistrationMessage(msg);
@@ -123,7 +124,6 @@ function AppRoutes() {
         <Route path="/" element={<Navigate to="/fishtracker/fish" replace />} />
         <Route path="/fishtracker" element={<Navigate to="/fishtracker/fish" replace />} />
 
-        {/* 未登録かつ共有データ無しの場合のみ、メインルートで LandingPage（共通レイアウトなし）を表示 */}
         {!canViewContainer && (
           <Route
             path="/fishtracker/:type"
@@ -131,7 +131,6 @@ function AppRoutes() {
           />
         )}
 
-        {/* 共通レイアウト適用ルートグループ */}
         <Route
           element={
             <MainLayout
@@ -143,7 +142,6 @@ function AppRoutes() {
             />
           }
         >
-          {/* 登録済み／共有データありの場合のみメインルートを FishTrackerContainer で描画 */}
           {canViewContainer && (
             <Route
               path="/fishtracker/:type"
@@ -160,7 +158,6 @@ function AppRoutes() {
             />
           )}
 
-          {/* 詳細ルート（未登録時でもダイレクトアクセス可能） */}
           <Route
             path="/fishtracker/:type/:slug"
             element={
@@ -179,7 +176,6 @@ function AppRoutes() {
         <Route path="*" element={<Navigate to="/fishtracker/fish" replace />} />
       </Routes>
 
-      {/* 閲覧中ユーザーが回遊・アクションしようとした際の登録モーダル */}
       <OnboardingModal
         isOpen={(!isRegistered || !activeCharacter) && registrationMessage !== null}
         onClose={() => setRegistrationMessage(null)}
@@ -187,7 +183,6 @@ function AppRoutes() {
         message={registrationMessage}
       />
 
-      {/* 設定モーダル */}
       <SettingsModal
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}

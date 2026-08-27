@@ -4,8 +4,8 @@
  * [Role] メイン領域の表示切替・フィルタリング・ルーティングコンポーネント
  * 
  * [調整内容]
- * - filteredFishes / filteredBaits / filteredAreas 内の検索クエリ正規化処理をループ外へ集約
- * - 検索クエリの小文字化およびトリム処理を統一してループ内演算コストと不一致リスクを解消
+ * - checkedSet 生成時の防御的フォールバック追加による堅牢性向上
+ * - 余分な isShared の伝達を削除し、コンポーネント間のインターフェースを単純化
  * ============================================================================
  */
 
@@ -38,18 +38,25 @@ export const FishTrackerContent: React.FC<FishTrackerContentProps> = ({
   onToggleCheck,
   navStack,
 }) => {
-  // 上位層で number[] 正規化済みのため直接 Set 化
-  const checkedSet = useMemo(() => {
-    return new Set(activeCharacter.checkedFishIds);
-  }, [activeCharacter.checkedFishIds]);
+  // 安全な checkedFishIds の抽出と Set 化
+  const checkedFishIds = useMemo(() => {
+    return Array.isArray(activeCharacter?.checkedFishIds) ? activeCharacter.checkedFishIds : [];
+  }, [activeCharacter?.checkedFishIds]);
 
+  const checkedSet = useMemo(() => {
+    return new Set(checkedFishIds);
+  }, [checkedFishIds]);
+
+  // 検索クエリの正規化
   const normalizedQuery = useMemo(() => {
-    return searchQuery.trim().toLowerCase();
+    return searchQuery ? searchQuery.trim().toLowerCase() : '';
   }, [searchQuery]);
 
+  // 魚リストのフィルタリング
   const filteredFishes = useMemo(() => {
     return FISHES.filter((fish) => {
       const isChecked = checkedSet.has(fish.id);
+
       if (statusFilter === 'checked' && !isChecked) return false;
       if (statusFilter === 'unchecked' && isChecked) return false;
 
@@ -63,6 +70,7 @@ export const FishTrackerContent: React.FC<FishTrackerContentProps> = ({
     });
   }, [checkedSet, statusFilter, normalizedQuery]);
 
+  // 餌リストのフィルタリング
   const filteredBaits = useMemo(() => {
     if (!normalizedQuery) return BAITS;
     return BAITS.filter(
@@ -72,6 +80,7 @@ export const FishTrackerContent: React.FC<FishTrackerContentProps> = ({
     );
   }, [normalizedQuery]);
 
+  // エリアリストのフィルタリング
   const filteredAreas = useMemo(() => {
     if (!normalizedQuery) return ZONES;
     return ZONES.filter(
@@ -87,7 +96,7 @@ export const FishTrackerContent: React.FC<FishTrackerContentProps> = ({
         <FishView
           fishes={filteredFishes}
           zones={ZONES}
-          checkedFishIds={activeCharacter.checkedFishIds}
+          checkedFishIds={checkedFishIds}
           viewMode={viewMode}
           onToggleCheck={onToggleCheck}
           navStack={navStack}
@@ -97,7 +106,7 @@ export const FishTrackerContent: React.FC<FishTrackerContentProps> = ({
         <BaitView
           baits={filteredBaits}
           allFishes={FISHES}
-          checkedFishIds={activeCharacter.checkedFishIds}
+          checkedFishIds={checkedFishIds}
           viewMode={viewMode}
           onToggleCheck={onToggleCheck}
           navStack={navStack}
@@ -107,7 +116,7 @@ export const FishTrackerContent: React.FC<FishTrackerContentProps> = ({
         <AreaView
           areas={filteredAreas}
           allFishes={FISHES}
-          checkedFishIds={activeCharacter.checkedFishIds}
+          checkedFishIds={checkedFishIds}
           viewMode={viewMode}
           onToggleCheck={onToggleCheck}
           navStack={navStack}
