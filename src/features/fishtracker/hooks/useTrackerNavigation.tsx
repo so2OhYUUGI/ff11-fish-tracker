@@ -1,21 +1,21 @@
 /**
  * ============================================================================
  * [FilePath] src/features/fishtracker/hooks/useTrackerNavigation.ts
- * [Role] 釣魚チェッカーのナビゲーションスタック・ルーティング・登録ガードの統合フック
- * 
- * [調整内容]
- * - 共有キャラクター閲覧中（activeCharacter.isShared）の詳細画面遷移を許可するようガード条件を変更
- * - 画面遷移時に URL クエリパラメータ（共有データキー等）を保持する処理を追加
+ * [Role] 釣魚チェッカーのルーティングおよびJSネイティブの戻る・遷移制御フック
  * ============================================================================
  */
 
-import { useMemo, useCallback } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useNavigationStack, type NavItem } from '@/hooks/useNavigationStack';
 import { useIsMobileLayout } from '@/hooks/useIsMobileLayout';
 import { toSlug } from '@/utils/slug';
-import type { MainTab, CharacterProgress } from '@/types/fishtracker';
+import type { MainTab, CharacterProgress, FishMaster, ZoneMaster, BaitMaster } from '@/types/fishtracker';
 import type { DisplayCharacterProgress } from '@/components/layout/Header';
+
+export type NavItem =
+	| { type: 'fish'; item: FishMaster }
+	| { type: 'area'; item: ZoneMaster }
+	| { type: 'bait'; item: BaitMaster };
 
 type UseTrackerNavigationProps = {
 	type?: string;
@@ -36,11 +36,31 @@ export const useTrackerNavigation = ({
 }: UseTrackerNavigationProps) => {
 	const navigate = useNavigate();
 	const location = useLocation();
-	const navStack = useNavigationStack(type, slug);
 	const isMobileLayout = useIsMobileLayout();
 
-	// 閲覧権限判定（ユーザーが登録済み、または共有キャラ閲覧中の場合）
 	const canNavigate = isRegistered || !!(activeCharacter as DisplayCharacterProgress)?.isShared;
+
+	const [canGoBackEffective, setCanGoBackEffective] = useState(false);
+	const depthRef = useRef<number>(0);
+	const lastSlugRef = useRef<string | undefined>(slug);
+
+	// slug や location の変化を監視して履歴の深さ（スタック階層）を追跡
+	useEffect(() => {
+		if (!slug) {
+			depthRef.current = 0;
+			setCanGoBackEffective(false);
+			lastSlugRef.current = undefined;
+			return;
+		}
+
+		// 一覧から新たに選択された、または別ルートで直アクセスされた場合
+		if (!lastSlugRef.current) {
+			depthRef.current = 0;
+			setCanGoBackEffective(false);
+		}
+
+		lastSlugRef.current = slug;
+	}, [slug]);
 
 	const handleSelectFromList = useCallback(
 		(item: NavItem) => {
@@ -52,76 +72,72 @@ export const useTrackerNavigation = ({
 			const itemSlug = toSlug(item.item.en);
 			const targetPath = `/fishtracker/${mainTab}/${itemSlug}${location.search}`;
 
-			if (isMobileLayout) {
-				navStack.push(item);
-			} else {
-				navStack.replace(item);
-			}
-			navigate(targetPath);
+			// リストからの選択時は深さをリセットし、戻るを非表示にする
+			depthRef.current = 0;
+			setCanGoBackEffective(false);
+			lastSlugRef.current = itemSlug;
+
+			navigate(targetPath, { replace: !isMobileLayout });
 		},
-		[isMobileLayout, navStack, navigate, mainTab, canNavigate, onRequestRegistration, location.search]
+		[isMobileLayout, navigate, mainTab, canNavigate, onRequestRegistration, location.search]
 	);
 
 	const handlePop = useCallback(() => {
-		if (navStack.stack.length > 1) {
-			const previousItem = navStack.stack[navStack.stack.length - 2];
-			const itemSlug = toSlug(previousItem.item.en);
-			navStack.pop();
-			navigate(`/fishtracker/${mainTab}/${itemSlug}${location.search}`);
-		} else {
-			navClear();
-			navigate(`/fishtracker/${mainTab}${location.search}`);
+		if (depthRef.current > 0) {
+			depthRef.current -= 1;
 		}
-	}, [navStack, navigate, mainTab, location.search]);
+		if (depthRef.current === 0) {
+			setCanGoBackEffective(false);
+		}
+		navigate(-1);
+	}, [navigate]);
 
-	const canGoBackEffective = navStack.stack.length > 1;
-
-	const { push: navPush, replace: navReplace, clear: navClear } = navStack;
-
-	const effectiveNavStack = useMemo(
-		() => ({
-			...navStack,
-			push: (item: NavItem) => {
-				if (!canNavigate) {
-					onRequestRegistration('キャラクターを登録すると詳細の回遊や記録が行えます');
-					return;
-				}
-				navPush(item);
-				const itemSlug = toSlug(item.item.en);
-				navigate(`/fishtracker/${mainTab}/${itemSlug}${location.search}`);
-			},
-			replace: (item: NavItem) => {
-				if (!canNavigate) {
-					onRequestRegistration('キャラクターを登録すると詳細の回遊や記録が行えます');
-					return;
-				}
-				navReplace(item);
-				const itemSlug = toSlug(item.item.en);
-				navigate(`/fishtracker/${mainTab}/${itemSlug}${location.search}`);
-			},
-			pop: handlePop,
-			clear: () => {
-				navClear();
-				navigate(`/fishtracker/${mainTab}${location.search}`);
-			},
-			selectFromList: handleSelectFromList,
-			canGoBack: canGoBackEffective,
-		}),
-		[
-			navStack,
-			navPush,
-			navReplace,
-			navClear,
-			navigate,
-			handlePop,
-			handleSelectFromList,
-			mainTab,
-			canGoBackEffective,
-			canNavigate,
-			onRequestRegistration,
-			location.search,
-		]
+	const handlePush = useCallback(
+		(item: NavItem) => {
+			if (!canNavigate) {
+				onRequestRegistration('キャラクターを登録すると詳細の回遊や記録が行えます');
+				return;
+			}
+			const itemSlug = toSlug(item.item.en);
+			depthRef.current += 1;
+			setCanGoBackEffective(true);
+			lastSlugRef.current = itemSlug;
+			navigate(`/fishtracker/${mainTab}/${itemSlug}${location.search}`);
+		},
+		[canNavigate, onRequestRegistration, mainTab, navigate, location.search]
 	);
+
+	const handleReplace = useCallback(
+		(item: NavItem) => {
+			if (!canNavigate) {
+				onRequestRegistration('キャラクターを登録すると詳細の回遊や記録が行えます');
+				return;
+			}
+			const itemSlug = toSlug(item.item.en);
+			setCanGoBackEffective(depthRef.current > 0);
+			lastSlugRef.current = itemSlug;
+			navigate(`/fishtracker/${mainTab}/${itemSlug}${location.search}`, { replace: true });
+		},
+		[canNavigate, onRequestRegistration, mainTab, navigate, location.search]
+	);
+
+	const handleClear = useCallback(() => {
+		depthRef.current = 0;
+		setCanGoBackEffective(false);
+		lastSlugRef.current = undefined;
+		navigate(`/fishtracker/${mainTab}${location.search}`);
+	}, [navigate, mainTab, location.search]);
+
+	const effectiveNavStack = {
+		push: handlePush,
+		replace: handleReplace,
+		pop: handlePop,
+		clear: handleClear,
+		selectFromList: handleSelectFromList,
+		canGoBack: canGoBackEffective,
+		current: null,
+		stack: [],
+	};
 
 	return {
 		effectiveNavStack,

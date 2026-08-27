@@ -1,29 +1,22 @@
 /**
  * ============================================================================
  * [FilePath] src/features/fishtracker/bait/BaitView.tsx
- * [Role] 餌一覧表示および詳細ビュー切り替え用コンテナコンポーネント
- * 
- * [概要]
- * - `useNavigationStack`（`navStack`）の最前面データ（`current`）に基づき、詳細パネルの切り替え・スタック遷移を描画
- * - 事前計算した `fishCountMap` をコンポーネント間で共有し、走査処理を最適化
- * - 表示モード（`viewMode`: 'card' | 'list'）に基づく `BaitCard` / `BaitListItem` の切替描画
- * - モバイル表示時の画面切替（一覧/詳細）およびPC表示時の `sticky` 追従レイアウト制御
- * - モバイル詳細オープン時の `body` スクロールロック制御を追加
- * - 詳細ビュー内の魚達成チェック操作を判定・実行可能に拡張
- * - スタイル記述はすべて `LAYOUT_TOKENS` へ完全集約済み
+ * [Role] 餌一覧表示および詳細ビュー切り替え用コンテナコンポーネント（URL/JSネイティブ遷移対応版）
  * ============================================================================
  */
 
 import { useMemo, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import type { BaitMaster, FishMaster, ViewMode } from '@/types/fishtracker';
-import type { useNavigationStack, NavItem } from '@/hooks/useNavigationStack';
 import { BaitCard } from './BaitCard';
 import { BaitListItem } from './BaitListItem';
 import { BaitDetailView } from './BaitDetailView';
 import { FishDetailView } from '../fish/FishDetailView';
 import { AreaDetailView } from '../area/AreaDetailView';
-import { REGIONS, ZONES, FISH_BAIT_RELATIONS } from '@/data';
+import { REGIONS, ZONES, FISHES, BAITS, FISH_BAIT_RELATIONS } from '@/data';
+import { findBySlug } from '@/utils/slug';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
+import type { TrackerNavStack } from '../FishTrackerContent';
 
 type Props = {
 	baits: BaitMaster[];
@@ -31,9 +24,7 @@ type Props = {
 	checkedFishIds: number[];
 	viewMode: ViewMode;
 	onToggleCheck: (fishId: number) => void;
-	navStack: ReturnType<typeof useNavigationStack> & {
-		selectFromList?: (item: NavItem) => void;
-	};
+	navStack: TrackerNavStack;
 };
 
 export const BaitView = ({
@@ -44,10 +35,22 @@ export const BaitView = ({
 	onToggleCheck,
 	navStack,
 }: Props) => {
-	const { current, selectFromList, push, replace, pop, clear, canGoBack } = navStack;
+	const { slug } = useParams<{ type?: string; slug?: string }>();
+	const { selectFromList, push, pop, clear, canGoBack } = navStack;
 
-	// 一覧選択時のハンドラ（selectFromList が無ければ replace を使用）
-	const handleSelectFromList = selectFromList ?? replace;
+	const currentItem = useMemo(() => {
+		if (!slug) return null;
+		const fish = findBySlug(FISHES, slug);
+		if (fish) return { type: 'fish' as const, item: fish };
+
+		const area = findBySlug(ZONES, slug);
+		if (area) return { type: 'area' as const, item: area };
+
+		const bait = findBySlug(BAITS, slug);
+		if (bait) return { type: 'bait' as const, item: bait };
+
+		return null;
+	}, [slug]);
 
 	// チェック操作ハンドラ
 	const handleToggleCheck = (fishId: number) => {
@@ -74,7 +77,7 @@ export const BaitView = ({
 	}, []);
 
 	// 選択中のアイテムが存在するかどうか
-	const isSelected = current !== null;
+	const isSelected = currentItem !== null;
 
 	// lg (1024px) 未満のモバイル表示時、詳細オープン中は body スクロールをロック
 	useEffect(() => {
@@ -99,8 +102,8 @@ export const BaitView = ({
 		);
 	}
 
-	// 現在選択中の餌（スタックの最前面が餌の場合）
-	const selectedBaitId = current?.type === 'bait' ? current.item.id : null;
+	// 現在選択中の餌
+	const selectedBaitId = currentItem?.type === 'bait' ? currentItem.item.id : null;
 
 	return (
 		<div className={LAYOUT_TOKENS.view.mainGrid}>
@@ -114,7 +117,7 @@ export const BaitView = ({
 								bait={bait}
 								fishes={allFishes}
 								isSelected={selectedBaitId === bait.id}
-								onClickDetail={(b) => handleSelectFromList({ type: 'bait', item: b })}
+								onClickDetail={(b) => selectFromList({ type: 'bait', item: b })}
 							/>
 						))}
 					</div>
@@ -126,19 +129,19 @@ export const BaitView = ({
 								bait={bait}
 								fishCount={fishCountMap.get(bait.id) || 0}
 								isSelected={selectedBaitId === bait.id}
-								onClickDetail={(b) => handleSelectFromList({ type: 'bait', item: b })}
+								onClickDetail={(b) => selectFromList({ type: 'bait', item: b })}
 							/>
 						))}
 					</div>
 				)}
 			</div>
 
-			{/* 右側：詳細表示領域（スタックに応じて切替） */}
-			{isSelected && (
+			{/* 右側：詳細表示領域（URL/slugに応じて切替） */}
+			{isSelected && currentItem && (
 				<div className={LAYOUT_TOKENS.sidebar.stickyContainer}>
-					{current.type === 'bait' && (
+					{currentItem.type === 'bait' && (
 						<BaitDetailView
-							bait={current.item}
+							bait={currentItem.item}
 							allFishes={allFishes}
 							checkedFishIds={checkedFishIds}
 							onToggleCheck={handleToggleCheck}
@@ -149,11 +152,11 @@ export const BaitView = ({
 						/>
 					)}
 
-					{current.type === 'fish' && (
+					{currentItem.type === 'fish' && (
 						<FishDetailView
-							fish={current.item}
+							fish={currentItem.item}
 							zones={ZONES}
-							isChecked={checkedFishIds.includes(current.item.id)}
+							isChecked={checkedFishIds.includes(currentItem.item.id)}
 							onToggleCheck={handleToggleCheck}
 							onClose={clear}
 							onBack={pop}
@@ -163,9 +166,9 @@ export const BaitView = ({
 						/>
 					)}
 
-					{current.type === 'area' && (
+					{currentItem.type === 'area' && (
 						<AreaDetailView
-							area={current.item}
+							area={currentItem.item}
 							allFishes={allFishes}
 							regionList={REGIONS}
 							checkedFishIds={checkedFishIds}

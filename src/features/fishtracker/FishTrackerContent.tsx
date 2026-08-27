@@ -2,10 +2,6 @@
  * ============================================================================
  * [FilePath] src/features/fishtracker/FishTrackerContent.tsx
  * [Role] メイン領域の表示切替・フィルタリング・ルーティングコンポーネント
- * 
- * [調整内容]
- * - checkedSet 生成時の防御的フォールバック追加による堅牢性向上
- * - 余分な isShared の伝達を削除し、コンポーネント間のインターフェースを単純化
  * ============================================================================
  */
 
@@ -14,10 +10,21 @@ import { FISHES, ZONES, BAITS } from '@/data/';
 import { FishView } from './fish/FishView';
 import { BaitView } from './bait/BaitView';
 import { AreaView } from './area/AreaView';
-import type { MainTab, ViewMode, CharacterProgress } from '@/types/fishtracker';
+import type { MainTab, ViewMode, CharacterProgress, FishMaster, ZoneMaster, BaitMaster } from '@/types/fishtracker';
 import type { StatusFilter } from '@/features/fishtracker/FilterBar';
-import type { useNavigationStack } from '@/hooks/useNavigationStack';
 import type { DisplayCharacterProgress } from '@/components/layout/Header';
+import type { NavItem } from '@/features/fishtracker/hooks/useTrackerNavigation';
+
+export type TrackerNavStack = {
+  stack: NavItem[];
+  current: NavItem | null;
+  push: (item: NavItem) => void;
+  replace: (item: NavItem) => void;
+  pop: () => void;
+  clear: () => void;
+  selectFromList: (item: NavItem) => void;
+  canGoBack: boolean;
+};
 
 type FishTrackerContentProps = {
   mainTab: MainTab;
@@ -26,7 +33,7 @@ type FishTrackerContentProps = {
   viewMode: ViewMode;
   activeCharacter: DisplayCharacterProgress | CharacterProgress;
   onToggleCheck: (fishId: number) => void;
-  navStack: ReturnType<typeof useNavigationStack>;
+  navStack: TrackerNavStack;
 };
 
 export const FishTrackerContent: React.FC<FishTrackerContentProps> = ({

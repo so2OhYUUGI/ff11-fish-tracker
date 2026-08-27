@@ -1,30 +1,22 @@
 /**
  * ============================================================================
  * [FilePath] src/features/fishtracker/fish/FishView.tsx
- * [Role] 魚一覧／詳細ビューのレスポンシブレイアウト制御コンポーネント
- * 
- * [概要]
- * - 魚カード一覧（FishCard / FishListItem）と各種詳細ビュー（Fish/Area/Bait）の2カラム／単一表示制御
- * - `useNavigationStack`（`navStack`）の最前面データ（`current`）に基づき、詳細パネルの切り替え・スタック遷移を描画
- * - モバイルおよびデスクトップ（sticky追従）でのレスポンシブ切り替え
- * - 詳細表示領域に画面高に応じた上限サイズ（calc）と独立スクロール領域を設定
- * 
- * [調整内容]
- * - スクロールロック制御を宣言的な処理へ変更し、フラグ管理を廃止
- * - リスト選択ハンドラーを useCallback でメモ化
+ * [Role] 魚一覧／詳細ビューのレスポンシブレイアウト制御コンポーネント（URL/JSネイティブ遷移対応版）
  * ============================================================================
  */
 
 import { useEffect, useMemo, useCallback } from 'react';
+import { useParams } from 'react-router-dom';
 import { FishCard } from './FishCard';
 import { FishListItem } from './FishListItem';
 import { FishDetailView } from './FishDetailView';
 import { AreaDetailView } from '../area/AreaDetailView';
 import { BaitDetailView } from '../bait/BaitDetailView';
-import type { FishMaster, ViewMode, ZoneMaster } from '@/types/fishtracker';
-import type { useNavigationStack, NavItem } from '@/hooks/useNavigationStack';
-import { FISHES, REGIONS } from '@/data';
+import type { FishMaster, ViewMode, ZoneMaster, BaitMaster } from '@/types/fishtracker';
+import { FISHES, ZONES, BAITS, REGIONS } from '@/data';
+import { findBySlug } from '@/utils/slug';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
+import type { TrackerNavStack } from '../FishTrackerContent';
 
 type Props = {
 	fishes: FishMaster[];
@@ -32,9 +24,7 @@ type Props = {
 	checkedFishIds: number[];
 	viewMode: ViewMode;
 	onToggleCheck: (fishId: number) => void;
-	navStack: ReturnType<typeof useNavigationStack> & {
-		selectFromList?: (item: NavItem) => void;
-	};
+	navStack: TrackerNavStack;
 };
 
 export const FishView = ({
@@ -45,22 +35,35 @@ export const FishView = ({
 	onToggleCheck,
 	navStack,
 }: Props) => {
-	const { current, selectFromList, replace, push, pop, clear, canGoBack } = navStack;
+	const { slug } = useParams<{ type?: string; slug?: string }>();
+	const { selectFromList, clear, pop, push } = navStack;
 
-	const handleSelectFromList = selectFromList ?? replace;
+	const currentItem = useMemo(() => {
+		if (!slug) return null;
+		const fish = findBySlug(FISHES, slug);
+		if (fish) return { type: 'fish' as const, item: fish };
+
+		const area = findBySlug(ZONES, slug);
+		if (area) return { type: 'area' as const, item: area };
+
+		const bait = findBySlug(BAITS, slug);
+		if (bait) return { type: 'bait' as const, item: bait };
+
+		return null;
+	}, [slug]);
 
 	const checkedSet = useMemo(
 		() => new Set(checkedFishIds),
 		[checkedFishIds]
 	);
 
-	const isSelected = current !== null;
+	const isSelected = currentItem !== null;
 
 	const handleSelectFish = useCallback(
 		(fish: FishMaster) => {
-			handleSelectFromList({ type: 'fish', item: fish });
+			selectFromList({ type: 'fish', item: fish });
 		},
-		[handleSelectFromList]
+		[selectFromList]
 	);
 
 	useEffect(() => {
@@ -90,7 +93,7 @@ export const FishView = ({
 		);
 	}
 
-	const selectedFishId = current?.type === 'fish' ? current.item.id : null;
+	const selectedFishId = currentItem?.type === 'fish' ? currentItem.item.id : null;
 
 	return (
 		<div className={LAYOUT_TOKENS.view.mainGrid}>
@@ -128,46 +131,46 @@ export const FishView = ({
 			</div>
 
 			{/* 右側：詳細表示領域 */}
-			{isSelected && (
+			{isSelected && currentItem && (
 				<div className={LAYOUT_TOKENS.sidebar.stickyContainer}>
-					{current.type === 'fish' && (
+					{currentItem.type === 'fish' && (
 						<FishDetailView
-							fish={current.item}
+							fish={currentItem.item as FishMaster}
 							zones={zones}
-							isChecked={checkedSet.has(current.item.id)}
+							isChecked={checkedSet.has(currentItem.item.id)}
 							onToggleCheck={onToggleCheck}
 							onClose={clear}
 							onBack={pop}
-							canGoBack={canGoBack}
-							onClickAreaDetail={(area) => push({ type: 'area', item: area })}
-							onClickBaitDetail={(bait) => push({ type: 'bait', item: bait })}
+							canGoBack={navStack.canGoBack}
+							onClickAreaDetail={(area: ZoneMaster) => push({ type: 'area', item: area })}
+							onClickBaitDetail={(bait: BaitMaster) => push({ type: 'bait', item: bait })}
 						/>
 					)}
 
-					{current.type === 'area' && (
+					{currentItem.type === 'area' && (
 						<AreaDetailView
-							area={current.item}
+							area={currentItem.item as ZoneMaster}
 							allFishes={FISHES}
 							regionList={REGIONS}
 							checkedFishIds={checkedFishIds}
 							onToggleCheck={onToggleCheck}
 							onClose={clear}
 							onBack={pop}
-							canGoBack={canGoBack}
-							onClickFishDetail={(fish) => push({ type: 'fish', item: fish })}
+							canGoBack={navStack.canGoBack}
+							onClickFishDetail={(fish: FishMaster) => push({ type: 'fish', item: fish })}
 						/>
 					)}
 
-					{current.type === 'bait' && (
+					{currentItem.type === 'bait' && (
 						<BaitDetailView
-							bait={current.item}
+							bait={currentItem.item as BaitMaster}
 							allFishes={FISHES}
 							checkedFishIds={checkedFishIds}
 							onToggleCheck={onToggleCheck}
 							onClose={clear}
 							onBack={pop}
-							canGoBack={canGoBack}
-							onClickFishDetail={(fish) => push({ type: 'fish', item: fish })}
+							canGoBack={navStack.canGoBack}
+							onClickFishDetail={(fish: FishMaster) => push({ type: 'fish', item: fish })}
 						/>
 					)}
 				</div>
