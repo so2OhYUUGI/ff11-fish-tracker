@@ -11,8 +11,8 @@ import { X, Copy, Check, Download } from 'lucide-react';
 import { toast } from 'sonner';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
-import { FISHES } from '@/data/';
-import type { FishMaster } from '@/types/fishtracker';
+import { encodeSharedProgress } from '@/utils/shareEncoding';
+import { buildShareCardData } from '@/utils/shareDataBuilder';
 
 type ProgressShareModalProps = {
 	isOpen: boolean;
@@ -32,18 +32,13 @@ export const ProgressShareModal: React.FC<ProgressShareModalProps> = ({
 	const [copied, setCopied] = useState(false);
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 
-	const checkedCount = Array.isArray(checkedFishIds) ? checkedFishIds.length : 0;
-	const validTotal = FISHES.length;
+	// 共通ロジックからデータを取得
+	const cardData = React.useMemo(
+		() => buildShareCardData(characterName, checkedFishIds),
+		[characterName, checkedFishIds]
+	);
 
-	const percentage = validTotal > 0 ? Math.round((checkedCount / validTotal) * 100) : 0;
-
-	// 釣った魚の中でスキル上位3体を抽出
-	const topFishList: FishMaster[] = React.useMemo(() => {
-		if (!checkedFishIds || checkedFishIds.length === 0) return [];
-		const checkedSet = new Set(checkedFishIds);
-		const matchedFishes = FISHES.filter((f) => checkedSet.has(f.id));
-		return matchedFishes.sort((a, b) => b.maxSkill - a.maxSkill).slice(0, 3);
-	}, [checkedFishIds]);
+	const { checkedCount, totalCount, percentage, topFishList } = cardData;
 
 	// Canvas画像生成処理
 	useEffect(() => {
@@ -91,7 +86,7 @@ export const ProgressShareModal: React.FC<ProgressShareModalProps> = ({
 
 		ctx.fillStyle = '#e2e8f0';
 		ctx.font = '32px sans-serif';
-		ctx.fillText(`釣獲種数: ${checkedCount} / ${validTotal} 種`, 80, 420);
+		ctx.fillText(`釣獲種数: ${checkedCount} / ${totalCount} 種`, 80, 420);
 
 		// --- 右側ブロック：スキル上位3体（ハイライト） ---
 		ctx.fillStyle = '#cbd5e1';
@@ -130,16 +125,24 @@ export const ProgressShareModal: React.FC<ProgressShareModalProps> = ({
 
 		setDataUrl(canvas.toDataURL('image/png'));
 		setIsGenerating(false);
-	}, [isOpen, characterName, checkedCount, validTotal, percentage, topFishList]);
+	}, [isOpen, characterName, checkedCount, totalCount, percentage, topFishList]);
 
 	if (!isOpen || typeof document === 'undefined') return null;
 
-	const shareUrl = window.location.origin ? `${window.location.origin}/fishtracker/fish` : '';
+	// エンコードしたデータをURLのクエリパラメータ（?share=...）として付与
+	const encodedData = encodeSharedProgress({
+		characterName,
+		checkedFishIds,
+		createdAt: Date.now(),
+	});
+
+	const baseUrl = window.location.origin ? `${window.location.origin}/fishtracker/fish` : '';
+	const shareUrl = encodedData ? `${baseUrl}?share=${encodedData}` : baseUrl;
 
 	// 最高難易度（1位）の魚だけをハッシュタグ化
 	const topFish = topFishList[0];
 	const fishHashtag = topFish ? ` #${topFish.ja.replace(/\s+/g, '')}` : '';
-	const shareText = `【FF11 釣獲記録】\nキャラクター: ${characterName}\n達成率: ${percentage}% (${checkedCount}/${validTotal}種)${fishHashtag}\n#FF11 #FF11_FishTracker`;
+	const shareText = `【FF11 釣獲記録】\nキャラクター: ${characterName}\n達成率: ${percentage}% (${checkedCount}/${totalCount}種)${fishHashtag}\n#FF11 #FF11_FishTracker`;
 
 	const handleXShare = () => {
 		const intentUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
@@ -167,19 +170,19 @@ export const ProgressShareModal: React.FC<ProgressShareModalProps> = ({
 	};
 
 	return createPortal(
-		<div className={LAYOUT_TOKENS.modal.overlay}>
+		<div className={LAYOUT_TOKENS.modalShare.overlay}>
 			<canvas ref={canvasRef} className="hidden" />
 
-			<div className={LAYOUT_TOKENS.modal.contentWrapper}>
+			<div className={LAYOUT_TOKENS.modalShare.contentWrapper}>
 				{/* ヘッダー */}
-				<div className={LAYOUT_TOKENS.modal.header}>
+				<div className={LAYOUT_TOKENS.modalShare.header}>
 					<h2 className="text-lg font-bold text-white flex items-center gap-2">
 						釣獲進捗の共有
 					</h2>
 					<button
 						type="button"
 						onClick={onClose}
-						className={LAYOUT_TOKENS.modal.closeButton}
+						className={LAYOUT_TOKENS.modalShare.closeButton}
 						aria-label="閉じる"
 					>
 						<X className="w-5 h-5" />
@@ -187,7 +190,7 @@ export const ProgressShareModal: React.FC<ProgressShareModalProps> = ({
 				</div>
 
 				{/* コンテンツボディ */}
-				<div className={LAYOUT_TOKENS.modal.body}>
+				<div className={LAYOUT_TOKENS.modalShare.body}>
 					<div className="flex flex-col items-center justify-center bg-slate-950 rounded-xl p-4 border border-slate-800">
 						{isGenerating ? (
 							<div className="h-48 flex items-center justify-center text-slate-400">
@@ -233,7 +236,7 @@ export const ProgressShareModal: React.FC<ProgressShareModalProps> = ({
 				</div>
 
 				{/* フッター */}
-				<div className={LAYOUT_TOKENS.modal.footer}>
+				<div className={LAYOUT_TOKENS.modalShare.footer}>
 					<button
 						type="button"
 						onClick={onClose}

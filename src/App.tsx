@@ -26,6 +26,7 @@ import { MasterDataEditorModal } from '@/components/dev/MasterDataEditorModal';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { FishTrackerContainer } from '@/features/fishtracker/FishTrackerContainer';
 import type { DisplayCharacterProgress } from '@/components/layout/Header';
+import { DynamicOgpMeta } from '@/components/share/DynamicOgpMeta';
 
 function AppRoutes() {
   const userDataProps = useUserData();
@@ -120,6 +121,7 @@ function AppRoutes() {
 
   return (
     <>
+      <DynamicOgpMeta />
       <Routes>
         <Route path="/" element={<Navigate to="/fishtracker/fish" replace />} />
         <Route path="/fishtracker" element={<Navigate to="/fishtracker/fish" replace />} />

@@ -7,12 +7,17 @@
 
 import React, { useState } from 'react';
 import { Share } from 'lucide-react';
+import { toast } from 'sonner';
 import type { CharacterProgress } from '@/types/fishtracker';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 import { ProgressShareModal } from '@/components/share/ProgressShareModal';
 
+export interface ShareCharacterProgress extends CharacterProgress {
+	isShared?: boolean;
+}
+
 type ShareProgressButtonProps = {
-	activeCharacter: CharacterProgress;
+	activeCharacter: ShareCharacterProgress;
 	className?: string;
 };
 
@@ -21,25 +26,37 @@ export const ShareProgressButton: React.FC<ShareProgressButtonProps> = ({
 	className = '',
 }) => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const isShared = !!activeCharacter?.isShared;
+
+	const handleClick = () => {
+		if (isShared) {
+			toast.info('共有キャラクターの進捗は共有できません');
+			return;
+		}
+		setIsModalOpen(true);
+	};
 
 	return (
 		<>
 			<button
 				type="button"
-				onClick={() => setIsModalOpen(true)}
-				className={`${COMMON_TOKENS.button.shareProgress} ${className}`}
-				title="釣獲進捗を共有"
+				onClick={handleClick}
+				className={`${COMMON_TOKENS.button.shareIcon} ${isShared ? 'opacity-50 cursor-not-allowed hover:bg-slate-800' : ''
+					} ${className}`}
+				title={isShared ? '共有キャラクターの進捗は共有できません' : '釣獲進捗を共有'}
+				aria-label="釣獲進捗を共有"
 			>
-				<Share className={`w-4 h-4 ${COMMON_TOKENS.entity.fish.text}`} />
-				<span>進捗を共有</span>
+				<Share className={`w-5 h-5 ${COMMON_TOKENS.entity.fish.text}`} />
 			</button>
 
-			<ProgressShareModal
-				isOpen={isModalOpen}
-				onClose={() => setIsModalOpen(false)}
-				characterName={activeCharacter?.name ?? 'Unknown'}
-				checkedFishIds={activeCharacter?.checkedFishIds ?? []}
-			/>
+			{!isShared && (
+				<ProgressShareModal
+					isOpen={isModalOpen}
+					onClose={() => setIsModalOpen(false)}
+					characterName={activeCharacter?.name ?? 'Unknown'}
+					checkedFishIds={activeCharacter?.checkedFishIds ?? []}
+				/>
+			)}
 		</>
 	);
 };

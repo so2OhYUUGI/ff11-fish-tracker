@@ -78,7 +78,7 @@ export const Header: React.FC<HeaderProps> = ({
 								id="char-select"
 								value={activeCharacter?.id ?? ''}
 								onChange={(e) => onSelectCharacter(e.target.value)}
-								className={`${LAYOUT_TOKENS.control.select}${activeCharacter?.isShared ? 'border-cyan-500 text-cyan-300 bg-slate-900' : ''}`}
+								className={`${LAYOUT_TOKENS.control.select} ${activeCharacter?.isShared ? 'border-cyan-500 text-cyan-300 bg-slate-900' : ''}`}
 							>
 								{characters.map((char) => (
 									<option key={char.id} value={char.id}>
@@ -123,7 +123,7 @@ export const Header: React.FC<HeaderProps> = ({
 						<button
 							type="button"
 							onClick={() => setIsOpen(!isOpen)}
-							className={`${LAYOUT_TOKENS.header.collapsedMenuButton}${activeCharacter?.isShared ? 'border-cyan-500/80 bg-slate-900' : ''}`}
+							className={`${LAYOUT_TOKENS.header.collapsedMenuButton} ${activeCharacter?.isShared ? 'border-cyan-500/80 bg-slate-900' : ''}`}
 							aria-expanded={isOpen}
 							aria-haspopup="true"
 						>
