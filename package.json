@@ -1,7 +1,7 @@
 {
   "name": "ff11-fish-tracker",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -17,7 +17,8 @@
     "react-dom": "^19.2.8",
     "react-helmet-async": "^3.0.0",
     "react-router-dom": "^7.18.2",
-    "sonner": "^2.0.8"
+    "sonner": "^2.0.8",
+    "svg2png-wasm": "^1.4.1"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20260827.1",

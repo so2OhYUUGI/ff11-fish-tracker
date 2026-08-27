@@ -1,11 +1,16 @@
 {
   "compilerOptions": {
-    "noEmit": true, // ← JSやd.tsを出力しない
+    "noEmit": true,
     "skipLibCheck": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "strict": true,
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
     "types": [
       "node",
       "@cloudflare/workers-types"
@@ -14,6 +19,8 @@
   "include": [
     "vite.config.ts",
     "vite/**/*.ts",
-    "scripts/**/*.ts"
+    "scripts/**/*.ts",
+    "functions/**/*",
+    "env.d.ts"
   ]
 }

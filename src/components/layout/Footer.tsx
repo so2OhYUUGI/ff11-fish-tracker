@@ -5,6 +5,7 @@
  * 
  * [概要]
  * - 著作権表示および権利表記（スクウェア・エニックス等のライセンス注記）
+ * - アプリケーションのバージョン情報（Ver, Commit Hash, Build Number）の自動表示
  * - LAYOUT_TOKENS および COMMON_TOKENS を参照した統一スタイルの適用
  * 
  * [編集・改修時の注意事項]
@@ -25,9 +26,14 @@ export const Footer: React.FC = () => {
       <div className={LAYOUT_TOKENS.header.inner}>
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-center sm:text-left">
           <div>
-            <p className={`font-medium mb-1 ${COMMON_TOKENS.color.textMain}`}>
-              FF11 釣魚チェッカー (FF11 Fishing Tracker)
-            </p>
+            <div className="flex items-center justify-center sm:justify-start gap-2 mb-1">
+              <p className={`font-medium ${COMMON_TOKENS.color.textMain}`}>
+                FF11 釣魚チェッカー (FF11 Fishing Tracker)
+              </p>
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-400 font-mono">
+                v{__APP_VERSION__} ({__COMMIT_HASH__}) #{__BUILD_NUMBER__}
+              </span>
+            </div>
             <p className={COMMON_TOKENS.color.textMuted}>
               記載されている会社名・製品名・システム名などは、各社の商標、または登録商標です。
             </p>

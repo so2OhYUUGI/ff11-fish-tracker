@@ -10,6 +10,22 @@
       "/*"
     ]
   },
+  "rules": [
+    {
+      "type": "CompiledWasm",
+      "globs": [
+        "**/*.wasm"
+      ],
+      "fallthrough": true
+    },
+    {
+      "type": "Data",
+      "globs": [
+        "**/*.ttf"
+      ],
+      "fallthrough": true
+    }
+  ],
   "env": {
     "staging": {
       "name": "ff11-fish-tracker-staging"

@@ -1,5 +1,11 @@
-*.d.ts
+# 自動生成される型定義ファイルを除外したい場合の例
+# (手動作成する src/ 以下の d.ts はコミット対象にする)
+vite.config.d.ts
 *.tsbuildinfo
+
+# 自動生成用の特定ファイルのみ指定する場合
+# auto-imports.d.ts
+# components.d.ts
 
 # Logs
 logs
