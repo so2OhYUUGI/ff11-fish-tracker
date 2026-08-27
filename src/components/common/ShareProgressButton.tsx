@@ -41,7 +41,7 @@ export const ShareProgressButton: React.FC<ShareProgressButtonProps> = ({
 			<button
 				type="button"
 				onClick={handleClick}
-				className={`${COMMON_TOKENS.button.shareIcon} ${isShared ? 'opacity-50 cursor-not-allowed hover:bg-slate-800' : ''
+				className={`${COMMON_TOKENS.button.shareIcon} ${isShared ? COMMON_TOKENS.button.disabledShare : ''
 					} ${className}`}
 				title={isShared ? '共有キャラクターの進捗は共有できません' : '釣獲進捗を共有'}
 				aria-label="釣獲進捗を共有"

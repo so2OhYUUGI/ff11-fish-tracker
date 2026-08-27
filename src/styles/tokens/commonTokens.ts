@@ -75,10 +75,10 @@ export const COMMON_TOKENS = {
     primaryButton: 'w-full py-2.5 sm:py-3 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-sm rounded-lg shadow-md transition-colors min-h-[42px] flex items-center justify-center',
   },
 
-  // 共有ボタン用スタイル定義（レスポンシブ調整）
+  // ボタン系スタイル定義（レスポンシブ調整）
   button: {
     shareIcon: 'p-2 sm:p-2.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors flex items-center justify-center shrink-0 min-w-[40px] min-h-[40px]',
-    shareProgress: 'flex items-center justify-center gap-1.5 px-3 py-2 sm:py-1.5 rounded-lg bg-indigo-600/20 text-indigo-300 hover:bg-indigo-600/30 transition-colors text-xs sm:text-sm font-medium min-h-[36px]',
+    disabledShare: 'opacity-50 cursor-not-allowed hover:bg-slate-800',
   },
 
   // アラート・通知メッセージUI
