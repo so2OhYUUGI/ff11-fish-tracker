@@ -1,18 +1,22 @@
 /**
  * ============================================================================
  * [FilePath] src/features/fishtracker/FishTrackerContainer.tsx
- * [Role] 釣魚チェッカーのメイン画面用コンテナコンポーネント（リファクタリング版）
+ * [Role] 釣魚チェッカーのメイン画面用コンテナコンポーネント（共有キャラ対応版）
+ * 
+ * [調整内容]
+ * - setSearchParams のコールバック内で new URLSearchParams(prev) を生成し参照の同一性による更新スキップを防止
+ * - FilterBar および Header へ渡すハンドラー関数を useCallback でメモ化
  * ============================================================================
  */
 
-import { useCallback } from 'react';
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { useCallback, useMemo } from 'react';
+import { useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { toast, Toaster } from 'sonner';
 
 import { useUserData } from '@/hooks/useUserData';
 import { FISHES } from '@/data/';
 
-import { Header } from '@/components/layout/Header';
+import { Header, type DisplayCharacterProgress } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { AdBanner } from '@/components/common/AdBanner';
 import { SeoHead } from '@/components/common/SeoHead';
@@ -21,11 +25,12 @@ import { FishTrackerContent } from '@/features/fishtracker/FishTrackerContent';
 import { useTrackerSeo } from '@/features/fishtracker/hooks/useTrackerSeo';
 import { useTrackerNavigation } from '@/features/fishtracker/hooks/useTrackerNavigation';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
-import type { MainTab, ViewMode, CharacterProgress } from '@/types/fishtracker';
+import type { MainTab, ViewMode } from '@/types/fishtracker';
 
 type FishTrackerContainerProps = {
 	userData: ReturnType<typeof useUserData>['userData'];
-	activeCharacter: CharacterProgress | undefined;
+	displayCharacters?: DisplayCharacterProgress[];
+	activeCharacter?: DisplayCharacterProgress;
 	isRegistered: boolean;
 	viewMode: ViewMode;
 	setViewMode: (mode: ViewMode) => void;
@@ -38,6 +43,7 @@ type FishTrackerContainerProps = {
 
 export function FishTrackerContainer({
 	userData,
+	displayCharacters,
 	activeCharacter,
 	isRegistered,
 	viewMode,
@@ -49,6 +55,7 @@ export function FishTrackerContainer({
 	onRequestRegistration,
 }: FishTrackerContainerProps) {
 	const navigate = useNavigate();
+	const location = useLocation();
 	const { type, slug } = useParams<{ type?: string; slug?: string }>();
 	const [searchParams, setSearchParams] = useSearchParams();
 
@@ -58,6 +65,27 @@ export function FishTrackerContainer({
 	const statusFilter = (searchParams.get('status') as StatusFilter) || 'all';
 	const searchQuery = searchParams.get('q') || '';
 
+	// 画面表示用の全キャラクターリスト（未指定時はローカルデータを使用）
+	const characterList = displayCharacters || userData.characters;
+
+	// activeCharacter 内の checkedFishIds を確実に number[] へ正規化
+	const effectiveActiveCharacter: DisplayCharacterProgress = useMemo(() => {
+		const rawChar = activeCharacter || {
+			id: 'guest',
+			name: 'ゲスト',
+			checkedFishIds: [],
+			createdAt: 0,
+			updatedAt: 0,
+		};
+
+		return {
+			...rawChar,
+			checkedFishIds: Array.isArray(rawChar.checkedFishIds)
+				? rawChar.checkedFishIds.map((id) => Number(id)).filter((id) => !isNaN(id))
+				: [],
+		};
+	}, [activeCharacter]);
+
 	// カスタムフックによるSEO管理とナビゲーション制御の分離
 	const { pageTitle, pageDescription } = useTrackerSeo(type, slug);
 	const { effectiveNavStack } = useTrackerNavigation({
@@ -65,45 +93,70 @@ export function FishTrackerContainer({
 		slug,
 		mainTab,
 		isRegistered,
-		activeCharacter,
+		activeCharacter: effectiveActiveCharacter,
 		onRequestRegistration,
 	});
 
-	const handleMainTabChange = (tab: MainTab) => {
-		if (!isRegistered || !activeCharacter) {
-			onRequestRegistration('キャラクターを登録すると機能を利用できます');
-			return;
-		}
-		effectiveNavStack.clear();
-		navigate(`/fishtracker/${tab}`);
-	};
-
-	const handleStatusFilterChange = (status: StatusFilter) => {
-		setSearchParams((prev) => {
-			prev.set('status', status);
-			return prev;
-		});
-	};
-
-	const handleSearchQueryChange = (query: string) => {
-		setSearchParams((prev) => {
-			if (query) {
-				prev.set('q', query);
-			} else {
-				prev.delete('q');
+	const handleMainTabChange = useCallback(
+		(tab: MainTab) => {
+			// 共有キャラ閲覧時または登録済みの場合はタブ切替を許可
+			if (!isRegistered && !effectiveActiveCharacter?.isShared) {
+				onRequestRegistration('キャラクターを登録すると機能を利用できます');
+				return;
 			}
-			return prev;
-		});
-	};
+			effectiveNavStack.clear();
+			navigate(`/fishtracker/${tab}`);
+		},
+		[isRegistered, effectiveActiveCharacter, onRequestRegistration, effectiveNavStack, navigate]
+	);
+
+	const handleStatusFilterChange = useCallback(
+		(status: StatusFilter) => {
+			setSearchParams(
+				(prev) => {
+					const nextParams = new URLSearchParams(prev);
+					nextParams.set('status', status);
+					return nextParams;
+				},
+				{ replace: true }
+			);
+		},
+		[setSearchParams]
+	);
+
+	const handleSearchQueryChange = useCallback(
+		(query: string) => {
+			setSearchParams(
+				(prev) => {
+					const nextParams = new URLSearchParams(prev);
+					if (query) {
+						nextParams.set('q', query);
+					} else {
+						nextParams.delete('q');
+					}
+					return nextParams;
+				},
+				{ replace: true }
+			);
+		},
+		[setSearchParams]
+	);
 
 	const handleToggleCheck = useCallback(
 		(fishId: number) => {
+			// 1. 共有キャラクター選択時は編集不可
+			if (effectiveActiveCharacter?.isShared) {
+				toast.info('共有キャラクターの釣獲状況は変更できません（閲覧専用）');
+				return;
+			}
+
+			// 2. 未登録かつ自身のキャラがない場合
 			if (!isRegistered || !activeCharacter) {
 				onRequestRegistration('キャラクターを登録すると釣獲状況を記録できます');
 				return;
 			}
 
-			const isCurrentlyChecked = activeCharacter.checkedFishIds.includes(fishId);
+			const isCurrentlyChecked = effectiveActiveCharacter.checkedFishIds.includes(fishId);
 			const targetFish = FISHES.find((f) => f.id === fishId);
 
 			toggleFishCheck(fishId);
@@ -118,30 +171,22 @@ export function FishTrackerContainer({
 				});
 			}
 		},
-		[isRegistered, activeCharacter, toggleFishCheck, onRequestRegistration]
+		[isRegistered, activeCharacter, effectiveActiveCharacter, toggleFishCheck, onRequestRegistration]
 	);
-
-	const effectiveActiveCharacter: CharacterProgress = activeCharacter || {
-		id: 'guest',
-		name: 'ゲスト',
-		checkedFishIds: [],
-		createdAt: 0,
-		updatedAt: 0,
-	};
 
 	return (
 		<div className={LAYOUT_TOKENS.page.appWrapper}>
 			<SeoHead
 				title={pageTitle}
 				description={pageDescription}
-				path={window.location.pathname}
+				path={location.pathname}
 			/>
 
 			<Toaster position="bottom-right" theme="dark" />
 
 			<div className={LAYOUT_TOKENS.header.stickyWrapper}>
 				<Header
-					characters={userData.characters}
+					characters={characterList}
 					activeCharacter={effectiveActiveCharacter}
 					onSelectCharacter={setActiveCharacter}
 					onOpenSettings={onOpenSettings}

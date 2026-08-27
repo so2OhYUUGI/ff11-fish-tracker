@@ -2,6 +2,11 @@
  * ============================================================================
  * [FilePath] src/hooks/useUserData.ts
  * [Role] ユーザー進捗データおよびアプリ設定（表示モード等）の永続化管理カスタムフック
+ * 
+ * [調整内容]
+ * - deleteCharacter のキャラクター数ガードを setUserData の関数型アップデート内に移動しステート不整合を防止
+ * - normalizeCharacterProgress 内の any 型を unknown へ置き換えて型安全性を向上
+ * - toggleFishCheck 内の冗長な Number() キャストを削除
  * ============================================================================
  */
 
@@ -23,6 +28,27 @@ const generateUniqueId = (): string => {
 	return `char-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 };
 
+/**
+ * CharacterProgress オブジェクト内の checkedFishIds を確実に number[] へ正規化する
+ */
+const normalizeCharacterProgress = (rawChar: unknown): CharacterProgress => {
+	const char = (typeof rawChar === 'object' && rawChar !== null ? rawChar : {}) as Record<string, unknown>;
+
+	const rawCheckedFishIds = Array.isArray(char.checkedFishIds) ? char.checkedFishIds : [];
+	const checkedFishIds = rawCheckedFishIds
+		.map((id) => Number(id))
+		.filter((id) => !isNaN(id));
+
+	return {
+		...char,
+		id: typeof char.id === 'string' && char.id ? char.id : generateUniqueId(),
+		name: typeof char.name === 'string' && char.name ? char.name : '新規キャラクター',
+		checkedFishIds,
+		createdAt: typeof char.createdAt === 'number' ? char.createdAt : Date.now(),
+		updatedAt: typeof char.updatedAt === 'number' ? char.updatedAt : Date.now(),
+	};
+};
+
 export const useUserData = () => {
 	const [userData, setUserData] = useState<UserData>(() => {
 		try {
@@ -33,8 +59,13 @@ export const useUserData = () => {
 			if (!parsed || !Array.isArray(parsed.characters)) {
 				return EMPTY_USER_DATA;
 			}
+
+			// 読み込み時に全キャラクターの checkedFishIds を number[] に正規化
+			const normalizedCharacters = parsed.characters.map(normalizeCharacterProgress);
+
 			return {
 				...parsed,
+				characters: normalizedCharacters,
 				viewMode: parsed.viewMode ?? 'card',
 			};
 		} catch (e) {
@@ -92,17 +123,15 @@ export const useUserData = () => {
 	};
 
 	const deleteCharacter = (characterId: string) => {
-		if (userData.characters.length <= 1) return;
 		setUserData((prev) => {
+			if (prev.characters.length <= 1) return prev;
+
 			const nextChars = prev.characters.filter((c) => c.id !== characterId);
-			const currentActiveId =
-				prev.characters.find((c) => c.id === prev.activeCharacterId)?.id ||
-				prev.characters[0]?.id;
+			const isDeletingActive = prev.activeCharacterId === characterId;
 
 			return {
 				...prev,
-				activeCharacterId:
-					currentActiveId === characterId ? nextChars[0].id : currentActiveId,
+				activeCharacterId: isDeletingActive ? nextChars[0].id : prev.activeCharacterId,
 				characters: nextChars,
 			};
 		});
@@ -110,6 +139,7 @@ export const useUserData = () => {
 
 	const toggleFishCheck = (fishId: number) => {
 		setUserData((prev) => {
+			// 選択中のキャラクターIDを取得（未設定時は先頭）
 			const targetActiveId =
 				prev.characters.find((c) => c.id === prev.activeCharacterId)?.id ||
 				prev.characters[0]?.id;
@@ -119,7 +149,9 @@ export const useUserData = () => {
 			const updatedChars = prev.characters.map((char) => {
 				if (char.id !== targetActiveId) return char;
 
+				// checkedFishIds は既に number[] であることが保証されているため直接比較
 				const isChecked = char.checkedFishIds.includes(fishId);
+
 				const nextChecked = isChecked
 					? char.checkedFishIds.filter((id) => id !== fishId)
 					: [...char.checkedFishIds, fishId];
@@ -174,8 +206,11 @@ export const useUserData = () => {
 						Array.isArray(parsedData.characters) &&
 						typeof parsedData.activeCharacterId === 'string'
 					) {
+						const normalizedCharacters = parsedData.characters.map(normalizeCharacterProgress);
+
 						setUserData({
 							...parsedData,
+							characters: normalizedCharacters,
 							viewMode: parsedData.viewMode ?? 'card',
 						});
 						resolve(true);

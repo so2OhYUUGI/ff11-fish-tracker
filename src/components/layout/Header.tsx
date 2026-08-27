@@ -1,20 +1,38 @@
 /**
  * ============================================================================
  * [FilePath] src/components/layout/Header.tsx
- * [Role] アプリケーションの固定ヘッダー・キャラクター切り替え・設定/開発用ツール導線コンポーネント
+ * [Role]     アプリケーションの固定ヘッダー・キャラクター切り替え・設定/開発用ツール導線コンポーネント
+ * 
+ * [概要]
+ * - 閲覧者自身のキャラクターおよび、URL共有経由で表示される一時的な「共有キャラ」の切替UIを提供
+ * - 共有キャラ表示時はバッジ（[共有]）を付与し、自身のキャラと明確に区別
+ * - 環境設定モーダルおよび開発用マスターデータエディタへの導線を保持
+ * 
+ * [依存関係・関連ファイル]
+ * - 型定義   : src/types/fishtracker.ts (CharacterProgress)
+ * - スタイル : src/styles/tokens/commonTokens.ts, src/styles/tokens/layoutTokens.ts
+ * - アイコン : lucide-react (Fish, Database, Settings, ChevronDown, Check, User, Share2)
+ * 
+ * [編集・改修時の注意事項（AI/エンジニア共通指示）]
+ * 1. 【データ混同防止】 共有キャラ選択時も LocalStorage 保存ロジックを発動させないため、ID（例: shared-guest-char）で区別可能な構造を維持すること
+ * 2. 【アクセシビリティ】 ボタン要素の type="button" 表記、aria-expanded / aria-haspopup を保持すること
  * ============================================================================
  */
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Fish, Database, Settings, ChevronDown, Check, User } from 'lucide-react';
+import { Fish, Database, Settings, ChevronDown, Check, User, Share2 } from 'lucide-react';
 import type { CharacterProgress } from '@/types/fishtracker';
 import { isDev } from '@/utils/env';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
 
+export interface DisplayCharacterProgress extends CharacterProgress {
+	isShared?: boolean;
+}
+
 type HeaderProps = {
-	characters: CharacterProgress[];
-	activeCharacter: CharacterProgress;
+	characters: DisplayCharacterProgress[];
+	activeCharacter: DisplayCharacterProgress;
 	onSelectCharacter: (id: string) => void;
 	onOpenSettings: () => void;
 	onOpenMasterEditor?: () => void;
@@ -59,7 +77,7 @@ export const Header: React.FC<HeaderProps> = ({
 						</div>
 					</div>
 
-					{/* --- 【パターンA】画面が広い時（sm / 640px以上）: 従来の個別表示 --- */}
+					{/* --- 【パターンA】画面が広い時（sm / 640px以上） --- */}
 					<div className="hidden sm:flex flex-wrap items-center gap-3">
 						{/* キャラクター切り替え */}
 						<div className="flex items-center gap-2">
@@ -70,11 +88,12 @@ export const Header: React.FC<HeaderProps> = ({
 								id="char-select"
 								value={activeCharacter?.id ?? ''}
 								onChange={(e) => onSelectCharacter(e.target.value)}
-								className={LAYOUT_TOKENS.control.select}
+								className={`${LAYOUT_TOKENS.control.select}${activeCharacter?.isShared ? 'border-cyan-500 text-cyan-300 bg-slate-900' : ''
+									}`}
 							>
 								{characters.map((char) => (
 									<option key={char.id} value={char.id}>
-										{char.name}
+										{char.name} {char.isShared ? '(共有)' : ''}
 									</option>
 								))}
 							</select>
@@ -82,6 +101,7 @@ export const Header: React.FC<HeaderProps> = ({
 
 						{/* 環境設定ボタン */}
 						<button
+							type="button"
 							onClick={onOpenSettings}
 							className={LAYOUT_TOKENS.control.button}
 							title="環境設定・データ管理"
@@ -93,6 +113,7 @@ export const Header: React.FC<HeaderProps> = ({
 						{/* 開発環境用マスター編集ボタン */}
 						{isDev && (
 							<button
+								type="button"
 								onClick={onOpenMasterEditor}
 								className={LAYOUT_TOKENS.control.devButton}
 								title="開発用マスターデータエディタを開く"
@@ -103,17 +124,24 @@ export const Header: React.FC<HeaderProps> = ({
 						)}
 					</div>
 
-					{/* --- 【パターンB】画面が狭い時（sm未満 / 640px未満）: ワンボタンに収束 --- */}
+					{/* --- 【パターンB】画面が狭い時（sm未満 / 640px未満） --- */}
 					<div className="relative flex sm:hidden" ref={menuRef}>
 						<button
+							type="button"
 							onClick={() => setIsOpen(!isOpen)}
-							className={LAYOUT_TOKENS.header.collapsedMenuButton}
+							className={`${LAYOUT_TOKENS.header.collapsedMenuButton}${activeCharacter?.isShared ? 'border-cyan-500/80 bg-slate-900' : ''
+								}`}
 							aria-expanded={isOpen}
 							aria-haspopup="true"
 						>
-							<User className="w-4 h-4 text-slate-400 shrink-0" />
+							{activeCharacter?.isShared ? (
+								<Share2 className="w-4 h-4 text-cyan-400 shrink-0" />
+							) : (
+								<User className="w-4 h-4 text-slate-400 shrink-0" />
+							)}
 							<span className={LAYOUT_TOKENS.header.collapsedButtonText}>
 								{activeCharacter?.name ?? 'キャラ未選択'}
+								{activeCharacter?.isShared ? ' (共有)' : ''}
 							</span>
 							<ChevronDown className={LAYOUT_TOKENS.header.collapsedChevron(isOpen)} />
 						</button>
@@ -132,6 +160,7 @@ export const Header: React.FC<HeaderProps> = ({
 										return (
 											<button
 												key={char.id}
+												type="button"
 												onClick={() => {
 													onSelectCharacter(char.id);
 													setIsOpen(false);
@@ -142,7 +171,15 @@ export const Header: React.FC<HeaderProps> = ({
 														: LAYOUT_TOKENS.header.dropdownItemInactive
 												}
 											>
-												<span className="truncate">{char.name}</span>
+												<div className="flex items-center gap-1.5 truncate">
+													{char.isShared && <Share2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />}
+													<span className="truncate">{char.name}</span>
+													{char.isShared && (
+														<span className="text-[10px] px-1 py-0.2 bg-cyan-950 text-cyan-400 border border-cyan-800 rounded">
+															共有
+														</span>
+													)}
+												</div>
 												{isSelected && <Check className="w-3.5 h-3.5 text-blue-400 shrink-0" />}
 											</button>
 										);
@@ -150,13 +187,14 @@ export const Header: React.FC<HeaderProps> = ({
 								</div>
 
 								{/* システム・設定セクション */}
-								<div className="py-1">
+								<div className="py-1 border-t border-slate-800">
 									<div className={LAYOUT_TOKENS.header.sectionHeader}>
 										システム
 									</div>
 
 									{/* 環境設定ボタン */}
 									<button
+										type="button"
 										onClick={() => {
 											setIsOpen(false);
 											onOpenSettings();
@@ -170,6 +208,7 @@ export const Header: React.FC<HeaderProps> = ({
 									{/* 開発環境用マスター編集ボタン */}
 									{isDev && (
 										<button
+											type="button"
 											onClick={() => {
 												setIsOpen(false);
 												onOpenMasterEditor?.();

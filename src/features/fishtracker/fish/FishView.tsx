@@ -9,18 +9,15 @@
  * - モバイルおよびデスクトップ（sticky追従）でのレスポンシブ切り替え
  * - 詳細表示領域に画面高に応じた上限サイズ（calc）と独立スクロール領域を設定
  * 
- * [依存関係・関連ファイル]
- * - スタイル     : src/styles/tokens/commonTokens, layoutTokens
- * - 型定義       : src/types/fish (FishMaster, ZoneMaster, ViewMode 等), useNavigationStack (NavItem)
- * 
- * [編集・改修時の注意事項（AI/エンジニア共通指示）]
- * 1. 【レイアウト維持】 2カラム/1カラムの切り替えロジックおよびレスポンシブ用のCSSクラス指定を変更しないこと。
+ * [調整内容]
+ * - スクロールロック制御を宣言的な処理へ変更し、フラグ管理を廃止
+ * - リスト選択ハンドラーを useCallback でメモ化
  * ============================================================================
  */
 
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useCallback } from 'react';
 import { FishCard } from './FishCard';
-import { FishListItem } from '../fish/FishListItem';
+import { FishListItem } from './FishListItem';
 import { FishDetailView } from './FishDetailView';
 import { AreaDetailView } from '../area/AreaDetailView';
 import { BaitDetailView } from '../bait/BaitDetailView';
@@ -50,33 +47,38 @@ export const FishView = ({
 }: Props) => {
 	const { current, selectFromList, replace, push, pop, clear, canGoBack } = navStack;
 
-	// 一覧選択時のハンドラ（selectFromList が無ければ replace を使用）
 	const handleSelectFromList = selectFromList ?? replace;
 
-	// チェック済み魚IDの高速判定用 Set
-	const checkedSet = useMemo(() => new Set(checkedFishIds), [checkedFishIds]);
+	const checkedSet = useMemo(
+		() => new Set(checkedFishIds),
+		[checkedFishIds]
+	);
 
-	// チェック操作ハンドラ
-	const handleToggleCheck = (fishId: number) => {
-		onToggleCheck(fishId);
-	};
-
-	// 詳細領域が表示中かどうか
 	const isSelected = current !== null;
 
-	// モバイルモーダル表示時に背景（body）のスクロールを制御
-	useEffect(() => {
-		// lg (1024px) 未満のモバイル表示時のみ body スクロールをロック
-		const isMobile = window.innerWidth < 1024;
+	const handleSelectFish = useCallback(
+		(fish: FishMaster) => {
+			handleSelectFromList({ type: 'fish', item: fish });
+		},
+		[handleSelectFromList]
+	);
 
-		if (isSelected && isMobile) {
-			document.body.style.overflow = 'hidden';
-		} else {
-			document.body.style.overflow = '';
-		}
+	useEffect(() => {
+		const handleScrollLock = () => {
+			const isMobile = window.innerWidth < 1024;
+			if (isSelected && isMobile) {
+				document.body.style.overflow = 'hidden';
+			} else {
+				document.body.style.overflow = '';
+			}
+		};
+
+		handleScrollLock();
+		window.addEventListener('resize', handleScrollLock);
 
 		return () => {
 			document.body.style.overflow = '';
+			window.removeEventListener('resize', handleScrollLock);
 		};
 	}, [isSelected]);
 
@@ -88,7 +90,6 @@ export const FishView = ({
 		);
 	}
 
-	// 現在選択中の魚（スタックの最前面が魚の場合）
 	const selectedFishId = current?.type === 'fish' ? current.item.id : null;
 
 	return (
@@ -104,8 +105,8 @@ export const FishView = ({
 								zones={zones}
 								isChecked={checkedSet.has(fish.id)}
 								isSelected={selectedFishId === fish.id}
-								onToggleCheck={handleToggleCheck}
-								onClickDetail={(f) => handleSelectFromList({ type: 'fish', item: f })}
+								onToggleCheck={onToggleCheck}
+								onClickDetail={handleSelectFish}
 							/>
 						))}
 					</div>
@@ -118,15 +119,15 @@ export const FishView = ({
 								zones={zones}
 								isChecked={checkedSet.has(fish.id)}
 								isSelected={selectedFishId === fish.id}
-								onToggleCheck={handleToggleCheck}
-								onClickDetail={(f) => handleSelectFromList({ type: 'fish', item: f })}
+								onToggleCheck={onToggleCheck}
+								onClickDetail={handleSelectFish}
 							/>
 						))}
 					</div>
 				)}
 			</div>
 
-			{/* 右側：詳細表示領域（スタックの型に応じて動的切り替え） */}
+			{/* 右側：詳細表示領域 */}
 			{isSelected && (
 				<div className={LAYOUT_TOKENS.sidebar.stickyContainer}>
 					{current.type === 'fish' && (
@@ -134,7 +135,7 @@ export const FishView = ({
 							fish={current.item}
 							zones={zones}
 							isChecked={checkedSet.has(current.item.id)}
-							onToggleCheck={handleToggleCheck}
+							onToggleCheck={onToggleCheck}
 							onClose={clear}
 							onBack={pop}
 							canGoBack={canGoBack}
@@ -149,7 +150,7 @@ export const FishView = ({
 							allFishes={FISHES}
 							regionList={REGIONS}
 							checkedFishIds={checkedFishIds}
-							onToggleCheck={handleToggleCheck}
+							onToggleCheck={onToggleCheck}
 							onClose={clear}
 							onBack={pop}
 							canGoBack={canGoBack}
@@ -162,7 +163,7 @@ export const FishView = ({
 							bait={current.item}
 							allFishes={FISHES}
 							checkedFishIds={checkedFishIds}
-							onToggleCheck={handleToggleCheck}
+							onToggleCheck={onToggleCheck}
 							onClose={clear}
 							onBack={pop}
 							canGoBack={canGoBack}
