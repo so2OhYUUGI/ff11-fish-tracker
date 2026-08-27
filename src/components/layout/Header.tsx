@@ -27,7 +27,6 @@ type HeaderProps = {
 	onSelectCharacter: (id: string) => void;
 	onOpenSettings: () => void;
 	onOpenMasterEditor?: () => void;
-	totalFishCount: number;
 };
 
 export const Header: React.FC<HeaderProps> = ({
@@ -36,7 +35,6 @@ export const Header: React.FC<HeaderProps> = ({
 	onSelectCharacter,
 	onOpenSettings,
 	onOpenMasterEditor,
-	totalFishCount,
 }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const menuRef = useRef<HTMLDivElement>(null);
@@ -93,7 +91,6 @@ export const Header: React.FC<HeaderProps> = ({
 						{/* 進捗共有ボタン */}
 						<ShareProgressButton
 							activeCharacter={activeCharacter}
-							totalFishCount={totalFishCount}
 						/>
 
 						{/* 環境設定ボタン */}
@@ -192,7 +189,6 @@ export const Header: React.FC<HeaderProps> = ({
 									<div className="px-3 py-1.5">
 										<ShareProgressButton
 											activeCharacter={activeCharacter}
-											totalFishCount={totalFishCount}
 											className="w-full justify-center"
 										/>
 									</div>

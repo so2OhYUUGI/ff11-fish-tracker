@@ -19,7 +19,6 @@ type ProgressShareModalProps = {
 	onClose: () => void;
 	characterName: string;
 	checkedFishIds: number[];
-	totalFishCount?: number;
 };
 
 export const ProgressShareModal: React.FC<ProgressShareModalProps> = ({
@@ -27,7 +26,6 @@ export const ProgressShareModal: React.FC<ProgressShareModalProps> = ({
 	onClose,
 	characterName,
 	checkedFishIds = [],
-	totalFishCount,
 }) => {
 	const [dataUrl, setDataUrl] = useState<string | null>(null);
 	const [isGenerating, setIsGenerating] = useState(false);
@@ -35,10 +33,7 @@ export const ProgressShareModal: React.FC<ProgressShareModalProps> = ({
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 
 	const checkedCount = Array.isArray(checkedFishIds) ? checkedFishIds.length : 0;
-	const validTotal =
-		typeof totalFishCount === 'number' && totalFishCount > 0
-			? totalFishCount
-			: FISHES.length;
+	const validTotal = FISHES.length;
 
 	const percentage = validTotal > 0 ? Math.round((checkedCount / validTotal) * 100) : 0;
 

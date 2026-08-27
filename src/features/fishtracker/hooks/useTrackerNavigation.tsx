@@ -27,7 +27,6 @@ type UseTrackerNavigationProps = {
 };
 
 export const useTrackerNavigation = ({
-	type,
 	slug,
 	mainTab,
 	isRegistered,

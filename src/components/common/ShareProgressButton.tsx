@@ -13,13 +13,11 @@ import { ProgressShareModal } from '@/components/share/ProgressShareModal';
 
 type ShareProgressButtonProps = {
 	activeCharacter: CharacterProgress;
-	totalFishCount?: number;
 	className?: string;
 };
 
 export const ShareProgressButton: React.FC<ShareProgressButtonProps> = ({
 	activeCharacter,
-	totalFishCount,
 	className = '',
 }) => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -41,7 +39,6 @@ export const ShareProgressButton: React.FC<ShareProgressButtonProps> = ({
 				onClose={() => setIsModalOpen(false)}
 				characterName={activeCharacter?.name ?? 'Unknown'}
 				checkedFishIds={activeCharacter?.checkedFishIds ?? []}
-				totalFishCount={totalFishCount}
 			/>
 		</>
 	);
