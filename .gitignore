@@ -6,6 +6,7 @@ vite.config.d.ts
 # 自動生成用の特定ファイルのみ指定する場合
 # auto-imports.d.ts
 # components.d.ts
+.wrangler
 
 # Logs
 logs
