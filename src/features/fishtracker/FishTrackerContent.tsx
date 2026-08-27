@@ -10,10 +10,11 @@ import { FISHES, ZONES, BAITS } from '@/data/';
 import { FishView } from './fish/FishView';
 import { BaitView } from './bait/BaitView';
 import { AreaView } from './area/AreaView';
-import type { MainTab, ViewMode, CharacterProgress, FishMaster, ZoneMaster, BaitMaster } from '@/types/fishtracker';
+import type { MainTab, ViewMode, CharacterProgress } from '@/types/fishtracker';
 import type { StatusFilter } from '@/features/fishtracker/FilterBar';
 import type { DisplayCharacterProgress } from '@/components/layout/Header';
 import type { NavItem } from '@/features/fishtracker/hooks/useTrackerNavigation';
+import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
 
 export type TrackerNavStack = {
   stack: NavItem[];
@@ -98,7 +99,7 @@ export const FishTrackerContent: React.FC<FishTrackerContentProps> = ({
   }, [normalizedQuery]);
 
   return (
-    <>
+    <div className={LAYOUT_TOKENS.page.mainContainer}>
       {mainTab === 'fish' && (
         <FishView
           fishes={filteredFishes}
@@ -129,6 +130,6 @@ export const FishTrackerContent: React.FC<FishTrackerContentProps> = ({
           navStack={navStack}
         />
       )}
-    </>
+    </div>
   );
 };

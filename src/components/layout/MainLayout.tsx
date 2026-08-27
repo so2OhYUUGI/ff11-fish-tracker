@@ -64,7 +64,7 @@ export function MainLayout({
 
 			<AdBanner slotId="top-banner" />
 
-			<main className={LAYOUT_TOKENS.page.mainContainer}>
+			<main className={LAYOUT_TOKENS.page.mainLayoutContainer}>
 				<Outlet />
 			</main>
 

@@ -21,7 +21,8 @@ export const LAYOUT_TOKENS = {
     base: 'min-h-screen bg-slate-900 text-slate-100 font-sans',
     centered: 'min-h-screen bg-slate-900 text-slate-100 flex flex-col justify-center items-center px-4 py-8 sm:py-12',
     mainContainer: 'flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6',
-  },
+    mainLayoutContainer: 'p-0',
+    },
 
   // ヘッダー領域
   header: {
