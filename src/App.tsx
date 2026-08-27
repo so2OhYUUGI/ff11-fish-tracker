@@ -4,8 +4,8 @@
  * [Role] アプリケーションのルートコンポーネント（パスベースルーティング版）
  * 
  * [調整内容]
- * - useState 初期化関数内での ref ミューテーションを廃止し、useEffect に自動選択およびクリーンアップを一本化
- * - sharedProgress 解除時に滞留する selectedCharacterId のリセット処理を追加
+ * - MainLayout 導入に伴う Layout Route 構造の適用
+ * - 未登録時の LandingPage と MainLayout 配下ルートの重複定義を解消
  * ============================================================================
  */
 
@@ -24,12 +24,22 @@ import { LandingPage } from '@/components/LandingPage';
 import { OnboardingModal } from '@/components/common/OnboardingModal';
 import { SettingsModal } from '@/components/settings/SettingsModal';
 import { MasterDataEditorModal } from '@/components/dev/MasterDataEditorModal';
+import { MainLayout } from '@/components/layout/MainLayout';
 import { FishTrackerContainer } from '@/features/fishtracker/FishTrackerContainer';
 import type { DisplayCharacterProgress } from '@/components/layout/Header';
 
 function AppRoutes() {
   const userDataProps = useUserData();
-  const { userData, activeCharacter, isRegistered, addCharacter, setActiveCharacter: setLocalActiveCharacter } = userDataProps;
+  const {
+    userData,
+    activeCharacter,
+    isRegistered,
+    viewMode,
+    setViewMode,
+    addCharacter,
+    setActiveCharacter: setLocalActiveCharacter,
+    toggleFishCheck,
+  } = userDataProps;
 
   // URL共有データの取得
   const { sharedProgress } = useSharedProgress();
@@ -75,18 +85,15 @@ function AppRoutes() {
 
   // 現在表示選択中のキャラ
   const currentActiveCharacter = useMemo<DisplayCharacterProgress | undefined>(() => {
-    // 1. 選択中のキャラIDが存在すれば優先
     if (selectedCharacterId) {
       const found = displayCharacters.find((c) => c.id === selectedCharacterId);
       if (found) return found;
     }
 
-    // 2. 登録ユーザーのデフォルト選択（useUserData の activeCharacter）
     if (activeCharacter) {
       return displayCharacters.find((c) => c.id === activeCharacter.id) || activeCharacter;
     }
 
-    // 3. フォールバック（一覧の先頭キャラ）
     return displayCharacters[0];
   }, [selectedCharacterId, displayCharacters, activeCharacter]);
 
@@ -116,41 +123,58 @@ function AppRoutes() {
         <Route path="/" element={<Navigate to="/fishtracker/fish" replace />} />
         <Route path="/fishtracker" element={<Navigate to="/fishtracker/fish" replace />} />
 
-        {/* メインルート：未登録かつ共有データ無しの場合のみオンボーディング（LandingPage）を表示 */}
-        <Route
-          path="/fishtracker/:type"
-          element={
-            !canViewContainer ? (
-              <LandingPage onCreateCharacter={addCharacter} />
-            ) : (
-              <FishTrackerContainer
-                {...userDataProps}
-                displayCharacters={displayCharacters}
-                activeCharacter={currentActiveCharacter}
-                setActiveCharacter={handleSelectCharacter}
-                onOpenSettings={() => setIsSettingsOpen(true)}
-                onOpenMasterEditor={() => setIsEditorOpen(true)}
-                onRequestRegistration={handleRequestRegistration}
-              />
-            )
-          }
-        />
+        {/* 未登録かつ共有データ無しの場合のみ、メインルートで LandingPage（共通レイアウトなし）を表示 */}
+        {!canViewContainer && (
+          <Route
+            path="/fishtracker/:type"
+            element={<LandingPage onCreateCharacter={addCharacter} />}
+          />
+        )}
 
-        {/* 詳細ページ（シェアリンク等）：未登録状態であっても閲覧を許可 */}
+        {/* 共通レイアウト適用ルートグループ */}
         <Route
-          path="/fishtracker/:type/:slug"
           element={
-            <FishTrackerContainer
-              {...userDataProps}
-              displayCharacters={displayCharacters}
+            <MainLayout
+              characters={displayCharacters}
               activeCharacter={currentActiveCharacter}
-              setActiveCharacter={handleSelectCharacter}
+              onSelectCharacter={handleSelectCharacter}
               onOpenSettings={() => setIsSettingsOpen(true)}
               onOpenMasterEditor={() => setIsEditorOpen(true)}
-              onRequestRegistration={handleRequestRegistration}
             />
           }
-        />
+        >
+          {/* 登録済み／共有データありの場合のみメインルートを FishTrackerContainer で描画 */}
+          {canViewContainer && (
+            <Route
+              path="/fishtracker/:type"
+              element={
+                <FishTrackerContainer
+                  activeCharacter={currentActiveCharacter}
+                  isRegistered={isRegistered}
+                  viewMode={viewMode}
+                  setViewMode={setViewMode}
+                  toggleFishCheck={toggleFishCheck}
+                  onRequestRegistration={handleRequestRegistration}
+                />
+              }
+            />
+          )}
+
+          {/* 詳細ルート（未登録時でもダイレクトアクセス可能） */}
+          <Route
+            path="/fishtracker/:type/:slug"
+            element={
+              <FishTrackerContainer
+                activeCharacter={currentActiveCharacter}
+                isRegistered={isRegistered}
+                viewMode={viewMode}
+                setViewMode={setViewMode}
+                toggleFishCheck={toggleFishCheck}
+                onRequestRegistration={handleRequestRegistration}
+              />
+            }
+          />
+        </Route>
 
         <Route path="*" element={<Navigate to="/fishtracker/fish" replace />} />
       </Routes>
