@@ -38,7 +38,7 @@ export const useTrackerNavigation = ({
 	const isMobileLayout = useIsMobileLayout();
 
 	const isSharedCharacter = !!(activeCharacter as DisplayCharacterProgress)?.isShared;
-	const canNavigate = isRegistered && !isSharedCharacter;
+	const canNavigate = isRegistered || !isSharedCharacter;
 
 	const [canGoBackEffective, setCanGoBackEffective] = useState(false);
 	const depthRef = useRef<number>(0);
@@ -62,11 +62,8 @@ export const useTrackerNavigation = ({
 
 	const handleSelectFromList = useCallback(
 		(item: NavItem) => {
-			if (!isRegistered) {
+			if (!isRegistered && isSharedCharacter) {
 				onRequestRegistration('キャラクターを登録すると詳細の回遊や記録が行えます');
-				return;
-			}
-			if (isSharedCharacter) {
 				return;
 			}
 
@@ -94,11 +91,8 @@ export const useTrackerNavigation = ({
 
 	const handlePush = useCallback(
 		(item: NavItem) => {
-			if (!isRegistered) {
+			if (!isRegistered && isSharedCharacter) {
 				onRequestRegistration('キャラクターを登録すると詳細の回遊や記録が行えます');
-				return;
-			}
-			if (isSharedCharacter) {
 				return;
 			}
 
@@ -113,11 +107,8 @@ export const useTrackerNavigation = ({
 
 	const handleReplace = useCallback(
 		(item: NavItem) => {
-			if (!isRegistered) {
+			if (!isRegistered && isSharedCharacter) {
 				onRequestRegistration('キャラクターを登録すると詳細の回遊や記録が行えます');
-				return;
-			}
-			if (isSharedCharacter) {
 				return;
 			}
 
