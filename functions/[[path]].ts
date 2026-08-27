@@ -31,6 +31,16 @@ export default {
 					if (decoded) {
 						characterName = decoded.characterName;
 						checkedFishIds = decoded.checkedFishIds;
+
+						// --- デバッグ用ログ ---
+						console.log('Decoded Data:', { characterName, checkedFishIdsCount: checkedFishIds.length });
+						if (checkedFishIds.length > 0) {
+							// 最初のIDでデータが引けるかテスト
+							const firstFishId = checkedFishIds[0];
+							// 以下の関数名は実際のプロジェクトに合わせてください
+							// const testFishData = getFishDataById(firstFishId); 
+							// console.log(`Fish Data for ID ${firstFishId}:`, testFishData);
+						}
 					}
 				}
 
