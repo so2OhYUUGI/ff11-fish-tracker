@@ -1,48 +1,48 @@
 /**
  * ============================================================================
- * [FilePath] src/components/ShareProgressButton.tsx
- * [Role] 釣獲進捗のSNS共有ボタンコンポーネント
+ * [FilePath] src/components/common/ShareProgressButton.tsx
+ * [Role]     釣獲進捗のSNS共有ボタンおよび ProgressShareModal 連携コンポーネント
  * ============================================================================
  */
 
-import React from 'react';
-import { Share2 } from 'lucide-react';
-import { shareContent } from '@/utils/share';
+import React, { useState } from 'react';
+import { Share } from 'lucide-react';
 import type { CharacterProgress } from '@/types/fishtracker';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
+import { ProgressShareModal } from '@/components/share/ProgressShareModal';
 
 type ShareProgressButtonProps = {
 	activeCharacter: CharacterProgress;
-	totalFishCount: number;
+	totalFishCount?: number;
+	className?: string;
 };
 
 export const ShareProgressButton: React.FC<ShareProgressButtonProps> = ({
 	activeCharacter,
 	totalFishCount,
+	className = '',
 }) => {
-	const checkedCount = activeCharacter.checkedFishIds.length;
-	const percentage = Math.round((checkedCount / totalFishCount) * 100) || 0;
-
-	const handleShare = () => {
-		const text = `【FF11 釣獲記録】\nキャラクター: ${activeCharacter.name}\n釣獲達成率: ${checkedCount}/${totalFishCount}種 (${percentage}%)\n`;
-		const url = window.location.origin + '/fishtracker/fish';
-
-		shareContent({
-			title: 'FF11 釣獲管理チェッカー',
-			text: text,
-			url: url,
-		});
-	};
+	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	return (
-		<button
-			type="button"
-			onClick={handleShare}
-			className={COMMON_TOKENS.button.shareProgress}
-			title="釣獲進捗を共有"
-		>
-			<Share2 className="w-4 h-4" />
-			<span>進捗を共有</span>
-		</button>
+		<>
+			<button
+				type="button"
+				onClick={() => setIsModalOpen(true)}
+				className={`${COMMON_TOKENS.button.shareProgress} ${className}`}
+				title="釣獲進捗を共有"
+			>
+				<Share className={`w-4 h-4 ${COMMON_TOKENS.entity.fish.text}`} />
+				<span>進捗を共有</span>
+			</button>
+
+			<ProgressShareModal
+				isOpen={isModalOpen}
+				onClose={() => setIsModalOpen(false)}
+				characterName={activeCharacter?.name ?? 'Unknown'}
+				checkedFishIds={activeCharacter?.checkedFishIds ?? []}
+				totalFishCount={totalFishCount}
+			/>
+		</>
 	);
 };

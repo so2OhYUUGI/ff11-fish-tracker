@@ -76,8 +76,11 @@ export const LAYOUT_TOKENS = {
 
   // モーダル・オーバーレイ構造
   modal: {
-    overlay: 'fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-150',
-    contentWrapper: 'w-full max-w-md max-h-[90vh] overflow-y-auto p-4 sm:p-6 bg-slate-900 border border-slate-700 rounded-xl sm:rounded-2xl shadow-2xl relative',
-    closeButton: 'absolute top-3 right-3 sm:top-4 sm:right-4 p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition z-10 min-w-[32px] min-h-[32px] flex items-center justify-center',
+    overlay: 'fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-sm overflow-y-auto animate-in fade-in duration-150',
+    contentWrapper: 'w-full max-w-2xl max-h-[85vh] my-auto bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden flex flex-col relative',
+    header: 'flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-950/50 shrink-0',
+    body: 'p-6 space-y-6 overflow-y-auto flex-1',
+    footer: 'px-6 py-3 bg-slate-950/50 border-t border-slate-800 flex justify-end shrink-0',
+    closeButton: 'p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors',
   },
 } as const;

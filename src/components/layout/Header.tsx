@@ -1,21 +1,11 @@
 /**
  * ============================================================================
  * [FilePath] src/components/layout/Header.tsx
- * [Role]     アプリケーションの固定ヘッダー・キャラクター切り替え・設定/開発用ツール導線コンポーネント
+ * [Role]     アプリケーションの固定ヘッダー・キャラクター切り替え・設定/開発用ツール・進捗共有導線コンポーネント
  * 
  * [概要]
  * - 閲覧者自身のキャラクターおよび、URL共有経由で表示される一時的な「共有キャラ」の切替UIを提供
- * - 共有キャラ表示時はバッジ（[共有]）を付与し、自身のキャラと明確に区別
- * - 環境設定モーダルおよび開発用マスターデータエディタへの導線を保持
- * 
- * [依存関係・関連ファイル]
- * - 型定義   : src/types/fishtracker.ts (CharacterProgress)
- * - スタイル : src/styles/tokens/commonTokens.ts, src/styles/tokens/layoutTokens.ts
- * - アイコン : lucide-react (Fish, Database, Settings, ChevronDown, Check, User, Share2)
- * 
- * [編集・改修時の注意事項（AI/エンジニア共通指示）]
- * 1. 【データ混同防止】 共有キャラ選択時も LocalStorage 保存ロジックを発動させないため、ID（例: shared-guest-char）で区別可能な構造を維持すること
- * 2. 【アクセシビリティ】 ボタン要素の type="button" 表記、aria-expanded / aria-haspopup を保持すること
+ * - 進捗共有ボタン（ShareProgressButton）を配置し、SNSシェアモーダルへ直結
  * ============================================================================
  */
 
@@ -25,6 +15,7 @@ import type { CharacterProgress } from '@/types/fishtracker';
 import { isDev } from '@/utils/env';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
+import { ShareProgressButton } from '@/components/common/ShareProgressButton';
 
 export interface DisplayCharacterProgress extends CharacterProgress {
 	isShared?: boolean;
@@ -36,6 +27,7 @@ type HeaderProps = {
 	onSelectCharacter: (id: string) => void;
 	onOpenSettings: () => void;
 	onOpenMasterEditor?: () => void;
+	totalFishCount: number;
 };
 
 export const Header: React.FC<HeaderProps> = ({
@@ -44,11 +36,11 @@ export const Header: React.FC<HeaderProps> = ({
 	onSelectCharacter,
 	onOpenSettings,
 	onOpenMasterEditor,
+	totalFishCount,
 }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const menuRef = useRef<HTMLDivElement>(null);
 
-	// メニュー外クリックで閉じる処理
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
 			if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -88,8 +80,7 @@ export const Header: React.FC<HeaderProps> = ({
 								id="char-select"
 								value={activeCharacter?.id ?? ''}
 								onChange={(e) => onSelectCharacter(e.target.value)}
-								className={`${LAYOUT_TOKENS.control.select}${activeCharacter?.isShared ? 'border-cyan-500 text-cyan-300 bg-slate-900' : ''
-									}`}
+								className={`${LAYOUT_TOKENS.control.select}${activeCharacter?.isShared ? 'border-cyan-500 text-cyan-300 bg-slate-900' : ''}`}
 							>
 								{characters.map((char) => (
 									<option key={char.id} value={char.id}>
@@ -98,6 +89,12 @@ export const Header: React.FC<HeaderProps> = ({
 								))}
 							</select>
 						</div>
+
+						{/* 進捗共有ボタン */}
+						<ShareProgressButton
+							activeCharacter={activeCharacter}
+							totalFishCount={totalFishCount}
+						/>
 
 						{/* 環境設定ボタン */}
 						<button
@@ -129,8 +126,7 @@ export const Header: React.FC<HeaderProps> = ({
 						<button
 							type="button"
 							onClick={() => setIsOpen(!isOpen)}
-							className={`${LAYOUT_TOKENS.header.collapsedMenuButton}${activeCharacter?.isShared ? 'border-cyan-500/80 bg-slate-900' : ''
-								}`}
+							className={`${LAYOUT_TOKENS.header.collapsedMenuButton}${activeCharacter?.isShared ? 'border-cyan-500/80 bg-slate-900' : ''}`}
 							aria-expanded={isOpen}
 							aria-haspopup="true"
 						>
@@ -186,8 +182,21 @@ export const Header: React.FC<HeaderProps> = ({
 									})}
 								</div>
 
-								{/* システム・設定セクション */}
+								{/* システム・共有セクション */}
 								<div className="py-1 border-t border-slate-800">
+									<div className={LAYOUT_TOKENS.header.sectionHeader}>
+										アクション
+									</div>
+
+									{/* モバイルメニュー内 進捗共有 */}
+									<div className="px-3 py-1.5">
+										<ShareProgressButton
+											activeCharacter={activeCharacter}
+											totalFishCount={totalFishCount}
+											className="w-full justify-center"
+										/>
+									</div>
+
 									<div className={LAYOUT_TOKENS.header.sectionHeader}>
 										システム
 									</div>
