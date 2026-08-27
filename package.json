@@ -20,6 +20,7 @@
     "sonner": "^2.0.8"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260827.1",
     "@eslint/js": "^10.0.1",
     "@tailwindcss/vite": "^4.3.3",
     "@types/luaparse": "^0.2.13",
