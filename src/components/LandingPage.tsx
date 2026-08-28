@@ -20,8 +20,8 @@ type LandingPageProps = {
 
 export const LandingPage: React.FC<LandingPageProps> = ({ onCreateCharacter }) => {
 	return (
-		<div className={LAYOUT_TOKENS.page.centered}>
-			<div className={`max-w-md w-full ${COMMON_TOKENS.state.default} rounded-2xl shadow-2xl p-8`}>
+		<div className={LAYOUT_TOKENS.page.fullScreenCentered}>
+			<div className={`max-w-md w-full ${COMMON_TOKENS.state.default} rounded-2xl shadow-2xl p-8 my-auto`}>
 				<CharacterCreateContent onCreateCharacter={onCreateCharacter} />
 			</div>
 		</div>

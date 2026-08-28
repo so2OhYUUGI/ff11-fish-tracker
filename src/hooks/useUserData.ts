@@ -6,6 +6,7 @@
  * [調整内容]
  * - addCharacter が作成した CharacterProgress オブジェクトを返却するよう修正
  * - activeCharacterId に共有キャラ等の外部IDも保持できるよう許容
+ * - 共有キャラクター選択時の toggleFishCheck によるローカルデータ誤更新バグを修正
  * ============================================================================
  */
 
@@ -139,17 +140,19 @@ export const useUserData = () => {
 
 	const toggleFishCheck = (fishId: number) => {
 		setUserData((prev) => {
-			// 選択中のキャラクターIDを取得（未設定時は先頭）
-			const targetActiveId =
-				prev.characters.find((c) => c.id === prev.activeCharacterId)?.id ||
-				prev.characters[0]?.id;
+			// 共有キャラが選択されている場合はローカルデータを変更しない
+			if (prev.activeCharacterId === 'shared-guest-character') {
+				return prev;
+			}
+
+			// 選択中のローカルキャラクターIDを取得
+			const targetActiveId = prev.characters.find((c) => c.id === prev.activeCharacterId)?.id;
 
 			if (!targetActiveId) return prev;
 
 			const updatedChars = prev.characters.map((char) => {
 				if (char.id !== targetActiveId) return char;
 
-				// checkedFishIds は既に number[] であることが保証されているため直接比較
 				const isChecked = char.checkedFishIds.includes(fishId);
 
 				const nextChecked = isChecked

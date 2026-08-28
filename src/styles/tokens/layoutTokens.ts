@@ -16,6 +16,7 @@ export const LAYOUT_TOKENS = {
     appWrapper: `${BASE_PAGE} flex flex-col selection:bg-blue-500/30 selection:text-white`,
     base: BASE_PAGE,
     centered: `${BASE_PAGE} flex flex-col justify-center items-center px-4 py-8 sm:py-12`,
+    fullScreenCentered: `${BASE_PAGE} flex flex-col justify-center items-center min-h-screen w-full py-12 px-4 overflow-y-auto`,
     mainContainer: 'flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6',
     mainLayoutContainer: 'p-0',
   },

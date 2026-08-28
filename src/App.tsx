@@ -56,28 +56,34 @@ function AppContent() {
   // 共有キャラクターデータのキャッシュ（URLパラメータ変化時も表示コンテキストを維持）
   const lastSharedCharRef = useRef<DisplayCharacterProgress | null>(null);
 
-  // 共有データからオブジェクトを構成
-  const sharedGuestCharacter = useMemo<DisplayCharacterProgress | null>(() => {
-    if (sharedProgress) {
-      const charObj: DisplayCharacterProgress = {
-        id: 'shared-guest-character',
-        name: sharedProgress.characterName,
-        checkedFishIds: sharedProgress.checkedFishIds,
-        createdAt: sharedProgress.createdAt,
-        updatedAt: sharedProgress.createdAt,
-        isShared: true,
-      };
-      lastSharedCharRef.current = charObj;
-      return charObj;
-    }
-    return lastSharedCharRef.current;
+  // sharedProgress が存在する場合のみオブジェクトを生成
+  const currentSharedCharacter = useMemo<DisplayCharacterProgress | null>(() => {
+    if (!sharedProgress) return null;
+    return {
+      id: 'shared-guest-character',
+      name: sharedProgress.characterName,
+      checkedFishIds: sharedProgress.checkedFishIds,
+      createdAt: sharedProgress.createdAt,
+      updatedAt: sharedProgress.createdAt,
+      isShared: true,
+    };
   }, [sharedProgress]);
+
+  // useEffect で安全に ref をキャッシュ更新
+  useEffect(() => {
+    if (currentSharedCharacter) {
+      lastSharedCharRef.current = currentSharedCharacter;
+    }
+  }, [currentSharedCharacter]);
+
+  // 表示用共有キャラ（現在の共有データ、またはキャッシュされた過去の共有データ）
+  const activeSharedCharacter = currentSharedCharacter || lastSharedCharRef.current;
 
   // 共有データが存在する場合、またはキャッシュ済みの場合はインメモリキャラとして一覧末尾に追加
   const displayCharacters = useMemo<DisplayCharacterProgress[]>(() => {
-    if (!sharedGuestCharacter) return userData.characters;
-    return [...userData.characters, sharedGuestCharacter];
-  }, [userData.characters, sharedGuestCharacter]);
+    if (!activeSharedCharacter) return userData.characters;
+    return [...userData.characters, activeSharedCharacter];
+  }, [userData.characters, activeSharedCharacter]);
 
   // 共有データの初回自動選択、表示モードの自動切替、およびURLクエリパラメータのクリーンアップ処理
   useEffect(() => {
