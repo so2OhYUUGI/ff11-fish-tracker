@@ -52,7 +52,6 @@
 |---|---|
 | `functions/[[path]].ts` | OGP画像生成（/api/ogp）およびSNSクローラー向けHTMLメタタグの動的書き換え（HTMLRewriter/エッジ処理） |
 | `src/types/fishtracker.ts` | 型定義（Windower互換データ、アプリ拡張、進捗構造） |
-| `src/hooks/useNavigationStack.ts` | ページ遷移の管理 |
 | `src/hooks/useUserData.ts` | LocalStorage永続化、キャラ追加/削除/切替、魚チェックON/OFFロジック |
 | `src/utils/share.ts` | Web Share APIおよびクリップボードコピー処理ユーティリティ |
 | `src/utils/shareEncoding.ts` | 釣獲進捗データの共有用エンコード/デコード処理 |

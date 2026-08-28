@@ -4,9 +4,8 @@
  * [Role] ユーザー進捗データおよびアプリ設定（表示モード等）の永続化管理カスタムフック
  * 
  * [調整内容]
- * - deleteCharacter のキャラクター数ガードを setUserData の関数型アップデート内に移動しステート不整合を防止
- * - normalizeCharacterProgress 内の any 型を unknown へ置き換えて型安全性を向上
- * - toggleFishCheck 内の冗長な Number() キャストを削除
+ * - addCharacter が作成した CharacterProgress オブジェクトを返却するよう修正
+ * - activeCharacterId に共有キャラ等の外部IDも保持できるよう許容
  * ============================================================================
  */
 
@@ -96,7 +95,7 @@ export const useUserData = () => {
 		}));
 	};
 
-	const addCharacter = (name: string) => {
+	const addCharacter = (name: string): CharacterProgress => {
 		const newChar: CharacterProgress = {
 			id: generateUniqueId(),
 			name,
@@ -109,6 +108,7 @@ export const useUserData = () => {
 			activeCharacterId: newChar.id,
 			characters: [...prev.characters, newChar],
 		}));
+		return newChar;
 	};
 
 	const renameCharacter = (characterId: string, newName: string) => {

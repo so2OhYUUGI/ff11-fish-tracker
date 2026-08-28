@@ -2,6 +2,19 @@
  * ============================================================================
  * [FilePath] src/features/fishtracker/hooks/useTrackerNavigation.ts
  * [Role] 釣魚チェッカーのルーティングおよびJSネイティブの戻る・遷移制御フック
+ * 
+ * [概要]
+ * - 魚・エリア・餌詳細画面への遷移（push, replace, selectFromList）および戻る（pop, clear）の制御
+ * - 未登録ユーザーアクセス時における遷移ロックおよび登録誘導モーダルの呼び出し
+ * 
+ * [依存関係・関連ファイル]
+ * - 型定義   : src/types/fishtracker.ts, src/components/layout/Header.ts
+ * - 参照元   : src/features/fishtracker/FishTrackerContainer.tsx
+ * 
+ * [編集・改修時の注意事項（AI/エンジニア共通指示）]
+ * 1. 【アクセス制御】 未登録ユーザー (isRegistered === false) の場合は詳細の回遊・遷移を拒否し、
+ *    必ず onRequestRegistration を実行してガードすること。
+ * 2. 【履歴制御】 Browser/React Router のネイティブ履歴操作 (navigate(-1) 等) を基準とすること。
  * ============================================================================
  */
 
@@ -30,15 +43,11 @@ export const useTrackerNavigation = ({
 	slug,
 	mainTab,
 	isRegistered,
-	activeCharacter,
 	onRequestRegistration,
 }: UseTrackerNavigationProps) => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const isMobileLayout = useIsMobileLayout();
-
-	const isSharedCharacter = !!(activeCharacter as DisplayCharacterProgress)?.isShared;
-	const canNavigate = isRegistered || !isSharedCharacter;
 
 	const [canGoBackEffective, setCanGoBackEffective] = useState(false);
 	const depthRef = useRef<number>(0);
@@ -62,7 +71,7 @@ export const useTrackerNavigation = ({
 
 	const handleSelectFromList = useCallback(
 		(item: NavItem) => {
-			if (!isRegistered && isSharedCharacter) {
+			if (!isRegistered) {
 				onRequestRegistration('キャラクターを登録すると詳細の回遊や記録が行えます');
 				return;
 			}
@@ -76,7 +85,7 @@ export const useTrackerNavigation = ({
 
 			navigate(targetPath, { replace: !isMobileLayout });
 		},
-		[isMobileLayout, navigate, mainTab, isRegistered, isSharedCharacter, onRequestRegistration, location.search]
+		[isMobileLayout, navigate, mainTab, isRegistered, onRequestRegistration, location.search]
 	);
 
 	const handlePop = useCallback(() => {
@@ -91,7 +100,7 @@ export const useTrackerNavigation = ({
 
 	const handlePush = useCallback(
 		(item: NavItem) => {
-			if (!isRegistered && isSharedCharacter) {
+			if (!isRegistered) {
 				onRequestRegistration('キャラクターを登録すると詳細の回遊や記録が行えます');
 				return;
 			}
@@ -102,12 +111,12 @@ export const useTrackerNavigation = ({
 			lastSlugRef.current = itemSlug;
 			navigate(`/fishtracker/${mainTab}/${itemSlug}${location.search}`);
 		},
-		[isRegistered, isSharedCharacter, onRequestRegistration, mainTab, navigate, location.search]
+		[isRegistered, onRequestRegistration, mainTab, navigate, location.search]
 	);
 
 	const handleReplace = useCallback(
 		(item: NavItem) => {
-			if (!isRegistered && isSharedCharacter) {
+			if (!isRegistered) {
 				onRequestRegistration('キャラクターを登録すると詳細の回遊や記録が行えます');
 				return;
 			}
@@ -117,7 +126,7 @@ export const useTrackerNavigation = ({
 			lastSlugRef.current = itemSlug;
 			navigate(`/fishtracker/${mainTab}/${itemSlug}${location.search}`, { replace: true });
 		},
-		[isRegistered, isSharedCharacter, onRequestRegistration, mainTab, navigate, location.search]
+		[isRegistered, onRequestRegistration, mainTab, navigate, location.search]
 	);
 
 	const handleClear = useCallback(() => {
@@ -128,8 +137,8 @@ export const useTrackerNavigation = ({
 	}, [navigate, mainTab, location.search]);
 
 	const effectiveNavStack = {
-		push: canNavigate ? handlePush : () => { },
-		replace: canNavigate ? handleReplace : () => { },
+		push: handlePush,
+		replace: handleReplace,
 		pop: handlePop,
 		clear: handleClear,
 		selectFromList: handleSelectFromList,

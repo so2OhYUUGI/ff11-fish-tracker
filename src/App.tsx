@@ -3,8 +3,21 @@
  * [FilePath] src/App.tsx
  * [Role] アプリケーションのルートコンポーネント（パスベースルーティング版）
  * 
- * [調整内容]
- * - 共有キャラ選択時に詳細ページへ遷移しても選択コンテキストが解除されないよう、ステート維持ロジックを補正
+ * [概要]
+ * - パスベースルーティングの定義およびダイアログ・モーダル状態の管理
+ * - 共有URLパラメータ（share）からのゲストキャラクター進捗復元とURLクリーンアップ処理
+ * - 登録済み / 未登録ユーザーに応じた閲覧権限（canViewContainer）の判定と表示切替
+ * 
+ * [依存関係・関連ファイル]
+ * - フック     : src/hooks/useUserData.ts, src/hooks/useSharedProgress.ts
+ * - レイアウト : src/components/layout/MainLayout.tsx
+ * - コンテナ   : src/features/fishtracker/FishTrackerContainer.tsx
+ * - 型定義     : src/components/layout/Header.ts (DisplayCharacterProgress)
+ * 
+ * [編集・改修時の注意事項（AI/エンジニア共通指示）]
+ * 1. 【状態維持】 共有キャラ選択時にURLクエリを削除しても、lastSharedCharRef にキャッシュすることでコンテキストを保持すること。
+ * 2. 【アクセス制御】 未登録かつ共有データ非保持時は LandingPage を表示し、不正なルーティングを防ぐこと。
+ * 3. 【選択状態一元化】 キャラクター選択状態は selectedCharacterId の独自管理を行わず useUserData 側に統一すること。
  * ============================================================================
  */
 
@@ -14,6 +27,8 @@ import {
   Routes,
   Route,
   Navigate,
+  useLocation,
+  useNavigate,
 } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 
@@ -41,6 +56,9 @@ function AppRoutes() {
     toggleFishCheck,
   } = userDataProps;
 
+  const location = useLocation();
+  const navigate = useNavigate();
+
   // URL共有データの取得
   const { sharedProgress } = useSharedProgress();
 
@@ -50,9 +68,6 @@ function AppRoutes() {
 
   // 初回読み込み・自動選択制御フラグ
   const hasAutoSelectedSharedRef = useRef(false);
-
-  // 画面上で選択中のキャラクターID
-  const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(null);
 
   // 共有キャラクターデータのキャッシュ（URLパラメータ変化時も表示コンテキストを維持）
   const lastSharedCharRef = useRef<DisplayCharacterProgress | null>(null);
@@ -70,25 +85,31 @@ function AppRoutes() {
 
   // 共有データが存在する場合、または選択中の場合はインメモリキャラとして一覧末尾に追加
   const displayCharacters = useMemo<DisplayCharacterProgress[]>(() => {
-    const activeShared = sharedProgress ? lastSharedCharRef.current : null;
-    const targetShared = activeShared || (selectedCharacterId === 'shared-guest-character' ? lastSharedCharRef.current : null);
+    if (!lastSharedCharRef.current) return userData.characters;
+    return [...userData.characters, lastSharedCharRef.current];
+  }, [userData.characters, sharedProgress]);
 
-    if (!targetShared) return userData.characters;
-    return [...userData.characters, targetShared];
-  }, [userData.characters, sharedProgress, selectedCharacterId]);
-
-  // 共有データの初回自動選択処理
+  // 共有データの初回自動選択およびURLクエリパラメータのクリーンアップ処理
   useEffect(() => {
     if (sharedProgress && !hasAutoSelectedSharedRef.current) {
-      setSelectedCharacterId('shared-guest-character');
+      setLocalActiveCharacter('shared-guest-character');
       hasAutoSelectedSharedRef.current = true;
-    }
-  }, [sharedProgress]);
 
-  // 現在表示選択中のキャラ
+      // URLからクエリ（share/ハッシュ等）を削除してアドレスバーをクリーン化
+      const searchParams = new URLSearchParams(location.search);
+      if (searchParams.has('share')) {
+        searchParams.delete('share');
+        const newSearch = searchParams.toString();
+        const newPath = location.pathname + (newSearch ? `?${newSearch}` : '');
+        navigate(newPath, { replace: true });
+      }
+    }
+  }, [sharedProgress, location.pathname, location.search, navigate, setLocalActiveCharacter]);
+
+  // 現在表示選択中のキャラ（useUserData 側の activeCharacterId 一元管理に統一）
   const currentActiveCharacter = useMemo<DisplayCharacterProgress | undefined>(() => {
-    if (selectedCharacterId) {
-      const found = displayCharacters.find((c) => c.id === selectedCharacterId);
+    if (userData.activeCharacterId) {
+      const found = displayCharacters.find((c) => c.id === userData.activeCharacterId);
       if (found) return found;
     }
 
@@ -97,25 +118,28 @@ function AppRoutes() {
     }
 
     return displayCharacters[0];
-  }, [selectedCharacterId, displayCharacters, activeCharacter]);
+  }, [userData.activeCharacterId, displayCharacters, activeCharacter]);
 
   // キャラクター選択変更ハンドラー
   const handleSelectCharacter = (characterId: string) => {
-    setSelectedCharacterId(characterId);
-    if (userData.characters.some((c) => c.id === characterId)) {
-      setLocalActiveCharacter(characterId);
-    }
+    setLocalActiveCharacter(characterId);
   };
 
   // 閲覧可能判定（登録済み、共有データが存在する、または共有キャラ選択中）
-  const canViewContainer = isRegistered || !!sharedProgress || selectedCharacterId === 'shared-guest-character';
+  const canViewContainer =
+    isRegistered ||
+    !!sharedProgress ||
+    userData.activeCharacterId === 'shared-guest-character';
 
   const handleRequestRegistration = (msg: string) => {
     setRegistrationMessage(msg);
   };
 
   const handleCreateCharacterAndClose = (name: string) => {
-    addCharacter(name);
+    const newChar = addCharacter(name);
+    if (newChar?.id) {
+      setLocalActiveCharacter(newChar.id);
+    }
     setRegistrationMessage(null);
   };
 
