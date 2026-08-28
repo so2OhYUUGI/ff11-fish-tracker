@@ -6,18 +6,9 @@
  * [概要]
  * - パスベースルーティングの定義およびダイアログ・モーダル状態の管理
  * - 共有URLパラメータ（share）からのゲストキャラクター進捗復元とURLクリーンアップ処理
- * - 登録済み / 未登録ユーザーに応じた閲覧権限（canViewContainer）の判定と表示切替
- * 
- * [依存関係・関連ファイル]
- * - フック     : src/hooks/useUserData.ts, src/hooks/useSharedProgress.ts
- * - レイアウト : src/components/layout/MainLayout.tsx
- * - コンテナ   : src/features/fishtracker/FishTrackerContainer.tsx
- * - 型定義     : src/components/layout/Header.ts (DisplayCharacterProgress)
- * 
- * [編集・改修時の注意事項（AI/エンジニア共通指示）]
- * 1. 【状態維持】 共有キャラ選択時にURLクエリを削除しても、lastSharedCharRef にキャッシュすることでコンテキストを保持すること。
- * 2. 【アクセス制御】 未登録かつ共有データ非保持時は LandingPage を表示し、不正なルーティングを防ぐこと。
- * 3. 【選択状態一元化】 キャラクター選択状態は selectedCharacterId の独自管理を行わず useUserData 側に統一すること。
+ * - 登録済み / 未登録ユーザーに応じた閲覧権限の判定と表示切替
+ *   - 一覧表示 (/fishtracker/:type): 未登録かつ共有データなしの場合は LandingPage を表示
+ *   - 詳細表示 (/fishtracker/:type/:slug): 未登録ユーザーであっても閲覧可能
  * ============================================================================
  */
 
@@ -125,12 +116,15 @@ function AppRoutes() {
     setLocalActiveCharacter(characterId);
   };
 
-  // 閲覧可能判定（登録済み、共有データが存在する、または共有キャラ選択中）
+  // 共有キャラクターがキャッシュされているかどうかの判定
+  const hasSharedGuestCharacter = lastSharedCharRef.current !== null;
+  
+  // 一覧ページの閲覧権限判定（登録済み、共有データ保持、または共有キャラ選択中）
   const canViewContainer =
     isRegistered ||
     !!sharedProgress ||
-    userData.activeCharacterId === 'shared-guest-character';
-
+    hasSharedGuestCharacter;
+  
   const handleRequestRegistration = (msg: string) => {
     setRegistrationMessage(msg);
   };
@@ -150,6 +144,7 @@ function AppRoutes() {
         <Route path="/" element={<Navigate to="/fishtracker/fish" replace />} />
         <Route path="/fishtracker" element={<Navigate to="/fishtracker/fish" replace />} />
 
+        {/* 1. 一覧表示（slug なし）: 権限がない場合は LandingPage を表示 */}
         {!canViewContainer && (
           <Route
             path="/fishtracker/:type"
@@ -157,6 +152,7 @@ function AppRoutes() {
           />
         )}
 
+        {/* 2. メインレイアウト配下のルーティング */}
         <Route
           element={
             <MainLayout
@@ -168,6 +164,7 @@ function AppRoutes() {
             />
           }
         >
+          {/* 一覧表示（slug なし）: 権限がある場合のみ表示 */}
           {canViewContainer && (
             <Route
               path="/fishtracker/:type"
@@ -184,6 +181,7 @@ function AppRoutes() {
             />
           )}
 
+          {/* 詳細表示（slug あり）: 共有/直接リンクアクセスのため無条件で許可 */}
           <Route
             path="/fishtracker/:type/:slug"
             element={

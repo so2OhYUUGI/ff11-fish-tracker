@@ -83,7 +83,7 @@ export const useUserData = () => {
 
 	const activeCharacter =
 		userData.characters.find((c) => c.id === userData.activeCharacterId) ||
-		userData.characters[0];
+		(userData.characters.length > 0 ? userData.characters[0] : undefined);
 
 	// キャラクター登録済み（1個以上のキャラが存在する）かどうか
 	const isRegistered = userData.characters.length > 0;
