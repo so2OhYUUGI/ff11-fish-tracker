@@ -4,21 +4,15 @@
  * [Role] アプリケーションのルートコンポーネント（パスベースルーティング版）
  * 
  * [概要]
- * - パスベースルーティングの定義およびダイアログ・モーダル状態の管理
+ * - アプリケーション全体のグローバル状態管理とモーダル・ダイアログ制御
  * - 共有URLパラメータ（share）からのゲストキャラクター進捗復元とURLクリーンアップ処理
- * - 共有リンクアクセス時は閲覧利便性の向上のため自動でリスト表示（list）へ変更
- * - 登録済み / 未登録ユーザーに応じた閲覧権限の判定と表示切替
- *   - 一覧表示 (/fishtracker/:type): 未登録かつ共有データなしの場合は LandingPage を表示
- *   - 詳細表示 (/fishtracker/:type/:slug): 未登録ユーザーであっても閲覧可能
+ * - 切り出した AppRouter によるルーティング・閲覧権限制御の委譲
  * ============================================================================
  */
 
 import { useState, useMemo, useEffect, useRef } from 'react';
 import {
   BrowserRouter,
-  Routes,
-  Route,
-  Navigate,
   useLocation,
   useNavigate,
 } from 'react-router-dom';
@@ -26,16 +20,14 @@ import { HelmetProvider } from 'react-helmet-async';
 
 import { useUserData } from '@/hooks/useUserData';
 import { useSharedProgress } from '@/hooks/useSharedProgress';
-import { LandingPage } from '@/components/LandingPage';
 import { OnboardingModal } from '@/components/common/OnboardingModal';
 import { SettingsModal } from '@/components/settings/SettingsModal';
 import { MasterDataEditorModal } from '@/components/dev/MasterDataEditorModal';
-import { MainLayout } from '@/components/layout/MainLayout';
-import { FishTrackerContainer } from '@/features/fishtracker/FishTrackerContainer';
 import type { DisplayCharacterProgress } from '@/components/layout/Header';
 import { DynamicOgpMeta } from '@/components/share/DynamicOgpMeta';
+import { AppRouter } from '@/routes/AppRouter';
 
-function AppRoutes() {
+function AppContent() {
   const userDataProps = useUserData();
   const {
     userData,
@@ -64,22 +56,28 @@ function AppRoutes() {
   // 共有キャラクターデータのキャッシュ（URLパラメータ変化時も表示コンテキストを維持）
   const lastSharedCharRef = useRef<DisplayCharacterProgress | null>(null);
 
-  if (sharedProgress) {
-    lastSharedCharRef.current = {
-      id: 'shared-guest-character',
-      name: sharedProgress.characterName,
-      checkedFishIds: sharedProgress.checkedFishIds,
-      createdAt: sharedProgress.createdAt,
-      updatedAt: sharedProgress.createdAt,
-      isShared: true,
-    };
-  }
+  // 共有データからオブジェクトを構成
+  const sharedGuestCharacter = useMemo<DisplayCharacterProgress | null>(() => {
+    if (sharedProgress) {
+      const charObj: DisplayCharacterProgress = {
+        id: 'shared-guest-character',
+        name: sharedProgress.characterName,
+        checkedFishIds: sharedProgress.checkedFishIds,
+        createdAt: sharedProgress.createdAt,
+        updatedAt: sharedProgress.createdAt,
+        isShared: true,
+      };
+      lastSharedCharRef.current = charObj;
+      return charObj;
+    }
+    return lastSharedCharRef.current;
+  }, [sharedProgress]);
 
-  // 共有データが存在する場合、または選択中の場合はインメモリキャラとして一覧末尾に追加
+  // 共有データが存在する場合、またはキャッシュ済みの場合はインメモリキャラとして一覧末尾に追加
   const displayCharacters = useMemo<DisplayCharacterProgress[]>(() => {
-    if (!lastSharedCharRef.current) return userData.characters;
-    return [...userData.characters, lastSharedCharRef.current];
-  }, [userData.characters, sharedProgress]);
+    if (!sharedGuestCharacter) return userData.characters;
+    return [...userData.characters, sharedGuestCharacter];
+  }, [userData.characters, sharedGuestCharacter]);
 
   // 共有データの初回自動選択、表示モードの自動切替、およびURLクエリパラメータのクリーンアップ処理
   useEffect(() => {
@@ -121,14 +119,15 @@ function AppRoutes() {
     setLocalActiveCharacter(characterId);
   };
 
-  // 共有キャラクターがキャッシュされているかどうかの判定
-  const hasSharedGuestCharacter = lastSharedCharRef.current !== null;
-
-  // 一覧ページの閲覧権限判定（登録済み、共有データ保持、または共有キャラ選択中）
+  /**
+   * 一覧ページの閲覧権限判定
+   * 1. ユーザーが登録済みである (isRegistered === true)
+   * 2. または、共有データが存在する (sharedProgress 存在、または共有キャラがアクティブ)
+   */
   const canViewContainer =
     isRegistered ||
     !!sharedProgress ||
-    hasSharedGuestCharacter;
+    (userData.activeCharacterId === 'shared-guest-character' && !!lastSharedCharRef.current);
 
   const handleRequestRegistration = (msg: string) => {
     setRegistrationMessage(msg);
@@ -145,65 +144,21 @@ function AppRoutes() {
   return (
     <>
       <DynamicOgpMeta />
-      <Routes>
-        <Route path="/" element={<Navigate to="/fishtracker/fish" replace />} />
-        <Route path="/fishtracker" element={<Navigate to="/fishtracker/fish" replace />} />
 
-        {/* 1. 一覧表示（slug なし）: 権限がない場合は LandingPage を表示 */}
-        {!canViewContainer && (
-          <Route
-            path="/fishtracker/:type"
-            element={<LandingPage onCreateCharacter={addCharacter} />}
-          />
-        )}
-
-        {/* 2. メインレイアウト配下のルーティング */}
-        <Route
-          element={
-            <MainLayout
-              characters={displayCharacters}
-              activeCharacter={currentActiveCharacter}
-              onSelectCharacter={handleSelectCharacter}
-              onOpenSettings={() => setIsSettingsOpen(true)}
-              onOpenMasterEditor={() => setIsEditorOpen(true)}
-            />
-          }
-        >
-          {/* 一覧表示（slug なし）: 権限がある場合のみ表示 */}
-          {canViewContainer && (
-            <Route
-              path="/fishtracker/:type"
-              element={
-                <FishTrackerContainer
-                  activeCharacter={currentActiveCharacter}
-                  isRegistered={isRegistered}
-                  viewMode={viewMode}
-                  setViewMode={setViewMode}
-                  toggleFishCheck={toggleFishCheck}
-                  onRequestRegistration={handleRequestRegistration}
-                />
-              }
-            />
-          )}
-
-          {/* 詳細表示（slug あり）: 共有/直接リンクアクセスのため無条件で許可 */}
-          <Route
-            path="/fishtracker/:type/:slug"
-            element={
-              <FishTrackerContainer
-                activeCharacter={currentActiveCharacter}
-                isRegistered={isRegistered}
-                viewMode={viewMode}
-                setViewMode={setViewMode}
-                toggleFishCheck={toggleFishCheck}
-                onRequestRegistration={handleRequestRegistration}
-              />
-            }
-          />
-        </Route>
-
-        <Route path="*" element={<Navigate to="/fishtracker/fish" replace />} />
-      </Routes>
+      <AppRouter
+        displayCharacters={displayCharacters}
+        currentActiveCharacter={currentActiveCharacter}
+        canViewContainer={canViewContainer}
+        isRegistered={isRegistered}
+        viewMode={viewMode}
+        setViewMode={setViewMode}
+        toggleFishCheck={toggleFishCheck}
+        handleSelectCharacter={handleSelectCharacter}
+        addCharacter={addCharacter}
+        handleRequestRegistration={handleRequestRegistration}
+        setIsSettingsOpen={setIsSettingsOpen}
+        setIsEditorOpen={setIsEditorOpen}
+      />
 
       <OnboardingModal
         isOpen={(!isRegistered || !activeCharacter) && registrationMessage !== null}
@@ -237,7 +192,7 @@ export default function App() {
   return (
     <HelmetProvider>
       <BrowserRouter>
-        <AppRoutes />
+        <AppContent />
       </BrowserRouter>
     </HelmetProvider>
   );

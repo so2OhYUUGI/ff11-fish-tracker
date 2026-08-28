@@ -17,6 +17,7 @@
 
 - **ビルドツール**: Vite
 - **UIライブラリ**: React (TypeScript)
+- **ルーティング**: React Router (`react-router-dom` v6, パスベースルーティング)
 - **スタイリング**: Tailwind CSS (v4)
 - **アイコン**: lucide-react
 - **エッジ/SSR環境**: Cloudflare Workers / Pages Functions (`functions/[[path]].ts`)
@@ -51,6 +52,9 @@
 | ファイル | 役割 |
 |---|---|
 | `functions/[[path]].ts` | OGP画像生成（/api/ogp）およびSNSクローラー向けHTMLメタタグの動的書き換え（HTMLRewriter/エッジ処理） |
+| `src/App.tsx` | アプリケーションのエントリーポイント。グローバル状態管理、共有URL復元、各種ダイアログ/モーダル状態の保持 |
+| `src/routes/AppRouter.tsx` | パスベースルーティング構造の集約定義。MainLayout を軸とした Outlet パターンの構築 |
+| `src/routes/ProtectedRoute.tsx` | 一覧画面の閲覧権限（登録済みまたは共有データ存在）を検証・保護するガードコンポーネント |
 | `src/types/fishtracker.ts` | 型定義（Windower互換データ、アプリ拡張、進捗構造） |
 | `src/hooks/useUserData.ts` | LocalStorage永続化、キャラ追加/削除/切替、魚チェックON/OFFロジック |
 | `src/utils/share.ts` | Web Share APIおよびクリップボードコピー処理ユーティリティ |
@@ -66,9 +70,10 @@
 | `src/components/layout/Footer.tsx` | 権利表記・ライセンス注記・著作権表示 |
 | `src/components/settings/SettingsModal.tsx` | 各種設定モーダルダイアログ |
 | `src/components/dev/MasterDataEditorModal.tsx` | マスターデータ編集・テスト用モーダル |
-| `src/components/LandingPage.tsx` | ランディングページコンポーネント |
+| `src/components/LandingPage.tsx` | 未登録ユーザー向けランディングページコンポーネント |
 | `src/features/fishtracker/FilterBar.tsx` | メインナビゲーション（魚/エリア/餌切替）、達成状態フィルター、プログレス表示、検索フォーム |
-| `src/features/fishtracker/FishTrackerContent.tsx` | 魚チェッカーメイン領域の表示切替（魚/エリア/餌）、ルーティング |
+| `src/features/fishtracker/FishTrackerContainer.tsx` | 魚チェッカーメイン領域のコンテナ。タブ切替・フィルター状態管理・チェック操作の受付 |
+| `src/features/fishtracker/FishTrackerContent.tsx` | 魚チェッカーメイン領域の表示切替（魚/エリア/餌の各カード・リスト・詳細表示） |
 | `src/features/fishtracker/fish/FishCard.tsx` | 個別魚カード（スペック表示、エリア情報の表示と+Nバッジ表示、アクセシビリティ対応） |
 | `src/features/fishtracker/fish/FishListItem.tsx` | リスト表示用個別魚行コンポーネント（詳細パネル内での `variant="inline"` 対応、アクセシビリティ対応） |
 | `src/features/fishtracker/fish/FishDetailView.tsx` | 魚詳細情報表示コンポーネント（アクセシビリティ・ユニークキー対応） |
@@ -172,6 +177,8 @@
 
 ### **開発・コード記述規約**
 
+- **ルーティング・関心事の分離**:
+  - `App.tsx` 内に直接 `<Routes>` や `<Route>` を定義せず、ルーティング定義は `src/routes/AppRouter.tsx` へ、閲覧権限検証ロジックは `src/routes/ProtectedRoute.tsx` へ切り出して責務を分離すること。
 - **リレーションデータの参照基準**:
   - 魚・エリア・餌の結びつきを表示する際は、単体マスターの埋め込み配列ではなく、必ずマスターリレーションデータ（`FISH_LOCATIONS`, `FISH_BAIT_RELATIONS` 等）を参照して動的に算出すること。
 - **カード内要素の溢れ制限デザイン**:
