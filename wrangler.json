@@ -21,7 +21,8 @@
     {
       "type": "Data",
       "globs": [
-        "**/*.ttf"
+        "**/*.ttf",
+        "**/*.woff2"
       ],
       "fallthrough": true
     }

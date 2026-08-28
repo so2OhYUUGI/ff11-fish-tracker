@@ -1,8 +1,26 @@
+/**
+ * ============================================================================
+ * [FilePath] functions/[[path]].ts
+ * [Role]     OGP画像生成（SVG->PNG変換）およびSNSクローラー向けHTMLメタタグの動的書き換え（SSR/エッジ処理）
+ * 
+ * [概要]
+ * - /api/ogp: 共有パラメータから釣獲進捗データを生成し、svg2png-wasm を用いて PNG 画像としてレスポンス返却
+ * - クローラー対応: URLの share パラメータを解釈し、HTMLRewriter で OGP メタタグを動的置換
+ * 
+ * [依存関係・関連ファイル]
+ * - 型定義   : functions/env.d.ts (*.wasm のモジュール型定義)
+ * - ユーティリティ: src/utils/shareDataBuilder.ts, src/utils/shareEncoding.ts
+ * 
+ * [編集・改修時の注意事項（AI/エンジニア共通指示）]
+ * 1. 【WASMの二重初期化防止】 initialized フラグを用い、Worker プロセス生存期間中に initialize() を1度のみ実行すること。
+ * 2. 【レスポンス形式】 SNS (X/Twitter等) 互換性のため /api/ogp の Content-Type は必ず image/png を維持すること。
+ * 3. 【描画サイズ】 OGP 標準規格に合わせ 1200 x 630 ピクセルを指定すること。
+ * ============================================================================
+ **/
 /// <reference types="@cloudflare/workers-types" />
 
 import { initialize, svg2png } from 'svg2png-wasm';
 import wasmModule from 'svg2png-wasm/svg2png_wasm_bg.wasm';
-import fontData from './assets/NotoSansJP-Regular.ttf';
 import { buildShareCardData } from '../src/utils/shareDataBuilder';
 import { decodeSharedProgress } from '../src/utils/shareEncoding';
 
@@ -13,11 +31,19 @@ interface Env {
 }
 
 let initialized = false;
+let fontCache: Uint8Array | null = null; // フォントデータをメモリに保持
 
-async function ensureWasmInitialized() {
+async function ensureInitialized(env: Env, requestUrl: string) {
 	if (!initialized) {
 		await initialize(wasmModule);
 		initialized = true;
+	}
+	// 初回リクエスト時のみ public/ からフォントを取得してキャッシュ
+	if (!fontCache) {
+		const fontRes = await env.ASSETS.fetch(new URL('/NotoSansJP-Regular.ttf', requestUrl).href);		if (!fontRes.ok) {
+			throw new Error(`Failed to load font: ${fontRes.status}`);
+		}
+		fontCache = new Uint8Array(await fontRes.arrayBuffer());
 	}
 }
 
@@ -28,6 +54,9 @@ export default {
 		// 1. OGP画像生成エンドポイントの処理 (/api/ogp)
 		if (url.pathname.startsWith('/api/ogp')) {
 			try {
+				// WASM と フォントデータの初期化・読み込み
+				await ensureInitialized(env, request.url);
+
 				const shareParam = url.searchParams.get('share');
 				let characterName = 'Unknown Angler';
 				let checkedFishIds: number[] = [];
@@ -85,13 +114,11 @@ export default {
           </svg>
         `;
 
-				await ensureWasmInitialized();
-
-				// フォントデータを渡して SVG -> PNG 変換
+				// キャッシュされたフォントデータを渡して SVG -> PNG 変換
 				const pngBuffer = await svg2png(svgContent, {
 					width: 1200,
 					height: 630,
-					fonts: [new Uint8Array(fontData)],
+					fonts: [fontCache!],
 				});
 
 				return new Response(pngBuffer as unknown as BodyInit, {
