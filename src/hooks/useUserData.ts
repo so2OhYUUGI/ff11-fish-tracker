@@ -12,6 +12,7 @@
 
 import { useState, useEffect } from 'react';
 import type { UserData, CharacterProgress, ViewMode } from '@/types/fishtracker';
+import { SHARED_GUEST_CHARACTER_ID } from '@/constants/character';
 
 const STORAGE_KEY = 'ff11_fish_tracker_user_data';
 
@@ -141,7 +142,7 @@ export const useUserData = () => {
 	const toggleFishCheck = (fishId: number) => {
 		setUserData((prev) => {
 			// 共有キャラが選択されている場合はローカルデータを変更しない
-			if (prev.activeCharacterId === 'shared-guest-character') {
+			if (prev.activeCharacterId === SHARED_GUEST_CHARACTER_ID) {
 				return prev;
 			}
 

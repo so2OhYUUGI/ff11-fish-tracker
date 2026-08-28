@@ -26,6 +26,17 @@ import { MasterDataEditorModal } from '@/components/dev/MasterDataEditorModal';
 import type { DisplayCharacterProgress } from '@/components/layout/Header';
 import { DynamicOgpMeta } from '@/components/share/DynamicOgpMeta';
 import { AppRouter } from '@/routes/AppRouter';
+import { SHARED_GUEST_CHARACTER_ID } from '@/constants/character';
+
+// 未登録かつ共有データもない場合に表示するフォールバック用のゲストキャラクター
+const FALLBACK_GUEST_CHARACTER: DisplayCharacterProgress = {
+  id: SHARED_GUEST_CHARACTER_ID,
+  name: 'ゲスト',
+  checkedFishIds: [],
+  createdAt: Date.now(),
+  updatedAt: Date.now(),
+  isShared: true,
+};
 
 function AppContent() {
   const userDataProps = useUserData();
@@ -60,7 +71,7 @@ function AppContent() {
   const currentSharedCharacter = useMemo<DisplayCharacterProgress | null>(() => {
     if (!sharedProgress) return null;
     return {
-      id: 'shared-guest-character',
+      id: SHARED_GUEST_CHARACTER_ID,
       name: sharedProgress.characterName,
       checkedFishIds: sharedProgress.checkedFishIds,
       createdAt: sharedProgress.createdAt,
@@ -79,16 +90,21 @@ function AppContent() {
   // 表示用共有キャラ（現在の共有データ、またはキャッシュされた過去の共有データ）
   const activeSharedCharacter = currentSharedCharacter || lastSharedCharRef.current;
 
-  // 共有データが存在する場合、またはキャッシュ済みの場合はインメモリキャラとして一覧末尾に追加
+  // 表示用キャラクター一覧（キャラ未登録かつ共有データもない場合は FALLBACK_GUEST_CHARACTER を挿入）
   const displayCharacters = useMemo<DisplayCharacterProgress[]>(() => {
-    if (!activeSharedCharacter) return userData.characters;
-    return [...userData.characters, activeSharedCharacter];
+    if (activeSharedCharacter) {
+      return [...userData.characters, activeSharedCharacter];
+    }
+    if (userData.characters.length === 0) {
+      return [FALLBACK_GUEST_CHARACTER];
+    }
+    return userData.characters;
   }, [userData.characters, activeSharedCharacter]);
 
   // 共有データの初回自動選択、表示モードの自動切替、およびURLクエリパラメータのクリーンアップ処理
   useEffect(() => {
     if (sharedProgress && !hasAutoSelectedSharedRef.current) {
-      setLocalActiveCharacter('shared-guest-character');
+      setLocalActiveCharacter(SHARED_GUEST_CHARACTER_ID);
 
       // 共有データ閲覧時は情報密度の高いリスト表示に変更
       setViewMode('list');
@@ -106,17 +122,19 @@ function AppContent() {
     }
   }, [sharedProgress, location.pathname, location.search, navigate, setLocalActiveCharacter, setViewMode]);
 
-  // 現在表示選択中のキャラ（useUserData 側の activeCharacterId 一元管理に統一）
-  const currentActiveCharacter = useMemo<DisplayCharacterProgress | undefined>(() => {
+  // 現在表示選択中のキャラ（常に有効な DisplayCharacterProgress を返却）
+  const currentActiveCharacter = useMemo<DisplayCharacterProgress>(() => {
     if (userData.activeCharacterId) {
       const found = displayCharacters.find((c) => c.id === userData.activeCharacterId);
       if (found) return found;
     }
 
     if (activeCharacter) {
-      return displayCharacters.find((c) => c.id === activeCharacter.id) || activeCharacter;
+      const found = displayCharacters.find((c) => c.id === activeCharacter.id);
+      if (found) return found;
     }
 
+    // いずれにも該当しない場合はリストの先頭（FALLBACK_GUEST_CHARACTER を含む）を確実に返す
     return displayCharacters[0];
   }, [userData.activeCharacterId, displayCharacters, activeCharacter]);
 
@@ -133,7 +151,7 @@ function AppContent() {
   const canViewContainer =
     isRegistered ||
     !!sharedProgress ||
-    (userData.activeCharacterId === 'shared-guest-character' && !!lastSharedCharRef.current);
+    (userData.activeCharacterId === SHARED_GUEST_CHARACTER_ID && !!lastSharedCharRef.current);
 
   const handleRequestRegistration = (msg: string) => {
     setRegistrationMessage(msg);

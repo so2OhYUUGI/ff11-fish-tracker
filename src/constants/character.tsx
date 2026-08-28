@@ -1,0 +1,1 @@
+export const SHARED_GUEST_CHARACTER_ID = 'shared-guest-character';
