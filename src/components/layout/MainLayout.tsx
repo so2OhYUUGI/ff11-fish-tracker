@@ -19,7 +19,7 @@ type MainLayoutProps = {
 	activeCharacter?: DisplayCharacterProgress;
 	onSelectCharacter: (characterId: string) => void;
 	onOpenSettings: () => void;
-	onOpenMasterEditor: () => void;
+	onOpenMasterEditor?: () => void;
 };
 
 export function MainLayout({

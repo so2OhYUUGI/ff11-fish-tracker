@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  * [FilePath] src/styles/tokens/layoutTokens.ts
- * [Role]     画面全体・ヘッダー・ビュー構造（カード/リスト/詳細パネル）用レイアウトトークン
+ * [Role]     画面全体・ヘッダー・フッター・ビュー構造（カード/リスト/詳細パネル）用レイアウトトークン
  * ============================================================================
  */
 
@@ -74,6 +74,14 @@ export const LAYOUT_TOKENS = {
     },
   },
 
+  footer: {
+    container: 'bg-slate-900 border-t border-slate-800 mt-auto py-6',
+    rowWrapper: 'flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-center sm:text-left',
+    titleGroup: 'flex items-center justify-center sm:justify-start gap-2 mb-1',
+    badge: 'text-[10px] px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-400 font-mono',
+    copyright: 'whitespace-nowrap',
+  },
+  
   control: {
     select: (isShared?: boolean) =>
       `text-white text-xs sm:text-sm rounded-lg px-2.5 sm:px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none min-h-[36px] transition-all ${isShared

@@ -22,15 +22,15 @@ import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-slate-900 border-t border-slate-800 mt-auto py-6">
+    <footer className={LAYOUT_TOKENS.footer.container}>
       <div className={LAYOUT_TOKENS.header.inner}>
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-center sm:text-left">
+        <div className={LAYOUT_TOKENS.footer.rowWrapper}>
           <div>
-            <div className="flex items-center justify-center sm:justify-start gap-2 mb-1">
+            <div className={LAYOUT_TOKENS.footer.titleGroup}>
               <p className={`font-medium ${COMMON_TOKENS.color.textMain}`}>
                 FF11 釣魚チェッカー (FF11 Fishing Tracker)
               </p>
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-400 font-mono">
+              <span className={LAYOUT_TOKENS.footer.badge}>
                 v{__APP_VERSION__} ({__COMMIT_HASH__}) #{__BUILD_NUMBER__}
               </span>
             </div>
@@ -38,7 +38,7 @@ export const Footer: React.FC = () => {
               記載されている会社名・製品名・システム名などは、各社の商標、または登録商標です。
             </p>
           </div>
-          <div className={`${COMMON_TOKENS.color.textMuted} whitespace-nowrap`}>
+          <div className={`${COMMON_TOKENS.color.textMuted} ${LAYOUT_TOKENS.footer.copyright}`}>
             &copy; SQUARE ENIX CO., LTD. All Rights Reserved.
           </div>
         </div>
