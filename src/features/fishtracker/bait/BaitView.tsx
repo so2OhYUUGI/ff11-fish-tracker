@@ -122,7 +122,7 @@ export const BaitView = ({
 						))}
 					</div>
 				) : (
-					<div className={LAYOUT_TOKENS.view.listContainer}>
+					<div className={LAYOUT_TOKENS.view.flexColGap2}>
 						{baits.map((bait) => (
 							<BaitListItem
 								key={bait.id}

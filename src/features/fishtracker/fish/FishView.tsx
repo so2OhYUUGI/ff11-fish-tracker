@@ -114,7 +114,7 @@ export const FishView = ({
 						))}
 					</div>
 				) : (
-					<div className={LAYOUT_TOKENS.view.listContainer}>
+					<div className={LAYOUT_TOKENS.view.flexColGap2}>
 						{fishes.map((fish) => (
 							<FishListItem
 								key={fish.id}

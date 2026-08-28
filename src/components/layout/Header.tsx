@@ -51,26 +51,29 @@ export const Header: React.FC<HeaderProps> = ({
 		};
 	}, []);
 
+	const isSharedActive = !!activeCharacter?.isShared;
+	const { icon } = LAYOUT_TOKENS.header;
+
 	return (
 		<header className={LAYOUT_TOKENS.header.container}>
 			<div className={LAYOUT_TOKENS.header.inner}>
-				<div className="flex items-center justify-between gap-4">
+				<div className={LAYOUT_TOKENS.header.rowWrapper}>
 
 					{/* タイトル */}
-					<div className="flex items-center gap-3">
+					<div className={LAYOUT_TOKENS.header.titleWrapper}>
 						<div className={LAYOUT_TOKENS.header.iconBg}>
-							<Fish className={`w-6 h-6 ${COMMON_TOKENS.color.textMain}`} />
+							<Fish className={`${icon.lg} ${COMMON_TOKENS.color.textMain}`} />
 						</div>
 						<div>
-							<h1 className="text-xl font-bold tracking-tight">FF11 釣魚チェッカー</h1>
+							<h1 className={LAYOUT_TOKENS.header.titleText}>FF11 釣魚チェッカー</h1>
 							<p className={COMMON_TOKENS.text.subText}>FF11 Fishing Tracker</p>
 						</div>
 					</div>
 
 					{/* --- 【パターンA】画面が広い時（sm / 640px以上） --- */}
-					<div className="hidden sm:flex flex-wrap items-center gap-3">
+					<div className={LAYOUT_TOKENS.header.desktopNav}>
 						{/* キャラクター切り替え */}
-						<div className="flex items-center gap-2">
+						<div className={LAYOUT_TOKENS.header.selectGroup}>
 							<label htmlFor="char-select" className={COMMON_TOKENS.text.label}>
 								キャラ:
 							</label>
@@ -78,10 +81,10 @@ export const Header: React.FC<HeaderProps> = ({
 								id="char-select"
 								value={activeCharacter?.id ?? ''}
 								onChange={(e) => onSelectCharacter(e.target.value)}
-								className={`${LAYOUT_TOKENS.control.select} ${activeCharacter?.isShared ? 'border-cyan-500 text-cyan-300 bg-slate-900' : ''}`}
+								className={LAYOUT_TOKENS.control.select(isSharedActive)}
 							>
 								{characters.map((char) => (
-									<option key={char.id} value={char.id}>
+									<option key={char.id} value={char.id} className={LAYOUT_TOKENS.header.selectOption}>
 										{char.name} {char.isShared ? '(共有)' : ''}
 									</option>
 								))}
@@ -100,7 +103,7 @@ export const Header: React.FC<HeaderProps> = ({
 							className={LAYOUT_TOKENS.control.button}
 							title="環境設定・データ管理"
 						>
-							<Settings className="w-4 h-4" />
+							<Settings className={icon.md} />
 							設定
 						</button>
 
@@ -112,29 +115,29 @@ export const Header: React.FC<HeaderProps> = ({
 								className={LAYOUT_TOKENS.control.devButton}
 								title="開発用マスターデータエディタを開く"
 							>
-								<Database className="w-3.5 h-3.5 text-red-400" />
+								<Database className={`${icon.sm} ${icon.dev}`} />
 								マスター編集
 							</button>
 						)}
 					</div>
 
 					{/* --- 【パターンB】画面が狭い時（sm未満 / 640px未満） --- */}
-					<div className="relative flex sm:hidden" ref={menuRef}>
+					<div className={LAYOUT_TOKENS.header.mobileNav} ref={menuRef}>
 						<button
 							type="button"
 							onClick={() => setIsOpen(!isOpen)}
-							className={`${LAYOUT_TOKENS.header.collapsedMenuButton} ${activeCharacter?.isShared ? 'border-cyan-500/80 bg-slate-900' : ''}`}
+							className={LAYOUT_TOKENS.header.collapsedMenuButton(isSharedActive)}
 							aria-expanded={isOpen}
 							aria-haspopup="true"
 						>
-							{activeCharacter?.isShared ? (
-								<Share2 className="w-4 h-4 text-cyan-400 shrink-0" />
+							{isSharedActive ? (
+								<Share2 className={`${icon.md} ${icon.shared}`} />
 							) : (
-								<User className="w-4 h-4 text-slate-400 shrink-0" />
+								<User className={`${icon.md} ${icon.muted}`} />
 							)}
 							<span className={LAYOUT_TOKENS.header.collapsedButtonText}>
 								{activeCharacter?.name ?? 'キャラ未選択'}
-								{activeCharacter?.isShared ? ' (共有)' : ''}
+								{isSharedActive ? ' (共有)' : ''}
 							</span>
 							<ChevronDown className={LAYOUT_TOKENS.header.collapsedChevron(isOpen)} />
 						</button>
@@ -144,7 +147,7 @@ export const Header: React.FC<HeaderProps> = ({
 							<div className={LAYOUT_TOKENS.header.dropdownContainer}>
 
 								{/* キャラクター選択セクション */}
-								<div className="py-1">
+								<div className={LAYOUT_TOKENS.header.dropdownSection}>
 									<div className={LAYOUT_TOKENS.header.sectionHeader}>
 										キャラクター切替
 									</div>
@@ -160,33 +163,35 @@ export const Header: React.FC<HeaderProps> = ({
 												}}
 												className={
 													isSelected
-														? LAYOUT_TOKENS.header.dropdownItemActive
+														? LAYOUT_TOKENS.header.dropdownItemActive(char.isShared)
 														: LAYOUT_TOKENS.header.dropdownItemInactive
 												}
 											>
-												<div className="flex items-center gap-1.5 truncate">
-													{char.isShared && <Share2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />}
+												<div className={LAYOUT_TOKENS.header.dropdownItemContent}>
+													{char.isShared && <Share2 className={`${icon.sm} ${icon.shared}`} />}
 													<span className="truncate">{char.name}</span>
 													{char.isShared && (
-														<span className="text-[10px] px-1 py-0.2 bg-cyan-950 text-cyan-400 border border-cyan-800 rounded">
+														<span className={LAYOUT_TOKENS.header.sharedBadge}>
 															共有
 														</span>
 													)}
 												</div>
-												{isSelected && <Check className="w-3.5 h-3.5 text-blue-400 shrink-0" />}
+												{isSelected && (
+													<Check className={`${icon.sm} ${icon.active(char.isShared)}`} />
+												)}
 											</button>
 										);
 									})}
 								</div>
 
 								{/* システム・共有セクション */}
-								<div className="py-1 border-t border-slate-800">
+								<div className={LAYOUT_TOKENS.header.dropdownDividerSection}>
 									<div className={LAYOUT_TOKENS.header.sectionHeader}>
 										アクション
 									</div>
 
 									{/* モバイルメニュー内 進捗共有 */}
-									<div className="px-3 py-1.5">
+									<div className={LAYOUT_TOKENS.header.dropdownShareButtonWrapper}>
 										<ShareProgressButton
 											activeCharacter={activeCharacter}
 											className="w-full justify-center"
@@ -206,7 +211,7 @@ export const Header: React.FC<HeaderProps> = ({
 										}}
 										className={LAYOUT_TOKENS.header.dropdownActionItem}
 									>
-										<Settings className="w-4 h-4 text-slate-400" />
+										<Settings className={`${icon.md} ${icon.muted}`} />
 										環境設定・データ管理
 									</button>
 
@@ -220,7 +225,7 @@ export const Header: React.FC<HeaderProps> = ({
 											}}
 											className={LAYOUT_TOKENS.header.dropdownActionItem}
 										>
-											<Database className="w-4 h-4 text-red-400" />
+											<Database className={`${icon.md} ${icon.dev}`} />
 											マスターデータ編集
 										</button>
 									)}

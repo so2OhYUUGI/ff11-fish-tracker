@@ -135,9 +135,9 @@ export const AreaView = ({
 		<div className={LAYOUT_TOKENS.view.mainGrid}>
 			{/* 左側：一覧表示領域 */}
 			<div className={LAYOUT_TOKENS.view.leftColumn(isSelected)}>
-				<div className={LAYOUT_TOKENS.view.groupListContainer}>
+				<div className={LAYOUT_TOKENS.view.flexColGap6}>
 					{groupedAreas.map((group) => (
-						<div key={group.region.id} className={LAYOUT_TOKENS.view.sectionGroup}>
+						<div key={group.region.id} className={LAYOUT_TOKENS.view.flexColGap2}>
 							{/* リージョン見出し */}
 							<div className={CARD_STYLES.sectionHeader.container}>
 								<span className={CARD_STYLES.sectionHeader.titleJa}>
@@ -166,7 +166,7 @@ export const AreaView = ({
 								</div>
 							) : (
 								/* リスト表示モード */
-								<div className={LAYOUT_TOKENS.view.listContainer}>
+								<div className={LAYOUT_TOKENS.view.flexColGap2}>
 									{group.areas.map((area) => (
 										<AreaListItem
 											key={area.id}
