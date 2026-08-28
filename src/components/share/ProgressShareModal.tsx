@@ -144,11 +144,31 @@ export const ProgressShareModal: React.FC<ProgressShareModalProps> = ({
 	const fishHashtag = topFish ? ` #${topFish.ja.replace(/\s+/g, '')}` : '';
 	const shareText = `【FF11 釣獲記録】\nキャラクター: ${characterName}\n達成率: ${percentage}% (${checkedCount}/${totalCount}種)${fishHashtag}\n#FF11 #FF11_FishTracker`;
 
+	// 修正後（src/components/share/ProgressShareModal.tsx）
 	const handleXShare = () => {
 		const intentUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
-		window.open(intentUrl, '_blank', 'noopener,noreferrer,width=600,height=400');
-	};
 
+		// タブレット・スマホ（画面幅 768px 未満 または タッチ端末）の場合
+		const isMobileOrTablet = window.innerWidth < 1024 || 'ontouchstart' in window;
+
+		if (isMobileOrTablet) {
+			// 同一タブで直接 X に遷移させる（空白タブが残らない）
+			window.location.href = intentUrl;
+		} else {
+			// デスクトップ環境のみ小窓（ポップアップ）で開く
+			const width = 600;
+			const height = 400;
+			const left = window.screen.width / 2 - width / 2;
+			const top = window.screen.height / 2 - height / 2;
+
+			window.open(
+				intentUrl,
+				'x-share-dialog',
+				`width=${width},height=${height},top=${top},left=${left},scrollbars=yes,resizable=yes`
+			);
+		}
+	};
+	
 	const handleCopyLink = async () => {
 		try {
 			await navigator.clipboard.writeText(shareUrl);
