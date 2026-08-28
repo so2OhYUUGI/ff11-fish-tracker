@@ -69,6 +69,15 @@ export const COMMON_TOKENS = {
     darker: 'bg-slate-900/80 border border-slate-700 rounded-md text-slate-200 p-2.5 sm:p-3',
   },
 
+  // 汎用レイアウト階層
+  layout: {
+    stackCompact: 'space-y-1.5',
+    stackStandard: 'space-y-4',
+    stackLoose: 'space-y-5',
+    headerGroup: 'text-center space-y-2 pt-2',
+    featureGroup: 'space-y-2.5 text-xs p-3.5 rounded-xl',
+  },
+
   // フォームUI共通スタイル（タッチターゲット・レスポンシブ調整）
   form: {
     input: 'w-full bg-slate-700 border border-slate-600 text-white placeholder-slate-400 text-sm rounded-lg px-3.5 sm:px-4 py-2 sm:py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors min-h-[42px]',

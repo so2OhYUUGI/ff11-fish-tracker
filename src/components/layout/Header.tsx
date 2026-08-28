@@ -39,17 +39,30 @@ export const Header: React.FC<HeaderProps> = ({
 	const [isOpen, setIsOpen] = useState(false);
 	const menuRef = useRef<HTMLDivElement>(null);
 
+	// 外側クリックおよびEscキーによるメニュー閉鎖対応
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
 			if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
 				setIsOpen(false);
 			}
 		};
-		document.addEventListener('mousedown', handleClickOutside);
+
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === 'Escape') {
+				setIsOpen(false);
+			}
+		};
+
+		if (isOpen) {
+			document.addEventListener('mousedown', handleClickOutside);
+			window.addEventListener('keydown', handleKeyDown);
+		}
+
 		return () => {
 			document.removeEventListener('mousedown', handleClickOutside);
+			window.removeEventListener('keydown', handleKeyDown);
 		};
-	}, []);
+	}, [isOpen]);
 
 	const isSharedActive = !!activeCharacter?.isShared;
 	const { icon } = LAYOUT_TOKENS.header;
@@ -108,7 +121,7 @@ export const Header: React.FC<HeaderProps> = ({
 						</button>
 
 						{/* 開発環境用マスター編集ボタン */}
-						{isDev && (
+						{isDev && onOpenMasterEditor && (
 							<button
 								type="button"
 								onClick={onOpenMasterEditor}
@@ -216,12 +229,12 @@ export const Header: React.FC<HeaderProps> = ({
 									</button>
 
 									{/* 開発環境用マスター編集ボタン */}
-									{isDev && (
+									{isDev && onOpenMasterEditor && (
 										<button
 											type="button"
 											onClick={() => {
 												setIsOpen(false);
-												onOpenMasterEditor?.();
+												onOpenMasterEditor();
 											}}
 											className={LAYOUT_TOKENS.header.dropdownActionItem}
 										>

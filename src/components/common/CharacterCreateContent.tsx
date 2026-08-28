@@ -24,6 +24,7 @@ const CharacterCreateForm: React.FC<CharacterCreateFormProps> = ({
 	autoFocus = true,
 }) => {
 	const [charName, setCharName] = useState('');
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const sampleName = useMemo(() => {
 		const randomIndex = Math.floor(Math.random() * SAMPLE_CHARACTERS.length);
@@ -32,14 +33,16 @@ const CharacterCreateForm: React.FC<CharacterCreateFormProps> = ({
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-		if (charName.trim()) {
-			onSubmit(charName.trim());
+		const trimmed = charName.trim();
+		if (trimmed && !isSubmitting) {
+			setIsSubmitting(true);
+			onSubmit(trimmed);
 		}
 	};
 
 	return (
-		<form onSubmit={handleSubmit} className="space-y-4">
-			<div className="space-y-1.5">
+		<form onSubmit={handleSubmit} className={COMMON_TOKENS.layout.stackStandard}>
+			<div className={COMMON_TOKENS.layout.stackCompact}>
 				<label htmlFor="initial-char-name" className={COMMON_TOKENS.text.label}>
 					キャラクター名を入力してください
 				</label>
@@ -51,13 +54,14 @@ const CharacterCreateForm: React.FC<CharacterCreateFormProps> = ({
 					onChange={(e) => setCharName(e.target.value)}
 					className={COMMON_TOKENS.form.input}
 					autoFocus={autoFocus}
+					maxLength={30}
 					required
 				/>
 			</div>
 
 			<button
 				type="submit"
-				disabled={!charName.trim()}
+				disabled={!charName.trim() || isSubmitting}
 				className={COMMON_TOKENS.form.primaryButton}
 			>
 				{submitLabel}
@@ -92,9 +96,9 @@ export const CharacterCreateContent: React.FC<CharacterCreateContentProps> = ({
 	};
 
 	return (
-		<div className="space-y-5">
+		<div className={COMMON_TOKENS.layout.stackLoose}>
 			{/* ヘッダーアイコン & タイトル */}
-			<div className="text-center space-y-2 pt-2">
+			<div className={COMMON_TOKENS.layout.headerGroup}>
 				<div className={`inline-flex p-3 ${COMMON_TOKENS.color.primaryBg} rounded-2xl shadow-lg`}>
 					<Fish className={`w-10 h-10 ${COMMON_TOKENS.color.textMain}`} />
 				</div>
@@ -107,7 +111,7 @@ export const CharacterCreateContent: React.FC<CharacterCreateContentProps> = ({
 			</div>
 
 			{/* アピールポイント（3大特徴） */}
-			<div className={`space-y-2.5 text-xs p-3.5 rounded-xl ${COMMON_TOKENS.box.dark}`}>
+			<div className={`${COMMON_TOKENS.layout.featureGroup} ${COMMON_TOKENS.box.dark}`}>
 				<div className="flex items-center gap-2.5">
 					<CheckCircle2 className={`w-4 h-4 ${COMMON_TOKENS.color.primary} shrink-0`} />
 					<span>釣果情報・ハラキリ対象・餌を簡単にチェック</span>
