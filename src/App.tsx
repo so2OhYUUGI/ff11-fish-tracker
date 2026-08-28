@@ -6,6 +6,7 @@
  * [概要]
  * - パスベースルーティングの定義およびダイアログ・モーダル状態の管理
  * - 共有URLパラメータ（share）からのゲストキャラクター進捗復元とURLクリーンアップ処理
+ * - 共有リンクアクセス時は閲覧利便性の向上のため自動でリスト表示（list）へ変更
  * - 登録済み / 未登録ユーザーに応じた閲覧権限の判定と表示切替
  *   - 一覧表示 (/fishtracker/:type): 未登録かつ共有データなしの場合は LandingPage を表示
  *   - 詳細表示 (/fishtracker/:type/:slug): 未登録ユーザーであっても閲覧可能
@@ -80,10 +81,14 @@ function AppRoutes() {
     return [...userData.characters, lastSharedCharRef.current];
   }, [userData.characters, sharedProgress]);
 
-  // 共有データの初回自動選択およびURLクエリパラメータのクリーンアップ処理
+  // 共有データの初回自動選択、表示モードの自動切替、およびURLクエリパラメータのクリーンアップ処理
   useEffect(() => {
     if (sharedProgress && !hasAutoSelectedSharedRef.current) {
       setLocalActiveCharacter('shared-guest-character');
+
+      // 共有データ閲覧時は情報密度の高いリスト表示に変更
+      setViewMode('list');
+
       hasAutoSelectedSharedRef.current = true;
 
       // URLからクエリ（share/ハッシュ等）を削除してアドレスバーをクリーン化
@@ -95,7 +100,7 @@ function AppRoutes() {
         navigate(newPath, { replace: true });
       }
     }
-  }, [sharedProgress, location.pathname, location.search, navigate, setLocalActiveCharacter]);
+  }, [sharedProgress, location.pathname, location.search, navigate, setLocalActiveCharacter, setViewMode]);
 
   // 現在表示選択中のキャラ（useUserData 側の activeCharacterId 一元管理に統一）
   const currentActiveCharacter = useMemo<DisplayCharacterProgress | undefined>(() => {
@@ -118,13 +123,13 @@ function AppRoutes() {
 
   // 共有キャラクターがキャッシュされているかどうかの判定
   const hasSharedGuestCharacter = lastSharedCharRef.current !== null;
-  
+
   // 一覧ページの閲覧権限判定（登録済み、共有データ保持、または共有キャラ選択中）
   const canViewContainer =
     isRegistered ||
     !!sharedProgress ||
     hasSharedGuestCharacter;
-  
+
   const handleRequestRegistration = (msg: string) => {
     setRegistrationMessage(msg);
   };
