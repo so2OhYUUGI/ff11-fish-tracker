@@ -52,6 +52,9 @@ export const BaitDetailView: React.FC<BaitDetailViewProps> = ({
 		return allFishes.filter((fish) => targetFishIds.has(fish.id));
 	}, [bait, allFishes]);
 
+	// チェック済み判定用の高速照合用 Set
+	const checkedSet = useMemo(() => new Set(checkedFishIds), [checkedFishIds]);
+
 	if (!bait) {
 		return (
 			<div className={DETAIL_STYLES.emptyDetailContainer}>
@@ -102,7 +105,7 @@ export const BaitDetailView: React.FC<BaitDetailViewProps> = ({
 									key={fish.id}
 									fish={fish}
 									variant="inline"
-									isChecked={checkedFishIds.includes(fish.id)}
+									isChecked={checkedSet.has(fish.id)}
 									onToggleCheck={onToggleCheck}
 									onClickDetail={onClickFishDetail}
 								/>

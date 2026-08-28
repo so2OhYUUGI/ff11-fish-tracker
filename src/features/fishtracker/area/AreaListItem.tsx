@@ -14,7 +14,7 @@
  * ============================================================================
  */
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { Fish } from 'lucide-react';
 import type { ZoneMaster } from '@/types/fishtracker';
 import { LIST_STYLES } from '@/styles/components/listStyles';
@@ -40,19 +40,28 @@ export const AreaListItem: React.FC<Props> = ({
     return area.description.replace(/\r?\n|\\n/g, ' ');
   }, [area.description]);
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      onClickDetail(area);
-    }
-  };
+  const handleClick = useCallback(() => {
+    onClickDetail(area);
+  }, [area, onClickDetail]);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        e.stopPropagation();
+        onClickDetail(area);
+      }
+    },
+    [area, onClickDetail]
+  );
 
   return (
     <div
       role="button"
       tabIndex={0}
-      onClick={() => onClickDetail(area)}
+      onClick={handleClick}
       onKeyDown={handleKeyDown}
+      aria-label={`${area.ja}の詳細を表示`}
       className={`${LIST_STYLES.base} ${isSelected ? LIST_STYLES.selected : LIST_STYLES.default
         } ${LIST_STYLES.itemRow} ${!hasFish ? LIST_STYLES.dimmed : ''}`}
     >

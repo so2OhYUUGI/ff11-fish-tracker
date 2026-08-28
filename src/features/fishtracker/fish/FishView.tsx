@@ -27,6 +27,30 @@ type Props = {
 	navStack: TrackerNavStack;
 };
 
+/**
+ * モバイル（1024px未満）で詳細画面表示時に背面スクロールをロックするカスタムフック
+ */
+const useScrollLock = (isLocked: boolean) => {
+	useEffect(() => {
+		const handleScrollLock = () => {
+			const isMobile = window.innerWidth < 1024;
+			if (isLocked && isMobile) {
+				document.body.style.overflow = 'hidden';
+			} else {
+				document.body.style.overflow = '';
+			}
+		};
+
+		handleScrollLock();
+		window.addEventListener('resize', handleScrollLock);
+
+		return () => {
+			document.body.style.overflow = '';
+			window.removeEventListener('resize', handleScrollLock);
+		};
+	}, [isLocked]);
+};
+
 export const FishView = ({
 	fishes,
 	zones,
@@ -59,31 +83,14 @@ export const FishView = ({
 
 	const isSelected = currentItem !== null;
 
+	useScrollLock(isSelected);
+
 	const handleSelectFish = useCallback(
 		(fish: FishMaster) => {
 			selectFromList({ type: 'fish', item: fish });
 		},
 		[selectFromList]
 	);
-
-	useEffect(() => {
-		const handleScrollLock = () => {
-			const isMobile = window.innerWidth < 1024;
-			if (isSelected && isMobile) {
-				document.body.style.overflow = 'hidden';
-			} else {
-				document.body.style.overflow = '';
-			}
-		};
-
-		handleScrollLock();
-		window.addEventListener('resize', handleScrollLock);
-
-		return () => {
-			document.body.style.overflow = '';
-			window.removeEventListener('resize', handleScrollLock);
-		};
-	}, [isSelected]);
 
 	if (fishes.length === 0) {
 		return (

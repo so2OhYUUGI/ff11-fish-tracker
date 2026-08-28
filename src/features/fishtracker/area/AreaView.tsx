@@ -7,7 +7,7 @@
 
 import { useMemo, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import type { ZoneMaster, FishMaster, ViewMode, RegionMaster } from '@/types/fishtracker';
+import type { ZoneMaster, FishMaster, ViewMode, RegionMaster, BaitMaster } from '@/types/fishtracker';
 import { REGIONS, ZONES, FISHES, BAITS, FISH_LOCATIONS } from '@/data/';
 import { findBySlug } from '@/utils/slug';
 import { AreaCard } from './AreaCard';
@@ -31,6 +31,30 @@ type Props = {
 type RegionGroup = {
 	region: RegionMaster;
 	areas: ZoneMaster[];
+};
+
+/**
+ * モバイル（1024px未満）で詳細画面表示時に背面スクロールをロックするカスタムフック
+ */
+const useScrollLock = (isLocked: boolean) => {
+	useEffect(() => {
+		const handleScrollLock = () => {
+			const isMobile = window.innerWidth < 1024;
+			if (isLocked && isMobile) {
+				document.body.style.overflow = 'hidden';
+			} else {
+				document.body.style.overflow = '';
+			}
+		};
+
+		handleScrollLock();
+		window.addEventListener('resize', handleScrollLock);
+
+		return () => {
+			document.body.style.overflow = '';
+			window.removeEventListener('resize', handleScrollLock);
+		};
+	}, [isLocked]);
 };
 
 export const AreaView = ({
@@ -58,21 +82,27 @@ export const AreaView = ({
 		return null;
 	}, [slug]);
 
-	// チェック操作ハンドラ
-	const handleToggleCheck = (fishId: number) => {
-		onToggleCheck(fishId);
-	};
+	const checkedSet = useMemo(
+		() => new Set(checkedFishIds),
+		[checkedFishIds]
+	);
 
-	// エリアIDごとの釣れる魚の総数をあらかじめ一元算出
+	// エリアIDごとの釣れる魚の総数をあらかじめ一元算出（O(N) 走査へ最適化）
 	const fishCountMap = useMemo(() => {
+		const areaFishMap = new Map<number, Set<number>>();
+
+		FISH_LOCATIONS.forEach((loc) => {
+			if (!areaFishMap.has(loc.zoneId)) {
+				areaFishMap.set(loc.zoneId, new Set());
+			}
+			areaFishMap.get(loc.zoneId)?.add(loc.fishId);
+		});
+
 		const map = new Map<number, number>();
 		areas.forEach((area) => {
-			const targetFishIds = FISH_LOCATIONS
-				.filter((loc) => loc.zoneId === area.id)
-				.map((loc) => loc.fishId);
-			const uniqueFishCount = new Set(targetFishIds).size;
-			map.set(area.id, uniqueFishCount);
+			map.set(area.id, areaFishMap.get(area.id)?.size || 0);
 		});
+
 		return map;
 	}, [areas]);
 
@@ -113,22 +143,8 @@ export const AreaView = ({
 
 	const isSelected = currentItem !== null;
 
-	// lg (1024px) 未満のモバイル表示時、詳細オープン中は body スクロールをロック
-	useEffect(() => {
-		const isMobile = window.innerWidth < 1024;
+	useScrollLock(isSelected);
 
-		if (isSelected && isMobile) {
-			document.body.style.overflow = 'hidden';
-		} else {
-			document.body.style.overflow = '';
-		}
-
-		return () => {
-			document.body.style.overflow = '';
-		};
-	}, [isSelected]);
-
-	// 現在選択中のエリア
 	const selectedAreaId = currentItem?.type === 'area' ? currentItem.item.id : null;
 
 	return (
@@ -188,42 +204,42 @@ export const AreaView = ({
 				<div className={LAYOUT_TOKENS.sidebar.stickyContainer}>
 					{currentItem.type === 'area' && (
 						<AreaDetailView
-							area={currentItem.item}
+							area={currentItem.item as ZoneMaster}
 							allFishes={allFishes}
 							regionList={REGIONS}
 							checkedFishIds={checkedFishIds}
-							onToggleCheck={handleToggleCheck}
+							onToggleCheck={onToggleCheck}
 							onClose={clear}
 							onBack={pop}
 							canGoBack={canGoBack}
-							onClickFishDetail={(fish) => push({ type: 'fish', item: fish })}
+							onClickFishDetail={(fish: FishMaster) => push({ type: 'fish', item: fish })}
 						/>
 					)}
 
 					{currentItem.type === 'fish' && (
 						<FishDetailView
-							fish={currentItem.item}
+							fish={currentItem.item as FishMaster}
 							zones={ZONES}
-							isChecked={checkedFishIds.includes(currentItem.item.id)}
-							onToggleCheck={handleToggleCheck}
+							isChecked={checkedSet.has(currentItem.item.id)}
+							onToggleCheck={onToggleCheck}
 							onClose={clear}
 							onBack={pop}
 							canGoBack={canGoBack}
-							onClickAreaDetail={(area) => push({ type: 'area', item: area })}
-							onClickBaitDetail={(bait) => push({ type: 'bait', item: bait })}
+							onClickAreaDetail={(area: ZoneMaster) => push({ type: 'area', item: area })}
+							onClickBaitDetail={(bait: BaitMaster) => push({ type: 'bait', item: bait })}
 						/>
 					)}
 
 					{currentItem.type === 'bait' && (
 						<BaitDetailView
-							bait={currentItem.item}
+							bait={currentItem.item as BaitMaster}
 							allFishes={allFishes}
 							checkedFishIds={checkedFishIds}
-							onToggleCheck={handleToggleCheck}
+							onToggleCheck={onToggleCheck}
 							onClose={clear}
 							onBack={pop}
 							canGoBack={canGoBack}
-							onClickFishDetail={(fish) => push({ type: 'fish', item: fish })}
+							onClickFishDetail={(fish: FishMaster) => push({ type: 'fish', item: fish })}
 						/>
 					)}
 				</div>

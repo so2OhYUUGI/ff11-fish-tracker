@@ -14,7 +14,7 @@
  * ============================================================================
  */
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { Check, MapPin } from 'lucide-react';
 import type { FishMaster, ZoneMaster } from '@/types/fishtracker';
 import { FISH_LOCATIONS } from '@/data';
@@ -98,22 +98,39 @@ export const FishListItem: React.FC<Props> = ({
 	const titleStyle = getTitleStyle(isInline, isSelected, isChecked);
 	const zoneBadgeStyle = totalZones === 1 ? LIST_STYLES.zoneCountSingle : LIST_STYLES.zoneCountMultiple;
 
-	const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-		// 子要素（チェックボックスボタン）でのキー操作時は発火を防止
-		if (e.target !== e.currentTarget) return;
+	const handleClick = useCallback(() => {
+		onClickDetail?.(fish);
+	}, [fish, onClickDetail]);
 
-		if (onClickDetail && (e.key === 'Enter' || e.key === ' ')) {
-			e.preventDefault();
-			onClickDetail(fish);
-		}
-	};
+	const handleKeyDown = useCallback(
+		(e: React.KeyboardEvent<HTMLDivElement>) => {
+			// 子要素（チェックボックスボタン等）でのキー操作時は発火を防止
+			if (e.target !== e.currentTarget) return;
+
+			if (onClickDetail && (e.key === 'Enter' || e.key === ' ')) {
+				e.preventDefault();
+				e.stopPropagation();
+				onClickDetail(fish);
+			}
+		},
+		[fish, onClickDetail]
+	);
+
+	const handleToggleClick = useCallback(
+		(e: React.MouseEvent<HTMLButtonElement>) => {
+			e.stopPropagation();
+			onToggleCheck?.(fish.id);
+		},
+		[fish.id, onToggleCheck]
+	);
 
 	return (
 		<div
-			onClick={() => onClickDetail?.(fish)}
+			onClick={handleClick}
 			onKeyDown={handleKeyDown}
 			role={onClickDetail ? 'button' : undefined}
 			tabIndex={onClickDetail ? 0 : undefined}
+			aria-label={onClickDetail ? `${fish.ja}の詳細を表示` : undefined}
 			className={containerStyle}
 		>
 			{/* 左側：チェックボックス ＋ 魚名（日本語・英語） */}
@@ -121,10 +138,7 @@ export const FishListItem: React.FC<Props> = ({
 				{onToggleCheck && (
 					<button
 						type="button"
-						onClick={(e) => {
-							e.stopPropagation();
-							onToggleCheck(fish.id);
-						}}
+						onClick={handleToggleClick}
 						className={`${LIST_STYLES.checkboxBase} ${isChecked ? LIST_STYLES.checkboxChecked : LIST_STYLES.checkboxDefault
 							}`}
 						title={isChecked ? '未獲得にする' : '獲得済みにする'}

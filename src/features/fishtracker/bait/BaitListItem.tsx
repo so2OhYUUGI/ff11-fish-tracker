@@ -12,7 +12,7 @@
  * ============================================================================
  */
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { Fish } from 'lucide-react';
 import type { BaitMaster } from '@/types/fishtracker';
 import { LIST_STYLES } from '@/styles/components/listStyles';
@@ -37,19 +37,28 @@ export const BaitListItem: React.FC<Props> = ({
 		return bait.description.replace(/\r?\n|\\n/g, ' ');
 	}, [bait.description]);
 
-	const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-		if (e.key === 'Enter' || e.key === ' ') {
-			e.preventDefault();
-			onClickDetail(bait);
-		}
-	};
+	const handleClick = useCallback(() => {
+		onClickDetail(bait);
+	}, [bait, onClickDetail]);
+
+	const handleKeyDown = useCallback(
+		(e: React.KeyboardEvent<HTMLDivElement>) => {
+			if (e.key === 'Enter' || e.key === ' ') {
+				e.preventDefault();
+				e.stopPropagation();
+				onClickDetail(bait);
+			}
+		},
+		[bait, onClickDetail]
+	);
 
 	return (
 		<div
 			role="button"
 			tabIndex={0}
-			onClick={() => onClickDetail(bait)}
+			onClick={handleClick}
 			onKeyDown={handleKeyDown}
+			aria-label={`${bait.ja}の詳細を表示`}
 			className={`${LIST_STYLES.base} ${LIST_STYLES.itemRow} ${isSelected ? LIST_STYLES.selected : LIST_STYLES.default
 				}`}
 		>

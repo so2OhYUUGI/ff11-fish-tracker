@@ -12,7 +12,7 @@
  * ============================================================================
  */
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { Fish } from 'lucide-react';
 import type { BaitMaster, FishMaster } from '@/types/fishtracker';
 import { FISH_BAIT_RELATIONS, FISHES } from '@/data';
@@ -57,19 +57,28 @@ export const BaitCard: React.FC<BaitCardProps> = ({
 		return bait.description.split(/\r?\n|\\n/);
 	}, [bait.description]);
 
-	const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-		if (e.key === 'Enter' || e.key === ' ') {
-			e.preventDefault();
-			onClickDetail(bait);
-		}
-	};
+	const handleClick = useCallback(() => {
+		onClickDetail(bait);
+	}, [bait, onClickDetail]);
+
+	const handleKeyDown = useCallback(
+		(e: React.KeyboardEvent<HTMLDivElement>) => {
+			if (e.key === 'Enter' || e.key === ' ') {
+				e.preventDefault();
+				e.stopPropagation();
+				onClickDetail(bait);
+			}
+		},
+		[bait, onClickDetail]
+	);
 
 	return (
 		<div
 			role="button"
 			tabIndex={0}
-			onClick={() => onClickDetail(bait)}
+			onClick={handleClick}
 			onKeyDown={handleKeyDown}
+			aria-label={`${bait.ja}の詳細を表示`}
 			className={`${CARD_STYLES.base} ${isSelected ? CARD_STYLES.selected : CARD_STYLES.default
 				} ${CARD_STYLES.cardWrapper}`}
 		>

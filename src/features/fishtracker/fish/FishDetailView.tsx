@@ -14,7 +14,7 @@
  * ============================================================================
  */
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { CheckSquare, Info, Square, Fish } from 'lucide-react';
 import type { FishMaster, ZoneMaster, BaitMaster } from '@/types/fishtracker';
 import {
@@ -86,12 +86,20 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 		return fish.description.split(/\r?\n|\\n/);
 	}, [fish.description]);
 
-	// 4. 竿情報の参照用ヘルパー関数
-	const getRodRelation = (rodId: number) => {
-		return FISH_ROD_RELATIONS.find(
-			(rel) => rel.fishId === fish.id && rel.rodId === rodId
-		);
-	};
+	// 4. 竿相性情報のルックアップ Map（高速化メモ化）
+	const rodRelationMap = useMemo(() => {
+		const map = new Map<number, (typeof FISH_ROD_RELATIONS)[number]>();
+		FISH_ROD_RELATIONS.forEach((rel) => {
+			if (rel.fishId === fish.id) {
+				map.set(rel.rodId, rel);
+			}
+		});
+		return map;
+	}, [fish.id]);
+
+	const handleToggleCheck = useCallback(() => {
+		onToggleCheck(fish.id);
+	}, [fish.id, onToggleCheck]);
 
 	const hasHarakiriItems = Boolean(fish.harakiriItems && fish.harakiriItems.length > 0);
 	const hasHarakiriTitle = Boolean(fish.harakiriTitle);
@@ -101,10 +109,10 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 	const headerActions = (
 		<button
 			type="button"
-			onClick={() => onToggleCheck(fish.id)}
+			onClick={handleToggleCheck}
 			className={`${DETAIL_STYLES.checkButtonBase} ${isChecked
-				? DETAIL_STYLES.checkButtonChecked
-				: DETAIL_STYLES.checkButtonUnchecked
+					? DETAIL_STYLES.checkButtonChecked
+					: DETAIL_STYLES.checkButtonUnchecked
 				} shrink-0`}
 			aria-label={`${fish.ja}を${isChecked ? '未釣獲' : '釣獲済み'}に変更`}
 			aria-pressed={isChecked}
@@ -191,6 +199,7 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 											key={zone.id}
 											type="button"
 											onClick={() => onClickAreaDetail(zone)}
+											aria-label={`${zone.ja}のエリア詳細を表示`}
 											className={`${DETAIL_STYLES.tagItem} ${DETAIL_STYLES.tagItemInteractive}`}
 										>
 											{zone.ja}
@@ -223,6 +232,7 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 											key={bait.id}
 											type="button"
 											onClick={() => onClickBaitDetail(bait)}
+											aria-label={`${bait.ja}の餌詳細を表示`}
 											className={`${DETAIL_STYLES.tagItem} ${DETAIL_STYLES.tagItemInteractive}`}
 										>
 											{bait.ja}
@@ -259,7 +269,7 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 							</thead>
 							<tbody className={DETAIL_TABLE_STYLES.tbody}>
 								{RODS.map((rod) => {
-									const rel = getRodRelation(rod.id);
+									const rel = rodRelationMap.get(rod.id);
 									const catchability = rel?.catchability || 'unknown';
 									const rodBreak = rel?.rodBreak || 'unknown';
 									const lineBreak = rel?.lineBreak || 'unknown';

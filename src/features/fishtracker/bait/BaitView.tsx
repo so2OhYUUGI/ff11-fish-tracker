@@ -7,7 +7,7 @@
 
 import { useMemo, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import type { BaitMaster, FishMaster, ViewMode } from '@/types/fishtracker';
+import type { BaitMaster, FishMaster, ViewMode, ZoneMaster } from '@/types/fishtracker';
 import { BaitCard } from './BaitCard';
 import { BaitListItem } from './BaitListItem';
 import { BaitDetailView } from './BaitDetailView';
@@ -25,6 +25,30 @@ type Props = {
 	viewMode: ViewMode;
 	onToggleCheck: (fishId: number) => void;
 	navStack: TrackerNavStack;
+};
+
+/**
+ * モバイル（1024px未満）で詳細画面表示時に背面スクロールをロックするカスタムフック
+ */
+const useScrollLock = (isLocked: boolean) => {
+	useEffect(() => {
+		const handleScrollLock = () => {
+			const isMobile = window.innerWidth < 1024;
+			if (isLocked && isMobile) {
+				document.body.style.overflow = 'hidden';
+			} else {
+				document.body.style.overflow = '';
+			}
+		};
+
+		handleScrollLock();
+		window.addEventListener('resize', handleScrollLock);
+
+		return () => {
+			document.body.style.overflow = '';
+			window.removeEventListener('resize', handleScrollLock);
+		};
+	}, [isLocked]);
 };
 
 export const BaitView = ({
@@ -52,10 +76,10 @@ export const BaitView = ({
 		return null;
 	}, [slug]);
 
-	// チェック操作ハンドラ
-	const handleToggleCheck = (fishId: number) => {
-		onToggleCheck(fishId);
-	};
+	const checkedSet = useMemo(
+		() => new Set(checkedFishIds),
+		[checkedFishIds]
+	);
 
 	// 餌IDごとの釣れる魚の総数をあらかじめ一元算出
 	const fishCountMap = useMemo(() => {
@@ -76,23 +100,9 @@ export const BaitView = ({
 		return map;
 	}, []);
 
-	// 選択中のアイテムが存在するかどうか
 	const isSelected = currentItem !== null;
 
-	// lg (1024px) 未満のモバイル表示時、詳細オープン中は body スクロールをロック
-	useEffect(() => {
-		const isMobile = window.innerWidth < 1024;
-
-		if (isSelected && isMobile) {
-			document.body.style.overflow = 'hidden';
-		} else {
-			document.body.style.overflow = '';
-		}
-
-		return () => {
-			document.body.style.overflow = '';
-		};
-	}, [isSelected]);
+	useScrollLock(isSelected);
 
 	if (baits.length === 0) {
 		return (
@@ -102,7 +112,6 @@ export const BaitView = ({
 		);
 	}
 
-	// 現在選択中の餌
 	const selectedBaitId = currentItem?.type === 'bait' ? currentItem.item.id : null;
 
 	return (
@@ -141,42 +150,42 @@ export const BaitView = ({
 				<div className={LAYOUT_TOKENS.sidebar.stickyContainer}>
 					{currentItem.type === 'bait' && (
 						<BaitDetailView
-							bait={currentItem.item}
+							bait={currentItem.item as BaitMaster}
 							allFishes={allFishes}
 							checkedFishIds={checkedFishIds}
-							onToggleCheck={handleToggleCheck}
+							onToggleCheck={onToggleCheck}
 							onClose={clear}
 							onBack={pop}
 							canGoBack={canGoBack}
-							onClickFishDetail={(fish) => push({ type: 'fish', item: fish })}
+							onClickFishDetail={(fish: FishMaster) => push({ type: 'fish', item: fish })}
 						/>
 					)}
 
 					{currentItem.type === 'fish' && (
 						<FishDetailView
-							fish={currentItem.item}
+							fish={currentItem.item as FishMaster}
 							zones={ZONES}
-							isChecked={checkedFishIds.includes(currentItem.item.id)}
-							onToggleCheck={handleToggleCheck}
+							isChecked={checkedSet.has(currentItem.item.id)}
+							onToggleCheck={onToggleCheck}
 							onClose={clear}
 							onBack={pop}
 							canGoBack={canGoBack}
-							onClickAreaDetail={(area) => push({ type: 'area', item: area })}
-							onClickBaitDetail={(bait) => push({ type: 'bait', item: bait })}
+							onClickAreaDetail={(area: ZoneMaster) => push({ type: 'area', item: area })}
+							onClickBaitDetail={(bait: BaitMaster) => push({ type: 'bait', item: bait })}
 						/>
 					)}
 
 					{currentItem.type === 'area' && (
 						<AreaDetailView
-							area={currentItem.item}
+							area={currentItem.item as ZoneMaster}
 							allFishes={allFishes}
 							regionList={REGIONS}
 							checkedFishIds={checkedFishIds}
-							onToggleCheck={handleToggleCheck}
+							onToggleCheck={onToggleCheck}
 							onClose={clear}
 							onBack={pop}
 							canGoBack={canGoBack}
-							onClickFishDetail={(fish) => push({ type: 'fish', item: fish })}
+							onClickFishDetail={(fish: FishMaster) => push({ type: 'fish', item: fish })}
 						/>
 					)}
 				</div>

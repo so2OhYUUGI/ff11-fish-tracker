@@ -14,7 +14,7 @@
  * ============================================================================
  */
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { Fish } from 'lucide-react';
 import type { ZoneMaster, FishMaster } from '@/types/fishtracker';
 import { FISH_LOCATIONS, FISHES } from '@/data';
@@ -60,37 +60,43 @@ export const AreaCard: React.FC<Props> = ({
     return area.description.split(/\r?\n|\\n/);
   }, [area.description]);
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      onClickDetail(area);
-    }
-  };
+  const handleClick = useCallback(() => {
+    onClickDetail(area);
+  }, [area, onClickDetail]);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        e.stopPropagation();
+        onClickDetail(area);
+      }
+    },
+    [area, onClickDetail]
+  );
 
   return (
     <div
       role="button"
       tabIndex={0}
-      onClick={() => onClickDetail(area)}
+      onClick={handleClick}
       onKeyDown={handleKeyDown}
-      className={`${CARD_STYLES.base} ${isSelected ? CARD_STYLES.selected : CARD_STYLES.default
-        } ${!hasFish ? 'opacity-70' : ''}`}
+      aria-label={`${area.ja}の詳細を表示`}
+      className={`${CARD_STYLES.base} ${isSelected ? CARD_STYLES.selected : CARD_STYLES.default} ${!hasFish ? 'opacity-70' : ''}`}
     >
       <div className={CARD_STYLES.cardWrapper}>
         <div>
           {/* 日本語名と英語名 */}
           <div className={CARD_STYLES.titleGroup}>
             <h3
-              className={`truncate ${CARD_STYLES.titleJa} ${isSelected
+              className={`truncate ${CARD_STYLES.titleJa}${isSelected
                   ? CARD_STYLES.titleJaSelectedArea
                   : CARD_STYLES.titleJaDefault
                 }`}
             >
               {area.ja}
             </h3>
-            <span className={CARD_STYLES.titleEnSub}>
-              {area.en}
-            </span>
+            <span className={CARD_STYLES.titleEnSub}>{area.en}</span>
           </div>
 
           {descriptionLines.length > 0 && (

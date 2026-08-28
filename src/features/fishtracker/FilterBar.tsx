@@ -11,7 +11,7 @@
  * ============================================================================
  */
 
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Search, LayoutGrid, List, Fish, Utensils, MapPin, X } from 'lucide-react';
 import type { ViewMode, MainTab, CharacterProgress } from '@/types/fishtracker';
 import { FILTER_BAR_STYLES } from '@/styles/features/FishTrackerStyle';
@@ -31,6 +31,12 @@ type FilterBarProps = {
 	totalFishCount: number;
 };
 
+const TAB_CONFIG: Array<{ id: MainTab; label: string; icon: React.ElementType }> = [
+	{ id: 'fish', label: '魚', icon: Fish },
+	{ id: 'bait', label: '餌', icon: Utensils },
+	{ id: 'area', label: 'エリア', icon: MapPin },
+];
+
 export const FilterBar: React.FC<FilterBarProps> = ({
 	mainTab,
 	onMainTabChange,
@@ -44,8 +50,32 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 	onViewModeChange,
 }) => {
 	const checkedCount = activeCharacter?.checkedFishIds?.length ?? 0;
-	const progressPercent =
-		totalFishCount > 0 ? Math.round((checkedCount / totalFishCount) * 100) : 0;
+	const progressPercent = useMemo(
+		() => (totalFishCount > 0 ? Math.round((checkedCount / totalFishCount) * 100) : 0),
+		[checkedCount, totalFishCount]
+	);
+
+	const searchPlaceholder = useMemo(() => {
+		switch (mainTab) {
+			case 'fish':
+				return '魚名で検索...';
+			case 'bait':
+				return '餌名で検索...';
+			case 'area':
+				return 'エリア名で検索...';
+		}
+	}, [mainTab]);
+
+	const handleSearchChange = useCallback(
+		(e: React.ChangeEvent<HTMLInputElement>) => {
+			onSearchQueryChange(e.target.value);
+		},
+		[onSearchQueryChange]
+	);
+
+	const handleSearchClear = useCallback(() => {
+		onSearchQueryChange('');
+	}, [onSearchQueryChange]);
 
 	return (
 		<div className={FILTER_BAR_STYLES.container}>
@@ -54,42 +84,21 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 				<div className={FILTER_BAR_STYLES.leftGroup}>
 					{/* 魚/餌/エリア切り替えタブ */}
 					<div className={FILTER_BAR_STYLES.tabContainer}>
-						<button
-							type="button"
-							onClick={() => onMainTabChange('fish')}
-							className={`${FILTER_BAR_STYLES.tabButtonBase} ${mainTab === 'fish'
-									? FILTER_BAR_STYLES.tabActive
-									: FILTER_BAR_STYLES.tabInactive
-								}`}
-							aria-label="魚一覧タブ"
-						>
-							<Fish className={FILTER_BAR_STYLES.tabIcon} />
-							<span>魚</span>
-						</button>
-						<button
-							type="button"
-							onClick={() => onMainTabChange('bait')}
-							className={`${FILTER_BAR_STYLES.tabButtonBase} ${mainTab === 'bait'
-									? FILTER_BAR_STYLES.tabActive
-									: FILTER_BAR_STYLES.tabInactive
-								}`}
-							aria-label="餌一覧タブ"
-						>
-							<Utensils className={FILTER_BAR_STYLES.tabIcon} />
-							<span>餌</span>
-						</button>
-						<button
-							type="button"
-							onClick={() => onMainTabChange('area')}
-							className={`${FILTER_BAR_STYLES.tabButtonBase} ${mainTab === 'area'
-									? FILTER_BAR_STYLES.tabActive
-									: FILTER_BAR_STYLES.tabInactive
-								}`}
-							aria-label="エリア一覧タブ"
-						>
-							<MapPin className={FILTER_BAR_STYLES.tabIcon} />
-							<span>エリア</span>
-						</button>
+						{TAB_CONFIG.map(({ id, label, icon: Icon }) => (
+							<button
+								key={id}
+								type="button"
+								onClick={() => onMainTabChange(id)}
+								className={`${FILTER_BAR_STYLES.tabButtonBase} ${mainTab === id
+										? FILTER_BAR_STYLES.tabActive
+										: FILTER_BAR_STYLES.tabInactive
+									}`}
+								aria-label={`${label}一覧タブ`}
+							>
+								<Icon className={FILTER_BAR_STYLES.tabIcon} />
+								<span>{label}</span>
+							</button>
+						))}
 					</div>
 
 					{/* ステータスフィルター（魚表示時のみ有効） */}
@@ -156,22 +165,16 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 						<Search className={FILTER_BAR_STYLES.searchIcon} />
 						<input
 							type="text"
-							placeholder={
-								mainTab === 'fish'
-									? '魚名で検索...'
-									: mainTab === 'bait'
-										? '餌名で検索...'
-										: 'エリア名で検索...'
-							}
+							placeholder={searchPlaceholder}
 							value={searchQuery}
-							onChange={(e) => onSearchQueryChange(e.target.value)}
+							onChange={handleSearchChange}
 							className={`${FILTER_BAR_STYLES.searchInput} ${searchQuery ? FILTER_BAR_STYLES.searchInputHasValue : ''
 								}`}
 						/>
 						{searchQuery && (
 							<button
 								type="button"
-								onClick={() => onSearchQueryChange('')}
+								onClick={handleSearchClear}
 								className={FILTER_BAR_STYLES.searchClearButton}
 								aria-label="検索内容をクリア"
 							>

@@ -12,7 +12,7 @@
  * ============================================================================
  */
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { Check, Info, MapPin } from 'lucide-react';
 import type { FishMaster, ZoneMaster } from '@/types/fishtracker';
 import { FISH_LOCATIONS } from '@/data';
@@ -69,19 +69,36 @@ export const FishCard: React.FC<FishCardProps> = ({
 		return fish.description.split(/\r?\n|\\n/);
 	}, [fish.description]);
 
-	const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-		if (e.key === 'Enter' || e.key === ' ') {
-			e.preventDefault();
-			onClickDetail(fish);
-		}
-	};
+	const handleClick = useCallback(() => {
+		onClickDetail(fish);
+	}, [fish, onClickDetail]);
+
+	const handleKeyDown = useCallback(
+		(e: React.KeyboardEvent<HTMLDivElement>) => {
+			if (e.key === 'Enter' || e.key === ' ') {
+				e.preventDefault();
+				e.stopPropagation();
+				onClickDetail(fish);
+			}
+		},
+		[fish, onClickDetail]
+	);
+
+	const handleToggleClick = useCallback(
+		(e: React.MouseEvent<HTMLButtonElement>) => {
+			e.stopPropagation();
+			onToggleCheck(fish.id);
+		},
+		[fish.id, onToggleCheck]
+	);
 
 	return (
 		<div
 			role="button"
 			tabIndex={0}
-			onClick={() => onClickDetail(fish)}
+			onClick={handleClick}
 			onKeyDown={handleKeyDown}
+			aria-label={`${fish.ja}の詳細を表示`}
 			className={`${CARD_STYLES.base} ${isSelected ? CARD_STYLES.selected : CARD_STYLES.default
 				}`}
 		>
@@ -171,10 +188,7 @@ export const FishCard: React.FC<FishCardProps> = ({
 				<div className="shrink-0 pt-1">
 					<button
 						type="button"
-						onClick={(e) => {
-							e.stopPropagation();
-							onToggleCheck(fish.id);
-						}}
+						onClick={handleToggleClick}
 						className={`${CARD_STYLES.checkButton.base} ${isChecked
 								? CARD_STYLES.checkButton.checked
 								: CARD_STYLES.checkButton.unchecked
