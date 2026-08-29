@@ -14,7 +14,7 @@
  */
 
 import React, { useMemo } from 'react';
-import { Utensils, Anchor, Fish } from 'lucide-react';
+import { Utensils, Fish } from 'lucide-react';
 import type { BaitMaster, FishMaster } from '@/types/fishtracker';
 import { FISH_BAIT_RELATIONS } from '@/data';
 import { DETAIL_STYLES } from '@/styles/components/detailStyles';
