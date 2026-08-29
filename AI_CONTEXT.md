@@ -1,15 +1,18 @@
-# AI Development Context & Architecture Guide
+# AI Development Context & Architecture Guide (共通基盤仕様)
 
-このドキュメントは、本プロジェクト（ff11-fish-tracker）を開発・保守するAIアシスタントのための仕様書およびガイドラインです。
+このドキュメントは、本プロジェクト（ff11-fish-tracker）を開発・保守するAIアシスタントのための全体仕様書およびガイドラインです。
 
 ---
 
 ## 1. プロジェクト概要
 
-- **目的**: FF11（ファイナルファンタジー11）の釣魚進捗管理および釣りデータ参照Webアプリ。
+- **目的**: FF11（ファイナルファンタジー11）の各種インゲーム要素（釣魚・フェイス取得等）の進捗管理およびデータ参照Webアプリ。
 - **ターゲット**: 個人プレイヤー（PC/スマホ双方対応）。
-- **データ設計指針**: Windower Resources (items.lua, zones.lua) のデータ仕様・ID体系をベースとし、アプリ独自の補足データ（上限スキル、ハラキリ等）および LocalStorage によるユーザー進捗を統合。
-- ** AIチャットスレッド名**: 📝FF11 釣魚チェッカー開発支援
+- **データ設計指針**: Windower Resources (items.lua, zones.lua) のデータ仕様・ID体系をベースとし、アプリ独自の補足データおよび LocalStorage によるユーザー進捗を統合。
+- **AIチャットスレッド名**: 📝FF11 釣魚チェッカー・フェイス取得チェッカー開発支援
+- **機能別個別仕様書**:
+  - 釣魚チェッカーの固有仕様およびコンポーネント一覧は [釣魚チェッカー仕様書 (`docs/fish-tracker-spec.md`)](#) を参照。
+  - フェイスチェッカーの固有仕様およびコンポーネント一覧は [フェイスチェッカー仕様書 (`docs/face-tracker-spec.md`)](#) を参照。
 
 ---
 
@@ -27,100 +30,59 @@
 
 ---
 
-## 3. データ構造（src/types/fishtracker.ts）
-### **データ宣言**
-- `src/types/`以下にあるファイルの宣言に従うこと
-
-### **リレーションデータ**
-- `FISH_LOCATIONS`: 魚ID (`fishId`) と エリアID (`zoneId`) の紐付け
-- `FISH_BAIT_RELATIONS`: 魚ID (`fishId`) と 餌ID (`baitId`) の紐付け
-- `FISH_ROD_RELATIONS`: 魚ID (`fishId`) と 竿ID (`rodId`) の相性データ
-
-### **ユーザー進捗 (UserData / CharacterProgress)**
-- LocalStorage キー: `ff11_fish_tracker_user_data`
-- `checkedFishIds`: 達成済みの魚ID（`number[]`）を保持
-- **状態管理（Provider構成）**: `UserDataProvider`（`src/contexts/UserDataContext.tsx`）を通じて全コンポーネントへグローバルに供給され、コンポーネントからは `useUserDataContext` フックを介して状態の参照・操作（キャラ切り替え/追加/削除、魚チェック変更等）を行う。LocalStorageの永続化および状態更新のコアロジックは Context 内部（`src/contexts/useUserData.ts`）にカプセル化されている。
-
-### **共有・OGP関連データ**
-- 共有URLクエリパラメータ: `share`（Base64 URL Safe等でエンコードされた文字列）
-- デコード後構造: `{ characterName: string, checkedFishIds: number[] }`
-- OGPカード生成用データ: `buildShareCardData` により算出（キャラクター名、達成数、全魚種数、達成率、上位獲得魚リスト等）
-
----
-
-## 4. ファイル・コンポーネント一覧
+## 3. 共通ファイル・コンポーネント一覧（基盤領域）
 
 | ファイル | 役割 |
 |---|---|
 | `functions/[[path]].ts` | OGP画像生成（/api/ogp）およびSNSクローラー向けHTMLメタタグの動的書き換え（HTMLRewriter/エッジ処理） |
 | `src/App.tsx` | アプリケーションのエントリーポイント。`UserDataProvider` による状態供給、共有URL復元、各種ダイアログ/モーダル状態の保持 |
-| `src/contexts/UserDataContext.tsx` | ユーザー進捗データ（キャラ管理・釣獲達成状態・LocalStorage永続化・共有データ展開）をアプリ全体に提供する React Context / Providerおよび `useUserDataContext` フック |
+| `src/contexts/UserDataContext.tsx` | ユーザー進捗データ（キャラ管理・達成状態・LocalStorage永続化・共有データ展開）をアプリ全体に提供する React Context / Providerおよび `useUserDataContext` フック |
 | `src/contexts/useUserData.ts` | `UserDataContext` 内で使用される LocalStorage データの永続化およびキャラクター操作ロジック管理用フック |
 | `src/constants/character.ts` | キャラクター識別・判定用定数定義（ゲストID、フォールバック値等） |
 | `src/routes/AppRouter.tsx` | パスベースルーティング構造の集約定義。MainLayout を軸としたレイアウト・表示切り替えの構築 |
-| `src/types/fishtracker.ts` | 型定義（Windower互換データ、アプリ拡張、進捗構造） |
 | `src/utils/share.ts` | Web Share APIおよびクリップボードコピー処理ユーティリティ |
-| `src/utils/shareEncoding.ts` | 釣獲進捗データの共有用エンコード/デコード処理 |
+| `src/utils/shareEncoding.ts` | 各種進捗データの共有用エンコード/デコード処理 |
 | `src/utils/shareDataBuilder.ts` | 共有パラメータからOGP描画に必要なカード表示用データを算出・集計 |
 | `src/components/common/SEO.tsx` | SEOメタ情報設定（Head管理） |
 | `src/components/common/SeoHead.tsx` | ページ個別ヘッダーメタ定義 |
 | `src/components/share/DynamicOgpMeta.tsx` | 共有URLパラメータに基づきクライアント側で動的OGPメタタグを設定するコンポーネント |
 | `src/components/common/AdBanner.tsx` | 広告エリア（プレースホルダー / AdSense枠） |
 | `src/components/common/ShareDetailButton.tsx` | 詳細画面用共有ボタン |
-| `src/components/common/ShareProgressButton.tsx` | 釣獲進捗のSNS共有ボタン |
+| `src/components/common/ShareProgressButton.tsx` | 進捗のSNS共有ボタン |
 | `src/components/layout/Header.tsx` | アプリタイトル、キャラ切替UI、開発用ツール導線 |
 | `src/components/layout/Footer.tsx` | 権利表記・ライセンス注記・著作権表示 |
 | `src/components/layout/MainLayout.tsx` | ヘッダー・フッター・広告枠を含む共通レイアウト（`children` または `<Outlet />` の描画に対応） |
 | `src/components/settings/SettingsModal.tsx` | 各種設定モーダルダイアログ |
 | `src/components/dev/MasterDataEditorModal.tsx` | マスターデータ編集・テスト用モーダル |
 | `src/components/LandingPage.tsx` | 未登録ユーザー向けランディングページコンポーネント |
-| `src/features/fishtracker/FilterBar.tsx` | メインナビゲーション（魚/エリア/餌切替）、達成状態フィルター、プログレス表示、検索フォーム |
-| `src/features/fishtracker/FishTrackerContainer.tsx` | 魚チェッカーメイン領域のコンテナ。タブ切替・フィルター状態管理・チェック操作の受付 |
-| `src/features/fishtracker/FishTrackerContent.tsx` | 魚チェッカーメイン領域の表示切替（魚/エリア/餌の各カード・リスト・詳細表示） |
-| `src/features/fishtracker/fish/FishCard.tsx` | 個別魚カード（スペック表示、エリア情報の表示と+Nバッジ表示、アクセシビリティ対応） |
-| `src/features/fishtracker/fish/FishListItem.tsx` | リスト表示用個別魚行コンポーネント（詳細パネル内での `variant="inline"` 対応、アクセシビリティ対応） |
-| `src/features/fishtracker/fish/FishDetailView.tsx` | 魚詳細情報表示コンポーネント（アクセシビリティ・ユニークキー対応） |
-| `src/features/fishtracker/area/AreaCard.tsx` | 個別エリアカード（基本情報および釣れる魚のタグ一覧＋+Nバッジ表示、アクセシビリティ・ユニークキー対応） |
-| `src/features/fishtracker/area/AreaListItem.tsx` | リスト表示用個別エリア行コンポーネント（対象魚の総数バッジ表示、`useMemo`・改行エスケープ最適化、アクセシビリティ対応） |
-| `src/features/fishtracker/area/AreaDetailView.tsx` | エリア詳細情報表示コンポーネント（魚チェック・スタック遷移連携、アクセシビリティ・ユニークキー対応） |
-| `src/features/fishtracker/bait/BaitCard.tsx` | 個別餌カード（基本情報および釣れる魚のタグ一覧＋+Nバッジ表示、アクセシビリティ対応） |
-| `src/features/fishtracker/bait/BaitListItem.tsx` | リスト表示用個別餌行コンポーネント（説明文横並び＋対象魚の総数バッジ表示、`useMemo`・改行エスケープ最適化、アクセシビリティ対応） |
-| `src/features/fishtracker/bait/BaitDetailView.tsx` | 餌詳細情報表示コンポーネント（魚チェック・スタック遷移連携、アクセシビリティ対応） |
 | `src/styles/components/cardStyles.ts` | カードUI用共通Tailwind CSSクラス定義（`CARD_STYLES`） |
 | `src/styles/components/listStyles.ts` | リストUI用共通Tailwind CSSクラス定義（`LIST_STYLES`） |
 | `src/styles/components/detailStyles.ts` | 詳細ビュー用共通Tailwind CSSクラス定義（`DETAIL_STYLES`） |
-| `src/styles/features/FishTrackerStyle.ts` | 魚チェッカー CSSクラス定義（`FISH_STYLES`） |
 | `src/styles/tokens/commonTokens.ts` | アプリ共通 CSSクラス定義（`COMMON_TOKENS`） |
 | `src/styles/tokens/layoutTokens.ts` | アプリ共通 CSSクラス定義（`LAYOUT_TOKENS`） |
-| `src/data/` | マスターデータおよびリレーション定義（`fishes`, `zones`, `baits`, `locations`, `relations`） |
 
 ---
 
-## 5. UI/UX標準化ルール（カード vs リスト）
+## 4. UI/UX標準化ルール（カード vs リスト）
 
-### **カード表示 (`AreaCard`, `BaitCard`, `FishCard`)**
+### **カード表示**
 - カードの垂直高さを適正に保ちつつ、情報網羅性を高める **3段構成** を採用する。
   1. **上段:** 名称表示領域（日本語名・英語名の縦並び）
   2. **中段:** 説明文領域 (`CARD_STYLES.descriptionBox`)
-  3. **下段:** 関連データ一覧表示（`Fish`アイコン + 「釣れる魚 (N):」 + タグ最大2件 + 超過分の `+N` バッジ）
+  3. **下段:** 関連データ一覧表示（アイコン + 「関連データ (N):」 + タグ最大2件 + 超過分の `+N` バッジ）
 
-### **リスト表示 (`AreaListItem`, `BaitListItem`, `FishListItem`)**
+### **リスト表示**
 - 垂直方向への高速スキャンと高密度表示を実現する **横並び構成** を採用する。
   - 縦に段数を増やさず（3段目の追加を禁止）、1行（高密度2段）の垂直高さを維持する。
-  - **構成:** 左側:名称（縦並び） / 中央:説明文（1行 truncate・右寄せ） / 右端:総数インジケーター（`Fish`アイコン + 件数バッジ）。
+  - **構成:** 左側:名称（縦並び） / 中央:説明文（1行 truncate・右寄せ） / 右端:総数インジケーター（アイコン + 件数バッジ）。
 
 ### **アクセシビリティ・キーボード操作対応**
 - カードおよびリスト要素などのクリック可能領域 (`div`) には、必ず `role="button"`、`tabIndex={0}`、および `onKeyDown`（Enter / Spaceキー判定）を付与する。
 - 戻るボタンや閉じるボタンなどのアイコン操作部には、`title` と同時に `aria-label` を明記してスクリーンリーダーへ配慮する。
 
-### **ヘッダーアイコンのカラー定義**
-- **魚（Fish）:** シアン (`text-cyan-400`)
-- **エリア（MapPin）:** エメラルド / レッド (`text-red-400` 等)
-- **エサ（Disc / Utensils）:** アンバー (`text-amber-400`)
-
 ---
 
-## 6. 動的OGP & SNSクローラー（SSR/エッジ処理）仕様
+## 5. 動的OGP & SNSクローラー（SSR/エッジ処理）仕様
 
 ### **1. クローラー向け動的OGP挿入（`functions/[[path]].ts`）**
 - URLパラメータに `share` が含まれる場合、Cloudflare Workers の `HTMLRewriter` により HTML レスポンス内の各メタタグ（`og:title`, `og:description`, `og:image`, `twitter:title`, `twitter:description`, `twitter:image` 等）を即座に動的書き換えする。
@@ -131,7 +93,7 @@
 
 ---
 
-## 7. ユーザープロファイル・応答制約（開発AI向け）
+## 6. ユーザープロファイル・応答制約（開発AI向け）
 
 - **応答の原則**: 結論・要点を先に述べ、簡潔かつ直接的に回答すること。
 - **締め言葉の禁止**: 回答末尾での感想の質問、感情への同意の要求、過度なまとめや演出、問いかけは一切禁止。結論または成果物の提示のみで簡潔に終了すること。
@@ -139,7 +101,7 @@
 
 ---
 
-## 8. 実装規約・ガイドライン
+## 7. 実装規約・ガイドライン
 
 ### **ファイルヘッダーコメントの標準規約（AI指示書型フォーマット）**
 今後作成・更新するすべてのコードファイル（TS/TSX/JSX等）の冒頭には、以下の標準化フォーマットに基づくJSDocブロックコメントを必ず明記し、リファクタリング時にも最新状態へ維持・更新してください。
@@ -182,17 +144,15 @@
 
 - **ルーティング・関心事の分離**:
   - `App.tsx` 内に直接 `<Routes>` や `<Route>` を定義せず、ルーティング定義は `src/routes/AppRouter.tsx` へ集約し、閲覧権限（`canViewContainer`）に応じたレイアウト・画面の切り替えを同コンポーネント内で処理して責務を分離すること。
-- **リレーションデータの参照基準**:
-  - 魚・エリア・餌の結びつきを表示する際は、単体マスターの埋め込み配列ではなく、必ずマスターリレーションデータ（`FISH_LOCATIONS`, `FISH_BAIT_RELATIONS` 等）を参照して動的に算出すること。
 - **カード内要素の溢れ制限デザイン**:
-  - カード内に可変長の関連要素（エリア名や魚名）をタグ表示する場合は、原則として上位2件を表示し、超過分は `+N` のバッジ形式でカウント表示してカードの高さを保持すること。
+  - カード内に可変長の関連要素をタグ表示する場合は、原則として上位2件を表示し、超過分は `+N` のバッジ形式でカウント表示してカードの高さを保持すること。
 - **UIスタイルの集約**:
   - カード、リスト、詳細表示等、再利用性の高い共通コンポーネントの Tailwind CSS クラス群は `src/styles/*Styles.ts` や `src/styles/tokens/*` に定数（`as const`）として定義して参照する。
 - **ボタン要素の定義**:
   - `button` タグを配置する際は、必ず `type="button"`（フォーム送信用の場合は `type="submit"`）を明記すること。
 - **テキストデータの改行処理とレンダリングのキー厳格化**:
   - マスターデータ内のテキスト改行は `\n`（または `\\n`）で混在しうるため、表示側（React）では `/\r?\n|\\n/` の正規表現等を用いて安全に分割・置換・レンダリングを行うこと。
-  - JSXで配列を `map` 描画する際、テキスト行などのキーには配列インデックス単体（`key={index}`）を避け、文字列の一部やユニークなIDを組み合わせたキー（`key={`${index}-${line.slice(0, 10)}`}`）を使用すること。
+  - JSXで配列を `map` 描画する際、テキスト行などのキーには配列インデックス単体（`key={index}`）を避け、文字列の一部やユニークなIDを組み合わせたキーを使用すること。
 
 ---
 
