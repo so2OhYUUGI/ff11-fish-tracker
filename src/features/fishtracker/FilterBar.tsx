@@ -6,7 +6,7 @@
  * [概要]
  * - メイン表示タブ（魚 / 餌 / エリア）の切替
  * - 魚表示時の状態絞り込み（すべて / 未釣獲 / 釣獲済み）および進捗率（プログレスバー）の描画
- * - 名称検索インプット（魚名 / 餌名 / エリア名の自動切替・テキストクリア機能付き）
+ * - 名称検索インプット（魚名 / 餌名 / エリア名の自動切替・テキストクリア機能付き・IME完全対応）
  * - 表示モード切替（カード表示 / リスト表示）
  * 
  * [依存関係・関連ファイル]
@@ -20,7 +20,7 @@
  * ============================================================================
  */
 
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useEffect, useRef } from 'react';
 import { Search, LayoutGrid, List, Fish, Utensils, MapPin, X } from 'lucide-react';
 import type { ViewMode, MainTab, CharacterProgress } from '@/types/fishtracker';
 import { FILTER_BAR_STYLES } from '@/styles/features/FishTrackerStyle';
@@ -58,6 +58,15 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 	viewMode,
 	onViewModeChange,
 }) => {
+	const inputRef = useRef<HTMLInputElement>(null);
+
+	// 親からの searchQuery 変更（クリアボタンなど）を input 要素へ確実に同期する
+	useEffect(() => {
+		if (inputRef.current && inputRef.current.value !== searchQuery) {
+			inputRef.current.value = searchQuery;
+		}
+	}, [searchQuery]);
+
 	const checkedCount = Array.isArray(activeCharacter?.checkedFishIds)
 		? activeCharacter.checkedFishIds.length
 		: 0;
@@ -78,14 +87,29 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 		}
 	}, [mainTab]);
 
-	const handleSearchChange = useCallback(
-		(e: React.ChangeEvent<HTMLInputElement>) => {
-			onSearchQueryChange(e.target.value);
+	const handleInput = useCallback(
+		(e: React.FormEvent<HTMLInputElement>) => {
+			const target = e.target as HTMLInputElement;
+			// IME変換中（isComposing）は親への伝搬を抑止し、未確定文字の消失を防ぐ
+			if ((e.nativeEvent as InputEvent).isComposing) {
+				return;
+			}
+			onSearchQueryChange(target.value);
+		},
+		[onSearchQueryChange]
+	);
+
+	const handleCompositionEnd = useCallback(
+		(e: React.CompositionEvent<HTMLInputElement>) => {
+			onSearchQueryChange(e.currentTarget.value);
 		},
 		[onSearchQueryChange]
 	);
 
 	const handleSearchClear = useCallback(() => {
+		if (inputRef.current) {
+			inputRef.current.value = '';
+		}
 		onSearchQueryChange('');
 	}, [onSearchQueryChange]);
 
@@ -173,10 +197,12 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 					<div className={FILTER_BAR_STYLES.searchContainer}>
 						<Search className={FILTER_BAR_STYLES.searchIcon} />
 						<input
+							ref={inputRef}
 							type="text"
 							placeholder={searchPlaceholder}
-							value={searchQuery}
-							onChange={handleSearchChange}
+							defaultValue={searchQuery}
+							onInput={handleInput}
+							onCompositionEnd={handleCompositionEnd}
 							className={`${FILTER_BAR_STYLES.searchInput} ${searchQuery ? FILTER_BAR_STYLES.searchInputHasValue : ''
 								}`}
 						/>
