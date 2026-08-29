@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  * [FilePath] src/contexts/UserDataContext.tsx
- * [Role] ユーザー進捗データ・表示キャラクター状態を一括管理・提供する Context / Provider
+ * [Role]     ユーザー進捗データ・表示キャラクター状態を一括管理・提供する Context / Provider
  * 
  * [概要]
  * - App.tsx や AppRouter でのバケツリレー (Prop Drilling) を解消する
@@ -15,6 +15,7 @@
  * [編集・改修時の注意事項（AI/エンジニア共通指示）]
  * 1. 【安全宣言】 Context 非依存の箇所で useUserDataContext を呼び出した場合は安全にエラーを出力させること
  * 2. 【既存挙動の完全維持】 isShared フラグの付与、共有キャラキャッシュ、URLクリーンアップ等の挙動を破壊しないこと
+ * 3. 【Fast Refresh対応】 ProviderコンポーネントとHookの同一ファイル共有のため eslint-disable-next-line 注記を維持すること
  * ============================================================================
  */
 
@@ -90,7 +91,7 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 	// 初回自動選択制御フラグ（エフェクト内のみで使用するため Ref のままで安全）
 	const hasAutoSelectedSharedRef = useRef(false);
 
-	// 共有キャラクターデータのキャッシュ State（Ref から State に変更）
+	// 共有キャラクターデータのキャッシュ State
 	const [lastSharedChar, setLastSharedChar] = useState<DisplayCharacterProgress | null>(null);
 
 	const currentSharedCharacter = useMemo<DisplayCharacterProgress | null>(() => {
@@ -105,11 +106,10 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 		};
 	}, [sharedProgress]);
 
-	useEffect(() => {
-		if (currentSharedCharacter) {
-			setLastSharedChar(currentSharedCharacter);
-		}
-	}, [currentSharedCharacter]);
+	// レンダリング中の状態更新（useEffectでの同期setStateによるカスケードレンダリングを回避）
+	if (currentSharedCharacter && currentSharedCharacter !== lastSharedChar) {
+		setLastSharedChar(currentSharedCharacter);
+	}
 
 	const activeSharedCharacter = currentSharedCharacter || lastSharedChar;
 
@@ -198,6 +198,7 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 	);
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useUserDataContext = (): UserDataContextType => {
 	const context = useContext(UserDataContext);
 	if (!context) {

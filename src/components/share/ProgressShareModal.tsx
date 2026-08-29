@@ -2,6 +2,18 @@
  * ============================================================================
  * [FilePath] src/components/share/ProgressShareModal.tsx
  * [Role]     進捗共有モーダルコンテナ（Canvas画像生成・プレビュー・Xポスト・URLコピー）
+ * 
+ * [概要]
+ * - HTML5 Canvasを使用した進捗画像の生成とダウンロード/共有機能の提供
+ * - useEffect 内での同期的 setState 呼び出しによるカスケードレンダリングを防止
+ * 
+ * [依存関係・関連ファイル]
+ * - スタイル : src/styles/tokens/commonTokens.ts, src/styles/tokens/layoutTokens.ts
+ * - ユーティリティ : src/utils/shareEncoding.ts, src/utils/shareDataBuilder.ts
+ * 
+ * [編集・改修時の注意事項（AI/エンジニア共通指示）]
+ * 1. 【ロジック・例外処理】 useEffect 直下での同期的 setState はカスケードレンダリングを引き起こすため、タイマー等による非同期化を行うこと
+ * 2. 【アクセシビリティ・作法】 button タグには type="button" を明記すること
  * ============================================================================
  */
 
@@ -47,87 +59,99 @@ export const ProgressShareModal: React.FC<ProgressShareModalProps> = ({
 	useEffect(() => {
 		if (!isOpen) return;
 
-		setIsGenerating(true);
-		const canvas = canvasRef.current;
-		if (!canvas) {
-			setIsGenerating(false);
-			return;
-		}
+		let isCancelled = false;
 
-		const ctx = canvas.getContext('2d');
-		if (!ctx) {
-			setIsGenerating(false);
-			return;
-		}
+		// 同期的 setState によるカスケードレンダリングを防止するため非同期で実行
+		const timer = setTimeout(() => {
+			if (isCancelled) return;
 
-		canvas.width = 1200;
-		canvas.height = 630;
+			setIsGenerating(true);
+			const canvas = canvasRef.current;
+			if (!canvas) {
+				setIsGenerating(false);
+				return;
+			}
 
-		// 背景描画（ダークテーマ）
-		ctx.fillStyle = '#0f172a'; // slate-900
-		ctx.fillRect(0, 0, canvas.width, canvas.height);
+			const ctx = canvas.getContext('2d');
+			if (!ctx) {
+				setIsGenerating(false);
+				return;
+			}
 
-		// 枠線
-		ctx.strokeStyle = '#38bdf8'; // sky-400
-		ctx.lineWidth = 6;
-		ctx.strokeRect(30, 30, canvas.width - 60, canvas.height - 60);
+			canvas.width = 1200;
+			canvas.height = 630;
 
-		// タイトル
-		ctx.fillStyle = '#ffffff';
-		ctx.font = 'bold 44px sans-serif';
-		ctx.fillText('FF11 釣魚チェッカーレポート', 80, 110);
+			// 背景描画（ダークテーマ）
+			ctx.fillStyle = '#0f172a'; // slate-900
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-		// キャラクター名
-		ctx.fillStyle = '#94a3b8'; // slate-400
-		ctx.font = '48px sans-serif';
-		ctx.fillText(`【${characterName}】`, 80, 190);
+			// 枠線
+			ctx.strokeStyle = '#38bdf8'; // sky-400
+			ctx.lineWidth = 6;
+			ctx.strokeRect(30, 30, canvas.width - 60, canvas.height - 60);
 
-		// --- 左側ブロック：進捗サマリー ---
-		ctx.fillStyle = '#38bdf8';
-		ctx.font = 'bold 120px sans-serif';
-		ctx.fillText(`${percentage}%`, 80, 340);
+			// タイトル
+			ctx.fillStyle = '#ffffff';
+			ctx.font = 'bold 44px sans-serif';
+			ctx.fillText('FF11 釣魚チェッカーレポート', 80, 110);
 
-		ctx.fillStyle = '#e2e8f0';
-		ctx.font = '32px sans-serif';
-		ctx.fillText(`釣獲種数: ${checkedCount} / ${totalCount} 種`, 80, 420);
+			// キャラクター名
+			ctx.fillStyle = '#94a3b8'; // slate-400
+			ctx.font = '48px sans-serif';
+			ctx.fillText(`【${characterName}】`, 80, 190);
 
-		// --- 右側ブロック：スキル上位3体（ハイライト） ---
-		ctx.fillStyle = '#cbd5e1';
-		ctx.font = 'bold 24px sans-serif';
-		ctx.fillText('★ 主な釣獲ハイライト（スキル順）', 660, 160);
+			// --- 左側ブロック：進捗サマリー ---
+			ctx.fillStyle = '#38bdf8';
+			ctx.font = 'bold 120px sans-serif';
+			ctx.fillText(`${percentage}%`, 80, 340);
 
-		if (topFishList.length > 0) {
-			const medals = ['🥇', '🥈', '🥉'];
-			topFishList.forEach((fish, index) => {
-				const startY = 220 + index * 85;
+			ctx.fillStyle = '#e2e8f0';
+			ctx.font = '32px sans-serif';
+			ctx.fillText(`釣獲種数: ${checkedCount} / ${totalCount} 種`, 80, 420);
 
-				// メダル
-				ctx.font = '28px sans-serif';
-				ctx.fillText(medals[index], 660, startY);
+			// --- 右側ブロック：スキル上位3体（ハイライト） ---
+			ctx.fillStyle = '#cbd5e1';
+			ctx.font = 'bold 24px sans-serif';
+			ctx.fillText('★ 主な釣獲ハイライト（スキル順）', 660, 160);
 
-				// 魚名 (日本語)
-				ctx.fillStyle = '#ffffff';
-				ctx.font = 'bold 28px sans-serif';
-				ctx.fillText(fish.ja, 720, startY - 5);
+			if (topFishList.length > 0) {
+				const medals = ['🥇', '🥈', '🥉'];
+				topFishList.forEach((fish, index) => {
+					const startY = 220 + index * 85;
 
-				// スキル値
-				ctx.fillStyle = '#94a3b8';
-				ctx.font = '20px sans-serif';
-				ctx.fillText(`上限スキル: ${fish.maxSkill}`, 720, startY + 30);
-			});
-		} else {
+					// メダル
+					ctx.font = '28px sans-serif';
+					ctx.fillText(medals[index], 660, startY);
+
+					// 魚名 (日本語)
+					ctx.fillStyle = '#ffffff';
+					ctx.font = 'bold 28px sans-serif';
+					ctx.fillText(fish.ja, 720, startY - 5);
+
+					// スキル値
+					ctx.fillStyle = '#94a3b8';
+					ctx.font = '20px sans-serif';
+					ctx.fillText(`上限スキル: ${fish.maxSkill}`, 720, startY + 30);
+				});
+			} else {
+				ctx.fillStyle = '#64748b';
+				ctx.font = '24px sans-serif';
+				ctx.fillText('まだ記録がありません', 660, 230);
+			}
+
+			// フッター
 			ctx.fillStyle = '#64748b';
-			ctx.font = '24px sans-serif';
-			ctx.fillText('まだ記録がありません', 660, 230);
-		}
+			ctx.font = '22px sans-serif';
+			ctx.fillText('FF11 釣魚チェッカー', 80, 550);
 
-		// フッター
-		ctx.fillStyle = '#64748b';
-		ctx.font = '22px sans-serif';
-		ctx.fillText('FF11 釣魚チェッカー', 80, 550);
+			setDataUrl(canvas.toDataURL('image/png'));
+			setIsGenerating(false);
+		}, 0);
 
-		setDataUrl(canvas.toDataURL('image/png'));
-		setIsGenerating(false);
+		return () => {
+			isCancelled = true;
+			clearTimeout(timer);
+		};
 	}, [isOpen, characterName, checkedCount, totalCount, percentage, topFishList]);
 
 	if (!isOpen || typeof document === 'undefined') return null;

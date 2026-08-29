@@ -1,7 +1,20 @@
 /**
  * ============================================================================
  * [FilePath] src/features/fishtracker/FishTrackerContent.tsx
- * [Role] メイン領域の表示切替・フィルタリング・ルーティングコンポーネント
+ * [Role]     メイン領域の表示切替・フィルタリング・ルーティングコンポーネント
+ * 
+ * [概要]
+ * - 魚/エリア/餌の各表示モードに応じたカード・リスト・詳細表示のレンダリング
+ * - フィルタリング条件（検索クエリ・チェック状態）に基づくデータの絞り込み処理
+ * 
+ * [依存関係・関連ファイル]
+ * - スタイル : src/styles/tokens/layoutTokens.ts
+ * - マスター : src/data/
+ * - コンポーネント : src/features/fishtracker/fish/FishView, bait/BaitView, area/AreaView
+ * 
+ * [編集・改修時の注意事項（AI/エンジニア共通指示）]
+ * 1. 【メモ化・パフォーマンス】 optional chaining を含むプロパティ参照は事前変数へ抽出し、React Compiler の依存関係推論を維持すること
+ * 2. 【型定義】 activeCharacter からの checkedFishIds 抽出時は常に配列判定による安全なフォールバックを行うこと
  * ============================================================================
  */
 
@@ -47,9 +60,11 @@ export const FishTrackerContent: React.FC<FishTrackerContentProps> = ({
   navStack,
 }) => {
   // 安全な checkedFishIds の抽出と Set 化
+  const rawCheckedFishIds = activeCharacter?.checkedFishIds;
+
   const checkedFishIds = useMemo(() => {
-    return Array.isArray(activeCharacter?.checkedFishIds) ? activeCharacter.checkedFishIds : [];
-  }, [activeCharacter?.checkedFishIds]);
+    return Array.isArray(rawCheckedFishIds) ? rawCheckedFishIds : [];
+  }, [rawCheckedFishIds]);
 
   const checkedSet = useMemo(() => {
     return new Set(checkedFishIds);
