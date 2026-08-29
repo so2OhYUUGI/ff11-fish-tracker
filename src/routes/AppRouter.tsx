@@ -13,10 +13,11 @@
  * - レイアウト  : src/components/layout/MainLayout.tsx
  * - ページ      : src/components/LandingPage.tsx
  * - 機能コンテナ: src/features/fishtracker/FishTrackerContainer.tsx
+ *                src/features/trusttracker/TrustTrackerContainer.tsx
  * 
  * [編集・改修時の注意事項（AI/エンジニア共通指示）]
  * 1. 【レイアウト一貫性】 MainLayout を適用するルートは renderWithMainLayout ヘルパーを経由して共通化すること
- * 2. 【閲覧権限判定】 一覧画面（/fishtracker/:type）の描画判定には canViewContainer を使用し、未登録時は LandingPage へフォールバックさせること
+ * 2. 【閲覧権限判定】 一覧画面（/fishtracker/:type, /trusttracker）の描画判定には canViewContainer を使用し、未登録時は LandingPage へフォールバックさせること
  * 3. 【リダイレクト設計】 不正なパスやルートパスへのアクセスは `/fishtracker/fish` へ安全にリダイレクトさせること
  * ============================================================================
  */
@@ -27,6 +28,7 @@ import { useUserDataContext } from '@/contexts/UserDataContext';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { LandingPage } from '@/components/LandingPage';
 import { FishTrackerContainer } from '@/features/fishtracker/FishTrackerContainer';
+import { TrustTrackerContainer } from '@/features/trusttracker/TrustTrackerContainer';
 
 type AppRouterProps = {
 	setIsSettingsOpen: (open: boolean) => void;
@@ -55,7 +57,10 @@ export function AppRouter({
 			<Route path="/" element={<Navigate to="/fishtracker/fish" replace />} />
 			<Route path="/fishtracker" element={<Navigate to="/fishtracker/fish" replace />} />
 
-			{/* 1. 一覧表示（slug なし）: 閲覧権限の有無で表示・レイアウトを分離 */}
+			{/* ====================================================================
+       * 1. 釣魚チェッカー (fishtracker)
+       * ==================================================================== */}
+			{/* 一覧表示（slug なし） */}
 			<Route
 				path="/fishtracker/:type"
 				element={
@@ -64,11 +69,28 @@ export function AppRouter({
 						: <LandingPage />
 				}
 			/>
-
-			{/* 2. 詳細表示（slug あり）: 共有・直接リンクアクセスのため常に MainLayout 内で表示 */}
+			{/* 詳細表示（slug あり） */}
 			<Route
 				path="/fishtracker/:type/:slug"
 				element={renderWithMainLayout(<FishTrackerContainer />)}
+			/>
+
+			{/* ====================================================================
+       * 2. フェイスチェッカー (trusttracker) - サブカテゴリなし構造
+       * ==================================================================== */}
+			{/* 一覧表示 */}
+			<Route
+				path="/trusttracker"
+				element={
+					canViewContainer
+						? renderWithMainLayout(<TrustTrackerContainer />)
+						: <LandingPage />
+				}
+			/>
+			{/* 詳細表示（slug あり） */}
+			<Route
+				path="/trusttracker/:slug"
+				element={renderWithMainLayout(<TrustTrackerContainer />)}
 			/>
 
 			{/* ワイルドカードリダイレクト */}

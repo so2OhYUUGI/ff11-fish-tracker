@@ -50,7 +50,7 @@ export const Header: React.FC<HeaderProps> = ({
 	const menuRef = useRef<HTMLDivElement>(null);
 
 	const location = useLocation();
-	const isTrustMode = location.pathname.startsWith('/trust');
+	const isTrustMode = location.pathname.startsWith('/trusttracker');
 
 	const effectiveActiveCharacter: DisplayCharacterProgress = useMemo(() => {
 		const rawChar = activeCharacter || {
@@ -167,7 +167,7 @@ export const Header: React.FC<HeaderProps> = ({
 											機能切り替え
 										</div>
 										<Link
-											to="/fish"
+											to="/fishtracker/fish"
 											onClick={() => setIsOpen(false)}
 											className={
 												!isTrustMode
@@ -183,7 +183,7 @@ export const Header: React.FC<HeaderProps> = ({
 										</Link>
 
 										<Link
-											to="/trust"
+											to="/trusttracker"
 											onClick={() => setIsOpen(false)}
 											className={
 												isTrustMode
