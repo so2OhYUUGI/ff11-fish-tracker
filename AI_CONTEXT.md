@@ -39,7 +39,7 @@
 ### **ユーザー進捗 (UserData / CharacterProgress)**
 - LocalStorage キー: `ff11_fish_tracker_user_data`
 - `checkedFishIds`: 達成済みの魚ID（`number[]`）を保持
-- **状態管理（Provider構成）**: `UserDataProvider`（`src/contexts/UserDataContext.tsx`）を通じて全コンポーネントへグローバルに供給され、`useUserData` フック（`src/hooks/useUserData.ts`）を介して状態の参照・更新（キャラ切り替え/追加/削除、魚チェック変更等）を行う。
+- **状態管理（Provider構成）**: `UserDataProvider`（`src/contexts/UserDataContext.tsx`）を通じて全コンポーネントへグローバルに供給され、コンポーネントからは `useUserDataContext` フックを介して状態の参照・操作（キャラ切り替え/追加/削除、魚チェック変更等）を行う。LocalStorageの永続化および状態更新のコアロジックは Context 内部（`src/contexts/useUserData.ts`）にカプセル化されている。
 
 ### **共有・OGP関連データ**
 - 共有URLクエリパラメータ: `share`（Base64 URL Safe等でエンコードされた文字列）
@@ -54,11 +54,12 @@
 |---|---|
 | `functions/[[path]].ts` | OGP画像生成（/api/ogp）およびSNSクローラー向けHTMLメタタグの動的書き換え（HTMLRewriter/エッジ処理） |
 | `src/App.tsx` | アプリケーションのエントリーポイント。`UserDataProvider` による状態供給、共有URL復元、各種ダイアログ/モーダル状態の保持 |
-| `src/contexts/UserDataContext.tsx` | ユーザー進捗データ（キャラ管理・釣獲達成状態・LocalStorage永続化・共有データ展開）をアプリ全体に提供する React Context / Provider |
+| `src/contexts/UserDataContext.tsx` | ユーザー進捗データ（キャラ管理・釣獲達成状態・LocalStorage永続化・共有データ展開）をアプリ全体に提供する React Context / Providerおよび `useUserDataContext` フック |
+| `src/contexts/useUserData.ts` | `UserDataContext` 内で使用される LocalStorage データの永続化およびキャラクター操作ロジック管理用フック |
+| `src/constants/character.ts` | キャラクター識別・判定用定数定義（ゲストID、フォールバック値等） |
 | `src/routes/AppRouter.tsx` | パスベースルーティング構造の集約定義。MainLayout を軸とした Outlet パターンの構築 |
 | `src/routes/ProtectedRoute.tsx` | 一覧画面の閲覧権限（登録済みまたは共有データ存在）を検証・保護するガードコンポーネント |
 | `src/types/fishtracker.ts` | 型定義（Windower互換データ、アプリ拡張、進捗構造） |
-| `src/hooks/useUserData.ts` | `UserDataContext` からユーザーデータ状態および操作ハンドラーを参照・取得するためのカスタムフック |
 | `src/utils/share.ts` | Web Share APIおよびクリップボードコピー処理ユーティリティ |
 | `src/utils/shareEncoding.ts` | 釣獲進捗データの共有用エンコード/デコード処理 |
 | `src/utils/shareDataBuilder.ts` | 共有パラメータからOGP描画に必要なカード表示用データを算出・集計 |

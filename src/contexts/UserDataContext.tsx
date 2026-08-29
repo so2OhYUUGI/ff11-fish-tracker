@@ -22,7 +22,7 @@
 import React, { createContext, useContext, useMemo, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import type { CharacterProgress, UserData, ViewMode } from '@/types/fishtracker';
-import { useUserData } from '@/hooks/useUserData';
+import { useUserData } from '@/contexts/useUserData';
 import { useSharedProgress } from '@/hooks/useSharedProgress';
 import { SHARED_GUEST_CHARACTER_ID } from '@/constants/character';
 
