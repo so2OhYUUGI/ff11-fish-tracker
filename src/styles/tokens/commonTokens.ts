@@ -4,6 +4,7 @@
  * [Role]     デザインシステム全体の基本トークン（カラー、状態、共通テキストスタイル）
  * 
  * [概要]
+ * - 機能モード（釣魚 / フェイス）固有のメインテーマカラー定義
  * - エンティティ（魚、エリア、エサ）固有のテーマカラー
  * - コンポーネントの状態（通常、選択中、チェック済み、データ無し）の統一スタイル
  * - フォーム要素・ボタン等の汎用入力スタイル定義
@@ -23,6 +24,32 @@ export const COMMON_TOKENS = {
     primaryHover: 'hover:bg-blue-500',
     textMain: 'text-white',
     textMuted: 'text-slate-400',
+  },
+
+  // 機能モード別テーマカラー（釣魚チェッカー / フェイスチェッカー）
+  mode: {
+    fish: {
+      text: 'text-cyan-400',
+      textActive: 'text-cyan-300',
+      bg: 'bg-cyan-600',
+      bgHover: 'hover:bg-cyan-500',
+      border: 'border-cyan-500',
+      borderMuted: 'border-cyan-800/60',
+      badge: 'bg-cyan-950/80 text-cyan-300 border-cyan-800/60',
+      iconBg: 'bg-cyan-950/80 border-cyan-700/50 text-cyan-400',
+      ring: 'focus:ring-cyan-500 ring-cyan-500/50',
+    },
+    trust: {
+      text: 'text-amber-400',
+      textActive: 'text-amber-300',
+      bg: 'bg-amber-600',
+      bgHover: 'hover:bg-amber-500',
+      border: 'border-amber-500',
+      borderMuted: 'border-amber-800/60',
+      badge: 'bg-amber-950/80 text-amber-300 border-amber-800/60',
+      iconBg: 'bg-amber-950/80 border-amber-700/50 text-amber-400',
+      ring: 'focus:ring-amber-500 ring-amber-500/50',
+    },
   },
 
   // エンティティ別アクセントカラー

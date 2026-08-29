@@ -7,6 +7,7 @@
  * - 閲覧者自身のキャラクターおよび、URL共有経由で表示される一時的な「共有キャラ」の切替UIを提供
  * - ハンバーガーメニュー内に「チェッカー切り替え」「キャラクター選択」「進捗共有」「環境設定」を統合
  * - UserDataContext から表示用キャラ一覧および選択中のキャラ情報を直接参照
+ * - CSS変数による抽象化テーマ（釣魚 / フェイス）を適用
  * 
  * [依存関係・関連ファイル]
  * - Context      : src/contexts/UserDataContext.tsx
@@ -175,7 +176,7 @@ export const Header: React.FC<HeaderProps> = ({
 													: LAYOUT_TOKENS.header.dropdownItemInactive
 											}
 										>
-											<div className={LAYOUT_TOKENS.header.dropdownItemContent}>
+											<div className="flex items-center gap-2">
 												<Fish className={icon.sm} />
 												<span>釣魚チェッカー</span>
 											</div>
@@ -191,7 +192,7 @@ export const Header: React.FC<HeaderProps> = ({
 													: LAYOUT_TOKENS.header.dropdownItemInactive
 											}
 										>
-											<div className={LAYOUT_TOKENS.header.dropdownItemContent}>
+											<div className="flex items-center gap-2">
 												<Scroll className={icon.sm} />
 												<span>フェイスチェッカー</span>
 											</div>
@@ -221,7 +222,7 @@ export const Header: React.FC<HeaderProps> = ({
 																: LAYOUT_TOKENS.header.dropdownItemInactive
 														}
 													>
-														<div className={LAYOUT_TOKENS.header.dropdownItemContent}>
+														<div className="flex items-center gap-2 truncate">
 															{char.isShared && <Share2 className={`${icon.sm} ${icon.shared}`} />}
 															<span className="truncate">{char.name}</span>
 															{char.isShared && (

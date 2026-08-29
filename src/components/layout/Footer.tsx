@@ -6,7 +6,8 @@
  * [概要]
  * - 著作権表示および権利表記（スクウェア・エニックス等のライセンス注記）
  * - アプリケーションのバージョン情報（Ver, Commit Hash, Build Number）の自動表示
- * - LAYOUT_TOKENS および COMMON_TOKENS を参照した統一スタイルの適用
+ * - 現在のパス（モード）に応じてタイトル表記を動的に切替
+ * - LAYOUT_TOKENS および CSS テーマ変数による統一スタイルの適用
  * 
  * [編集・改修時の注意事項]
  * 1. 【権利表記の維持】
@@ -17,28 +18,36 @@
  */
 
 import React from 'react';
-import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
+import { useLocation } from 'react-router-dom';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
 
 export const Footer: React.FC = () => {
+  const location = useLocation();
+  const isTrustMode = location.pathname.startsWith('/trusttracker');
+  const { footer } = LAYOUT_TOKENS;
+
   return (
-    <footer className={LAYOUT_TOKENS.footer.container}>
-      <div className={LAYOUT_TOKENS.header.inner}>
-        <div className={LAYOUT_TOKENS.footer.rowWrapper}>
+    <footer className={footer.container}>
+      <div className={footer.inner}>
+        <div className={footer.rowWrapper}>
           <div>
-            <div className={LAYOUT_TOKENS.footer.titleGroup}>
-              <p className={`font-medium ${COMMON_TOKENS.color.textMain}`}>
-                FF11 釣魚チェッカー (FF11 Fishing Tracker)
+            <div className={footer.titleGroup}>
+              <p className={footer.titleText}>
+                {isTrustMode ? 'FF11 フェイスチェッカー' : 'FF11 釣魚チェッカー'}
+                {' '}
+                <span className="font-normal text-slate-300">
+                  ({isTrustMode ? 'FF11 Trust Tracker' : 'FF11 Fishing Tracker'})
+                </span>
               </p>
-              <span className={LAYOUT_TOKENS.footer.badge}>
+              <span className={footer.badge}>
                 v{__APP_VERSION__} ({__COMMIT_HASH__}) #{__BUILD_NUMBER__}
               </span>
             </div>
-            <p className={COMMON_TOKENS.color.textMuted}>
+            <p className={footer.disclaimerText}>
               記載されている会社名・製品名・システム名などは、各社の商標、または登録商標です。
             </p>
           </div>
-          <div className={`${COMMON_TOKENS.color.textMuted} ${LAYOUT_TOKENS.footer.copyright}`}>
+          <div className={footer.copyright}>
             &copy; SQUARE ENIX CO., LTD. All Rights Reserved.
           </div>
         </div>
