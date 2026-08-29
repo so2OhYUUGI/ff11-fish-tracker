@@ -280,17 +280,6 @@ export const ProgressShareModal: React.FC<ProgressShareModalProps> = ({
 						</button>
 					</div>
 				</div>
-
-				{/* フッター */}
-				<div className={LAYOUT_TOKENS.modalShare.footer}>
-					<button
-						type="button"
-						onClick={onClose}
-						className={COMMON_TOKENS.actionText.cancelLink}
-					>
-						閉じる
-					</button>
-				</div>
 			</div>
 		</div>,
 		document.body
