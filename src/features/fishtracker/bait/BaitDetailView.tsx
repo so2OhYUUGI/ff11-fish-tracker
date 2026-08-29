@@ -14,7 +14,7 @@
  */
 
 import React, { useMemo } from 'react';
-import { Anchor, Fish } from 'lucide-react';
+import { Utensils, Anchor, Fish } from 'lucide-react';
 import type { BaitMaster, FishMaster } from '@/types/fishtracker';
 import { FISH_BAIT_RELATIONS } from '@/data';
 import { DETAIL_STYLES } from '@/styles/components/detailStyles';
@@ -69,7 +69,7 @@ export const BaitDetailView: React.FC<BaitDetailViewProps> = ({
 				titleJa={bait.ja}
 				titleEn={bait.en}
 				categoryName="餌"
-				icon={<Anchor className={`w-5 h-5 shrink-0 ${COMMON_TOKENS.entity.bait.text}`} />}
+				icon={<Utensils className={`w-5 h-5 shrink-0 ${COMMON_TOKENS.entity.bait.text}`} />}
 				canGoBack={canGoBack}
 				onBack={onBack}
 				onClose={onClose}
