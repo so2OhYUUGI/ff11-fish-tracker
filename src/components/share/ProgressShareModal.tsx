@@ -21,7 +21,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Copy, Check, Download } from 'lucide-react';
 import { toast } from 'sonner';
-import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
 import { encodeSharedProgress } from '@/utils/shareEncoding';
 import { buildShareCardData } from '@/utils/shareDataBuilder';
