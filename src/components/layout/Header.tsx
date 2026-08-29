@@ -6,12 +6,18 @@
  * [概要]
  * - 閲覧者自身のキャラクターおよび、URL共有経由で表示される一時的な「共有キャラ」の切替UIを提供
  * - 進捗共有ボタン（ShareProgressButton）を配置し、SNSシェアモーダルへ直結
+ * - UserDataContext から表示用キャラ一覧および選択中のキャラ情報を直接参照
+ * 
+ * [依存関係・関連ファイル]
+ * - Context  : src/contexts/UserDataContext.tsx
+ * - トークン    : src/styles/tokens/commonTokens.ts, src/styles/tokens/layoutTokens.ts
  * ============================================================================
  */
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Fish, Database, Settings, ChevronDown, Check, User, Share2 } from 'lucide-react';
 import type { CharacterProgress } from '@/types/fishtracker';
+import { useUserDataContext } from '@/contexts/UserDataContext';
 import { isDev } from '@/utils/env';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
@@ -22,22 +28,34 @@ export interface DisplayCharacterProgress extends CharacterProgress {
 }
 
 type HeaderProps = {
-	characters: DisplayCharacterProgress[];
-	activeCharacter: DisplayCharacterProgress;
-	onSelectCharacter: (id: string) => void;
 	onOpenSettings: () => void;
 	onOpenMasterEditor?: () => void;
 };
 
 export const Header: React.FC<HeaderProps> = ({
-	characters,
-	activeCharacter,
-	onSelectCharacter,
 	onOpenSettings,
 	onOpenMasterEditor,
 }) => {
+	const { displayCharacters, activeCharacter, setActiveCharacter } = useUserDataContext();
 	const [isOpen, setIsOpen] = useState(false);
 	const menuRef = useRef<HTMLDivElement>(null);
+
+	const effectiveActiveCharacter: DisplayCharacterProgress = useMemo(() => {
+		const rawChar = activeCharacter || {
+			id: 'guest',
+			name: 'ゲスト',
+			checkedFishIds: [],
+			createdAt: 0,
+			updatedAt: 0,
+		};
+
+		return {
+			...rawChar,
+			checkedFishIds: Array.isArray(rawChar.checkedFishIds)
+				? rawChar.checkedFishIds.map((id) => Number(id)).filter((id) => !isNaN(id))
+				: [],
+		};
+	}, [activeCharacter]);
 
 	// 外側クリックおよびEscキーによるメニュー閉鎖対応
 	useEffect(() => {
@@ -64,7 +82,7 @@ export const Header: React.FC<HeaderProps> = ({
 		};
 	}, [isOpen]);
 
-	const isSharedActive = !!activeCharacter?.isShared;
+	const isSharedActive = !!effectiveActiveCharacter?.isShared;
 	const { icon } = LAYOUT_TOKENS.header;
 
 	return (
@@ -92,11 +110,11 @@ export const Header: React.FC<HeaderProps> = ({
 							</label>
 							<select
 								id="char-select"
-								value={activeCharacter?.id ?? ''}
-								onChange={(e) => onSelectCharacter(e.target.value)}
+								value={effectiveActiveCharacter?.id ?? ''}
+								onChange={(e) => setActiveCharacter(e.target.value)}
 								className={LAYOUT_TOKENS.control.select(isSharedActive)}
 							>
-								{characters.map((char) => (
+								{displayCharacters.map((char) => (
 									<option key={char.id} value={char.id} className={LAYOUT_TOKENS.header.selectOption}>
 										{char.name} {char.isShared ? '(共有)' : ''}
 									</option>
@@ -106,7 +124,7 @@ export const Header: React.FC<HeaderProps> = ({
 
 						{/* 進捗共有ボタン */}
 						<ShareProgressButton
-							activeCharacter={activeCharacter}
+							activeCharacter={effectiveActiveCharacter}
 						/>
 
 						{/* 環境設定ボタン */}
@@ -149,7 +167,7 @@ export const Header: React.FC<HeaderProps> = ({
 								<User className={`${icon.md} ${icon.muted}`} />
 							)}
 							<span className={LAYOUT_TOKENS.header.collapsedButtonText}>
-								{activeCharacter?.name ?? 'キャラ未選択'}
+								{effectiveActiveCharacter?.name ?? 'キャラ未選択'}
 								{isSharedActive ? ' (共有)' : ''}
 							</span>
 							<ChevronDown className={LAYOUT_TOKENS.header.collapsedChevron(isOpen)} />
@@ -164,14 +182,14 @@ export const Header: React.FC<HeaderProps> = ({
 									<div className={LAYOUT_TOKENS.header.sectionHeader}>
 										キャラクター切替
 									</div>
-									{characters.map((char) => {
-										const isSelected = char.id === activeCharacter?.id;
+									{displayCharacters.map((char) => {
+										const isSelected = char.id === effectiveActiveCharacter?.id;
 										return (
 											<button
 												key={char.id}
 												type="button"
 												onClick={() => {
-													onSelectCharacter(char.id);
+													setActiveCharacter(char.id);
 													setIsOpen(false);
 												}}
 												className={
@@ -206,7 +224,7 @@ export const Header: React.FC<HeaderProps> = ({
 									{/* モバイルメニュー内 進捗共有 */}
 									<div className={LAYOUT_TOKENS.header.dropdownShareButtonWrapper}>
 										<ShareProgressButton
-											activeCharacter={activeCharacter}
+											activeCharacter={effectiveActiveCharacter}
 											className="w-full justify-center"
 										/>
 									</div>

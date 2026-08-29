@@ -2,12 +2,21 @@
  * ============================================================================
  * [FilePath] src/components/settings/SettingsModal.tsx
  * [Role] アプリケーションの環境設定・データ管理モーダル（固定サイズ版）
+ * 
+ * [概要]
+ * - UserDataContext から状態および操作関数を直接参照し、Props 伝播を削除
+ * - キャラクターの追加・変更・削除およびデータのインポート/エクスポート制御を提供
+ * 
+ * [依存関係・関連ファイル]
+ * - Context  : src/contexts/UserDataContext.tsx
+ * - タブ    : src/components/settings/CharacterTab.tsx, src/components/settings/DataTab.tsx
+ * - スタイル : src/styles/components/settingsStyles.ts
  * ============================================================================
  */
 
 import React, { useState } from 'react';
 import { X, User, Database } from 'lucide-react';
-import type { CharacterProgress } from '@/types/fishtracker';
+import { useUserDataContext } from '@/contexts/UserDataContext';
 import { CharacterTab } from './CharacterTab';
 import { DataTab } from './DataTab';
 import { SETTINGS_STYLES } from '@/styles/components/settingsStyles';
@@ -17,29 +26,23 @@ type TabType = 'character' | 'data';
 type SettingsModalProps = {
 	isOpen: boolean;
 	onClose: () => void;
-	characters: CharacterProgress[];
-	activeCharacterId: string;
-	onSelectCharacter: (id: string) => void;
-	onAddCharacter: (name: string) => void;
-	onRenameCharacter: (id: string, newName: string) => void;
-	onDeleteCharacter: (id: string) => void;
-	onExport: () => void;
-	onImport: (file: File) => Promise<boolean>;
 };
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({
 	isOpen,
 	onClose,
-	characters,
-	activeCharacterId,
-	onSelectCharacter,
-	onAddCharacter,
-	onRenameCharacter,
-	onDeleteCharacter,
-	onExport,
-	onImport,
 }) => {
 	const [activeTab, setActiveTab] = useState<TabType>('character');
+	const {
+		userData,
+		activeCharacterId,
+		setActiveCharacter,
+		addCharacter,
+		renameCharacter,
+		deleteCharacter,
+		exportData,
+		importData,
+	} = useUserDataContext();
 
 	if (!isOpen) return null;
 
@@ -63,8 +66,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 					<button
 						onClick={() => setActiveTab('character')}
 						className={`${SETTINGS_STYLES.tabNav.buttonBase} ${activeTab === 'character'
-								? SETTINGS_STYLES.tabNav.active
-								: SETTINGS_STYLES.tabNav.inactive
+							? SETTINGS_STYLES.tabNav.active
+							: SETTINGS_STYLES.tabNav.inactive
 							}`}
 					>
 						<User className="w-4 h-4" />
@@ -73,8 +76,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 					<button
 						onClick={() => setActiveTab('data')}
 						className={`${SETTINGS_STYLES.tabNav.buttonBase} ${activeTab === 'data'
-								? SETTINGS_STYLES.tabNav.active
-								: SETTINGS_STYLES.tabNav.inactive
+							? SETTINGS_STYLES.tabNav.active
+							: SETTINGS_STYLES.tabNav.inactive
 							}`}
 					>
 						<Database className="w-4 h-4" />
@@ -86,19 +89,19 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 				<div className={SETTINGS_STYLES.content}>
 					{activeTab === 'character' && (
 						<CharacterTab
-							characters={characters}
+							characters={userData.characters}
 							activeCharacterId={activeCharacterId}
-							onSelectCharacter={onSelectCharacter}
-							onAddCharacter={onAddCharacter}
-							onRenameCharacter={onRenameCharacter}
-							onDeleteCharacter={onDeleteCharacter}
+							onSelectCharacter={setActiveCharacter}
+							onAddCharacter={addCharacter}
+							onRenameCharacter={renameCharacter}
+							onDeleteCharacter={deleteCharacter}
 						/>
 					)}
 
 					{activeTab === 'data' && (
 						<DataTab
-							onExport={onExport}
-							onImport={onImport}
+							onExport={exportData}
+							onImport={importData}
 						/>
 					)}
 				</div>

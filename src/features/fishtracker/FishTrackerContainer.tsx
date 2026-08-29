@@ -3,7 +3,8 @@
  * [FilePath] src/features/fishtracker/FishTrackerContainer.tsx
  * [Role] 釣魚チェッカーのメイン画面用コンテナコンポーネント（共有キャラ対応版）
  * 
- * [調整内容]
+ * [概要]
+ * - UserDataContext から状態および操作関数を取得し、Props 伝播（バケツリレー）を廃止
  * - タブ切り替え（handleMainTabChange）時の URL クエリパラメータ（location.search）保持
  * - checkedFishIds の数値化・正規化ロジックの最適化と型安全性の向上
  * - 閲覧専用状態および未登録ガード判定のロジックを整理
@@ -16,35 +17,29 @@ import { toast } from 'sonner';
 
 import { FISHES } from '@/data/';
 import type { DisplayCharacterProgress } from '@/components/layout/Header';
+import { useUserDataContext } from '@/contexts/UserDataContext';
 import { SeoHead } from '@/components/common/SeoHead';
 import { FilterBar, type StatusFilter } from '@/features/fishtracker/FilterBar';
 import { FishTrackerContent } from '@/features/fishtracker/FishTrackerContent';
 import { useTrackerSeo } from '@/features/fishtracker/hooks/useTrackerSeo';
 import { useTrackerNavigation } from '@/features/fishtracker/hooks/useTrackerNavigation';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
-import type { MainTab, ViewMode } from '@/types/fishtracker';
+import type { MainTab } from '@/types/fishtracker';
 
-type FishTrackerContainerProps = {
-	activeCharacter?: DisplayCharacterProgress;
-	isRegistered: boolean;
-	viewMode: ViewMode;
-	setViewMode: (mode: ViewMode) => void;
-	toggleFishCheck: (fishId: number) => void;
-	onRequestRegistration: (message: string) => void;
-};
-
-export function FishTrackerContainer({
-	activeCharacter,
-	isRegistered,
-	viewMode,
-	setViewMode,
-	toggleFishCheck,
-	onRequestRegistration,
-}: FishTrackerContainerProps) {
+export function FishTrackerContainer() {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const { type, slug } = useParams<{ type?: string; slug?: string }>();
 	const [searchParams, setSearchParams] = useSearchParams();
+
+	const {
+		activeCharacter,
+		isRegistered,
+		viewMode,
+		setViewMode,
+		toggleFishCheck,
+		setRegistrationMessage: onRequestRegistration,
+	} = useUserDataContext();
 
 	const validTabs: MainTab[] = ['fish', 'bait', 'area'];
 	const mainTab = validTabs.includes(type as MainTab) ? (type as MainTab) : 'fish';
