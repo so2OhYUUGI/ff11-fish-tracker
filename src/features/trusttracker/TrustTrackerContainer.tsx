@@ -1,127 +1,141 @@
 /**
  * ============================================================================
  * [FilePath] src/features/trusttracker/TrustTrackerContainer.tsx
- * [Role]     フェイスチェッカーのメイン画面用コンテナコンポーネント
+ * [Role] フェイスチェッカー（TrustTracker）全体のメインコンテナ
  * 
  * [概要]
- * - フェイスチェッカーの3モード（フェイス一覧 / ウィッシュリスト / マクロ管理）のルーティング切替および状態管理
- * - URLパラメータ (:type) に基づく表示モード判定およびクエリ引き継ぎナビゲーション
- * - 魚チェッカー (FishTrackerContainer) の構造・規約に完全準拠
+ * - フィルターバー（FilterBar）とメインコンテンツ（TrustTrackerContent）の統合
+ * - 各種状態管理（サブタイプ切替、ステータスフィルター、検索クエリ、修得済みIDリスト）
+ * - FilterBar への渡す Props（totalTrustCount, activeCharacter）の整合性維持
  * 
  * [依存関係・関連ファイル]
- * - Context     : src/contexts/UserDataContext.tsx
- * - コンポーネント: src/components/common/SeoHead.tsx, src/features/trusttracker/FilterBar.tsx
- * - トークン    : src/styles/tokens/commonTokens.ts, src/styles/tokens/layoutTokens.ts
- * 
- * [編集・改修時の注意事項（AI/エンジニア共通指示）]
- * 1. 【サブタイプ判定】 URLパラメータ (:type) を正とし、不正値は 'trust' に安全にフォールバックすること
- * 2. 【クエリパラメータ保持】 モード切替時は location.search を引き継ぎ、検索状態やフィルタークエリを維持すること
- * 3. 【レイアウト一貫性】 stickyFilterBar 領域内で FilterBar コンポーネントを呼び出す構造を守ること
+ * - 型定義  : src/types/trusttracker.ts
+ * - 関連    : src/features/trusttracker/FilterBar.tsx
+ * - 関連    : src/features/trusttracker/TrustTrackerContent.tsx
  * ============================================================================
  */
 
-import { useCallback } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { Construction } from 'lucide-react';
-import { useUserDataContext } from '@/contexts/UserDataContext';
-import { SeoHead } from '@/components/common/SeoHead';
-import { FilterBar, SUBTYPE_CONFIG, type TrustSubtype } from '@/features/trusttracker/FilterBar';
-import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
-import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
+import React, { useState, useCallback, useMemo } from 'react';
+import type { TrustSubtype, StatusFilter, TrustMaster } from '@/types/trusttracker';
+import type { CharacterProgress } from '@/types/fishtracker';
+import { FilterBar } from './FilterBar';
+import { TrustTrackerContent } from './TrustTrackerContent';
 
-export function TrustTrackerContainer() {
-	const { type } = useParams<{ type?: string }>();
-	const navigate = useNavigate();
-	const location = useLocation();
-	const { activeCharacter } = useUserDataContext();
-	const { emptyState } = LAYOUT_TOKENS;
-
-	// 有効なサブタイプか判定し、不正な場合は 'trust' にフォールバック
-	const activeType: TrustSubtype =
-		type && type in SUBTYPE_CONFIG ? (type as TrustSubtype) : 'trust';
-
-	const currentConfig = SUBTYPE_CONFIG[activeType];
-	const CurrentIcon = currentConfig.icon;
-
-	// タブ切替ハンドラー（クエリパラメータ location.search を保持して遷移）
-	const handleTypeChange = useCallback(
-		(newType: TrustSubtype) => {
-			navigate(`/trusttracker/${newType}${location.search}`);
+// ※ 実際の運用時には src/data/trusts.ts 等からマスターデータをインポートします
+const MOCK_TRUSTS: TrustMaster[] = [
+	{
+		id: 896,
+		en: 'Shantotto',
+		ja: 'シャントット',
+		icon_id: 1029,
+		party_name: 'Shantotto',
+		job: '黒魔道士',
+		combatType: '魔法攻撃',
+		isLimited: false,
+		acquireInfo: '通常',
+		item: {
+			id: 0,
+			en: '',
+			ja: '盟-シャントット',
+			desc_jp: '',
+			desc_en: '',
 		},
-		[navigate, location.search]
+	},
+	{
+		id: 897,
+		en: 'Naji',
+		ja: 'ナジ',
+		icon_id: 1010,
+		party_name: 'Naji',
+		job: '戦士',
+		combatType: '近接物理',
+		isLimited: false,
+		acquireInfo: '新魔法フェイス（バストゥーク）',
+		item: {
+			id: 0,
+			en: '',
+			ja: '盟-ナジ',
+			desc_jp: '',
+			desc_en: '',
+		},
+	},
+	{
+		id: 898,
+		en: 'Kupipi',
+		ja: 'クピピ',
+		icon_id: 1038,
+		party_name: 'Kupipi',
+		job: '白魔道士',
+		combatType: '回復',
+		isLimited: false,
+		acquireInfo: '新魔法フェイス（ウィンダス）',
+		item: {
+			id: 0,
+			en: '',
+			ja: '盟-クピピ',
+			desc_jp: '',
+			desc_en: '',
+		},
+	},
+];
+
+export const TrustTrackerContainer: React.FC = () => {
+	// 1. サブタイプ（メインタブ）
+	const [activeType, setActiveType] = useState<TrustSubtype>('trust');
+
+	// 2. 修得ステータスフィルター
+	const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
+
+	// 3. 検索クエリ
+	const [searchQuery, setSearchQuery] = useState<string>('');
+
+	// 4. 修得済みフェイスIDリスト（動作テスト用状態）
+	const [checkedTrustIds, setCheckedTrustIds] = useState<number[]>([]);
+
+	// 修得トグル処理
+	const handleToggleCheck = useCallback((trustId: number) => {
+		setCheckedTrustIds((prev) =>
+			prev.includes(trustId) ? prev.filter((id) => id !== trustId) : [...prev, trustId]
+		);
+	}, []);
+
+	// FilterBar 互換用のダミーキャラクターオブジェクト（checkedFishIds に checkedTrustIds をマッピング）
+	const activeCharacter: CharacterProgress = useMemo(
+		() => ({
+			characterId: 'default',
+			characterName: 'メインキャラ',
+			checkedFishIds: checkedTrustIds,
+			checkedZoneIds: [],
+			checkedBaitIds: [],
+		}),
+		[checkedTrustIds]
 	);
 
 	return (
-		<>
-			<SeoHead
-				title={`FF11 フェイスチェッカー - ${currentConfig.label}`}
-				description="FF11のフェイス（Trust）修得状況を管理・共有できるチェッカーツールです。"
-				path={location.pathname}
+		<div className="w-full flex flex-col gap-4">
+			{/* 1. フィルターバー */}
+			<FilterBar
+				activeType={activeType}
+				onTypeChange={setActiveType}
+				activeCharacter={activeCharacter}
+				statusFilter={statusFilter}
+				onStatusFilterChange={setStatusFilter}
+				searchQuery={searchQuery}
+				onSearchQueryChange={setSearchQuery}
+				totalTrustCount={MOCK_TRUSTS.length}
 			/>
 
-			{/* 追従フィルターバー領域 */}
-			<div className={LAYOUT_TOKENS.header.stickyFilterBar}>
-				<FilterBar
+			{/* 2. メインコンテンツ領域 */}
+			<div className="flex-1 min-h-[500px]">
+				<TrustTrackerContent
 					activeType={activeType}
-					onTypeChange={handleTypeChange}
+					statusFilter={statusFilter}
+					searchQuery={searchQuery}
+					trusts={MOCK_TRUSTS}
+					checkedTrustIds={checkedTrustIds}
+					onToggleCheck={handleToggleCheck}
 				/>
 			</div>
-
-			{/* メインコンテンツ表示エリア（将来的に TrustTrackerContent へ分離） */}
-			<div className={LAYOUT_TOKENS.page.mainContainer}>
-				<div className={LAYOUT_TOKENS.view.emptyContainer}>
-					<div className={emptyState.wrapper}>
-						{/* メインアイコン */}
-						<div className={emptyState.iconBadge}>
-							<CurrentIcon className={emptyState.iconLarge} />
-						</div>
-
-						{/* タイトル */}
-						<h2 className={emptyState.title}>
-							<Construction className={emptyState.titleIcon} />
-							{currentConfig.label}（開発中）
-						</h2>
-
-						{/* サブテキスト */}
-						<p className={`${COMMON_TOKENS.text.subText} ${emptyState.description}`}>
-							{currentConfig.description}
-							<br />
-							現在選択中のモード: <span className="font-bold text-[var(--theme-text-accent)]">{activeType}</span> /
-							キャラクター: <span className={emptyState.characterName}>{activeCharacter?.name ?? 'ゲスト'}</span>
-						</p>
-
-						{/* モード別プロトタイプカード */}
-						<div className={emptyState.cardContainer}>
-							<div className={emptyState.cardHeader}>
-								【{currentConfig.label} モードの機能】
-							</div>
-							<ul className={emptyState.cardList}>
-								{activeType === 'trust' && (
-									<>
-										<li>全フェイスの修得済みチェック</li>
-										<li>ロール別・入手元別フィルタリング</li>
-										<li>詳細モーダル表示（入手クエスト・手順）</li>
-									</>
-								)}
-								{activeType === 'wishlist' && (
-									<>
-										<li>最大3パターンの目標リスト作成</li>
-										<li>優先度の高いフェイスの抽出・整理</li>
-										<li>URLでのウィッシュリスト共有機能</li>
-									</>
-								)}
-								{activeType === 'macro' && (
-									<>
-										<li>呼び出しマクロパターンの作成・保存</li>
-										<li>マイパーティ（呼出スロット5枠）の構成</li>
-										<li>ゲーム内貼り付け用マクロテキスト生成</li>
-									</>
-								)}
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-		</>
+		</div>
 	);
-}
+};

@@ -4,7 +4,8 @@
  * [Role]     リスト表示モード用の共通スタイル定義
  * 
  * [概要]
- * - リスト表示（FishListItem, AreaListItem, BaitListItem）における横並び高密度表示用スタイル
+ * - リスト表示（FishListItem, AreaListItem, BaitListItem, TrustListItem）における横並び高密度表示用スタイル
+ * - モードテーマ（data-theme="fish" / "trust"）に連動するCSS変数参照に対応
  * - モバイル（小画面）〜PC画面における幅・テキスト省略（truncate）領域のレスポンシブ最適化
  * 
  * [編集・改修時の注意事項（AI/エンジニア共通指示）]
@@ -22,15 +23,17 @@ export const LIST_STYLES = {
 	itemRow: 'flex items-center justify-between gap-2 sm:gap-3 cursor-pointer py-1.5 px-2 sm:py-2 sm:px-3 min-h-[44px]',
 	fishRow: 'flex items-center justify-between gap-2 sm:gap-3 cursor-pointer py-1.5 px-2 sm:py-2 sm:px-3 min-h-[44px]',
 	dimmed: 'opacity-70',
-	default: 'bg-slate-800/60 border-slate-700/60 hover:border-slate-500 hover:bg-slate-800 shadow-sm',
-	selected: COMMON_TOKENS.state.selected,
+
+	// テーマ変数対応（モードに応じた背景色・枠線色の切り替え）
+	default: 'bg-[var(--theme-container-bg)] border-[var(--theme-container-border)] hover:border-[var(--theme-accent-border)] hover:bg-[var(--theme-active-item-bg)] shadow-sm',
+	selected: 'bg-[var(--theme-active-item-bg)] border-[var(--theme-accent-border)] shadow-md',
 	checked: COMMON_TOKENS.state.checked,
 	empty: COMMON_TOKENS.state.empty,
 	selectedCheckedOpacity: 'opacity-90',
 
 	// 1b. インライン用リスト行（詳細パネル等で利用）
-	inlineBase: 'w-full text-left p-2.5 sm:p-3 rounded-lg bg-slate-800/60 border border-slate-700/50 flex items-center justify-between gap-2 min-h-[40px]',
-	inlineInteractive: 'cursor-pointer hover:bg-slate-800 transition-colors',
+	inlineBase: 'w-full text-left p-2.5 sm:p-3 rounded-lg bg-[var(--theme-container-bg)] border border-[var(--theme-container-border)] flex items-center justify-between gap-2 min-h-[40px]',
+	inlineInteractive: 'cursor-pointer hover:bg-[var(--theme-active-item-bg)] hover:border-[var(--theme-accent-border)] transition-colors',
 
 	// 2. レイアウトグループ（幅変動に対応した幅調整およびコンテナ）
 	leftGroupContainer: 'flex items-center gap-2.5 min-w-0 flex-1',
@@ -43,10 +46,11 @@ export const LIST_STYLES = {
 
 	// 3. タイトル・テキスト表現（レスポンシブフォント）
 	titleJa: `${COMMON_TOKENS.text.titleJa} text-xs sm:text-sm leading-tight`,
-	titleJaDefault: 'text-white group-hover:text-cyan-400',
+	titleJaDefault: 'text-white group-hover:text-[var(--theme-text-accent)]',
 	titleJaSelected: COMMON_TOKENS.entity.fish.textActive,
 	titleJaSelectedBait: COMMON_TOKENS.entity.bait.textActive,
 	titleJaSelectedArea: COMMON_TOKENS.entity.area.textActive,
+	titleJaSelectedTrust: 'text-[var(--theme-text-accent)] font-bold',
 	titleJaChecked: 'line-through text-slate-500',
 	titleEn: COMMON_TOKENS.text.titleEn,
 	subText: COMMON_TOKENS.text.subText,
@@ -58,20 +62,20 @@ export const LIST_STYLES = {
 
 	// 4. チェックボックス UI（モバイル用操作領域の維持）
 	checkboxBase: 'w-5 h-5 rounded border flex items-center justify-center transition-colors shrink-0 touch-manipulation',
-	checkboxDefault: 'border-slate-600 bg-slate-700/50 hover:border-slate-500 text-transparent',
+	checkboxDefault: 'border-slate-600 bg-slate-700/50 hover:border-[var(--theme-accent-border)] text-transparent',
 	checkboxChecked: 'bg-emerald-600 border-emerald-500 text-white shadow-sm',
 
-	// 5. インジケーター・バッジ（サイズ感の補正）
-	badge: 'shrink-0 flex items-center gap-1 text-[11px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 bg-slate-800/80 border border-slate-700/60 rounded text-slate-300 font-medium',
+	// 5. インジケーター・バッジ（テーマ対応補正）
+	badge: 'shrink-0 flex items-center gap-1 text-[11px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 bg-[var(--theme-badge-bg)] border border-[var(--theme-badge-border)] text-[var(--theme-badge-text)] rounded font-medium',
 	indicatorBase: 'shrink-0 flex items-center gap-1 text-[11px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 border rounded',
-	indicatorActive: 'shrink-0 flex items-center gap-1 text-[11px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 border rounded bg-slate-800/80 border-slate-700/60 text-slate-300',
+	indicatorActive: 'shrink-0 flex items-center gap-1 text-[11px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 border rounded bg-[var(--theme-badge-bg)] border-[var(--theme-badge-border)] text-[var(--theme-badge-text)]',
 	indicatorEmpty: `shrink-0 flex items-center gap-1 text-[11px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 border rounded ${COMMON_TOKENS.state.emptyBadge}`,
 	indicatorIcon: 'w-3 h-3 sm:w-3.5 sm:h-3.5',
-	indicatorIconActive: 'w-3 h-3 sm:w-3.5 sm:h-3.5 text-cyan-400',
+	indicatorIconActive: 'w-3 h-3 sm:w-3.5 sm:h-3.5 text-[var(--theme-text-accent)]',
 	indicatorIconEmpty: 'w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-500',
 
 	// 6. 生息エリア数バッジ（個別）
 	zoneCountBase: 'inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] sm:text-xs font-medium border shrink-0',
 	zoneCountSingle: 'bg-amber-950/50 text-amber-300 border-amber-800/40',
-	zoneCountMultiple: 'bg-slate-800/80 text-slate-300 border-slate-700/60',
+	zoneCountMultiple: 'bg-[var(--theme-container-bg)] text-slate-300 border-[var(--theme-container-border)]',
 } as const;
