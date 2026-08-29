@@ -5,7 +5,7 @@
  * 
  * [概要]
  * - App.tsx や AppRouter でのバケツリレー (Prop Drilling) を解消する
- * - useUserData / useSharedProgress を集約し、共有データのキャッシュや閲覧権限（canViewContainer）判定も含めて管理する
+ * - useUserData / useSharedProgress を集約し、閲覧権限（canViewContainer）判定も含めて管理する
  * 
  * [依存関係・関連ファイル]
  * - フック   : src/contexts/useUserData.ts, src/hooks/useSharedProgress.ts
@@ -14,13 +14,12 @@
  * 
  * [編集・改修時の注意事項（AI/エンジニア共通指示）]
  * 1. 【安全宣言】 Context 非依存の箇所で useUserDataContext を呼び出した場合は安全にエラーを出力させること
- * 2. 【既存挙動の完全維持】 isShared フラグの付与、共有キャラキャッシュ、URLクリーンアップ等の挙動を破壊しないこと
+ * 2. 【既存挙動の完全維持】 isShared フラグの付与、URLクリーンアップ等の挙動を破壊しないこと
  * 3. 【Fast Refresh対応】 ProviderコンポーネントとHookの同一ファイル共有のため eslint-disable-next-line 注記を維持すること
  * ============================================================================
  */
 
 import React, { createContext, useContext, useMemo, useEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import type { CharacterProgress, UserData, ViewMode } from '@/types/fishtracker';
 import { useUserData } from '@/contexts/useUserData';
 import { useSharedProgress } from '@/hooks/useSharedProgress';
@@ -82,19 +81,15 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 		importData,
 	} = userDataProps;
 
-	const { sharedProgress } = useSharedProgress();
-	const location = useLocation();
-	const navigate = useNavigate();
+	const { sharedProgress, clearSharedMode } = useSharedProgress();
 
 	const [registrationMessage, setRegistrationMessage] = useState<string | null>(null);
 
-	// 初回自動選択制御フラグ（エフェクト内のみで使用するため Ref のままで安全）
+	// 初回自動選択制御フラグ
 	const hasAutoSelectedSharedRef = useRef(false);
 
-	// 共有キャラクターデータのキャッシュ State
-	const [lastSharedChar, setLastSharedChar] = useState<DisplayCharacterProgress | null>(null);
-
-	const currentSharedCharacter = useMemo<DisplayCharacterProgress | null>(() => {
+	// sharedProgress から共有キャラクターを生成（純粋な派生値）
+	const activeSharedCharacter = useMemo<DisplayCharacterProgress | null>(() => {
 		if (!sharedProgress) return null;
 		return {
 			id: SHARED_GUEST_CHARACTER_ID,
@@ -105,21 +100,6 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 			isShared: true,
 		};
 	}, [sharedProgress]);
-
-	// sharedProgress（外部データ）が取得できた場合のみキャッシュStateを更新
-	useEffect(() => {
-		if (!sharedProgress) return;
-		setLastSharedChar({
-			id: SHARED_GUEST_CHARACTER_ID,
-			name: sharedProgress.characterName,
-			checkedFishIds: sharedProgress.checkedFishIds,
-			createdAt: sharedProgress.createdAt,
-			updatedAt: sharedProgress.createdAt,
-			isShared: true,
-		});
-	}, [sharedProgress]);
-
-	const activeSharedCharacter = currentSharedCharacter || lastSharedChar;
 
 	// 表示用キャラクター一覧
 	const displayCharacters = useMemo<DisplayCharacterProgress[]>(() => {
@@ -138,16 +118,9 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 			setLocalActiveCharacter(SHARED_GUEST_CHARACTER_ID);
 			setViewMode('list');
 			hasAutoSelectedSharedRef.current = true;
-
-			const searchParams = new URLSearchParams(location.search);
-			if (searchParams.has('share')) {
-				searchParams.delete('share');
-				const newSearch = searchParams.toString();
-				const newPath = location.pathname + (newSearch ? `?${newSearch}` : '');
-				navigate(newPath, { replace: true });
-			}
+			clearSharedMode();
 		}
-	}, [sharedProgress, location.pathname, location.search, navigate, setLocalActiveCharacter, setViewMode]);
+	}, [sharedProgress, setLocalActiveCharacter, setViewMode, clearSharedMode]);
 
 	// 現在選択中の表示キャラクター
 	const activeCharacter = useMemo<DisplayCharacterProgress>(() => {
@@ -164,11 +137,8 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 		return displayCharacters[0];
 	}, [userData.activeCharacterId, displayCharacters, localActiveCharacter]);
 
-	// 一覧ページの閲覧権限判定
-	const canViewContainer =
-		isRegistered ||
-		!!sharedProgress ||
-		(userData.activeCharacterId === SHARED_GUEST_CHARACTER_ID && !!lastSharedChar);
+	// 一覧ページの閲覧権限判定（未登録ユーザが共有リンク以外でアクセスした場合はランディングへ遷移させる）
+	const canViewContainer = isRegistered || !!activeSharedCharacter;
 
 	const handleCreateCharacterAndClose = (name: string) => {
 		const newChar = addCharacter(name);
