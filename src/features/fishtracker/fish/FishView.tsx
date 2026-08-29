@@ -18,7 +18,7 @@ import { findBySlug } from '@/utils/slug';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
 import type { TrackerNavStack } from '../FishTrackerContent';
 
-type Props = {
+type FishViewProps = {
 	fishes: FishMaster[];
 	zones: ZoneMaster[];
 	checkedFishIds: number[];
@@ -26,6 +26,12 @@ type Props = {
 	onToggleCheck: (fishId: number) => void;
 	navStack: TrackerNavStack;
 };
+
+type CurrentItem =
+	| { type: 'fish'; item: FishMaster }
+	| { type: 'area'; item: ZoneMaster }
+	| { type: 'bait'; item: BaitMaster }
+	| null;
 
 /**
  * モバイル（1024px未満）で詳細画面表示時に背面スクロールをロックするカスタムフック
@@ -58,20 +64,20 @@ export const FishView = ({
 	viewMode,
 	onToggleCheck,
 	navStack,
-}: Props) => {
+}: FishViewProps) => {
 	const { slug } = useParams<{ type?: string; slug?: string }>();
 	const { selectFromList, clear, pop, push } = navStack;
 
-	const currentItem = useMemo(() => {
+	const currentItem: CurrentItem = useMemo(() => {
 		if (!slug) return null;
 		const fish = findBySlug(FISHES, slug);
-		if (fish) return { type: 'fish' as const, item: fish };
+		if (fish) return { type: 'fish', item: fish };
 
 		const area = findBySlug(ZONES, slug);
-		if (area) return { type: 'area' as const, item: area };
+		if (area) return { type: 'area', item: area };
 
 		const bait = findBySlug(BAITS, slug);
-		if (bait) return { type: 'bait' as const, item: bait };
+		if (bait) return { type: 'bait', item: bait };
 
 		return null;
 	}, [slug]);
@@ -142,7 +148,7 @@ export const FishView = ({
 				<div className={LAYOUT_TOKENS.sidebar.stickyContainer}>
 					{currentItem.type === 'fish' && (
 						<FishDetailView
-							fish={currentItem.item as FishMaster}
+							fish={currentItem.item}
 							zones={zones}
 							isChecked={checkedSet.has(currentItem.item.id)}
 							onToggleCheck={onToggleCheck}
@@ -156,7 +162,7 @@ export const FishView = ({
 
 					{currentItem.type === 'area' && (
 						<AreaDetailView
-							area={currentItem.item as ZoneMaster}
+							area={currentItem.item}
 							allFishes={FISHES}
 							regionList={REGIONS}
 							checkedFishIds={checkedFishIds}
@@ -170,7 +176,7 @@ export const FishView = ({
 
 					{currentItem.type === 'bait' && (
 						<BaitDetailView
-							bait={currentItem.item as BaitMaster}
+							bait={currentItem.item}
 							allFishes={FISHES}
 							checkedFishIds={checkedFishIds}
 							onToggleCheck={onToggleCheck}

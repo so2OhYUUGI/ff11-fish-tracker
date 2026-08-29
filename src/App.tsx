@@ -26,7 +26,6 @@ function AppContent() {
     isRegistered,
     registrationMessage,
     setRegistrationMessage,
-    handleCreateCharacterAndClose,
   } = useUserDataContext();
 
   const [isEditorOpen, setIsEditorOpen] = useState(false);
@@ -44,8 +43,6 @@ function AppContent() {
       <OnboardingModal
         isOpen={(!isRegistered || !activeCharacter) && registrationMessage !== null}
         onClose={() => setRegistrationMessage(null)}
-        onCreateCharacter={handleCreateCharacterAndClose}
-        message={registrationMessage}
       />
 
       <SettingsModal

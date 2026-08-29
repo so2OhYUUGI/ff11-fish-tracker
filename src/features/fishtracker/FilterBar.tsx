@@ -49,7 +49,10 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 	viewMode,
 	onViewModeChange,
 }) => {
-	const checkedCount = activeCharacter?.checkedFishIds?.length ?? 0;
+	const checkedCount = Array.isArray(activeCharacter?.checkedFishIds)
+		? activeCharacter.checkedFishIds.length
+		: 0;
+
 	const progressPercent = useMemo(
 		() => (totalFishCount > 0 ? Math.round((checkedCount / totalFishCount) * 100) : 0),
 		[checkedCount, totalFishCount]
@@ -80,9 +83,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 	return (
 		<div className={FILTER_BAR_STYLES.container}>
 			<div className={FILTER_BAR_STYLES.inner}>
-				{/* 左側: メイン切り替え（魚 / 餌 / エリア） & ステータスフィルター */}
+				{/* 左側: メイン切り替え & ステータスフィルター */}
 				<div className={FILTER_BAR_STYLES.leftGroup}>
-					{/* 魚/餌/エリア切り替えタブ */}
 					<div className={FILTER_BAR_STYLES.tabContainer}>
 						{TAB_CONFIG.map(({ id, label, icon: Icon }) => (
 							<button
@@ -101,7 +103,6 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 						))}
 					</div>
 
-					{/* ステータスフィルター（魚表示時のみ有効） */}
 					{mainTab === 'fish' && (
 						<div className={FILTER_BAR_STYLES.filterContainer}>
 							<button
@@ -138,7 +139,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 					)}
 				</div>
 
-				{/* 中央: 達成率表示領域（魚タブ選択時のみ表示） */}
+				{/* 中央: 達成率表示領域 */}
 				{mainTab === 'fish' ? (
 					<div className={FILTER_BAR_STYLES.progressGroup}>
 						<div className={FILTER_BAR_STYLES.progressTextContainer}>
@@ -160,7 +161,6 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 
 				{/* 右側: 検索 & 表示モード切り替え */}
 				<div className={FILTER_BAR_STYLES.rightGroup}>
-					{/* 検索入力フォーム */}
 					<div className={FILTER_BAR_STYLES.searchContainer}>
 						<Search className={FILTER_BAR_STYLES.searchIcon} />
 						<input
@@ -183,7 +183,6 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 						)}
 					</div>
 
-					{/* カード/リスト表示切替ボタン */}
 					<div className={FILTER_BAR_STYLES.viewModeContainer}>
 						<button
 							type="button"

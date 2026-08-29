@@ -1,25 +1,29 @@
+/**
+ * ============================================================================
+ * [FilePath] src/components/settings/CharacterTab.tsx
+ * [Role] キャラクター一覧・切替・編集タブコンポーネント
+ * 
+ * [概要]
+ * - UserDataContext からキャラクター情報および各種操作関数を直接参照
+ * ============================================================================
+ */
+
 import React, { useState } from 'react';
 import { UserPlus, Edit2, Trash2, Check, X, User } from 'lucide-react';
+import { useUserDataContext } from '@/contexts/UserDataContext';
 import type { CharacterProgress } from '@/types/fishtracker';
 import { SETTINGS_STYLES } from '@/styles/components/settingsStyles';
 
-type CharacterTabProps = {
-	characters: CharacterProgress[];
-	activeCharacterId: string;
-	onSelectCharacter: (id: string) => void;
-	onAddCharacter: (name: string) => void;
-	onRenameCharacter: (id: string, newName: string) => void;
-	onDeleteCharacter: (id: string) => void;
-};
+export const CharacterTab: React.FC = () => {
+	const {
+		userData,
+		activeCharacterId,
+		setActiveCharacter,
+		addCharacter,
+		renameCharacter,
+		deleteCharacter,
+	} = useUserDataContext();
 
-export const CharacterTab: React.FC<CharacterTabProps> = ({
-	characters,
-	activeCharacterId,
-	onSelectCharacter,
-	onAddCharacter,
-	onRenameCharacter,
-	onDeleteCharacter,
-}) => {
 	const [editingId, setEditingId] = useState<string | null>(null);
 	const [editingName, setEditingName] = useState('');
 	const [newCharName, setNewCharName] = useState('');
@@ -30,7 +34,7 @@ export const CharacterTab: React.FC<CharacterTabProps> = ({
 	const handleAddCharacter = (e: React.FormEvent) => {
 		e.preventDefault();
 		if (!newCharName.trim()) return;
-		onAddCharacter(newCharName.trim());
+		addCharacter(newCharName.trim());
 		setNewCharName('');
 		setIsAdding(false);
 	};
@@ -42,7 +46,7 @@ export const CharacterTab: React.FC<CharacterTabProps> = ({
 
 	const handleSaveRename = (id: string) => {
 		if (editingName.trim()) {
-			onRenameCharacter(id, editingName.trim());
+			renameCharacter(id, editingName.trim());
 		}
 		setEditingId(null);
 	};
@@ -96,7 +100,7 @@ export const CharacterTab: React.FC<CharacterTabProps> = ({
 			)}
 
 			<div className={styles.listContainer}>
-				{characters.map((char) => {
+				{userData.characters.map((char) => {
 					const isActive = char.id === activeCharacterId;
 					const isEditing = editingId === char.id;
 
@@ -140,7 +144,7 @@ export const CharacterTab: React.FC<CharacterTabProps> = ({
 												}`}
 										/>
 										<button
-											onClick={() => onSelectCharacter(char.id)}
+											onClick={() => setActiveCharacter(char.id)}
 											className={`${styles.nameButtonBase} ${isActive ? styles.nameButtonActive : styles.nameButtonInactive
 												}`}
 										>
@@ -162,10 +166,10 @@ export const CharacterTab: React.FC<CharacterTabProps> = ({
 											<Edit2 className="w-3.5 h-3.5" />
 										</button>
 										<button
-											onClick={() => onDeleteCharacter(char.id)}
-											disabled={characters.length <= 1}
+											onClick={() => deleteCharacter(char.id)}
+											disabled={userData.characters.length <= 1}
 											className={styles.deleteActionButton}
-											title={characters.length <= 1 ? '最後の1キャラは削除できません' : '削除'}
+											title={userData.characters.length <= 1 ? '最後の1キャラは削除できません' : '削除'}
 										>
 											<Trash2 className="w-3.5 h-3.5" />
 										</button>

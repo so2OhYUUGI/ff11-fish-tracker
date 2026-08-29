@@ -4,19 +4,13 @@
  * [Role] アプリケーションの環境設定・データ管理モーダル（固定サイズ版）
  * 
  * [概要]
- * - UserDataContext から状態および操作関数を直接参照し、Props 伝播を削除
- * - キャラクターの追加・変更・削除およびデータのインポート/エクスポート制御を提供
- * 
- * [依存関係・関連ファイル]
- * - Context  : src/contexts/UserDataContext.tsx
- * - タブ    : src/components/settings/CharacterTab.tsx, src/components/settings/DataTab.tsx
- * - スタイル : src/styles/components/settingsStyles.ts
+ * - タブ表示の切り替えおよびモーダル自体の開閉処理のみを保持
+ * - タブ配下のコンポーネントへの Props 伝播を削除
  * ============================================================================
  */
 
 import React, { useState } from 'react';
 import { X, User, Database } from 'lucide-react';
-import { useUserDataContext } from '@/contexts/UserDataContext';
 import { CharacterTab } from './CharacterTab';
 import { DataTab } from './DataTab';
 import { SETTINGS_STYLES } from '@/styles/components/settingsStyles';
@@ -33,16 +27,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 	onClose,
 }) => {
 	const [activeTab, setActiveTab] = useState<TabType>('character');
-	const {
-		userData,
-		activeCharacterId,
-		setActiveCharacter,
-		addCharacter,
-		renameCharacter,
-		deleteCharacter,
-		exportData,
-		importData,
-	} = useUserDataContext();
 
 	if (!isOpen) return null;
 
@@ -87,23 +71,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
 				{/* タブコンテンツ */}
 				<div className={SETTINGS_STYLES.content}>
-					{activeTab === 'character' && (
-						<CharacterTab
-							characters={userData.characters}
-							activeCharacterId={activeCharacterId}
-							onSelectCharacter={setActiveCharacter}
-							onAddCharacter={addCharacter}
-							onRenameCharacter={renameCharacter}
-							onDeleteCharacter={deleteCharacter}
-						/>
-					)}
-
-					{activeTab === 'data' && (
-						<DataTab
-							onExport={exportData}
-							onImport={importData}
-						/>
-					)}
+					{activeTab === 'character' && <CharacterTab />}
+					{activeTab === 'data' && <DataTab />}
 				</div>
 
 				{/* フッター */}

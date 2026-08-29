@@ -57,7 +57,6 @@ export const Header: React.FC<HeaderProps> = ({
 		};
 	}, [activeCharacter]);
 
-	// 外側クリックおよびEscキーによるメニュー閉鎖対応
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
 			if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -101,9 +100,8 @@ export const Header: React.FC<HeaderProps> = ({
 						</div>
 					</div>
 
-					{/* --- 【パターンA】画面が広い時（sm / 640px以上） --- */}
+					{/* デスクトップナビゲーション */}
 					<div className={LAYOUT_TOKENS.header.desktopNav}>
-						{/* キャラクター切り替え */}
 						<div className={LAYOUT_TOKENS.header.selectGroup}>
 							<label htmlFor="char-select" className={COMMON_TOKENS.text.label}>
 								キャラ:
@@ -122,12 +120,8 @@ export const Header: React.FC<HeaderProps> = ({
 							</select>
 						</div>
 
-						{/* 進捗共有ボタン */}
-						<ShareProgressButton
-							activeCharacter={effectiveActiveCharacter}
-						/>
+						<ShareProgressButton activeCharacter={effectiveActiveCharacter} />
 
-						{/* 環境設定ボタン */}
 						<button
 							type="button"
 							onClick={onOpenSettings}
@@ -138,7 +132,6 @@ export const Header: React.FC<HeaderProps> = ({
 							設定
 						</button>
 
-						{/* 開発環境用マスター編集ボタン */}
 						{isDev && onOpenMasterEditor && (
 							<button
 								type="button"
@@ -152,7 +145,7 @@ export const Header: React.FC<HeaderProps> = ({
 						)}
 					</div>
 
-					{/* --- 【パターンB】画面が狭い時（sm未満 / 640px未満） --- */}
+					{/* モバイルナビゲーション */}
 					<div className={LAYOUT_TOKENS.header.mobileNav} ref={menuRef}>
 						<button
 							type="button"
@@ -173,11 +166,8 @@ export const Header: React.FC<HeaderProps> = ({
 							<ChevronDown className={LAYOUT_TOKENS.header.collapsedChevron(isOpen)} />
 						</button>
 
-						{/* ドロップダウンメニュー */}
 						{isOpen && (
 							<div className={LAYOUT_TOKENS.header.dropdownContainer}>
-
-								{/* キャラクター選択セクション */}
 								<div className={LAYOUT_TOKENS.header.dropdownSection}>
 									<div className={LAYOUT_TOKENS.header.sectionHeader}>
 										キャラクター切替
@@ -215,13 +205,10 @@ export const Header: React.FC<HeaderProps> = ({
 									})}
 								</div>
 
-								{/* システム・共有セクション */}
 								<div className={LAYOUT_TOKENS.header.dropdownDividerSection}>
 									<div className={LAYOUT_TOKENS.header.sectionHeader}>
 										アクション
 									</div>
-
-									{/* モバイルメニュー内 進捗共有 */}
 									<div className={LAYOUT_TOKENS.header.dropdownShareButtonWrapper}>
 										<ShareProgressButton
 											activeCharacter={effectiveActiveCharacter}
@@ -232,8 +219,6 @@ export const Header: React.FC<HeaderProps> = ({
 									<div className={LAYOUT_TOKENS.header.sectionHeader}>
 										システム
 									</div>
-
-									{/* 環境設定ボタン */}
 									<button
 										type="button"
 										onClick={() => {
@@ -246,7 +231,6 @@ export const Header: React.FC<HeaderProps> = ({
 										環境設定・データ管理
 									</button>
 
-									{/* 開発環境用マスター編集ボタン */}
 									{isDev && onOpenMasterEditor && (
 										<button
 											type="button"
@@ -261,7 +245,6 @@ export const Header: React.FC<HeaderProps> = ({
 										</button>
 									)}
 								</div>
-
 							</div>
 						)}
 					</div>

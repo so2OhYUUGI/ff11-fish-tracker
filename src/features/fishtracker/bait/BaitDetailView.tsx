@@ -1,68 +1,70 @@
 /**
  * ============================================================================
  * [FilePath] src/features/fishtracker/bait/BaitDetailView.tsx
- * [Role] 餌の詳細情報表示コンポーネント
+ * [Role] 餌詳細情報表示コンポーネント
  * 
  * [概要]
  * - 共通ヘッダーコンポーネント（`DetailHeader`）を利用してヘッダー部分を統一
- * - ヘッダー（餌名・共有）を固定し、コンテンツ部分全体を独立スクロール表示
- * - `@/data` の中間マスタを参照し、その餌で釣れる魚の一覧を抽出・描画
- * - 釣れる魚一覧の各行を統合作成した FishListItem（variant="inline"）へ置き換え
- * - 全スタイルの参照を `DETAIL_STYLES` および `COMMON_TOKENS` へ完全集約
+ * - ヘッダー（餌名・システム属性）を固定し、コンテンツ部分全体を独立スクロール表示
+ * - 該当する餌で釣れる魚一覧（釣獲チェック状態、スキル上限、サイズ区分）を表示
+ * - 魚タグ・カードクリックによる魚詳細画面（`FishDetailView`）への相互遷移サポート
+ * - 説明文（`description`）の表示
+ * - 全スタイルの参照を `DETAIL_STYLES` / `DETAIL_TABLE_STYLES` および `COMMON_TOKENS` へ完全移行
  * ============================================================================
  */
 
 import React, { useMemo } from 'react';
-import { Utensils, Fish } from 'lucide-react';
+import { Anchor, CheckSquare, Square } from 'lucide-react';
 import type { BaitMaster, FishMaster } from '@/types/fishtracker';
 import { FISH_BAIT_RELATIONS } from '@/data';
 import { DETAIL_STYLES } from '@/styles/components/detailStyles';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 import { DetailHeader } from '@/features/fishtracker/common/DetailHeader';
-import { FishListItem } from '@/features/fishtracker/fish/FishListItem';
+import { SkillBadge, SizeBadge } from '@/features/fishtracker/common/FishBadges';
 
 type BaitDetailViewProps = {
-	bait: BaitMaster | null;
+	bait: BaitMaster;
 	allFishes: FishMaster[];
-	checkedFishIds?: number[];
+	checkedFishIds: number[];
+	onToggleCheck: (fishId: number) => void;
 	onClose: () => void;
 	onBack?: () => void;
 	canGoBack?: boolean;
-	onToggleCheck?: (fishId: number) => void;
 	onClickFishDetail?: (fish: FishMaster) => void;
 };
 
 export const BaitDetailView: React.FC<BaitDetailViewProps> = ({
 	bait,
 	allFishes,
-	checkedFishIds = [],
+	checkedFishIds,
+	onToggleCheck,
 	onClose,
 	onBack,
 	canGoBack = false,
-	onToggleCheck,
 	onClickFishDetail,
 }) => {
+	const checkedSet = useMemo(() => new Set(checkedFishIds), [checkedFishIds]);
+
+	// 1. この餌で釣れる魚の抽出（メモ化）
 	const targetFishes = useMemo(() => {
-		if (!bait) return [];
 		const targetFishIds = new Set(
 			FISH_BAIT_RELATIONS
 				.filter((rel) => rel.baitId === bait.id)
 				.map((rel) => rel.fishId)
 		);
 		return allFishes.filter((fish) => targetFishIds.has(fish.id));
-	}, [bait, allFishes]);
+	}, [bait.id, allFishes]);
 
-	// チェック済み判定用の高速照合用 Set
-	const checkedSet = useMemo(() => new Set(checkedFishIds), [checkedFishIds]);
+	// 2. 釣獲達成度の算出
+	const checkedCount = useMemo(() => {
+		return targetFishes.filter((fish) => checkedSet.has(fish.id)).length;
+	}, [targetFishes, checkedSet]);
 
-	if (!bait) {
-		return (
-			<div className={DETAIL_STYLES.emptyDetailContainer}>
-				<Utensils className={DETAIL_STYLES.emptyIcon} />
-				<p className={DETAIL_STYLES.emptyText}>リストから餌を選択すると詳細が表示されます</p>
-			</div>
-		);
-	}
+	// 3. 改行コード（\n および \\n）で分割した説明文行リスト
+	const descriptionLines = useMemo(() => {
+		if (!bait.description) return [];
+		return bait.description.split(/\r?\n|\\n/);
+	}, [bait.description]);
 
 	return (
 		<div className={DETAIL_STYLES.panelBase}>
@@ -70,8 +72,8 @@ export const BaitDetailView: React.FC<BaitDetailViewProps> = ({
 			<DetailHeader
 				titleJa={bait.ja}
 				titleEn={bait.en}
-				categoryName="エサ"
-				icon={<Utensils className={`w-5 h-5 shrink-0 ${COMMON_TOKENS.entity.bait.text}`} />}
+				categoryName="餌"
+				icon={<Anchor className={`w-5 h-5 shrink-0 ${COMMON_TOKENS.entity.bait.text}`} />}
 				canGoBack={canGoBack}
 				onBack={onBack}
 				onClose={onClose}
@@ -79,10 +81,69 @@ export const BaitDetailView: React.FC<BaitDetailViewProps> = ({
 
 			{/* 2. 一括スクロール可能なコンテンツ領域 */}
 			<div className={DETAIL_STYLES.scrollContent}>
+				{/* 基本情報・釣獲進捗ステータス */}
+				<div>
+					<h3 className={DETAIL_STYLES.sectionTitle}>基本情報</h3>
+					<div className="flex items-center gap-3 text-sm text-slate-300">
+						<span>対象魚数: <strong className="text-white">{targetFishes.length}</strong> 種類</span>
+						<span>・</span>
+						<span>釣獲済み: <strong className="text-emerald-400">{checkedCount}</strong> / {targetFishes.length}</span>
+					</div>
+				</div>
+
+				{/* 釣れる魚一覧 */}
+				<div>
+					<h3 className={DETAIL_STYLES.sectionTitle}>
+						釣れる魚 ({targetFishes.length} 種類)
+					</h3>
+					{targetFishes.length > 0 ? (
+						<div className="space-y-2">
+							{targetFishes.map((fish) => {
+								const isChecked = checkedSet.has(fish.id);
+								return (
+									<div
+										key={fish.id}
+										className="flex items-center justify-between p-2.5 rounded-lg bg-slate-800/60 border border-slate-700/50 hover:border-slate-600 transition-colors"
+									>
+										<div className="flex items-center gap-2.5 min-w-0">
+											<button
+												type="button"
+												onClick={() => onToggleCheck(fish.id)}
+												className="p-1 text-slate-400 hover:text-white transition-colors shrink-0"
+												aria-label={`${fish.ja}のチェック状態切り替え`}
+											>
+												{isChecked ? (
+													<CheckSquare className="w-5 h-5 text-emerald-400" />
+												) : (
+													<Square className="w-5 h-5 text-slate-500" />
+												)}
+											</button>
+											<button
+												type="button"
+												onClick={() => onClickFishDetail?.(fish)}
+												className="text-left font-medium text-slate-200 hover:text-cyan-300 transition-colors truncate"
+											>
+												{fish.ja}
+											</button>
+										</div>
+
+										<div className="flex items-center gap-1.5 shrink-0 ml-2">
+											<SkillBadge maxSkill={fish.maxSkill} />
+											<SizeBadge sizeType={fish.sizeType} />
+										</div>
+									</div>
+								);
+							})}
+						</div>
+					) : (
+						<p className={DETAIL_STYLES.emptyText}>この餌で釣れる魚のデータがありません</p>
+					)}
+				</div>
+
 				{/* 説明文 */}
-				{bait.description && (
+				{descriptionLines.length > 0 && (
 					<div className={DETAIL_STYLES.descriptionBox}>
-						{bait.description.split(/\r?\n|\\n/).map((line, index) => (
+						{descriptionLines.map((line, index) => (
 							<React.Fragment key={`${index}-${line.slice(0, 10)}`}>
 								{index > 0 && <br />}
 								{line}
@@ -90,31 +151,6 @@ export const BaitDetailView: React.FC<BaitDetailViewProps> = ({
 						))}
 					</div>
 				)}
-
-				{/* 釣れる魚一覧 */}
-				<div>
-					<h3 className={`${DETAIL_STYLES.sectionTitle} flex items-center gap-2`}>
-						<Fish className={`w-4 h-4 shrink-0 ${COMMON_TOKENS.entity.fish.text}`} />
-						<span>対象の魚 ({targetFishes.length} 種)</span>
-					</h3>
-
-					{targetFishes.length > 0 ? (
-						<div className={DETAIL_STYLES.relatedList}>
-							{targetFishes.map((fish) => (
-								<FishListItem
-									key={fish.id}
-									fish={fish}
-									variant="inline"
-									isChecked={checkedSet.has(fish.id)}
-									onToggleCheck={onToggleCheck}
-									onClickDetail={onClickFishDetail}
-								/>
-							))}
-						</div>
-					) : (
-						<p className={DETAIL_STYLES.emptyText}>対象の魚データがありません</p>
-					)}
-				</div>
 			</div>
 		</div>
 	);

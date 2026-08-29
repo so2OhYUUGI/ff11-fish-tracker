@@ -8,7 +8,7 @@
  * - `AreaCard` と統一されたカードレイアウト（上段:名称 / 中段:説明文 / 下段:対象魚）
  * - 該当の餌で釣れる魚の抽出および上限数制限付きタグ表示（上位表示＋残り件数バッジ）
  * - 全スタイルの参照を `CARD_STYLES` へ完全移行
- * - キーボード操作時のアクセシビリティ対応を追加
+ * - キーボード操作時のアクセシビリティ対応
  * ============================================================================
  */
 
@@ -79,6 +79,7 @@ export const BaitCard: React.FC<BaitCardProps> = ({
 			onClick={handleClick}
 			onKeyDown={handleKeyDown}
 			aria-label={`${bait.ja}の詳細を表示`}
+			aria-selected={isSelected}
 			className={`${CARD_STYLES.base} ${isSelected ? CARD_STYLES.selected : CARD_STYLES.default
 				} ${CARD_STYLES.cardWrapper}`}
 		>

@@ -79,28 +79,29 @@ export const AreaDetailView: React.FC<AreaDetailViewProps> = ({
 				globalFishIds.add(fish.id);
 			} else {
 				loc.subLocationIds.forEach((subId) => {
-					if (subMap.has(subId)) {
-						subMap.get(subId)!.add(fish.id);
+					const targetSubSet = subMap.get(subId);
+					if (targetSubSet) {
+						targetSubSet.add(fish.id);
 					}
 				});
 			}
 		});
 
 		const sortFish = (fishes: FishMaster[]) =>
-			fishes.sort((a, b) => (a.maxSkill ?? 0) - (b.maxSkill ?? 0));
+			[...fishes].sort((a, b) => (a.maxSkill ?? 0) - (b.maxSkill ?? 0));
 
 		const globalFishes = sortFish(
 			Array.from(globalFishIds)
-				.map((id) => fishMap.get(id)!)
-				.filter(Boolean)
+				.map((id) => fishMap.get(id))
+				.filter((fish): fish is FishMaster => fish !== undefined)
 		);
 
 		const subLocationGroupedFishes = zoneSubLocations.map((sub) => {
 			const fishIds = subMap.get(sub.id) || new Set();
 			const fishes = sortFish(
 				Array.from(fishIds)
-					.map((id) => fishMap.get(id)!)
-					.filter(Boolean)
+					.map((id) => fishMap.get(id))
+					.filter((fish): fish is FishMaster => fish !== undefined)
 			);
 			return {
 				subLocation: sub,

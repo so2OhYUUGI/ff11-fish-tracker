@@ -9,7 +9,7 @@
  * - FISH_LOCATIONS から生息エリア数を算出し、MapPin アイコンとともに右端属性領域にバッジ表示
  * - 属性情報（生息エリア数・上限スキル・サイズ・水質）の全表示を統一
  * - `variant` Props（'default' | 'inline'）によりメイン一覧用と詳細画面インライン用のスタイル切替に対応
- * - 獲得/達成状態（チェック状態）のチェックボックス描画およびトグル操作
+ * - 釣獲/達成状態（チェック状態）のチェックボックス描画およびトグル操作
  * - チェック済・選択中（アクティブ）・デフォルト状態に応じたスタイリング切り替え
  * ============================================================================
  */
@@ -141,8 +141,8 @@ export const FishListItem: React.FC<Props> = ({
 						onClick={handleToggleClick}
 						className={`${LIST_STYLES.checkboxBase} ${isChecked ? LIST_STYLES.checkboxChecked : LIST_STYLES.checkboxDefault
 							}`}
-						title={isChecked ? '未獲得にする' : '獲得済みにする'}
-						aria-label={`${fish.ja}の獲得状態の切り替え（現在: ${isChecked ? '獲得済み' : '未獲得'}）`}
+						title={isChecked ? '未釣獲にする' : '釣獲済みにする'}
+						aria-label={`${fish.ja}の釣獲状態の切り替え（現在: ${isChecked ? '釣獲済み' : '未釣獲'}）`}
 						aria-pressed={isChecked}
 					>
 						{isChecked && <Check className="w-4 h-4 stroke-3" />}

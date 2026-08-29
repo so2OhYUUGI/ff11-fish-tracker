@@ -41,7 +41,6 @@ export const FishCard: React.FC<FishCardProps> = ({
 	onToggleCheck,
 	onClickDetail,
 }) => {
-	// 生息エリア情報の抽出（メモ化）
 	const { matchedZones, totalZones } = useMemo(() => {
 		const targetZoneIds = new Set(
 			FISH_LOCATIONS
@@ -63,7 +62,6 @@ export const FishCard: React.FC<FishCardProps> = ({
 		(fish.harakiriItems && fish.harakiriItems.length > 0) || fish.harakiriTitle
 	);
 
-	// 改行コード（\n および \\n）で分割した説明文行リスト
 	const descriptionLines = useMemo(() => {
 		if (!fish.description) return [];
 		return fish.description.split(/\r?\n|\\n/);
@@ -104,7 +102,6 @@ export const FishCard: React.FC<FishCardProps> = ({
 		>
 			<div className="flex items-start justify-between gap-3">
 				<div className="flex-1 min-w-0">
-					{/* 日本語名と英語名 */}
 					<div className="flex flex-col min-w-0">
 						<h3
 							className={`truncate ${CARD_STYLES.titleJa} ${isSelected
@@ -119,7 +116,6 @@ export const FishCard: React.FC<FishCardProps> = ({
 						</span>
 					</div>
 
-					{/* 説明文 */}
 					{descriptionLines.length > 0 && (
 						<div className={CARD_STYLES.boxBlock}>
 							{descriptionLines.map((line, index) => (
@@ -131,7 +127,6 @@ export const FishCard: React.FC<FishCardProps> = ({
 						</div>
 					)}
 
-					{/* タグ・属性バッジ領域 */}
 					<div className="flex flex-wrap items-center gap-1.5 mt-2">
 						<span className={`${BADGE_BASE_STYLE} ${FISH_STYLES.badgeSkill}`}>
 							上限: {fish.maxSkill}
@@ -143,7 +138,6 @@ export const FishCard: React.FC<FishCardProps> = ({
 						{fish.taikobou && <FlagBadge type="taikobou" />}
 					</div>
 
-					{/* 生息エリア */}
 					<div className={CARD_STYLES.targetLabelGroup}>
 						<div className={CARD_STYLES.targetLabel}>
 							<MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
@@ -175,7 +169,6 @@ export const FishCard: React.FC<FishCardProps> = ({
 						)}
 					</div>
 
-					{/* 備考 */}
 					{fish.notes && (
 						<div className={CARD_STYLES.notesBlock}>
 							<Info className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
@@ -184,7 +177,6 @@ export const FishCard: React.FC<FishCardProps> = ({
 					)}
 				</div>
 
-				{/* 獲得状態切り替えボタン */}
 				<div className="shrink-0 pt-1">
 					<button
 						type="button"

@@ -19,7 +19,7 @@ import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
 import { CARD_STYLES } from '@/styles/components/cardStyles';
 import type { TrackerNavStack } from '../FishTrackerContent';
 
-type Props = {
+type AreaViewProps = {
 	areas: ZoneMaster[];
 	allFishes: FishMaster[];
 	checkedFishIds: number[];
@@ -32,6 +32,12 @@ type RegionGroup = {
 	region: RegionMaster;
 	areas: ZoneMaster[];
 };
+
+type CurrentItem =
+	| { type: 'fish'; item: FishMaster }
+	| { type: 'area'; item: ZoneMaster }
+	| { type: 'bait'; item: BaitMaster }
+	| null;
 
 /**
  * モバイル（1024px未満）で詳細画面表示時に背面スクロールをロックするカスタムフック
@@ -64,20 +70,20 @@ export const AreaView = ({
 	viewMode,
 	onToggleCheck,
 	navStack,
-}: Props) => {
+}: AreaViewProps) => {
 	const { slug } = useParams<{ type?: string; slug?: string }>();
 	const { selectFromList, push, pop, clear, canGoBack } = navStack;
 
-	const currentItem = useMemo(() => {
+	const currentItem: CurrentItem = useMemo(() => {
 		if (!slug) return null;
 		const fish = findBySlug(FISHES, slug);
-		if (fish) return { type: 'fish' as const, item: fish };
+		if (fish) return { type: 'fish', item: fish };
 
 		const area = findBySlug(ZONES, slug);
-		if (area) return { type: 'area' as const, item: area };
+		if (area) return { type: 'area', item: area };
 
 		const bait = findBySlug(BAITS, slug);
-		if (bait) return { type: 'bait' as const, item: bait };
+		if (bait) return { type: 'bait', item: bait };
 
 		return null;
 	}, [slug]);
@@ -204,7 +210,7 @@ export const AreaView = ({
 				<div className={LAYOUT_TOKENS.sidebar.stickyContainer}>
 					{currentItem.type === 'area' && (
 						<AreaDetailView
-							area={currentItem.item as ZoneMaster}
+							area={currentItem.item}
 							allFishes={allFishes}
 							regionList={REGIONS}
 							checkedFishIds={checkedFishIds}
@@ -218,7 +224,7 @@ export const AreaView = ({
 
 					{currentItem.type === 'fish' && (
 						<FishDetailView
-							fish={currentItem.item as FishMaster}
+							fish={currentItem.item}
 							zones={ZONES}
 							isChecked={checkedSet.has(currentItem.item.id)}
 							onToggleCheck={onToggleCheck}
@@ -232,7 +238,7 @@ export const AreaView = ({
 
 					{currentItem.type === 'bait' && (
 						<BaitDetailView
-							bait={currentItem.item as BaitMaster}
+							bait={currentItem.item}
 							allFishes={allFishes}
 							checkedFishIds={checkedFishIds}
 							onToggleCheck={onToggleCheck}

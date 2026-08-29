@@ -8,7 +8,7 @@
  * - 餌名称（縦並び）、説明文（中央横並び）、釣れる魚の総数バッジ（右端）を配置
  * - 親から受け取った `fishCount`（釣れる魚の件数）をバッジ描画
  * - 全スタイルの参照を `LIST_STYLES` / `COMMON_TOKENS` へ完全移行
- * - アクセシビリティ（キーボード操作対応）の強化
+ * - アクセシビリティ（キーボード操作対応、`aria-selected` 属性追加）の強化
  * ============================================================================
  */
 
@@ -18,17 +18,17 @@ import type { BaitMaster } from '@/types/fishtracker';
 import { LIST_STYLES } from '@/styles/components/listStyles';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 
-type Props = {
+type BaitListItemProps = {
 	bait: BaitMaster;
 	fishCount?: number;
 	isSelected?: boolean;
 	onClickDetail: (bait: BaitMaster) => void;
 };
 
-export const BaitListItem: React.FC<Props> = ({
+export const BaitListItem: React.FC<BaitListItemProps> = ({
 	bait,
 	fishCount = 0,
-	isSelected,
+	isSelected = false,
 	onClickDetail,
 }) => {
 	// 説明文の改行エスケープ（\n または \\n をスペース1つに置換）
@@ -59,13 +59,16 @@ export const BaitListItem: React.FC<Props> = ({
 			onClick={handleClick}
 			onKeyDown={handleKeyDown}
 			aria-label={`${bait.ja}の詳細を表示`}
+			aria-selected={isSelected}
 			className={`${LIST_STYLES.base} ${LIST_STYLES.itemRow} ${isSelected ? LIST_STYLES.selected : LIST_STYLES.default
 				}`}
 		>
 			{/* 1. 左側：名称表示領域（縦並び・幅固定寄り） */}
 			<div className={LIST_STYLES.nameGroup}>
 				<span
-					className={`truncate ${LIST_STYLES.titleJa} ${isSelected ? LIST_STYLES.titleJaSelectedBait : LIST_STYLES.titleJaDefault
+					className={`truncate ${LIST_STYLES.titleJa} ${isSelected
+							? LIST_STYLES.titleJaSelectedBait
+							: LIST_STYLES.titleJaDefault
 						}`}
 				>
 					{bait.ja}

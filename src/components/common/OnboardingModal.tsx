@@ -2,11 +2,16 @@
  * ============================================================================
  * [FilePath] src/components/common/OnboardingModal.tsx
  * [Role] 未登録ユーザーが制限機能にアクセスした際に表示するオンボーディングモーダル
+ * 
+ * [概要]
+ * - UserDataContext から作成処理およびメッセージを取得し、Props 伝播を排除
+ * - 未登録時の誘導コンテンツおよびキャラクター作成フォームを表示
  * ============================================================================
  */
 
 import React, { useEffect } from 'react';
 import { X } from 'lucide-react';
+import { useUserDataContext } from '@/contexts/UserDataContext';
 import { CharacterCreateContent } from './CharacterCreateContent';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
@@ -14,16 +19,14 @@ import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
 interface OnboardingModalProps {
 	isOpen: boolean;
 	onClose: () => void;
-	onCreateCharacter: (name: string) => void;
-	message?: string | null;
 }
 
 export const OnboardingModal: React.FC<OnboardingModalProps> = ({
 	isOpen,
 	onClose,
-	onCreateCharacter,
-	message,
 }) => {
+	const { handleCreateCharacterAndClose, registrationMessage } = useUserDataContext();
+
 	// Escキー入力でモーダルを閉じる対応
 	useEffect(() => {
 		if (!isOpen) return;
@@ -58,8 +61,8 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
 
 				{/* 共通のコンテンツコンポーネントを配置 */}
 				<CharacterCreateContent
-					onCreateCharacter={onCreateCharacter}
-					message={message}
+					onCreateCharacter={handleCreateCharacterAndClose}
+					message={registrationMessage}
 					onClose={onClose}
 				/>
 			</div>

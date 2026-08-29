@@ -49,7 +49,7 @@ type FishDetailViewProps = {
 	onClickBaitDetail?: (bait: BaitMaster) => void;
 };
 
-export const FishDetailView: React.FC<FishDetailViewProps> = ({
+export const FishDetailView = ({
 	fish,
 	zones,
 	isChecked,
@@ -59,7 +59,7 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 	canGoBack = false,
 	onClickAreaDetail,
 	onClickBaitDetail,
-}) => {
+}: FishDetailViewProps) => {
 	// 1. エリア情報の抽出（メモ化）
 	const targetZones = useMemo(() => {
 		const targetZoneIds = new Set(
@@ -111,8 +111,8 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 			type="button"
 			onClick={handleToggleCheck}
 			className={`${DETAIL_STYLES.checkButtonBase} ${isChecked
-					? DETAIL_STYLES.checkButtonChecked
-					: DETAIL_STYLES.checkButtonUnchecked
+				? DETAIL_STYLES.checkButtonChecked
+				: DETAIL_STYLES.checkButtonUnchecked
 				} shrink-0`}
 			aria-label={`${fish.ja}を${isChecked ? '未釣獲' : '釣獲済み'}に変更`}
 			aria-pressed={isChecked}
@@ -168,15 +168,15 @@ export const FishDetailView: React.FC<FishDetailViewProps> = ({
 							{hasHarakiriItems && (
 								<div className={DETAIL_STYLES.harakiriItemRow}>
 									<span className={DETAIL_STYLES.harakiriLabel}>入手アイテム:</span>
-									{fish.harakiriItems!.map((item) => (
+									{fish.harakiriItems?.map((item) => (
 										<HarakiriItemBadge key={item} itemName={item} />
 									))}
 								</div>
 							)}
-							{hasHarakiriTitle && (
+							{hasHarakiriTitle && fish.harakiriTitle && (
 								<div className={DETAIL_STYLES.harakiriTitleRow}>
 									<span className={DETAIL_STYLES.harakiriLabel}>獲得称号:</span>
-									<HarakiriTitleBadge titleName={fish.harakiriTitle!} />
+									<HarakiriTitleBadge titleName={fish.harakiriTitle} />
 								</div>
 							)}
 						</div>

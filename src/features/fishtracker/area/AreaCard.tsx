@@ -10,7 +10,7 @@
  * - 魚が0件の場合の視覚的表現（減衰スタイル）の適用
  * - 選択中（アクティブ）状態に応じたスタイリング切り替え
  * - スタイル定義を CARD_STYLES に完全集約
- * - キーボード操作時のアクセシビリティ対応を追加
+ * - キーボード操作時のアクセシビリティ対応（aria-selected属性追加、クラス連結の修正）
  * ============================================================================
  */
 
@@ -20,17 +20,17 @@ import type { ZoneMaster, FishMaster } from '@/types/fishtracker';
 import { FISH_LOCATIONS, FISHES } from '@/data';
 import { CARD_STYLES } from '@/styles/components/cardStyles';
 
-type Props = {
+type AreaCardProps = {
   area: ZoneMaster;
   fishes?: FishMaster[];
   isSelected?: boolean;
   onClickDetail: (area: ZoneMaster) => void;
 };
 
-export const AreaCard: React.FC<Props> = ({
+export const AreaCard: React.FC<AreaCardProps> = ({
   area,
   fishes = FISHES,
-  isSelected,
+  isSelected = false,
   onClickDetail,
 }) => {
   // 該当エリア (area.id) で釣れる魚の一覧を算出（重複排除・メモ化）
@@ -82,14 +82,16 @@ export const AreaCard: React.FC<Props> = ({
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       aria-label={`${area.ja}の詳細を表示`}
-      className={`${CARD_STYLES.base} ${isSelected ? CARD_STYLES.selected : CARD_STYLES.default} ${!hasFish ? 'opacity-70' : ''}`}
+      aria-selected={isSelected}
+      className={`${CARD_STYLES.base} ${isSelected ? CARD_STYLES.selected : CARD_STYLES.default
+        } ${!hasFish ? 'opacity-70' : ''}`}
     >
       <div className={CARD_STYLES.cardWrapper}>
         <div>
           {/* 日本語名と英語名 */}
           <div className={CARD_STYLES.titleGroup}>
             <h3
-              className={`truncate ${CARD_STYLES.titleJa}${isSelected
+              className={`truncate ${CARD_STYLES.titleJa} ${isSelected
                   ? CARD_STYLES.titleJaSelectedArea
                   : CARD_STYLES.titleJaDefault
                 }`}

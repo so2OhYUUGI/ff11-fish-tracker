@@ -1,13 +1,20 @@
+/**
+ * ============================================================================
+ * [FilePath] src/components/settings/DataTab.tsx
+ * [Role] データインポート・エクスポート管理タブコンポーネント
+ * 
+ * [概要]
+ * - UserDataContext からエクスポート/インポート処理を直接参照
+ * ============================================================================
+ */
+
 import React, { useRef, useState } from 'react';
 import { Download, Upload, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { useUserDataContext } from '@/contexts/UserDataContext';
 import { SETTINGS_STYLES } from '@/styles/components/settingsStyles';
 
-type DataTabProps = {
-	onExport: () => void;
-	onImport: (file: File) => Promise<boolean>;
-};
-
-export const DataTab: React.FC<DataTabProps> = ({ onExport, onImport }) => {
+export const DataTab: React.FC = () => {
+	const { exportData, importData } = useUserDataContext();
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [statusMessage, setStatusMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -18,7 +25,7 @@ export const DataTab: React.FC<DataTabProps> = ({ onExport, onImport }) => {
 		if (!file) return;
 
 		try {
-			await onImport(file);
+			await importData(file);
 			setStatusMessage({ type: 'success', text: 'データを正常に復元しました。' });
 			if (fileInputRef.current) fileInputRef.current.value = '';
 		} catch (err) {
@@ -34,8 +41,8 @@ export const DataTab: React.FC<DataTabProps> = ({ onExport, onImport }) => {
 			{statusMessage && (
 				<div
 					className={`${styles.statusMessageBase} ${statusMessage.type === 'success'
-							? styles.statusSuccess
-							: styles.statusError
+						? styles.statusSuccess
+						: styles.statusError
 						}`}
 				>
 					{statusMessage.type === 'success' ? (
@@ -54,7 +61,7 @@ export const DataTab: React.FC<DataTabProps> = ({ onExport, onImport }) => {
 					現在のチェック状況や全キャラクターの情報を JSON ファイルとしてバックアップします。
 				</p>
 				<button
-					onClick={onExport}
+					onClick={exportData}
 					className={styles.exportButton}
 				>
 					<Download className="w-4 h-4" />

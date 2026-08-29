@@ -9,7 +9,7 @@
  * - 親（AreaView）から受け取った `fishCount`（釣れる魚の件数）をバッジ描画
  * - 魚が0件の場合の視覚的表現（減衰スタイル）の適用
  * - 選択中（アクティブ）状態に応じたスタイリング切り替え
- * - アクセシビリティ（キーボード操作対応）の強化
+ * - アクセシビリティ（キーボード操作対応、`aria-selected` 属性追加）の強化
  * - 全スタイルの参照を `LIST_STYLES` へ完全移行
  * ============================================================================
  */
@@ -19,17 +19,17 @@ import { Fish } from 'lucide-react';
 import type { ZoneMaster } from '@/types/fishtracker';
 import { LIST_STYLES } from '@/styles/components/listStyles';
 
-type Props = {
+type AreaListItemProps = {
   area: ZoneMaster;
   fishCount?: number;
   isSelected?: boolean;
   onClickDetail: (area: ZoneMaster) => void;
 };
 
-export const AreaListItem: React.FC<Props> = ({
+export const AreaListItem: React.FC<AreaListItemProps> = ({
   area,
   fishCount = 0,
-  isSelected,
+  isSelected = false,
   onClickDetail,
 }) => {
   const hasFish = fishCount > 0;
@@ -62,6 +62,7 @@ export const AreaListItem: React.FC<Props> = ({
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       aria-label={`${area.ja}の詳細を表示`}
+      aria-selected={isSelected}
       className={`${LIST_STYLES.base} ${isSelected ? LIST_STYLES.selected : LIST_STYLES.default
         } ${LIST_STYLES.itemRow} ${!hasFish ? LIST_STYLES.dimmed : ''}`}
     >
