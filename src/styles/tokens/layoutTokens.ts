@@ -7,7 +7,7 @@
 
 // 共通ベーススタイルの抽出
 const BASE_PAGE = 'min-h-screen bg-slate-900 text-slate-100 font-sans';
-const BASE_MODAL_OVERLAY = 'fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-150';
+const BASE_MODAL_OVERLAY = 'fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-sm touch-none overscroll-none animate-in fade-in duration-150';
 const BASE_DROPDOWN_ITEM = 'w-full text-left px-3.5 py-2.5 text-xs sm:text-sm flex items-center transition-all';
 const BASE_CLOSE_BUTTON = 'rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition';
 
@@ -93,9 +93,9 @@ export const LAYOUT_TOKENS = {
   },
 
   sidebar: {
-    stickyContainer: 'fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-10 sm:px-20 bg-black/75 backdrop-blur-sm lg:static lg:inset-auto lg:z-auto lg:col-span-5 lg:sticky lg:top-[160px] lg:max-h-[calc(100vh-180px)] lg:w-full lg:flex lg:flex-col lg:bg-slate-900 lg:border lg:border-slate-800 lg:rounded-xl lg:p-0 lg:backdrop-blur-none overflow-hidden shadow-xl',
+    stickyContainer: 'fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-10 sm:px-20 bg-black/75 backdrop-blur-sm touch-none overscroll-none lg:touch-auto lg:overscroll-auto lg:static lg:inset-auto lg:z-auto lg:col-span-5 lg:sticky lg:top-[160px] lg:max-h-[calc(100vh-180px)] lg:w-full lg:flex lg:flex-col lg:bg-slate-900 lg:border lg:border-slate-800 lg:rounded-xl lg:p-0 lg:backdrop-blur-none overflow-hidden shadow-xl',
   },
-
+  
   view: {
     mainGrid: 'grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start',
     emptyContainer: 'text-center py-8 sm:py-12 px-4 bg-slate-800/30 rounded-xl border border-slate-800/80',
