@@ -26,10 +26,11 @@ const CharacterCreateForm: React.FC<CharacterCreateFormProps> = ({
 	const [charName, setCharName] = useState('');
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
-	const sampleName = useMemo(() => {
+	// useStateの初期化関数を使用して初回レンダリング時にのみ実行する
+	const [sampleName] = useState(() => {
 		const randomIndex = Math.floor(Math.random() * SAMPLE_CHARACTERS.length);
 		return SAMPLE_CHARACTERS[randomIndex];
-	}, []);
+	});
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();

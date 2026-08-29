@@ -36,8 +36,7 @@ import type { EditTab, EditableFish } from './types';
 import { EDITOR_STYLES } from '@/styles/components/editorStyles';
 
 export const MasterDataEditor: React.FC = () => {
-	if (!isDev) return null;
-
+	// 1. すべての State / Hook をコンポーネント最上部で宣言
 	const [activeTab, setActiveTab] = useState<EditTab>('fish');
 
 	const [fishList, setFishList] = useState<EditableFish[]>(() =>
@@ -68,6 +67,9 @@ export const MasterDataEditor: React.FC = () => {
 	const [fishRodRelations, setFishRodRelations] = useState<FishRodRelation[]>(
 		() => FISH_ROD_RELATIONS || []
 	);
+
+	// 2. Hook 宣言の後に早期リターンを配置
+	if (!isDev) return null;
 
 	const handleFishChange = (updated: EditableFish) => {
 		setFishList((prev) => prev.map((item) => (item.id === updated.id ? updated : item)));

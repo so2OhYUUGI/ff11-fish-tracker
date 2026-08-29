@@ -24,7 +24,7 @@
  * ============================================================================
  */
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { BAITS } from '@/data/baits';
 import { SUB_LOCATIONS } from '@/data/subLocations';
 import { RelationEditor } from '../../RelationEditor';
@@ -49,17 +49,14 @@ export const FishEditTab: React.FC<FishEditTabProps> = ({
 	onBaitRelationChange,
 	onRodRelationChange,
 }) => {
-	const [selectedFish, setSelectedFish] = useState<EditableFish | null>(null);
+	const [selectedFishId, setSelectedFishId] = useState<number | null>(null);
 	const [searchQuery, setSearchQuery] = useState<string>('');
 
-	useEffect(() => {
-		if (selectedFish) {
-			const currentInList = fishList.find((f) => f.id === selectedFish.id);
-			if (currentInList) {
-				setSelectedFish(currentInList);
-			}
-		}
-	}, [fishList]);
+	// 選択中の魚オブジェクトは fishList と selectedFishId から派生させる
+	const selectedFish = useMemo(() => {
+		if (selectedFishId === null) return null;
+		return fishList.find((f) => f.id === selectedFishId) ?? null;
+	}, [fishList, selectedFishId]);
 
 	// カスタムフックから竿操作ロジックを取得
 	const { handleRodStatusToggle, handleRodNotesChange } = useRodRelationHandlers(
@@ -85,7 +82,6 @@ export const FishEditTab: React.FC<FishEditTabProps> = ({
 		<K extends keyof EditableFish>(field: K, value: EditableFish[K]) => {
 			if (!selectedFish) return;
 			const updated = { ...selectedFish, [field]: value };
-			setSelectedFish(updated);
 			onFishChange(updated);
 		},
 		[selectedFish, onFishChange]
@@ -135,7 +131,6 @@ export const FishEditTab: React.FC<FishEditTabProps> = ({
 					zoneIds: updatedZoneIds,
 					subLocationIds: updatedSubIds.length > 0 ? updatedSubIds : undefined,
 				};
-				setSelectedFish(updated);
 				onFishChange(updated);
 			} else {
 				// --- 通常ゾーン / サブロケーション存在ゾーンの「全域」トグル処理 ---
@@ -174,7 +169,6 @@ export const FishEditTab: React.FC<FishEditTabProps> = ({
 					zoneIds: updatedZoneIds,
 					subLocationIds: updatedSubIds.length > 0 ? updatedSubIds : undefined,
 				};
-				setSelectedFish(updated);
 				onFishChange(updated);
 			}
 		},
@@ -312,7 +306,7 @@ export const FishEditTab: React.FC<FishEditTabProps> = ({
 				selectedFishId={selectedFish?.id}
 				searchQuery={searchQuery}
 				onSearchChange={setSearchQuery}
-				onSelectFish={setSelectedFish}
+				onSelectFish={(fish) => setSelectedFishId(fish.id)}
 			/>
 
 			<div className={EDITOR_STYLES.fishEdit.formPanel}>

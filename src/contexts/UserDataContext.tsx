@@ -87,11 +87,11 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
 	const [registrationMessage, setRegistrationMessage] = useState<string | null>(null);
 
-	// 初回自動選択制御フラグ
+	// 初回自動選択制御フラグ（エフェクト内のみで使用するため Ref のままで安全）
 	const hasAutoSelectedSharedRef = useRef(false);
 
-	// 共有キャラクターデータのキャッシュ
-	const lastSharedCharRef = useRef<DisplayCharacterProgress | null>(null);
+	// 共有キャラクターデータのキャッシュ State（Ref から State に変更）
+	const [lastSharedChar, setLastSharedChar] = useState<DisplayCharacterProgress | null>(null);
 
 	const currentSharedCharacter = useMemo<DisplayCharacterProgress | null>(() => {
 		if (!sharedProgress) return null;
@@ -107,11 +107,11 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
 	useEffect(() => {
 		if (currentSharedCharacter) {
-			lastSharedCharRef.current = currentSharedCharacter;
+			setLastSharedChar(currentSharedCharacter);
 		}
 	}, [currentSharedCharacter]);
 
-	const activeSharedCharacter = currentSharedCharacter || lastSharedCharRef.current;
+	const activeSharedCharacter = currentSharedCharacter || lastSharedChar;
 
 	// 表示用キャラクター一覧
 	const displayCharacters = useMemo<DisplayCharacterProgress[]>(() => {
@@ -160,7 +160,7 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 	const canViewContainer =
 		isRegistered ||
 		!!sharedProgress ||
-		(userData.activeCharacterId === SHARED_GUEST_CHARACTER_ID && !!lastSharedCharRef.current);
+		(userData.activeCharacterId === SHARED_GUEST_CHARACTER_ID && !!lastSharedChar);
 
 	const handleCreateCharacterAndClose = (name: string) => {
 		const newChar = addCharacter(name);

@@ -5,7 +5,7 @@
  * ============================================================================
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import type { ZoneMaster, RegionMaster } from '@/types/fishtracker';
 import { RelationEditor } from '../RelationEditor';
 import type { EntityItem } from '../types';
@@ -22,36 +22,30 @@ export const ZoneEditTab: React.FC<Props> = ({
 	regionList = [],
 	onZoneChange,
 }) => {
-	const [selectedRegionId, setSelectedRegionId] = useState<number | string | null>(
-		regionList[0]?.id ?? null
-	);
+	const [selectedRegionId, setSelectedRegionId] = useState<number | string | null>(null);
 
-	// regionList の更新時に選択 ID を補正
-	useEffect(() => {
-		if (selectedRegionId === null && regionList.length > 0) {
-			setSelectedRegionId(regionList[0].id);
-		}
-	}, [regionList, selectedRegionId]);
+	// 選択 ID が null の場合は先頭のリージョン ID を派生して使用する（useEffect 不要）
+	const activeRegionId = selectedRegionId ?? regionList[0]?.id ?? null;
 
-	const selectedRegion = regionList.find((r) => r.id === selectedRegionId);
+	const selectedRegion = regionList.find((r) => r.id === activeRegionId);
 
 	// 選択中リージョンに所属しているゾーンIDの配列
 	const currentBelongingZoneIds = zoneList
-		.filter((z) => z.regionId === selectedRegionId)
+		.filter((z) => z.regionId === activeRegionId)
 		.map((z) => z.id);
 
 	// ゾーンのトグル処理（チェック時: 選択中regionIdを設定 / 解除時: regionIdを未設定にする）
 	const handleZoneToggle = (zoneId: number | string) => {
-		if (selectedRegionId === null) return;
+		if (activeRegionId === null) return;
 
 		const targetZone = zoneList.find((z) => z.id === zoneId);
 		if (!targetZone) return;
 
-		const isBelonging = targetZone.regionId === selectedRegionId;
+		const isBelonging = targetZone.regionId === activeRegionId;
 
 		const updatedZone: ZoneMaster = {
 			...targetZone,
-			regionId: isBelonging ? undefined : Number(selectedRegionId),
+			regionId: isBelonging ? undefined : Number(activeRegionId),
 		};
 
 		onZoneChange(updatedZone);
@@ -61,7 +55,7 @@ export const ZoneEditTab: React.FC<Props> = ({
 	const zoneEntityItems: EntityItem[] = zoneList.map((z) => {
 		// 他のリージョンに所属している場合はサブテキストに表示
 		const otherRegion = regionList.find((r) => r.id === z.regionId);
-		const subLabel = z.regionId && z.regionId !== selectedRegionId
+		const subLabel = z.regionId && z.regionId !== activeRegionId
 			? `(現在: ${otherRegion?.ja || z.regionId})`
 			: z.en;
 
@@ -85,7 +79,7 @@ export const ZoneEditTab: React.FC<Props> = ({
 					{regionList.map((region) => {
 						// 該当リージョンに紐づくエリア数をカウント
 						const count = zoneList.filter((z) => z.regionId === region.id).length;
-						const isSelected = selectedRegionId === region.id;
+						const isSelected = activeRegionId === region.id;
 
 						return (
 							<div

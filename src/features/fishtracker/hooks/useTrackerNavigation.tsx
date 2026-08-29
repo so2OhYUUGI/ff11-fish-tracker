@@ -18,7 +18,7 @@
  * ============================================================================
  */
 
-import { useCallback, useEffect, useState, useRef } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useIsMobileLayout } from '@/hooks/useIsMobileLayout';
 import { toSlug } from '@/utils/slug';
@@ -49,25 +49,18 @@ export const useTrackerNavigation = ({
 	const location = useLocation();
 	const isMobileLayout = useIsMobileLayout();
 
-	const [canGoBackEffective, setCanGoBackEffective] = useState(false);
-	const depthRef = useRef<number>(0);
-	const lastSlugRef = useRef<string | undefined>(slug);
+	const [depth, setDepth] = useState(0);
+	const [prevSlug, setPrevSlug] = useState<string | undefined>(slug);
 
-	useEffect(() => {
-		if (!slug) {
-			depthRef.current = 0;
-			setCanGoBackEffective(false);
-			lastSlugRef.current = undefined;
-			return;
+	// レンダー中に props (slug) の変更を検知して状態を同期（useEffect 不要）
+	if (slug !== prevSlug) {
+		setPrevSlug(slug);
+		if (!slug || !prevSlug) {
+			setDepth(0);
 		}
+	}
 
-		if (!lastSlugRef.current) {
-			depthRef.current = 0;
-			setCanGoBackEffective(false);
-		}
-
-		lastSlugRef.current = slug;
-	}, [slug]);
+	const canGoBackEffective = depth > 0;
 
 	const handleSelectFromList = useCallback(
 		(item: NavItem) => {
@@ -79,9 +72,7 @@ export const useTrackerNavigation = ({
 			const itemSlug = toSlug(item.item.en);
 			const targetPath = `/fishtracker/${mainTab}/${itemSlug}${location.search}`;
 
-			depthRef.current = 0;
-			setCanGoBackEffective(false);
-			lastSlugRef.current = itemSlug;
+			setDepth(0);
 
 			navigate(targetPath, { replace: !isMobileLayout });
 		},
@@ -89,12 +80,7 @@ export const useTrackerNavigation = ({
 	);
 
 	const handlePop = useCallback(() => {
-		if (depthRef.current > 0) {
-			depthRef.current -= 1;
-		}
-		if (depthRef.current === 0) {
-			setCanGoBackEffective(false);
-		}
+		setDepth((prev) => Math.max(0, prev - 1));
 		navigate(-1);
 	}, [navigate]);
 
@@ -106,9 +92,7 @@ export const useTrackerNavigation = ({
 			}
 
 			const itemSlug = toSlug(item.item.en);
-			depthRef.current += 1;
-			setCanGoBackEffective(true);
-			lastSlugRef.current = itemSlug;
+			setDepth((prev) => prev + 1);
 			navigate(`/fishtracker/${mainTab}/${itemSlug}${location.search}`);
 		},
 		[isRegistered, onRequestRegistration, mainTab, navigate, location.search]
@@ -122,17 +106,13 @@ export const useTrackerNavigation = ({
 			}
 
 			const itemSlug = toSlug(item.item.en);
-			setCanGoBackEffective(depthRef.current > 0);
-			lastSlugRef.current = itemSlug;
 			navigate(`/fishtracker/${mainTab}/${itemSlug}${location.search}`, { replace: true });
 		},
 		[isRegistered, onRequestRegistration, mainTab, navigate, location.search]
 	);
 
 	const handleClear = useCallback(() => {
-		depthRef.current = 0;
-		setCanGoBackEffective(false);
-		lastSlugRef.current = undefined;
+		setDepth(0);
 		navigate(`/fishtracker/${mainTab}${location.search}`);
 	}, [navigate, mainTab, location.search]);
 

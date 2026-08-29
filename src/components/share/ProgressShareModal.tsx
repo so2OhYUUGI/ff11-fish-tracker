@@ -32,6 +32,9 @@ export const ProgressShareModal: React.FC<ProgressShareModalProps> = ({
 	const [copied, setCopied] = useState(false);
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 
+	// マウント時にタイムスタンプを一度だけ保持
+	const [createdAt] = useState(() => Date.now());
+
 	// 共通ロジックからデータを取得
 	const cardData = React.useMemo(
 		() => buildShareCardData(characterName, checkedFishIds),
@@ -133,7 +136,7 @@ export const ProgressShareModal: React.FC<ProgressShareModalProps> = ({
 	const encodedData = encodeSharedProgress({
 		characterName,
 		checkedFishIds,
-		createdAt: Date.now(),
+		createdAt,
 	});
 
 	const baseUrl = window.location.origin ? `${window.location.origin}/fishtracker/fish` : '';
@@ -144,11 +147,10 @@ export const ProgressShareModal: React.FC<ProgressShareModalProps> = ({
 	const fishHashtag = topFish ? ` #${topFish.ja.replace(/\s+/g, '')}` : '';
 	const shareText = `【FF11 釣獲記録】\nキャラクター: ${characterName}\n達成率: ${percentage}% (${checkedCount}/${totalCount}種)${fishHashtag}\n#FF11 #FF11_FishTracker`;
 
-	// 修正後（src/components/share/ProgressShareModal.tsx）
 	const handleXShare = () => {
 		const intentUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
 
-		// タブレット・スマホ（画面幅 768px 未満 または タッチ端末）の場合
+		// タブレット・スマホ（画面幅 1024px 未満 または タッチ端末）の場合
 		const isMobileOrTablet = window.innerWidth < 1024 || 'ontouchstart' in window;
 
 		if (isMobileOrTablet) {
@@ -168,7 +170,7 @@ export const ProgressShareModal: React.FC<ProgressShareModalProps> = ({
 			);
 		}
 	};
-	
+
 	const handleCopyLink = async () => {
 		try {
 			await navigator.clipboard.writeText(shareUrl);
