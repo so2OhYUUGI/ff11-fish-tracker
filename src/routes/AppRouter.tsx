@@ -1,13 +1,14 @@
 /**
  * ============================================================================
  * [FilePath] src/routes/AppRouter.tsx
- * [Role] アプリケーションのパスベースルーティング定義コンポーネント
+ * [Role]     アプリケーションのパスベースルーティング定義コンポーネント
  * 
  * [概要]
  * - URLパスに応じた表示コンポーネントの切替およびリダイレクトを制御する
  * - URLパスに基づいてグローバルテーマ（data-theme）をHTML要素へ反映する
  * - 未登録ユーザーに対しては `canViewContainer` フラグに基づき LandingPage を表示する
  * - 詳細画面（slug指定）アクセスの場合は共有リンク・直接アクセスに対応するため MainLayout 内で表示する
+ * - 魚チェッカーと同等のサブタイプ構造（フェイス一覧/ウィッシュリスト/マクロ管理）に対応
  * 
  * [依存関係・関連ファイル]
  * - Context      : src/contexts/UserDataContext.tsx
@@ -18,8 +19,8 @@
  * 
  * [編集・改修時の注意事項（AI/エンジニア共通指示）]
  * 1. 【レイアウト一貫性】 MainLayout を適用するルートは renderWithMainLayout ヘルパーを経由して共通化すること
- * 2. 【閲覧権限判定】 一覧画面（/fishtracker/:type, /trusttracker）の描画判定には canViewContainer を使用し、未登録時は LandingPage へフォールバックさせること
- * 3. 【リダイレクト設計】 不正なパスやルートパスへのアクセスは `/fishtracker/fish` へ安全にリダイレクトさせること
+ * 2. 【閲覧権限判定】 一覧画面（/fishtracker/:type, /trusttracker/:type）の描画判定には canViewContainer を使用し、未登録時は LandingPage へフォールバックさせること
+ * 3. 【リダイレクト設計】 不正なパスやルートパスへのアクセスは `/fishtracker/fish` へ安全にリダイレクトさせること。`/trusttracker` 単体アクセスは `/trusttracker/trust` へリダイレクトすること
  * ============================================================================
  */
 
@@ -99,11 +100,15 @@ export function AppRouter({
       />
 
       {/* ====================================================================
-       * 2. フェイスチェッカー (trusttracker) - サブカテゴリなし構造
+       * 2. フェイスチェッカー (trusttracker)
+       *    サブタイプ: trust (フェイス一覧), wishlist (ウィッシュリスト), macro (マクロ管理)
        * ==================================================================== */}
-      {/* 一覧表示 */}
+      {/* リダイレクト (デフォルトサブタイプ: trust) */}
+      <Route path="/trusttracker" element={<Navigate to="/trusttracker/trust" replace />} />
+
+      {/* 一覧表示（slug なし） */}
       <Route
-        path="/trusttracker"
+        path="/trusttracker/:type"
         element={
           canViewContainer
             ? renderWithMainLayout(<TrustTrackerContainer />)
@@ -112,7 +117,7 @@ export function AppRouter({
       />
       {/* 詳細表示（slug あり） */}
       <Route
-        path="/trusttracker/:slug"
+        path="/trusttracker/:type/:slug"
         element={renderWithMainLayout(<TrustTrackerContainer />)}
       />
 
