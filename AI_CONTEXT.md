@@ -57,8 +57,7 @@
 | `src/contexts/UserDataContext.tsx` | ユーザー進捗データ（キャラ管理・釣獲達成状態・LocalStorage永続化・共有データ展開）をアプリ全体に提供する React Context / Providerおよび `useUserDataContext` フック |
 | `src/contexts/useUserData.ts` | `UserDataContext` 内で使用される LocalStorage データの永続化およびキャラクター操作ロジック管理用フック |
 | `src/constants/character.ts` | キャラクター識別・判定用定数定義（ゲストID、フォールバック値等） |
-| `src/routes/AppRouter.tsx` | パスベースルーティング構造の集約定義。MainLayout を軸とした Outlet パターンの構築 |
-| `src/routes/ProtectedRoute.tsx` | 一覧画面の閲覧権限（登録済みまたは共有データ存在）を検証・保護するガードコンポーネント |
+| `src/routes/AppRouter.tsx` | パスベースルーティング構造の集約定義。MainLayout を軸としたレイアウト・表示切り替えの構築 |
 | `src/types/fishtracker.ts` | 型定義（Windower互換データ、アプリ拡張、進捗構造） |
 | `src/utils/share.ts` | Web Share APIおよびクリップボードコピー処理ユーティリティ |
 | `src/utils/shareEncoding.ts` | 釣獲進捗データの共有用エンコード/デコード処理 |
@@ -71,6 +70,7 @@
 | `src/components/common/ShareProgressButton.tsx` | 釣獲進捗のSNS共有ボタン |
 | `src/components/layout/Header.tsx` | アプリタイトル、キャラ切替UI、開発用ツール導線 |
 | `src/components/layout/Footer.tsx` | 権利表記・ライセンス注記・著作権表示 |
+| `src/components/layout/MainLayout.tsx` | ヘッダー・フッター・広告枠を含む共通レイアウト（`children` または `<Outlet />` の描画に対応） |
 | `src/components/settings/SettingsModal.tsx` | 各種設定モーダルダイアログ |
 | `src/components/dev/MasterDataEditorModal.tsx` | マスターデータ編集・テスト用モーダル |
 | `src/components/LandingPage.tsx` | 未登録ユーザー向けランディングページコンポーネント |
@@ -181,7 +181,7 @@
 ### **開発・コード記述規約**
 
 - **ルーティング・関心事の分離**:
-  - `App.tsx` 内に直接 `<Routes>` や `<Route>` を定義せず、ルーティング定義は `src/routes/AppRouter.tsx` へ、閲覧権限検証ロジックは `src/routes/ProtectedRoute.tsx` へ切り出して責務を分離すること。
+  - `App.tsx` 内に直接 `<Routes>` や `<Route>` を定義せず、ルーティング定義は `src/routes/AppRouter.tsx` へ集約し、閲覧権限（`canViewContainer`）に応じたレイアウト・画面の切り替えを同コンポーネント内で処理して責務を分離すること。
 - **リレーションデータの参照基準**:
   - 魚・エリア・餌の結びつきを表示する際は、単体マスターの埋め込み配列ではなく、必ずマスターリレーションデータ（`FISH_LOCATIONS`, `FISH_BAIT_RELATIONS` 等）を参照して動的に算出すること。
 - **カード内要素の溢れ制限デザイン**:

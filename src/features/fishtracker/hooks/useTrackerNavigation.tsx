@@ -26,108 +26,108 @@ import type { MainTab, CharacterProgress, FishMaster, ZoneMaster, BaitMaster } f
 import type { DisplayCharacterProgress } from '@/components/layout/Header';
 
 export type NavItem =
-	| { type: 'fish'; item: FishMaster }
-	| { type: 'area'; item: ZoneMaster }
-	| { type: 'bait'; item: BaitMaster };
+  | { type: 'fish'; item: FishMaster }
+  | { type: 'area'; item: ZoneMaster }
+  | { type: 'bait'; item: BaitMaster };
 
 type UseTrackerNavigationProps = {
-	type?: string;
-	slug?: string;
-	mainTab: MainTab;
-	isRegistered: boolean;
-	activeCharacter: CharacterProgress | DisplayCharacterProgress | undefined;
-	onRequestRegistration: (message: string) => void;
+  type?: string;
+  slug?: string;
+  mainTab: MainTab;
+  isRegistered: boolean;
+  activeCharacter?: CharacterProgress | DisplayCharacterProgress;
+  onRequestRegistration: (message: string) => void;
 };
 
 export const useTrackerNavigation = ({
-	slug,
-	mainTab,
-	isRegistered,
-	onRequestRegistration,
+  slug,
+  mainTab,
+  isRegistered,
+  onRequestRegistration,
 }: UseTrackerNavigationProps) => {
-	const navigate = useNavigate();
-	const location = useLocation();
-	const isMobileLayout = useIsMobileLayout();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isMobileLayout = useIsMobileLayout();
 
-	const [depth, setDepth] = useState(0);
-	const [prevSlug, setPrevSlug] = useState<string | undefined>(slug);
+  const [depth, setDepth] = useState(0);
+  const [prevSlug, setPrevSlug] = useState<string | undefined>(slug);
 
-	// レンダー中に props (slug) の変更を検知して状態を同期（useEffect 不要）
-	if (slug !== prevSlug) {
-		setPrevSlug(slug);
-		if (!slug || !prevSlug) {
-			setDepth(0);
-		}
-	}
+  // レンダー中に props (slug) の変更を検知して状態を同期（useEffect 不要）
+  if (slug !== prevSlug) {
+    setPrevSlug(slug);
+    if (!slug || !prevSlug) {
+      setDepth(0);
+    }
+  }
 
-	const canGoBackEffective = depth > 0;
+  const canGoBackEffective = depth > 0;
 
-	const handleSelectFromList = useCallback(
-		(item: NavItem) => {
-			if (!isRegistered) {
-				onRequestRegistration('キャラクターを登録すると詳細の回遊や記録が行えます');
-				return;
-			}
+  const handleSelectFromList = useCallback(
+    (item: NavItem) => {
+      if (!isRegistered) {
+        onRequestRegistration('キャラクターを登録すると詳細の回遊や記録が行えます');
+        return;
+      }
 
-			const itemSlug = toSlug(item.item.en);
-			const targetPath = `/fishtracker/${mainTab}/${itemSlug}${location.search}`;
+      const itemSlug = toSlug(item.item.en);
+      const targetPath = `/fishtracker/${mainTab}/${itemSlug}${location.search}`;
 
-			setDepth(0);
+      setDepth(0);
 
-			navigate(targetPath, { replace: !isMobileLayout });
-		},
-		[isMobileLayout, navigate, mainTab, isRegistered, onRequestRegistration, location.search]
-	);
+      navigate(targetPath, { replace: !isMobileLayout });
+    },
+    [isMobileLayout, navigate, mainTab, isRegistered, onRequestRegistration, location.search]
+  );
 
-	const handlePop = useCallback(() => {
-		setDepth((prev) => Math.max(0, prev - 1));
-		navigate(-1);
-	}, [navigate]);
+  const handlePop = useCallback(() => {
+    setDepth((prev) => Math.max(0, prev - 1));
+    navigate(-1);
+  }, [navigate]);
 
-	const handlePush = useCallback(
-		(item: NavItem) => {
-			if (!isRegistered) {
-				onRequestRegistration('キャラクターを登録すると詳細の回遊や記録が行えます');
-				return;
-			}
+  const handlePush = useCallback(
+    (item: NavItem) => {
+      if (!isRegistered) {
+        onRequestRegistration('キャラクターを登録すると詳細の回遊や記録が行えます');
+        return;
+      }
 
-			const itemSlug = toSlug(item.item.en);
-			setDepth((prev) => prev + 1);
-			navigate(`/fishtracker/${mainTab}/${itemSlug}${location.search}`);
-		},
-		[isRegistered, onRequestRegistration, mainTab, navigate, location.search]
-	);
+      const itemSlug = toSlug(item.item.en);
+      setDepth((prev) => prev + 1);
+      navigate(`/fishtracker/${mainTab}/${itemSlug}${location.search}`);
+    },
+    [isRegistered, onRequestRegistration, mainTab, navigate, location.search]
+  );
 
-	const handleReplace = useCallback(
-		(item: NavItem) => {
-			if (!isRegistered) {
-				onRequestRegistration('キャラクターを登録すると詳細の回遊や記録が行えます');
-				return;
-			}
+  const handleReplace = useCallback(
+    (item: NavItem) => {
+      if (!isRegistered) {
+        onRequestRegistration('キャラクターを登録すると詳細の回遊や記録が行えます');
+        return;
+      }
 
-			const itemSlug = toSlug(item.item.en);
-			navigate(`/fishtracker/${mainTab}/${itemSlug}${location.search}`, { replace: true });
-		},
-		[isRegistered, onRequestRegistration, mainTab, navigate, location.search]
-	);
+      const itemSlug = toSlug(item.item.en);
+      navigate(`/fishtracker/${mainTab}/${itemSlug}${location.search}`, { replace: true });
+    },
+    [isRegistered, onRequestRegistration, mainTab, navigate, location.search]
+  );
 
-	const handleClear = useCallback(() => {
-		setDepth(0);
-		navigate(`/fishtracker/${mainTab}${location.search}`);
-	}, [navigate, mainTab, location.search]);
+  const handleClear = useCallback(() => {
+    setDepth(0);
+    navigate(`/fishtracker/${mainTab}${location.search}`);
+  }, [navigate, mainTab, location.search]);
 
-	const effectiveNavStack = {
-		push: handlePush,
-		replace: handleReplace,
-		pop: handlePop,
-		clear: handleClear,
-		selectFromList: handleSelectFromList,
-		canGoBack: canGoBackEffective,
-		current: null,
-		stack: [],
-	};
+  const effectiveNavStack = {
+    push: handlePush,
+    replace: handleReplace,
+    pop: handlePop,
+    clear: handleClear,
+    selectFromList: handleSelectFromList,
+    canGoBack: canGoBackEffective,
+    current: null,
+    stack: [],
+  };
 
-	return {
-		effectiveNavStack,
-	};
+  return {
+    effectiveNavStack,
+  };
 };

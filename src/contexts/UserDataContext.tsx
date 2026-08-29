@@ -5,10 +5,10 @@
  * 
  * [概要]
  * - App.tsx や AppRouter でのバケツリレー (Prop Drilling) を解消する
- * - useUserData / useSharedProgress を集約し、共有データのキャッシュや閲覧権限判定も含めて管理する
+ * - useUserData / useSharedProgress を集約し、共有データのキャッシュや閲覧権限（canViewContainer）判定も含めて管理する
  * 
  * [依存関係・関連ファイル]
- * - フック   : src/hooks/useUserData.ts, src/hooks/useSharedProgress.ts
+ * - フック   : src/contexts/useUserData.ts, src/hooks/useSharedProgress.ts
  * - 型定義   : src/types/fishtracker.ts
  * - 定数     : src/constants/character.ts
  * 
@@ -106,10 +106,18 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 		};
 	}, [sharedProgress]);
 
-	// レンダリング中の状態更新（useEffectでの同期setStateによるカスケードレンダリングを回避）
-	if (currentSharedCharacter && currentSharedCharacter !== lastSharedChar) {
-		setLastSharedChar(currentSharedCharacter);
-	}
+	// sharedProgress（外部データ）が取得できた場合のみキャッシュStateを更新
+	useEffect(() => {
+		if (!sharedProgress) return;
+		setLastSharedChar({
+			id: SHARED_GUEST_CHARACTER_ID,
+			name: sharedProgress.characterName,
+			checkedFishIds: sharedProgress.checkedFishIds,
+			createdAt: sharedProgress.createdAt,
+			updatedAt: sharedProgress.createdAt,
+			isShared: true,
+		});
+	}, [sharedProgress]);
 
 	const activeSharedCharacter = currentSharedCharacter || lastSharedChar;
 

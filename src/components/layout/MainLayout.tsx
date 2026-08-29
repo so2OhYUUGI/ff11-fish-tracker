@@ -4,7 +4,7 @@
  * [Role] アプリケーション全体の共通レイアウトコンポーネント
  * 
  * [概要]
- * - Header, Footer, AdBanner, Toaster, Outlet を配置する基盤レイアウト
+ * - Header, Footer, AdBanner, Toaster, (Outlet / children) を配置する基盤レイアウト
  * - キャラクター情報等のProps伝播を廃止し、Header側でContextを参照する設計へ移行
  * 
  * [依存関係・関連ファイル]
@@ -17,6 +17,7 @@
  * ============================================================================
  */
 
+import type { ReactNode } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Toaster } from 'sonner';
 
@@ -26,11 +27,13 @@ import { AdBanner } from '@/components/common/AdBanner';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
 
 type MainLayoutProps = {
+	children?: ReactNode;
 	onOpenSettings: () => void;
 	onOpenMasterEditor?: () => void;
 };
 
 export function MainLayout({
+	children,
 	onOpenSettings,
 	onOpenMasterEditor,
 }: MainLayoutProps) {
@@ -48,7 +51,7 @@ export function MainLayout({
 			<AdBanner slotId="top-banner" />
 
 			<main className={LAYOUT_TOKENS.page.mainLayoutContainer}>
-				<Outlet />
+				{children ?? <Outlet />}
 			</main>
 
 			<AdBanner slotId="bottom-banner" />

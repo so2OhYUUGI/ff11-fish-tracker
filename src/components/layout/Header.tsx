@@ -9,8 +9,15 @@
  * - UserDataContext から表示用キャラ一覧および選択中のキャラ情報を直接参照
  * 
  * [依存関係・関連ファイル]
- * - Context  : src/contexts/UserDataContext.tsx
+ * - Context      : src/contexts/UserDataContext.tsx
+ * - コンポーネント: src/components/common/ShareProgressButton.tsx
  * - トークン    : src/styles/tokens/commonTokens.ts, src/styles/tokens/layoutTokens.ts
+ * - ユーティリティ: src/utils/env.ts
+ * 
+ * [編集・改修時の注意事項（AI/エンジニア共通指示）]
+ * 1. 【データ安全性】 effectiveActiveCharacter 内で checkedFishIds が配列であること、および数値型 ID であることを安全に補正・保証する処理を維持すること
+ * 2. 【アクセス操作】 モバイルメニュー開閉時は Escape キー押下およびメニュー外クリックによる自動クローズイベントを解除（クリーンアップ）すること
+ * 3. 【共有状態視認性】 isSharedActive（共有キャラ選択中）の場合、UIのアクセントカラーやバッジで明確に判別できるようにすること
  * ============================================================================
  */
 

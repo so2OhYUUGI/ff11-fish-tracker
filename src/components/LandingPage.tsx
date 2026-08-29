@@ -4,9 +4,17 @@
  * [Role] 初回訪問ユーザー向けランディングページ 兼 初期キャラクター作成コンポーネント
  * 
  * [概要]
- * - UserDataContext から addCharacter を直接取得し、Props 伝播を排除
- * - 初期キャラクター作成フォームとアプリの主な機能説明を表示
- * - COMMON_TOKENS および LAYOUT_TOKENS を参照し、統一スタイルを適用
+ * - UserDataContext から addCharacter を取得し、初期キャラクター作成フォームを描画
+ * - MainLayout（ヘッダー・フッター等）を伴わない独立したフルスクリーンUIを提供
+ * 
+ * [依存関係・関連ファイル]
+ * - Context   : src/contexts/UserDataContext.tsx
+ * - コンポーネント: src/components/common/CharacterCreateContent.tsx
+ * - スタイル   : src/styles/tokens/commonTokens.ts, src/styles/tokens/layoutTokens.ts
+ * 
+ * [編集・改修時の注意事項（AI/エンジニア共通指示）]
+ * 1. 【レイアウト構造】 MainLayout の外で独立して描画されるため、LAYOUT_TOKENS.page.fullScreenCentered による全画面中央配置スタイルを維持すること
+ * 2. 【状態遷移】 キャラクター作成成功後、UserDataContext の isRegistered / canViewContainer が更新され、AppRouter により自動的に MainLayout 配下へ遷移する仕組みを維持すること
  * ============================================================================
  */
 

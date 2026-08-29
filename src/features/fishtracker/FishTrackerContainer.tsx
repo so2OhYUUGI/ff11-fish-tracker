@@ -8,6 +8,19 @@
  * - タブ切り替え（handleMainTabChange）時の URL クエリパラメータ（location.search）保持
  * - checkedFishIds の数値化・正規化ロジックの最適化と型安全性の向上
  * - 閲覧専用状態および未登録ガード判定のロジックを整理
+ * 
+ * [依存関係・関連ファイル]
+ * - データ      : src/data/
+ * - Context     : src/contexts/UserDataContext.tsx
+ * - フック      : src/features/fishtracker/hooks/useTrackerSeo.ts, src/features/fishtracker/hooks/useTrackerNavigation.ts
+ * - コンポーネント: src/components/common/SeoHead.tsx, src/features/fishtracker/FilterBar.tsx, src/features/fishtracker/FishTrackerContent.tsx
+ * - トークン    : src/styles/tokens/layoutTokens.ts
+ * - 型定義      : src/types/fishtracker.ts, src/components/layout/Header.tsx
+ * 
+ * [編集・改修時の注意事項（AI/エンジニア共通指示）]
+ * 1. 【ID正規化処理】 effectiveActiveCharacter 内での checkedFishIds の数値化・フィルタリング（Number.isInteger）は括り出しを正確に行い、NaN や不整合データの混入を確実に防ぐこと
+ * 2. 【共有キャラガード】 effectiveActiveCharacter.isShared が true の場合は、チェック操作（handleToggleCheck）時にトースト通知を出して処理を中断すること
+ * 3. 【クエリ保持】 タブ切り替え時は location.search を引き継ぎ、絞り込み状態や検索キーワードを維持すること
  * ============================================================================
  */
 
@@ -59,11 +72,13 @@ export function FishTrackerContainer() {
 			};
 		}
 
-		const normalizedIds = Array.isArray(activeCharacter.checkedFishIds)
+		const rawIds = Array.isArray(activeCharacter.checkedFishIds)
 			? activeCharacter.checkedFishIds
-				.map((id) => (typeof id === 'number' ? id : Number(id)))
-			: []
-				.filter((id) => Number.isInteger(id) && !Number.isNaN(id));
+			: [];
+
+		const normalizedIds = rawIds
+			.map((id) => (typeof id === 'number' ? id : Number(id)))
+			.filter((id) => Number.isInteger(id));
 
 		return {
 			...activeCharacter,
@@ -82,6 +97,8 @@ export function FishTrackerContainer() {
 		onRequestRegistration,
 	});
 
+	const { clear: clearNavStack } = effectiveNavStack;
+
 	// タブ切り替え処理（クエリパラメータを保持して遷移）
 	const handleMainTabChange = useCallback(
 		(tab: MainTab) => {
@@ -90,10 +107,10 @@ export function FishTrackerContainer() {
 				onRequestRegistration('キャラクターを登録すると機能を利用できます');
 				return;
 			}
-			effectiveNavStack.clear();
+			clearNavStack();
 			navigate(`/fishtracker/${tab}${location.search}`);
 		},
-		[isRegistered, effectiveActiveCharacter.isShared, onRequestRegistration, effectiveNavStack, navigate, location.search]
+		[isRegistered, effectiveActiveCharacter.isShared, onRequestRegistration, clearNavStack, navigate, location.search]
 	);
 
 	const handleStatusFilterChange = useCallback(
