@@ -5,8 +5,8 @@
  * ============================================================================
  */
 
-// 共通ベーススタイルの抽出（明度・視認性の高いダークテーマベース）
-const BASE_PAGE = 'min-h-screen bg-slate-900 text-slate-100 font-sans';
+// 共通ベーススタイル（テーマ変数に準拠）
+const BASE_PAGE = 'min-h-screen bg-[var(--theme-page-bg)] text-slate-100 font-sans transition-colors';
 const BASE_MODAL_OVERLAY = 'fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-sm touch-none overscroll-none animate-in fade-in duration-150';
 const BASE_DROPDOWN_ITEM = 'w-full text-left px-3.5 py-2.5 text-xs sm:text-sm flex items-center transition-all';
 const BASE_CLOSE_BUTTON = 'rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition';
@@ -20,20 +20,12 @@ export const LAYOUT_TOKENS = {
     mainContainer: 'flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6',
     mainLayoutContainer: 'p-0',
   },
-  header_: {
-    stickyWrapper: 'sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 shadow-md transition-all',
-    stickyFilterBar: 'sticky top-[80px] z-30 bg-slate-900/95 backdrop-blur-md pb-0 p-0 transition-all',
-    container: 'bg-slate-800 text-white shadow-md border-b border-slate-700',
-    inner: 'max-w-7xl mx-auto px-3 py-3 sm:px-6 sm:py-4 lg:px-8',
-    rowWrapper: 'flex items-center justify-between gap-4',
-    titleWrapper: 'flex items-center gap-3',
-    titleText: 'text-xl font-bold tracking-tight',
-  },
+
   header: {
     stickyWrapper: 'sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-700/80 shadow-md transition-all',
     stickyFilterBar: 'sticky top-[80px] z-30 bg-slate-900/90 backdrop-blur-md pb-0 p-0 transition-all',
     container: 'bg-[image:var(--theme-header-bg)] text-white shadow-md border-b [border-bottom-color:var(--theme-header-border)] [border-top-color:var(--theme-accent-border)] transition-all',
-    inner: 'max-w-7xl mx-auto px-3 py-3 sm:px-6 sm:py-4 lg:px-8',
+    inner: 'max-w-7xl mx-auto px-3 py-2.5 sm:px-6 sm:py-3.5 lg:px-8',
     rowWrapper: 'flex items-center justify-between gap-4',
     titleWrapper: 'flex items-center gap-3',
     titleText: 'text-xl font-bold tracking-tight text-white',
@@ -86,12 +78,12 @@ export const LAYOUT_TOKENS = {
   },
 
   footer: {
-    container: 'bg-slate-900 border-t border-slate-800 text-slate-200 mt-auto py-6',
+    container: 'bg-[image:var(--theme-header-bg)] text-white shadow-md border-t [border-top-color:var(--theme-header-border)] mt-auto py-6 transition-all',
     inner: 'max-w-7xl mx-auto px-3 py-3 sm:px-6 sm:py-4 lg:px-8',
     rowWrapper: 'flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-center sm:text-left',
     titleGroup: 'flex items-center justify-center sm:justify-start gap-2 mb-1',
     titleText: 'font-medium text-slate-200',
-    badge: 'text-[10px] px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 font-mono',
+    badge: 'text-[10px] px-1.5 py-0.5 rounded bg-[var(--theme-accent-bg)] border border-[var(--theme-accent-border)] text-slate-200 font-mono',
     disclaimerText: 'text-slate-400',
     copyright: 'whitespace-nowrap text-slate-400',
   },
@@ -107,7 +99,7 @@ export const LAYOUT_TOKENS = {
   },
 
   sidebar: {
-    stickyContainer: 'fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-10 sm:px-20 bg-black/75 backdrop-blur-sm touch-none overscroll-none lg:touch-auto lg:overscroll-auto lg:static lg:inset-auto lg:z-auto lg:col-span-5 lg:sticky lg:top-[160px] lg:max-h-[calc(100vh-180px)] lg:w-full lg:flex lg:flex-col lg:bg-slate-900 lg:border lg:border-slate-800 lg:rounded-xl lg:p-0 lg:backdrop-blur-none overflow-hidden shadow-xl',
+    stickyContainer: 'fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-10 sm:px-20 bg-black/75 backdrop-blur-sm touch-none overscroll-none lg:touch-auto lg:overscroll-auto lg:static lg:inset-auto lg:z-auto lg:col-span-5 lg:sticky lg:top-[160px] lg:max-h-[calc(100vh-180px)] lg:w-full lg:flex lg:flex-col lg:bg-slate-900/80 lg:border lg:border-[var(--theme-accent-border)] lg:rounded-xl lg:p-0 lg:backdrop-blur-none overflow-hidden shadow-xl',
   },
 
   view: {
@@ -124,7 +116,6 @@ export const LAYOUT_TOKENS = {
       }`,
   },
 
-  // プレースホルダー・開発中画面用トークン
   emptyState: {
     wrapper: 'flex flex-col items-center justify-center min-h-[360px] text-center p-4 sm:p-8',
     iconBadge: 'w-16 h-16 rounded-2xl bg-[var(--theme-accent-bg)] border border-[var(--theme-accent-border)] flex items-center justify-center mb-4 shadow-md',
@@ -134,7 +125,7 @@ export const LAYOUT_TOKENS = {
     description: 'max-w-md mb-6 leading-relaxed text-slate-300',
     characterName: 'text-white font-semibold',
 
-    cardContainer: 'p-4 sm:p-5 bg-slate-800/80 rounded-xl border border-[var(--theme-accent-border)]/60 text-xs sm:text-sm text-slate-200 max-w-sm text-left leading-relaxed shadow-lg backdrop-blur-sm',
+    cardContainer: 'p-4 sm:p-5 bg-[var(--theme-badge-bg)] rounded-xl border border-[var(--theme-accent-border)]/60 text-xs sm:text-sm text-slate-200 max-w-sm text-left leading-relaxed shadow-lg backdrop-blur-sm',
     cardHeader: 'font-bold mb-2 text-xs uppercase tracking-wider text-[var(--theme-text-accent)] border-b border-[var(--theme-accent-border)]/40 pb-1',
     cardList: 'list-disc list-inside space-y-1.5 text-slate-300',
   },

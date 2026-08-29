@@ -3,38 +3,27 @@
 /* デフォルト（釣魚モード / fish） */
 :root,
 [data-theme="fish"] {
+	--theme-page-bg: #0f172a;
 	--theme-header-bg: linear-gradient(to right, #0f172a, rgba(30, 58, 138, 0.4), #0f172a);
 	--theme-header-border: rgba(30, 64, 175, 0.5);
-	/* blue-800/50 */
 	--theme-accent-border: #3b82f6;
-	/* blue-500 */
 	--theme-accent-bg: #2563eb;
-	/* blue-600 */
 	--theme-text-accent: #60a5fa;
-	/* blue-400 */
 	--theme-badge-bg: rgba(23, 37, 84, 0.8);
-	/* blue-950/80 */
 	--theme-badge-text: #93c5fd;
-	/* blue-300 */
 	--theme-badge-border: rgba(30, 64, 175, 0.6);
-	/* blue-800/60 */
 }
 
 /* フェイスモード / trust */
 [data-theme="trust"] {
+	--theme-page-bg: #1c1917;
+	/* stone-900 (または好みの背景色) */
 	--theme-header-bg: linear-gradient(to right, #0f172a, rgba(69, 26, 3, 0.4), #0f172a);
 	--theme-header-border: rgba(146, 64, 14, 0.5);
-	/* amber-800/50 */
 	--theme-accent-border: #f59e0b;
-	/* amber-500 */
 	--theme-accent-bg: #d97706;
-	/* amber-600 */
 	--theme-text-accent: #fbbf24;
-	/* amber-400 */
 	--theme-badge-bg: rgba(69, 26, 3, 0.8);
-	/* amber-950/80 */
 	--theme-badge-text: #fde047;
-	/* amber-300 */
 	--theme-badge-border: rgba(146, 64, 14, 0.6);
-	/* amber-800/60 */
 }
