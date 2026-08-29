@@ -1,9 +1,10 @@
 @import "tailwindcss";
 
-/* デフォルト（釣魚モード / fish） */
+/* デフォルト（釣魚モード / fish） - ディープブルー系 */
 :root,
 [data-theme="fish"] {
 	--theme-page-bg: #0f172a;
+	/* slate-900 */
 	--theme-header-bg: linear-gradient(to right, #0f172a, rgba(30, 58, 138, 0.4), #0f172a);
 	--theme-header-border: rgba(30, 64, 175, 0.5);
 	--theme-accent-border: #3b82f6;
@@ -12,18 +13,42 @@
 	--theme-badge-bg: rgba(23, 37, 84, 0.8);
 	--theme-badge-text: #93c5fd;
 	--theme-badge-border: rgba(30, 64, 175, 0.6);
+
+	/* 画面全体・コンテナ基調色（ブルー） */
+	--theme-container-bg: #1e293b;
+	/* slate-800 */
+	--theme-container-border: #334155;
+	/* slate-700 */
+	--theme-inner-bg: #0f172a;
+	/* slate-900 */
+	--theme-inner-border: #1e293b;
+	/* slate-800 */
+	--theme-active-item-bg: #334155;
+	/* slate-700 */
 }
 
-/* フェイスモード / trust */
+/* フェイスモード / trust - ゴールドアンバー系 */
 [data-theme="trust"] {
 	--theme-page-bg: #1c1917;
-	/* stone-900 (または好みの背景色) */
-	--theme-header-bg: linear-gradient(to right, #0f172a, rgba(69, 26, 3, 0.4), #0f172a);
-	--theme-header-border: rgba(146, 64, 14, 0.5);
+	/* stone-900 */
+	--theme-header-bg: linear-gradient(to right, #1c1917, rgba(120, 53, 15, 0.4), #1c1917);
+	--theme-header-border: rgba(180, 83, 9, 0.5);
 	--theme-accent-border: #f59e0b;
 	--theme-accent-bg: #d97706;
 	--theme-text-accent: #fbbf24;
 	--theme-badge-bg: rgba(69, 26, 3, 0.8);
 	--theme-badge-text: #fde047;
 	--theme-badge-border: rgba(146, 64, 14, 0.6);
+
+	/* 画面全体・コンテナ基調色（ゴールドアンバー） */
+	--theme-container-bg: #292524;
+	/* stone-800 */
+	--theme-container-border: #44403c;
+	/* stone-700 */
+	--theme-inner-bg: #1c1917;
+	/* stone-900 */
+	--theme-inner-border: #292524;
+	/* stone-800 */
+	--theme-active-item-bg: #44403c;
+	/* stone-700 */
 }

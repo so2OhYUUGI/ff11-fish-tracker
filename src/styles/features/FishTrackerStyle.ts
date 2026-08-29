@@ -6,6 +6,7 @@
  * [概要]
  * - 魚データ固有の属性（ハラキリ、恵比寿、太公望）やサイズ・水質バッジのスタイルおよび構成を集約
  * - FilterBar 内の各要素（タブ、フィルター、進捗バー、検索、表示切替）の Tailwind クラスを集約
+ * - テーマ変数（var(--theme-*)）を参照した動的なモードスタイル（fish / trust）の適用に対応
  * ============================================================================
  */
 
@@ -56,48 +57,48 @@ export const FISH_FLAG_CONFIG = {
 } as const;
 
 export const FILTER_BAR_STYLES = {
-  container: 'bg-slate-800 border-b border-slate-700 py-2 sm:py-3 px-3 sm:px-6 lg:px-8',
+  container: 'bg-[var(--theme-container-bg)] border-b border-[var(--theme-container-border)] py-2 sm:py-3 px-3 sm:px-6 lg:px-8 transition-colors duration-200',
   inner: 'max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-2.5 sm:gap-3',
 
   leftGroup: 'flex items-center gap-2 w-full lg:w-auto overflow-x-auto pb-1 sm:pb-0 shrink-0',
-  tabContainer: 'flex bg-slate-900 p-1 rounded-lg border border-slate-700 shrink-0',
-  filterContainer: 'flex bg-slate-900 p-1 rounded-lg border border-slate-700 flex-1 sm:flex-none shrink-0',
+  tabContainer: 'flex bg-[var(--theme-inner-bg)] p-1 rounded-lg border border-[var(--theme-container-border)] shrink-0 transition-colors duration-200',
+  filterContainer: 'flex bg-[var(--theme-inner-bg)] p-1 rounded-lg border border-[var(--theme-container-border)] flex-1 sm:flex-none shrink-0 transition-colors duration-200',
 
   // タブボタン
-  tabButtonBase: 'flex items-center gap-1.5 px-3 py-2 sm:py-1.5 text-xs font-medium rounded-md transition-colors min-h-[36px] sm:min-h-0 shrink-0',
-  tabActive: 'bg-blue-600 !text-white font-semibold shadow-md',
-  tabInactive: 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50',
+  tabButtonBase: 'flex items-center gap-1.5 px-3 py-2 sm:py-1.5 text-xs font-medium rounded-md transition-all duration-200 min-h-[36px] sm:min-h-0 shrink-0',
+  tabActive: 'bg-[var(--theme-accent-bg)] !text-white font-semibold shadow-md',
+  tabInactive: 'text-stone-400 hover:text-stone-200 hover:bg-[var(--theme-container-bg)]',
   tabIcon: 'w-3.5 h-3.5 shrink-0',
 
   // ステータスフィルターボタン
   statusButtonBase: 'flex-1 sm:flex-none px-2.5 sm:px-3 py-2 sm:py-1.5 text-xs font-medium rounded-md transition-colors text-center min-h-[36px] sm:min-h-0 shrink-0',
-  statusInactive: 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50',
-  statusAllActive: 'bg-slate-700 !text-white font-semibold shadow-md',
+  statusInactive: 'text-stone-400 hover:text-stone-200 hover:bg-[var(--theme-container-bg)]',
+  statusAllActive: 'bg-[var(--theme-active-item-bg)] !text-white font-semibold shadow-md',
   statusUncheckedActive: 'bg-amber-600 !text-white font-semibold shadow-md',
   statusCheckedActive: 'bg-emerald-600 !text-white font-semibold shadow-md',
 
   // プログレス表示
   progressGroup: 'flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2 w-full lg:flex-1 lg:max-w-xs px-1 sm:px-2',
-  progressTextContainer: 'flex justify-between items-center text-xs font-semibold text-slate-300 whitespace-nowrap gap-2',
+  progressTextContainer: 'flex justify-between items-center text-xs font-semibold text-stone-300 whitespace-nowrap gap-2',
   progressSubText: COMMON_TOKENS.text.subText,
-  progressBarTrack: 'w-full bg-slate-700 rounded-full h-2 overflow-hidden',
-  progressBarFill: 'bg-blue-500 h-2 rounded-full transition-all duration-300 ease-out',
+  progressBarTrack: 'w-full bg-[var(--theme-inner-bg)] rounded-full h-2 overflow-hidden border border-[var(--theme-container-border)]',
+  progressBarFill: 'bg-[var(--theme-accent-bg)] h-2 rounded-full transition-all duration-300 ease-out',
   progressSpacer: 'hidden lg:block lg:flex-1',
 
   // 検索入力エリア
   rightGroup: 'flex items-center gap-2 w-full lg:w-auto',
   searchContainer: 'relative flex-1 sm:w-64 min-w-[140px]',
-  searchIcon: 'w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none',
-  searchInput: 'w-full bg-slate-900 border border-slate-700 text-white text-xs rounded-lg pl-9 pr-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder-slate-500',
+  searchIcon: 'w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none',
+  searchInput: 'w-full bg-[var(--theme-inner-bg)] border border-[var(--theme-container-border)] text-white text-xs rounded-lg pl-9 pr-3 py-2 focus:outline-none focus:ring-1 focus:ring-[var(--theme-accent-border)] placeholder-stone-500 transition-colors duration-200',
   searchInputHasValue: 'pr-8',
-  searchClearButton: 'absolute right-1 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-slate-200 focus:outline-none',
+  searchClearButton: 'absolute right-1 top-1/2 -translate-y-1/2 p-1.5 text-stone-400 hover:text-stone-200 focus:outline-none',
   searchClearIcon: 'w-3.5 h-3.5 shrink-0',
 
   // 表示モード切り替え
-  viewModeContainer: 'flex bg-slate-900 p-1 rounded-lg border border-slate-700 shrink-0',
+  viewModeContainer: 'flex bg-[var(--theme-inner-bg)] p-1 rounded-lg border border-[var(--theme-container-border)] shrink-0 transition-colors duration-200',
   viewModeButtonBase: 'p-2 sm:p-1.5 rounded transition-colors',
-  viewModeActive: 'bg-slate-700 !text-blue-400 shadow-md',
-  viewModeInactive: 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50',
+  viewModeActive: 'bg-[var(--theme-active-item-bg)] !text-[var(--theme-text-accent)] shadow-md',
+  viewModeInactive: 'text-stone-400 hover:text-stone-200 hover:bg-[var(--theme-container-bg)]',
   viewModeIcon: 'w-4 h-4 shrink-0',
 } as const;
 
