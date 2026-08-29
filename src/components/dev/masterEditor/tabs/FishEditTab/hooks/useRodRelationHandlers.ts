@@ -34,7 +34,7 @@ export function useRodRelationHandlers(
 			const catchabilityOrder: NonNullable<FishRodRelation['catchability']>[] = ['unknown', 'possible', 'impossible'];
 			const breakOrder: NonNullable<FishRodRelation['rodBreak']>[] = ['unknown', 'no', 'yes'];
 
-			let nextValue: any;
+			let nextValue: FishRodRelation['catchability'] | FishRodRelation['rodBreak'];
 			if (field === 'catchability') {
 				const currentValue = existingRel?.catchability || 'unknown';
 				const currentIdx = catchabilityOrder.indexOf(currentValue);

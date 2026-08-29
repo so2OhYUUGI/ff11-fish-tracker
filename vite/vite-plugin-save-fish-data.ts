@@ -9,6 +9,17 @@ import type { Plugin } from 'vite';
 import fs from 'node:fs';
 import path from 'node:path';
 
+type InputFish = {
+  id: number;
+  zoneIds?: number[];
+  subLocationIds?: number[];
+  impossibleRodIds?: unknown;
+  brokenRodIds?: unknown;
+  brokenLineRodIds?: unknown;
+  tooSmallRodIds?: unknown;
+  [key: string]: unknown;
+};
+
 export function saveFishDataPlugin(): Plugin {
   return {
     name: 'save-fish-data-plugin',
@@ -72,16 +83,15 @@ export function saveFishDataPlugin(): Plugin {
               let cleanFishList = [];
 
               if (Array.isArray(fishList)) {
-                cleanFishList = fishList.map((fish: any) => {
-                  const {
-                    zoneIds,
-                    subLocationIds,
-                    impossibleRodIds,
-                    brokenRodIds,
-                    brokenLineRodIds,
-                    tooSmallRodIds,
-                    ...restFish
-                  } = fish;
+                cleanFishList = fishList.map((fish: InputFish) => {
+                  const { zoneIds, subLocationIds } = fish;
+                  const restFish = { ...fish };
+                  delete restFish.zoneIds;
+                  delete restFish.subLocationIds;
+                  delete restFish.impossibleRodIds;
+                  delete restFish.brokenRodIds;
+                  delete restFish.brokenLineRodIds;
+                  delete restFish.tooSmallRodIds;
 
                   if (Array.isArray(zoneIds)) {
                     const fishSubIds: number[] = Array.isArray(subLocationIds) ? subLocationIds : [];

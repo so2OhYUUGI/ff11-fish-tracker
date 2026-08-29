@@ -105,7 +105,12 @@ export const MasterDataEditor: React.FC = () => {
 	};
 
 	const handleExport = () => {
-		const exportFishes = fishList.map(({ zoneIds, subLocationIds, ...fish }) => fish);
+		const exportFishes = fishList.map((fish) => {
+			const copy = { ...fish };
+			delete copy.zoneIds;
+			delete copy.subLocationIds;
+			return copy;
+		});
 		const exportLocations: FishLocation[] = fishList.flatMap((fish) =>
 			(fish.zoneIds || []).map((zoneId) => {
 				// 該当ゾーンに対応する subLocationIds の抽出

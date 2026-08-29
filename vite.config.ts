@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import path from 'node:path';
 import { execSync } from 'node:child_process';
 import packageJson from './package.json';
-// @ts-ignore
+// @ts-expect-error Vite plugin import path includes ts extension
 import { saveFishDataPlugin } from './vite/vite-plugin-save-fish-data.ts';
 
 // Gitのショートコミットハッシュを取得

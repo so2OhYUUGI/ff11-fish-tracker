@@ -40,7 +40,8 @@ async function ensureInitialized(env: Env, requestUrl: string) {
 	}
 	// 初回リクエスト時のみ public/ からフォントを取得してキャッシュ
 	if (!fontCache) {
-		const fontRes = await env.ASSETS.fetch(new URL('/NotoSansJP-Regular.ttf', requestUrl).href);		if (!fontRes.ok) {
+		const fontRes = await env.ASSETS.fetch(new URL('/NotoSansJP-Regular.ttf', requestUrl).href);
+		if (!fontRes.ok) {
 			throw new Error(`Failed to load font: ${fontRes.status}`);
 		}
 		fontCache = new Uint8Array(await fontRes.arrayBuffer());
@@ -128,8 +129,8 @@ export default {
 					},
 				});
 
-			} catch (error: any) {
-				const errorMessage = error?.stack || error?.message || String(error);
+			} catch (error: unknown) {
+				const errorMessage = error instanceof Error ? error.stack || error.message : String(error);
 				return new Response(`OGP Generation Error:\n\n${errorMessage}`, {
 					status: 500,
 					headers: { 'Content-Type': 'text/plain; charset=utf-8' },
@@ -161,7 +162,7 @@ export default {
 		return new HTMLRewriter()
 			.on('title', {
 				element(element) {
-					(element as any).setInnerContent(ogTitle);
+					element.setInnerContent(ogTitle);
 				},
 			})
 			.on('meta[name="description"]', {
