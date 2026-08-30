@@ -15,7 +15,7 @@ import { COMMON_TOKENS } from '../tokens/commonTokens';
 
 export const LIST_STYLES = {
 	// 1. 基本リスト行・レイアウト（タップ領域およびレスポンシブパディングの確保）
-	base: 'relative rounded-lg border p-2 sm:p-2.5 transition-all duration-150 select-none group min-h-[44px]',
+	base: 'relative rounded-lg border transition-all duration-150 select-none group min-h-[44px]',
 	itemRow: 'flex items-center justify-between gap-2 sm:gap-3 cursor-pointer py-1.5 px-2 sm:py-2 sm:px-3 min-h-[44px]',
 	fishRow: 'flex items-center justify-between gap-2 sm:gap-3 cursor-pointer py-1.5 px-2 sm:py-2 sm:px-3 min-h-[44px]',
 	dimmed: 'opacity-70',

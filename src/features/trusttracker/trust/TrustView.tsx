@@ -5,6 +5,7 @@
  * 
  * [概要]
  * - フィルタリング済みフェイス一覧のリスト表示および選択状態の管理
+ * - LAYOUT_TOKENS を使用した魚チェッカー準拠の標準レイアウト（リスト + サイドバー詳細）
  * - PC画面（1024px以上）: 左右2カラム（リスト + 右側サイドバー詳細）
  * - モバイル画面（1024px未満）: 選択時に詳細画面をモーダル/オーバーレイ表示
  * ============================================================================
@@ -15,6 +16,7 @@ import { X, Users } from 'lucide-react';
 import type { TrustMaster } from '@/types/trusttracker';
 import { TrustListItem } from './TrustListItem';
 import { TrustDetailView } from './TrustDetailView';
+import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
 
 type Props = {
 	trusts: TrustMaster[];
@@ -55,20 +57,22 @@ export const TrustView: React.FC<Props> = ({
 		setIsMobileDetailOpen(false);
 	}, []);
 
+	const isSelected = selectedTrust !== null;
+
 	return (
-		<div className="w-full h-full flex flex-col lg:flex-row gap-4 relative">
+		<div className={LAYOUT_TOKENS.view.mainGrid}>
 			{/* 1. 左側: フェイス一覧リスト */}
-			<div className="flex-1 flex flex-col min-w-0 bg-slate-900/40 border border-slate-800/80 rounded-xl overflow-hidden">
+			<div className={LAYOUT_TOKENS.view.leftColumn(isSelected)}>
 				{trusts.length === 0 ? (
-					<div className="flex-1 flex flex-col items-center justify-center p-12 text-center">
+					<div className={LAYOUT_TOKENS.view.emptyContainer}>
 						<Users className="w-12 h-12 text-slate-600 mb-3" />
-						<p className="text-slate-400 font-medium">該当するフェイスが見つかりません</p>
+						<p className={LAYOUT_TOKENS.view.emptyText}>該当するフェイスが見つかりません</p>
 						<p className="text-xs text-slate-500 mt-1">
 							検索ワードや修得ステータスフィルターの条件を変更してください。
 						</p>
 					</div>
 				) : (
-					<div className="flex-1 overflow-y-auto p-2 space-y-1.5 custom-scrollbar">
+					<div className={LAYOUT_TOKENS.view.flexColGap2}>
 						{trusts.map((trust) => {
 							const isChecked = checkedSet.has(trust.id);
 							const isSelected = trust.id === selectedTrustId;
@@ -89,7 +93,7 @@ export const TrustView: React.FC<Props> = ({
 			</div>
 
 			{/* 2. 右側: PC用 サイドバー詳細パネル (1024px以上) */}
-			<div className="hidden lg:block w-[380px] xl:w-[420px] shrink-0 h-[calc(100vh-220px)] sticky top-4">
+			<div className={LAYOUT_TOKENS.sidebar.stickyContainer}>
 				<TrustDetailView
 					trust={selectedTrust}
 					isChecked={selectedTrust ? checkedSet.has(selectedTrust.id) : false}
