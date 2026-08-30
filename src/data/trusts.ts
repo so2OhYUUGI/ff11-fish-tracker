@@ -46,8 +46,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Rahal",
     "job": "ナイト",
     "combatType": "盾",
-    "isLimited": true,
-    "acquireInfo": "盟-ラーアル",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10139,
       "en": "Cipher: Rahal",

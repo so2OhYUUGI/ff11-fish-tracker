@@ -1,12 +1,12 @@
 /**
  * ============================================================================
  * [FilePath] src/components/dev/masterEditor/tabs/TrustEditTab/components/TrustBasicFields.tsx
- * [Role] フェイス編集（ジョブ、戦闘タイプ、所属分類、限定、修得情報）コンポーネント
+ * [Role] フェイス編集（ジョブ、戦闘タイプ、所属分類、限定、修得情報、アイテム情報）コンポーネント
  * ============================================================================
  */
 
 import React from 'react';
-import type { TrustMaster, TrustCombatType, TrustAffiliation } from '@/types/trusttracker';
+import type { TrustMaster, TrustCombatType, TrustAffiliation, TrustItemInfo } from '@/types/trusttracker';
 import { EDITOR_STYLES } from '@/styles/components/editorStyles';
 
 type TrustBasicFieldsProps = {
@@ -14,7 +14,7 @@ type TrustBasicFieldsProps = {
 	onFieldChange: <K extends keyof TrustMaster>(field: K, value: TrustMaster[K]) => void;
 };
 
-const COMBAT_TYPES: TrustCombatType[] = ['近接物理', '遠隔物理', '魔法攻撃', '回復', '支援', '盾'];
+const COMBAT_TYPES: TrustCombatType[] = ['盾', '近接物理', '遠隔物理', '魔法攻撃', '回復', '支援'];
 const AFFILIATIONS: TrustAffiliation[] = [
 	'サンドリア',
 	'バストゥーク',
@@ -31,6 +31,14 @@ export const TrustBasicFields: React.FC<TrustBasicFieldsProps> = ({
 	trust,
 	onFieldChange,
 }) => {
+	const handleItemChange = <K extends keyof TrustItemInfo>(key: K, value: TrustItemInfo[K]) => {
+		const currentItem: TrustItemInfo = trust.item || { id: 0, ja: '', en: '' };
+		onFieldChange('item', {
+			...currentItem,
+			[key]: value,
+		});
+	};
+
 	return (
 		<div className="space-y-4 text-xs">
 			{/* 選択中フェイス参照表示 */}
@@ -127,6 +135,33 @@ export const TrustBasicFields: React.FC<TrustBasicFieldsProps> = ({
 							className={EDITOR_STYLES.fishEdit.inputField}
 							placeholder="修得条件や入手方法を入力..."
 						/>
+					</div>
+				</div>
+
+				{/* 盟（アイテム）情報編集 - 最下部 */}
+				<div className="pt-2 border-t border-slate-200 space-y-2">
+					<label className={EDITOR_STYLES.trustEdit.fieldLabel}>盟（アイテム）情報</label>
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+						<div>
+							<span className="text-slate-400 text-[10px] block mb-0.5">アイテム名 JP (item.ja)</span>
+							<input
+								type="text"
+								value={trust.item?.ja || ''}
+								onChange={(e) => handleItemChange('ja', e.target.value)}
+								className={EDITOR_STYLES.fishEdit.inputField}
+								placeholder="例: 盟-シャントット"
+							/>
+						</div>
+						<div>
+							<span className="text-slate-400 text-[10px] block mb-0.5">アイテム名 EN (item.en)</span>
+							<input
+								type="text"
+								value={trust.item?.en || ''}
+								onChange={(e) => handleItemChange('en', e.target.value)}
+								className={EDITOR_STYLES.fishEdit.inputField}
+								placeholder="例: Cipher: Shantotto"
+							/>
+						</div>
 					</div>
 				</div>
 			</div>
