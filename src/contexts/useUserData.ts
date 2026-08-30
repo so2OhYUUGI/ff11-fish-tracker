@@ -6,7 +6,8 @@
  * [調整内容]
  * - addCharacter が作成した CharacterProgress オブジェクトを返却するよう修正
  * - activeCharacterId に共有キャラ等の外部IDも保持できるよう許容
- * - 共有キャラクター選択時の toggleFishCheck によるローカルデータ誤更新バグを修正
+ * - 共有キャラクター選択時の toggleFishCheck / toggleTrustCheck によるローカルデータ誤更新バグを修正
+ * - checkedTrustIds（フェイス修得データ）の正規化・永続化・トグル処理の追加
  * ============================================================================
  */
 
@@ -30,7 +31,7 @@ const generateUniqueId = (): string => {
 };
 
 /**
- * CharacterProgress オブジェクト内の checkedFishIds を確実に number[] へ正規化する
+ * CharacterProgress オブジェクト内の checkedFishIds / checkedTrustIds を確実に number[] へ正規化する
  */
 const normalizeCharacterProgress = (rawChar: unknown): CharacterProgress => {
 	const char = (typeof rawChar === 'object' && rawChar !== null ? rawChar : {}) as Record<string, unknown>;
@@ -40,11 +41,17 @@ const normalizeCharacterProgress = (rawChar: unknown): CharacterProgress => {
 		.map((id) => Number(id))
 		.filter((id) => !isNaN(id));
 
+	const rawCheckedTrustIds = Array.isArray(char.checkedTrustIds) ? char.checkedTrustIds : [];
+	const checkedTrustIds = rawCheckedTrustIds
+		.map((id) => Number(id))
+		.filter((id) => !isNaN(id));
+
 	return {
 		...char,
 		id: typeof char.id === 'string' && char.id ? char.id : generateUniqueId(),
 		name: typeof char.name === 'string' && char.name ? char.name : '新規キャラクター',
 		checkedFishIds,
+		checkedTrustIds,
 		createdAt: typeof char.createdAt === 'number' ? char.createdAt : Date.now(),
 		updatedAt: typeof char.updatedAt === 'number' ? char.updatedAt : Date.now(),
 	};
@@ -61,7 +68,7 @@ export const useUserData = () => {
 				return EMPTY_USER_DATA;
 			}
 
-			// 読み込み時に全キャラクターの checkedFishIds を number[] に正規化
+			// 読み込み時に全キャラクターの checkedFishIds / checkedTrustIds を number[] に正規化
 			const normalizedCharacters = parsed.characters.map(normalizeCharacterProgress);
 
 			return {
@@ -102,6 +109,7 @@ export const useUserData = () => {
 			id: generateUniqueId(),
 			name,
 			checkedFishIds: [],
+			checkedTrustIds: [],
 			createdAt: Date.now(),
 			updatedAt: Date.now(),
 		};
@@ -163,6 +171,42 @@ export const useUserData = () => {
 				return {
 					...char,
 					checkedFishIds: nextChecked,
+					updatedAt: Date.now(),
+				};
+			});
+
+			return {
+				...prev,
+				characters: updatedChars,
+			};
+		});
+	};
+
+	const toggleTrustCheck = (trustId: number) => {
+		setUserData((prev) => {
+			// 共有キャラが選択されている場合はローカルデータを変更しない
+			if (prev.activeCharacterId === SHARED_GUEST_CHARACTER_ID) {
+				return prev;
+			}
+
+			// 選択中のローカルキャラクターIDを取得
+			const targetActiveId = prev.characters.find((c) => c.id === prev.activeCharacterId)?.id;
+
+			if (!targetActiveId) return prev;
+
+			const updatedChars = prev.characters.map((char) => {
+				if (char.id !== targetActiveId) return char;
+
+				const rawChecked = Array.isArray(char.checkedTrustIds) ? char.checkedTrustIds : [];
+				const isChecked = rawChecked.includes(trustId);
+
+				const nextChecked = isChecked
+					? rawChecked.filter((id) => id !== trustId)
+					: [...rawChecked, trustId];
+
+				return {
+					...char,
+					checkedTrustIds: nextChecked,
 					updatedAt: Date.now(),
 				};
 			});
@@ -242,6 +286,7 @@ export const useUserData = () => {
 		renameCharacter,
 		deleteCharacter,
 		toggleFishCheck,
+		toggleTrustCheck,
 		exportData,
 		importData,
 	};

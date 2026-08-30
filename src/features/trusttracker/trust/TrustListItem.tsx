@@ -116,6 +116,15 @@ export const TrustListItem: React.FC<Props> = ({
 		[trust.id, onToggleCheck]
 	);
 
+	const handleToggleKeyDown = useCallback(
+		(e: React.KeyboardEvent<HTMLButtonElement>) => {
+			if (e.key === 'Enter' || e.key === ' ') {
+				e.stopPropagation();
+			}
+		},
+		[]
+	);
+
 	return (
 		<div
 			onClick={handleClick}
@@ -131,6 +140,7 @@ export const TrustListItem: React.FC<Props> = ({
 					<button
 						type="button"
 						onClick={handleToggleClick}
+						onKeyDown={handleToggleKeyDown}
 						className={`${LIST_STYLES.checkboxBase} ${isChecked ? LIST_STYLES.checkboxChecked : LIST_STYLES.checkboxDefault
 							}`}
 						title={isChecked ? '未修得にする' : '修得済みにする'}

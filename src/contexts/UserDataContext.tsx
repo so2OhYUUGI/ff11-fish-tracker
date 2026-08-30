@@ -6,6 +6,7 @@
  * [概要]
  * - App.tsx や AppRouter でのバケツリレー (Prop Drilling) を解消する
  * - useUserData / useSharedProgress を集約し、閲覧権限（canViewContainer）判定も含めて管理する
+ * - 釣魚（checkedFishIds）に加え、フェイス修得（checkedTrustIds）のトグル状態および操作関数を提供する
  * 
  * [依存関係・関連ファイル]
  * - フック   : src/contexts/useUserData.ts, src/hooks/useSharedProgress.ts
@@ -27,6 +28,7 @@ import { SHARED_GUEST_CHARACTER_ID } from '@/constants/character';
 
 export interface DisplayCharacterProgress extends CharacterProgress {
 	isShared?: boolean;
+	checkedTrustIds?: number[];
 }
 
 // 未登録かつ共有データもない場合に表示するフォールバック用のゲストキャラクター
@@ -34,6 +36,7 @@ const FALLBACK_GUEST_CHARACTER: DisplayCharacterProgress = {
 	id: SHARED_GUEST_CHARACTER_ID,
 	name: 'ゲスト',
 	checkedFishIds: [],
+	checkedTrustIds: [],
 	createdAt: Date.now(),
 	updatedAt: Date.now(),
 	isShared: true,
@@ -56,6 +59,7 @@ interface UserDataContextType {
 	renameCharacter: (characterId: string, newName: string) => void;
 	deleteCharacter: (characterId: string) => void;
 	toggleFishCheck: (fishId: number) => void;
+	toggleTrustCheck: (trustId: number) => void;
 	setViewMode: (mode: ViewMode) => void;
 	exportData: () => void;
 	importData: (file: File) => Promise<boolean>;
@@ -77,6 +81,7 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 		renameCharacter,
 		deleteCharacter,
 		toggleFishCheck,
+		toggleTrustCheck,
 		exportData,
 		importData,
 	} = userDataProps;
@@ -95,6 +100,7 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 			id: SHARED_GUEST_CHARACTER_ID,
 			name: sharedProgress.characterName,
 			checkedFishIds: sharedProgress.checkedFishIds,
+			checkedTrustIds: (sharedProgress as any).checkedTrustIds || [],
 			createdAt: sharedProgress.createdAt,
 			updatedAt: sharedProgress.createdAt,
 			isShared: true,
@@ -163,6 +169,7 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 		renameCharacter,
 		deleteCharacter,
 		toggleFishCheck,
+		toggleTrustCheck,
 		setViewMode,
 		exportData,
 		importData,

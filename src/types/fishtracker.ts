@@ -22,9 +22,10 @@ export type ZoneMaster = {
 
 // --- ユーザー進捗データ (LocalStorage保存用) ---
 export type CharacterProgress = {
-	id: string;            // キャラクター一意ID (UUID等)
-	name: string;          // キャラクター名 (例: "Toraou")
-	checkedFishIds: number[]; // 釣った魚の Windower Item ID リスト
+	id: string;              // キャラクター一意ID (UUID等)
+	name: string;            // キャラクター名 (例: "Toraou")
+	checkedFishIds: number[];   // 釣った魚の Windower Item ID リスト
+	checkedTrustIds?: number[]; // 修得済みフェイスの ID リスト
 	createdAt: number;
 	updatedAt: number;
 };
@@ -123,7 +124,7 @@ export type RegionMaster = {
 
 // src/data/subLocations.ts
 export type SubLocationMaster = {
-	id: number;      
+	id: number;
 	zoneId: number;  // 親となる Zone ID
 	ja: string;      // 表示名（例: "まりも航路"）
 	en: string;

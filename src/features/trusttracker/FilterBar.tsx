@@ -15,7 +15,7 @@
  * [編集・改修時の注意事項（AI/エンジニア共通指示）]
  * 1. 【アクセシビリティ】 タブ切替ボタンには aria-label 属性を設定すること
  * 2. 【検索制御】 入力キーワードのクリアボタン表示制御およびクリア処理（onSearchQueryChange('')）を維持すること
- * 3. 【数値計算】 checkedFishIds 配列の要素数と totalTrustCount からプログレス表示率（progressPercent）を正しく算出すること
+ * 3. 【数値計算】 checkedTrustIds 配列の要素数と totalTrustCount からプログレス表示率（progressPercent）を正しく算出すること
  * ============================================================================
  */
 
@@ -79,8 +79,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 	}, [searchQuery]);
 
 	// 修得済み数の算出
-	const checkedCount = Array.isArray(activeCharacter?.checkedFishIds)
-		? activeCharacter.checkedFishIds.length
+	const checkedCount = Array.isArray(activeCharacter?.checkedTrustIds)
+		? activeCharacter.checkedTrustIds.length
 		: 0;
 
 	const progressPercent = useMemo(
@@ -156,8 +156,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 								type="button"
 								onClick={() => onStatusFilterChange('all')}
 								className={`${FILTER_BAR_STYLES.statusButtonBase} ${statusFilter === 'all'
-										? FILTER_BAR_STYLES.statusAllActive
-										: FILTER_BAR_STYLES.statusInactive
+									? FILTER_BAR_STYLES.statusAllActive
+									: FILTER_BAR_STYLES.statusInactive
 									}`}
 							>
 								すべて
@@ -166,8 +166,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 								type="button"
 								onClick={() => onStatusFilterChange('unchecked')}
 								className={`${FILTER_BAR_STYLES.statusButtonBase} ${statusFilter === 'unchecked'
-										? FILTER_BAR_STYLES.statusUncheckedActive
-										: FILTER_BAR_STYLES.statusInactive
+									? FILTER_BAR_STYLES.statusUncheckedActive
+									: FILTER_BAR_STYLES.statusInactive
 									}`}
 							>
 								未修得
@@ -176,8 +176,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 								type="button"
 								onClick={() => onStatusFilterChange('checked')}
 								className={`${FILTER_BAR_STYLES.statusButtonBase} ${statusFilter === 'checked'
-										? FILTER_BAR_STYLES.statusCheckedActive
-										: FILTER_BAR_STYLES.statusInactive
+									? FILTER_BAR_STYLES.statusCheckedActive
+									: FILTER_BAR_STYLES.statusInactive
 									}`}
 							>
 								修得済み
