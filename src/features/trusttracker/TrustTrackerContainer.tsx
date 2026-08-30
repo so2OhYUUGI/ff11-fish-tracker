@@ -9,6 +9,7 @@
  * - checkedTrustIds の数値化・正規化ロジックの適用
  * - 閲覧専用状態（共有キャラ）および未登録ガード判定、Undoアクション付きトーストの実装
  * - 共通ナビゲーションフック（useTrackerNavigation）の組み込み
+ * - 限定（isLimited: true）を除外したフェイス総数の計算・伝播
  * 
  * [依存関係・関連ファイル]
  * - データ      : src/data/trusts.ts
@@ -43,6 +44,13 @@ export const TrustTrackerContainer: React.FC = () => {
 		toggleTrustCheck,
 		setRegistrationMessage: onRequestRegistration,
 	} = useUserDataContext();
+
+	// 限定（isLimited: true）を除外したフェイスの抽出と総数
+	const nonLimitedTrusts = useMemo(() => {
+		return TRUSTS.filter((trust) => !trust.isLimited);
+	}, []);
+
+	const totalTrustCount = nonLimitedTrusts.length;
 
 	// 1. サブタイプ（メインタブ）
 	const activeType = (searchParams.get('type') as TrustSubtype) || 'trust';
@@ -197,7 +205,7 @@ export const TrustTrackerContainer: React.FC = () => {
 					onStatusFilterChange={handleStatusFilterChange}
 					searchQuery={searchQuery}
 					onSearchQueryChange={handleSearchQueryChange}
-					totalTrustCount={TRUSTS.length}
+					totalTrustCount={totalTrustCount}
 				/>
 			</div>
 

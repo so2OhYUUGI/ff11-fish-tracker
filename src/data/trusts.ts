@@ -243,16 +243,17 @@ export const TRUSTS: TrustMaster[] = [
     "icon_id": 1010,
     "party_name": "InvincibleShld",
     "job": "",
-    "combatType": "",
+    "combatType": "近接物理",
     "isLimited": true,
     "acquireInfo": "",
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-I.シールド(UC)",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "バストゥーク"
   },
   {
     "id": 917,

@@ -8,6 +8,7 @@
  * - 表示順: 名前 -> アイテム -> タイプの構成に最適化
  * - 戦闘タイプバッジの幅固定化によるレイアウト崩れ・ガタつきの防止
  * - 修得/達成状態（チェック状態）のチェックボックス描画およびトグル操作
+ * - 限定フェイス（isLimited: true）のチェックボックス操作無効化
  * - variant Props（'default' | 'inline'）によりメイン一覧用と詳細画面インライン用のスタイル切替に対応
  * 
  * [依存関係・関連ファイル]
@@ -81,6 +82,7 @@ export const TrustListItem: React.FC<Props> = ({
 	onClickDetail,
 }) => {
 	const isInline = variant === 'inline';
+	const isLimited = !!trust.isLimited;
 
 	const containerStyle = getContainerStyle(isInline, isSelected, isChecked, !!onClickDetail);
 	const titleStyle = getTitleStyle(isInline, isSelected, isChecked);
@@ -106,9 +108,10 @@ export const TrustListItem: React.FC<Props> = ({
 	const handleToggleClick = useCallback(
 		(e: React.MouseEvent<HTMLButtonElement>) => {
 			e.stopPropagation();
+			if (isLimited) return;
 			onToggleCheck?.(trust.id);
 		},
-		[trust.id, onToggleCheck]
+		[trust.id, isLimited, onToggleCheck]
 	);
 
 	const handleToggleKeyDown = useCallback(
@@ -134,13 +137,24 @@ export const TrustListItem: React.FC<Props> = ({
 				{onToggleCheck && (
 					<button
 						type="button"
+						disabled={isLimited}
 						onClick={handleToggleClick}
 						onKeyDown={handleToggleKeyDown}
 						className={`${LIST_STYLES.checkboxBase} ${isChecked ? LIST_STYLES.checkboxChecked : LIST_STYLES.checkboxDefault
-							}`}
-						title={isChecked ? '未修得にする' : '修得済みにする'}
-						aria-label={`${trust.ja}の修得状態の切り替え（現在: ${isChecked ? '修得済み' : '未修得'
-							}）`}
+							} ${isLimited ? 'opacity-50 cursor-not-allowed' : ''}`}
+						title={
+							isLimited
+								? '限定フェイスのため操作できません'
+								: isChecked
+									? '未修得にする'
+									: '修得済みにする'
+						}
+						aria-label={
+							isLimited
+								? `${trust.ja}（限定フェイスのため修得操作不可）`
+								: `${trust.ja}の修得状態の切り替え（現在: ${isChecked ? '修得済み' : '未修得'
+								}）`
+						}
 						aria-pressed={isChecked}
 					>
 						{isChecked && <Check className="w-4 h-4 stroke-3" />}
@@ -159,18 +173,14 @@ export const TrustListItem: React.FC<Props> = ({
 			<div className={LIST_STYLES.badgeGroupContainer}>
 				{/* アイテム名 */}
 				{trust.item?.ja && (
-					<Badge
-						className={TRUST_ITEM_STYLES.itemBadge}
-					>
+					<Badge className={TRUST_ITEM_STYLES.itemBadge}>
 						<Package className={TRUST_ITEM_STYLES.itemIcon} />
 						<span className="truncate">{trust.item.ja}</span>
 					</Badge>
 				)}
 
 				{/* 戦闘タイプ */}
-				<Badge
-					className={`${TRUST_ITEM_STYLES.combatBadgeBase} ${combatBadgeStyle}`}
-				>
+				<Badge className={`${TRUST_ITEM_STYLES.combatBadgeBase} ${combatBadgeStyle}`}>
 					{trust.combatType}
 				</Badge>
 			</div>
