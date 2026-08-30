@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  * [FilePath] vite/vite-plugin-save-fish-data.ts
- * [Role] 魚関連マスターデータおよび中間リレーション保存用の Vite プラグイン
+ * [Role] 魚関連マスターデータおよびフェイスマスターデータ保存用の Vite プラグイン
  * ============================================================================
  */
 
@@ -25,7 +25,52 @@ export function saveFishDataPlugin(): Plugin {
     name: 'save-fish-data-plugin',
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
-        // パスとメソッドの厳格な判定
+        // ====================================================================
+        // フェイスマスターデータ保存エンドポイント (/api/save-trust-data)
+        // ====================================================================
+        if (req.url === '/api/save-trust-data') {
+          if (req.method !== 'POST') {
+            res.statusCode = 405;
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({ success: false, error: 'Method Not Allowed' }));
+            return;
+          }
+
+          const chunks: Buffer[] = [];
+          req.on('data', (chunk: Buffer) => chunks.push(chunk));
+
+          req.on('end', () => {
+            res.setHeader('Content-Type', 'application/json');
+            const body = Buffer.concat(chunks).toString('utf-8');
+
+            if (!body.trim()) {
+              res.statusCode = 400;
+              res.end(JSON.stringify({ success: false, error: 'Empty request body' }));
+              return;
+            }
+
+            try {
+              const { trustList } = JSON.parse(body);
+
+              if (Array.isArray(trustList)) {
+                const trustsFilePath = path.resolve(process.cwd(), 'src/data/trusts.ts');
+                const trustsContent = `import type { TrustMaster } from '@/types/trusttracker';\n\nexport const TRUSTS: TrustMaster[] = ${JSON.stringify(trustList, null, 2)};\n`;
+                fs.writeFileSync(trustsFilePath, trustsContent, 'utf-8');
+              }
+
+              res.statusCode = 200;
+              res.end(JSON.stringify({ success: true }));
+            } catch (error) {
+              res.statusCode = 500;
+              res.end(JSON.stringify({ success: false, error: String(error) }));
+            }
+          });
+          return;
+        }
+
+        // ====================================================================
+        // 魚関連マスターデータ保存エンドポイント (/api/save-fish-data)
+        // ====================================================================
         if (req.url === '/api/save-fish-data') {
           if (req.method !== 'POST') {
             res.statusCode = 405; // Method Not Allowed

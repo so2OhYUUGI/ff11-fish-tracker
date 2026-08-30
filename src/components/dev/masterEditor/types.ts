@@ -11,7 +11,7 @@
 
 import type { FishMaster } from '@/types/fishtracker';
 
-export type EditTab = 'fish' | 'zone' | 'bait';
+export type EditTab = 'fish' | 'zone' | 'bait' | 'trust';
 
 export type EditableFish = FishMaster & {
 	zoneIds?: number[];

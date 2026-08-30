@@ -134,4 +134,10 @@ export const EDITOR_STYLES = {
 		harakiriContainer: 'grid grid-cols-1 sm:grid-cols-2 gap-2.5 p-2.5 border border-slate-200 rounded-md bg-slate-50',
 		textareaField: 'w-full h-12 p-1 mt-0.5 border border-slate-300 rounded text-xs bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-500',
 	},
+	trustEdit: {
+		sectionCard: 'bg-slate-50 border border-slate-200 rounded-lg p-3.5 space-y-3 shadow-sm',
+		sectionTitle: 'text-xs font-bold text-slate-700 flex items-center gap-1.5 border-b border-slate-200 pb-1.5 m-0',
+		fieldLabel: 'block text-[11px] font-bold text-slate-600 mb-1',
+		checkboxLabel: 'flex items-center gap-2 cursor-pointer font-bold text-slate-700 text-xs bg-white px-3 py-2 rounded border border-slate-200 hover:bg-slate-50 transition-colors',
+	},
 } as const;

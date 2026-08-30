@@ -5,8 +5,8 @@
  * 
  * [概要]
  * - 開発環境限定で動作するマスターデータ統合編集コンテナ
- * - インラインスタイルを排除し、EDITOR_STYLES に定義を集約
- * - FISH_LOCATIONS から zoneIds および subLocationIds を抽出し EditableFish を初期化
+ * - タブ選択をドロップダウン方式にし、ツールバーの表示領域を最適化
+ * - 魚・ゾーン・餌に加え、フェイス（TRUSTS）マスターデータの編集に対応
  * ============================================================================
  */
 
@@ -16,6 +16,7 @@ import {
 	FISHES,
 	ZONES,
 	BAITS,
+	TRUSTS,
 	FISH_LOCATIONS,
 	SUB_LOCATIONS,
 	REGIONS,
@@ -29,9 +30,11 @@ import type {
 	FishBaitRelation,
 	FishRodRelation,
 } from '@/types/fishtracker';
+import type { TrustMaster } from '@/types/trusttracker';
 import { FishEditTab } from './tabs/FishEditTab/FishEditTab';
 import { ZoneEditTab } from './tabs/ZoneEditTab';
 import { BaitReorderTab } from './tabs/BaitReorderTab';
+import { TrustEditTab } from './tabs/TrustEditTab/TrustEditTab';
 import type { EditTab, EditableFish } from './types';
 import { EDITOR_STYLES } from '@/styles/components/editorStyles';
 
@@ -56,9 +59,8 @@ export const MasterDataEditor: React.FC = () => {
 	);
 
 	const [zoneList, setZoneList] = useState<ZoneMaster[]>(() => ZONES);
-
-	// 餌マスターの State（定義順のまま保持）
 	const [baitList, setBaitList] = useState<BaitMaster[]>(() => BAITS || []);
+	const [trustList, setTrustList] = useState<TrustMaster[]>(() => TRUSTS || []);
 
 	// 中間リレーションデータの State
 	const [fishBaitRelations, setFishBaitRelations] = useState<FishBaitRelation[]>(
@@ -79,21 +81,34 @@ export const MasterDataEditor: React.FC = () => {
 		setZoneList((prev) => prev.map((item) => (item.id === updated.id ? updated : item)));
 	};
 
+	const handleTrustChange = (updated: TrustMaster) => {
+		setTrustList((prev) => prev.map((item) => (item.id === updated.id ? updated : item)));
+	};
+
 	const handleDirectSave = async () => {
 		try {
-			const response = await fetch('/api/save-fish-data', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					fishList,
-					zoneList,
-					baitList,
-					fishBaitRelations,
-					fishRodRelations,
+			const [fishRes, trustRes] = await Promise.all([
+				fetch('/api/save-fish-data', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({
+						fishList,
+						zoneList,
+						baitList,
+						fishBaitRelations,
+						fishRodRelations,
+					}),
 				}),
-			});
+				fetch('/api/save-trust-data', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({
+						trustList,
+					}),
+				}),
+			]);
 
-			if (response.ok) {
+			if (fishRes.ok && trustRes.ok) {
 				alert('マスターデータ（TSファイル）へ直接保存しました！');
 			} else {
 				alert('保存に失敗しました。');
@@ -113,7 +128,6 @@ export const MasterDataEditor: React.FC = () => {
 		});
 		const exportLocations: FishLocation[] = fishList.flatMap((fish) =>
 			(fish.zoneIds || []).map((zoneId) => {
-				// 該当ゾーンに対応する subLocationIds の抽出
 				const zoneSubLocationIds = (fish.subLocationIds || []).filter((subId) => {
 					const subLoc = SUB_LOCATIONS.find((s) => s.id === subId);
 					return subLoc?.zoneId === zoneId;
@@ -133,6 +147,7 @@ export const MasterDataEditor: React.FC = () => {
 			fishLocations: exportLocations,
 			zones: zoneList,
 			baits: baitList,
+			trusts: trustList,
 			fishBaitRelations,
 			fishRodRelations,
 		};
@@ -140,7 +155,7 @@ export const MasterDataEditor: React.FC = () => {
 		const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(exportData, null, 2));
 		const downloadAnchor = document.createElement('a');
 		downloadAnchor.setAttribute('href', dataStr);
-		downloadAnchor.setAttribute('download', 'updatedFishData.json');
+		downloadAnchor.setAttribute('download', 'updatedMasterData.json');
 		document.body.appendChild(downloadAnchor);
 		downloadAnchor.click();
 		downloadAnchor.remove();
@@ -158,38 +173,22 @@ export const MasterDataEditor: React.FC = () => {
 		<div className={EDITOR_STYLES.wrapper}>
 			{/* ツールバー */}
 			<div className={EDITOR_STYLES.toolbar}>
-				{/* 左側：タブ切り替えボタン群 */}
-				<div className={EDITOR_STYLES.tabGroup}>
-					<button
-						type="button"
-						onClick={() => setActiveTab('fish')}
-						className={`${EDITOR_STYLES.tabButtonBase} ${activeTab === 'fish'
-							? EDITOR_STYLES.tabButtonActive
-							: EDITOR_STYLES.tabButtonInactive
-							}`}
+				{/* 左側：ドロップダウン方式の編集カテゴリ切り替え */}
+				<div className="flex items-center gap-2">
+					<label htmlFor="master-editor-tab-select" className="text-xs font-semibold text-gray-300 whitespace-nowrap">
+						編集項目:
+					</label>
+					<select
+						id="master-editor-tab-select"
+						value={activeTab}
+						onChange={(e) => setActiveTab(e.target.value as EditTab)}
+						className="bg-gray-800 text-gray-100 border border-gray-600 rounded px-3 py-1.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
 					>
-						🐟 魚データ編集
-					</button>
-					<button
-						type="button"
-						onClick={() => setActiveTab('zone')}
-						className={`${EDITOR_STYLES.tabButtonBase} ${activeTab === 'zone'
-							? EDITOR_STYLES.tabButtonActive
-							: EDITOR_STYLES.tabButtonInactive
-							}`}
-					>
-						🗺️ ゾーン（エリア）編集
-					</button>
-					<button
-						type="button"
-						onClick={() => setActiveTab('bait')}
-						className={`${EDITOR_STYLES.tabButtonBase} ${activeTab === 'bait'
-							? EDITOR_STYLES.tabButtonActive
-							: EDITOR_STYLES.tabButtonInactive
-							}`}
-					>
-						🪱 餌並び順編集
-					</button>
+						<option value="fish">🐟 魚データ編集</option>
+						<option value="zone">🗺️ ゾーン（エリア）編集</option>
+						<option value="bait">🪱 餌並び順編集</option>
+						<option value="trust">👤 フェイスデータ編集</option>
+					</select>
 				</div>
 
 				{/* 右側：データ保存・出力アクションボタン群 */}
@@ -238,6 +237,13 @@ export const MasterDataEditor: React.FC = () => {
 				)}
 				{activeTab === 'bait' && (
 					<BaitReorderTab baitList={baitList} onBaitListChange={setBaitList} />
+				)}
+				{activeTab === 'trust' && (
+					<TrustEditTab
+						trustList={trustList}
+						onTrustChange={handleTrustChange}
+						onTrustListChange={setTrustList}
+					/>
 				)}
 			</div>
 		</div>
