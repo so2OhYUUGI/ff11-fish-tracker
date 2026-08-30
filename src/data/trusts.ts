@@ -82,8 +82,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Mnejing",
     "job": "ナイト",
     "combatType": "盾",
-    "isLimited": true,
-    "acquireInfo": "盟-メネジン",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10122,
       "en": "Cipher: Mnejing",
@@ -100,8 +100,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Rughadjeen",
     "job": "ナイト",
     "combatType": "盾",
-    "isLimited": true,
-    "acquireInfo": "盟-天蛇将",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 0,
       "en": "",
@@ -119,7 +119,7 @@ export const TRUSTS: TrustMaster[] = [
     "job": "ナイト",
     "combatType": "盾",
     "isLimited": false,
-    "acquireInfo": "盟-ヴァレンラール",
+    "acquireInfo": "エミネンス・レコード「フェイスを呼び出す」",
     "item": {
       "id": 10116,
       "en": "Cipher: Valaineral",
@@ -136,8 +136,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Amchuchu",
     "job": "魔導剣士",
     "combatType": "盾",
-    "isLimited": true,
-    "acquireInfo": "盟-アムチュチュ",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10154,
       "en": "Cipher: Amchuchu",
@@ -244,7 +244,7 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "InvincibleShld",
     "job": "",
     "combatType": "",
-    "isLimited": false,
+    "isLimited": true,
     "acquireInfo": "",
     "item": {
       "id": 0,
@@ -298,7 +298,7 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Ayame",
     "job": "",
     "combatType": "",
-    "isLimited": false,
+    "isLimited": true,
     "acquireInfo": "",
     "item": {
       "id": 0,
@@ -316,8 +316,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Zeid",
     "job": "暗黒騎士",
     "combatType": "近接物理",
-    "isLimited": true,
-    "acquireInfo": "盟-ザイド",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10112,
       "en": "Cipher: Zeid",
@@ -352,8 +352,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Cid",
     "job": "戦士",
     "combatType": "近接物理",
-    "isLimited": true,
-    "acquireInfo": "盟-シド",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10138,
       "en": "Cipher: Cid",
@@ -424,8 +424,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Aldo",
     "job": "シーフ",
     "combatType": "近接物理",
-    "isLimited": true,
-    "acquireInfo": "盟-アルド",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10126,
       "en": "Cipher: Aldo",
@@ -442,7 +442,7 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Aldo",
     "job": "",
     "combatType": "",
-    "isLimited": false,
+    "isLimited": true,
     "acquireInfo": "",
     "item": {
       "id": 0,
@@ -478,7 +478,7 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Maat",
     "job": "",
     "combatType": "",
-    "isLimited": false,
+    "isLimited": true,
     "acquireInfo": "",
     "item": {
       "id": 0,
@@ -496,8 +496,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Mildaurion",
     "job": "ナイト",
     "combatType": "近接物理",
-    "isLimited": true,
-    "acquireInfo": "盟-ミルドリオン",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10156,
       "en": "Cipher: Mildaurion",
@@ -551,7 +551,7 @@ export const TRUSTS: TrustMaster[] = [
     "job": "侍",
     "combatType": "近接物理",
     "isLimited": false,
-    "acquireInfo": "盟-テンゼン",
+    "acquireInfo": "エミネンス・レコード「フェイス：ミリ・アリアポー」",
     "item": {
       "id": 10114,
       "en": "Cipher: Tenzen",
@@ -640,8 +640,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "NajaSalaheem",
     "job": "モンク",
     "combatType": "近接物理",
-    "isLimited": true,
-    "acquireInfo": "盟-ナジャ",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 0,
       "en": "",
@@ -658,7 +658,7 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "NajaSalaheem",
     "job": "",
     "combatType": "",
-    "isLimited": false,
+    "isLimited": true,
     "acquireInfo": "",
     "item": {
       "id": 0,
@@ -712,8 +712,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Luzaf",
     "job": "コルセア",
     "combatType": "近接物理",
-    "isLimited": true,
-    "acquireInfo": "盟-ルザフ",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10124,
       "en": "Cipher: Luzaf",
@@ -730,8 +730,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Rongelouts",
     "job": "戦士",
     "combatType": "近接物理",
-    "isLimited": true,
-    "acquireInfo": "盟-ロンジェルツ",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10161,
       "en": "Cipher: Rongelouts",
@@ -748,8 +748,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Areuhat",
     "job": "戦士",
     "combatType": "近接物理",
-    "isLimited": true,
-    "acquireInfo": "盟-アレヴァト",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10149,
       "en": "Cipher: Areuhat",
@@ -802,8 +802,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Noillurie",
     "job": "侍",
     "combatType": "近接物理",
-    "isLimited": true,
-    "acquireInfo": "盟-ノユリ",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10131,
       "en": "Cipher: Noillurie",
@@ -820,8 +820,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Maximilian",
     "job": "シーフ",
     "combatType": "近接物理",
-    "isLimited": true,
-    "acquireInfo": "盟-マクシミリアン",
+    "isLimited": false,
+    "acquireInfo": "フェイスゲットキャンペーン",
     "item": {
       "id": 10164,
       "en": "Cipher: Maximilian",
@@ -838,8 +838,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Mayakov",
     "job": "踊り子",
     "combatType": "近接物理",
-    "isLimited": true,
-    "acquireInfo": "盟-マヤコフ",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10151,
       "en": "Cipher: Mayakov",
@@ -910,8 +910,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "LhuMhakaracca",
     "job": "獣使い",
     "combatType": "近接物理",
-    "isLimited": true,
-    "acquireInfo": "盟-ルー",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 0,
       "en": "",
@@ -928,8 +928,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "LehkoHabhoka",
     "job": "シーフ",
     "combatType": "近接物理",
-    "isLimited": true,
-    "acquireInfo": "盟-レコ",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 0,
       "en": "",
@@ -982,8 +982,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Darrcuiln",
     "job": "戦士",
     "combatType": "近接物理",
-    "isLimited": true,
-    "acquireInfo": "盟-ダラクァルン",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10183,
       "en": "Cipher: Darrcuiln",
@@ -1018,8 +1018,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Teodor",
     "job": "黒魔道士",
     "combatType": "近接物理",
-    "isLimited": true,
-    "acquireInfo": "盟-テオドール",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10179,
       "en": "Cipher: Teodor",
@@ -1054,7 +1054,7 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Flaviria",
     "job": "",
     "combatType": "",
-    "isLimited": false,
+    "isLimited": true,
     "acquireInfo": "",
     "item": {
       "id": 0,
@@ -1072,8 +1072,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Morimar",
     "job": "獣使い",
     "combatType": "近接物理",
-    "isLimited": true,
-    "acquireInfo": "盟-モリマー",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10182,
       "en": "Cipher: Morimar",
@@ -1090,8 +1090,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "LheLhangavo",
     "job": "モンク",
     "combatType": "近接物理",
-    "isLimited": true,
-    "acquireInfo": "盟-レイ",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 0,
       "en": "",
@@ -1144,8 +1144,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Abenzio",
     "job": "モンク",
     "combatType": "近接物理",
-    "isLimited": true,
-    "acquireInfo": "盟-アベンツィオ",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10144,
       "en": "Cipher: Abenzio",
@@ -1198,8 +1198,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Babban",
     "job": "モンク",
     "combatType": "近接物理",
-    "isLimited": true,
-    "acquireInfo": "盟-ウェイレア",
+    "isLimited": false,
+    "acquireInfo": "公式イベント「サンシャインシーカー」",
     "item": {
       "id": 10143,
       "en": "Cipher: Babban",
@@ -1216,8 +1216,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "UkaTotlihn",
     "job": "踊り子",
     "combatType": "近接物理",
-    "isLimited": true,
-    "acquireInfo": "盟-ウカ",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 0,
       "en": "",
@@ -1234,8 +1234,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Gilgamesh",
     "job": "侍",
     "combatType": "近接物理",
-    "isLimited": true,
-    "acquireInfo": "盟-ギルガメッシュ",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10148,
       "en": "Cipher: Gilgamesh",
@@ -1252,7 +1252,7 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "JakohWahcondalo",
     "job": "",
     "combatType": "",
-    "isLimited": false,
+    "isLimited": true,
     "acquireInfo": "",
     "item": {
       "id": 0,
@@ -1270,8 +1270,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Fablinix",
     "job": "シーフ",
     "combatType": "近接物理",
-    "isLimited": true,
-    "acquireInfo": "盟-ファブリニクス",
+    "isLimited": false,
+    "acquireInfo": "「冒険者さんありがとうキャンペーン」 Treasure Coffer",
     "item": {
       "id": 10128,
       "en": "Cipher: Fablinix",
@@ -1288,12 +1288,12 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Matsui-P",
     "job": "忍者",
     "combatType": "近接物理",
-    "isLimited": false,
-    "acquireInfo": "通常(使用期間限定)",
+    "isLimited": true,
+    "acquireInfo": "使用期間限定",
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-マツイP",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
     }
@@ -1306,7 +1306,7 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Mumor",
     "job": "踊り子",
     "combatType": "近接物理",
-    "isLimited": true,
+    "isLimited": false,
     "acquireInfo": "公式イベント【限】盟-ミュモルあますず祭り",
     "item": {
       "id": 10135,
@@ -1324,8 +1324,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Lion",
     "job": "シーフ",
     "combatType": "近接物理",
-    "isLimited": true,
-    "acquireInfo": "盟-ライオン",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10113,
       "en": "Cipher: Lion",
@@ -1396,8 +1396,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Makki-Chebukki",
     "job": "狩人",
     "combatType": "遠隔物理",
-    "isLimited": true,
-    "acquireInfo": "盟-マッキー",
+    "isLimited": false,
+    "acquireInfo": "フェイスゲットキャンペーン",
     "item": {
       "id": 0,
       "en": "",
@@ -1414,8 +1414,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Najelith",
     "job": "狩人",
     "combatType": "遠隔物理",
-    "isLimited": true,
-    "acquireInfo": "盟-風蛇将",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 0,
       "en": "",
@@ -1432,8 +1432,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Elivira",
     "job": "狩人",
     "combatType": "遠隔物理",
-    "isLimited": true,
-    "acquireInfo": "盟-エリヴィラ",
+    "isLimited": false,
+    "acquireInfo": "フェイスゲットキャンペーン",
     "item": {
       "id": 10130,
       "en": "Cipher: Elivira",
@@ -1450,8 +1450,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Margret",
     "job": "狩人",
     "combatType": "遠隔物理",
-    "isLimited": true,
-    "acquireInfo": "盟-マルグレート",
+    "isLimited": false,
+    "acquireInfo": "フェイスゲットキャンペーン",
     "item": {
       "id": 10147,
       "en": "Cipher: Margret",
@@ -1504,8 +1504,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Kukki-Chebukki",
     "job": "黒魔道士",
     "combatType": "魔法攻撃",
-    "isLimited": true,
-    "acquireInfo": "盟-クッキー",
+    "isLimited": false,
+    "acquireInfo": "フェイスゲットキャンペーン",
     "item": {
       "id": 0,
       "en": "",
@@ -1522,8 +1522,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Ovjang",
     "job": "赤魔道士",
     "combatType": "魔法攻撃",
-    "isLimited": true,
-    "acquireInfo": "盟-アヴゼン",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10121,
       "en": "Cipher: Ovjang",
@@ -1576,8 +1576,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Kayeel-Payeel",
     "job": "黒魔道士",
     "combatType": "魔法攻撃",
-    "isLimited": true,
-    "acquireInfo": "盟-カイルパイル",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10165,
       "en": "Cipher: Kayeel",
@@ -1594,8 +1594,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Leonoyne",
     "job": "黒魔道士",
     "combatType": "魔法攻撃",
-    "isLimited": true,
-    "acquireInfo": "盟-レオノアーヌ",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10163,
       "en": "Cipher: Leonoyne",
@@ -1612,8 +1612,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Robel-Akbel",
     "job": "黒魔道士",
     "combatType": "魔法攻撃",
-    "isLimited": true,
-    "acquireInfo": "盟-ロベルアクベル",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10166,
       "en": "Cipher: Robel-Akbel",
@@ -1666,14 +1666,14 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "D.Shantotto",
     "job": "黒魔道士",
     "combatType": "魔法攻撃",
-    "isLimited": true,
-    "acquireInfo": "盟-ドルチェ",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
-      "id": 0,
-      "en": "",
-      "ja": "盟-D.シャントット",
-      "desc_jp": "",
-      "desc_en": ""
+      "id": 10129,
+      "en": "Cipher: Domina",
+      "ja": "盟-ドルチェ",
+      "desc_jp": "『ドルチェ』の力が宿った巻物。\nドルチェ・シャントットの力を\n借りることができる。",
+      "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Tarutaru named Domina Shantotto. Chanting the enigmatic script summons her alter ego to the bearer's side."
     }
   },
   {
@@ -1702,8 +1702,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Ullegore",
     "job": "黒魔道士",
     "combatType": "魔法攻撃",
-    "isLimited": true,
-    "acquireInfo": "盟-ウルゴア",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10178,
       "en": "Cipher: Ullegore",
@@ -1720,8 +1720,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Mumor",
     "job": "黒魔道士",
     "combatType": "魔法攻撃",
-    "isLimited": true,
-    "acquireInfo": "公式イベント",
+    "isLimited": false,
+    "acquireInfo": "公式イベント「アイドル戦士ミュモル★ヒロインショー ～最後のステージ～」",
     "item": {
       "id": 10177,
       "en": "Cipher: Mumor II",
@@ -1738,7 +1738,7 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Pieuje",
     "job": "",
     "combatType": "",
-    "isLimited": false,
+    "isLimited": true,
     "acquireInfo": "",
     "item": {
       "id": 0,
@@ -1756,7 +1756,7 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Apururu",
     "job": "",
     "combatType": "",
-    "isLimited": false,
+    "isLimited": true,
     "acquireInfo": "",
     "item": {
       "id": 0,
@@ -1792,7 +1792,7 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Yoran-Oran",
     "job": "",
     "combatType": "",
-    "isLimited": false,
+    "isLimited": true,
     "acquireInfo": "",
     "item": {
       "id": 0,
@@ -1833,7 +1833,7 @@ export const TRUSTS: TrustMaster[] = [
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-チェルキキ",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
     }
@@ -1847,13 +1847,13 @@ export const TRUSTS: TrustMaster[] = [
     "job": "白魔道士",
     "combatType": "回復",
     "isLimited": false,
-    "acquireInfo": "盟-水蛇将",
+    "acquireInfo": "エミネンス・レコード「フェイス：ヴァレンラール」",
     "item": {
-      "id": 0,
-      "en": "",
-      "ja": "盟-ミリ・アリアポー",
-      "desc_jp": "",
-      "desc_en": ""
+      "id": 10115,
+      "en": "Cipher: Mihli",
+      "ja": "盟-水蛇将",
+      "desc_jp": "『水蛇将』の力が宿った巻物。\n水蛇将ミリ・アリアポーの力を\n借りることができる。",
+      "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Mithra named Mihli Aliapoh. Chanting the enigmatic script summons her alter ego to the bearer's side."
     }
   },
   {
@@ -1864,8 +1864,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Karaha-Baruha",
     "job": "白魔道士",
     "combatType": "回復",
-    "isLimited": true,
-    "acquireInfo": "盟-カラハバルハ",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10142,
       "en": "Cipher: Karaha",
@@ -1882,8 +1882,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "FerreousCoffin",
     "job": "白魔道士",
     "combatType": "回復",
-    "isLimited": true,
-    "acquireInfo": "盟-フェリアス",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 0,
       "en": "",
@@ -1905,7 +1905,7 @@ export const TRUSTS: TrustMaster[] = [
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-ユグナス",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
     }
@@ -1918,14 +1918,14 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "KingOfHearts",
     "job": "赤魔道士",
     "combatType": "支援",
-    "isLimited": true,
-    "acquireInfo": "盟-キング",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
-      "id": 0,
-      "en": "",
-      "ja": "盟-キング・オブ・ハーツ",
-      "desc_jp": "",
-      "desc_en": ""
+      "id": 10181,
+      "en": "Cipher: King",
+      "ja": "盟-キング",
+      "desc_jp": "『キング』の力が宿った巻物。\nキング・オブ・ハーツの力を借りることができる。",
+      "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Cardian named the King of Hearts. Chanting the enigmatic script summons his alter ego to the bearer's side."
     }
   },
   {
@@ -1972,8 +1972,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Qultada",
     "job": "コルセア",
     "combatType": "支援",
-    "isLimited": true,
-    "acquireInfo": "盟-クルタダ",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10152,
       "en": "Cipher: Qultada",
@@ -2026,7 +2026,7 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Sylvie",
     "job": "",
     "combatType": "",
-    "isLimited": false,
+    "isLimited": true,
     "acquireInfo": "",
     "item": {
       "id": 0,
@@ -2044,8 +2044,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Joachim",
     "job": "吟遊詩人",
     "combatType": "支援",
-    "isLimited": false,
-    "acquireInfo": "盟-ヨアヒム",
+    "isLimited": true,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10117,
       "en": "Cipher: Joachim",
@@ -2062,12 +2062,12 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Cornelia",
     "job": "─",
     "combatType": "支援",
-    "isLimited": false,
-    "acquireInfo": "通常(使用期間限定)",
+    "isLimited": true,
+    "acquireInfo": "使用期間限定",
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-コーネリア",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
     }
@@ -2080,8 +2080,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Brygid",
     "job": "─",
     "combatType": "支援",
-    "isLimited": true,
-    "acquireInfo": "盟-ブリジッド",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10155,
       "en": "Cipher: Brygid",
@@ -2098,8 +2098,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "StarSibyl",
     "job": "─",
     "combatType": "支援",
-    "isLimited": true,
-    "acquireInfo": "盟-星の神子",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10134,
       "en": "Cipher: S. Sibyl",
@@ -2116,14 +2116,14 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "KuyinHathdenna",
     "job": "─",
     "combatType": "支援",
-    "isLimited": true,
-    "acquireInfo": "盟-クイン",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
-      "id": 0,
-      "en": "",
-      "ja": "盟-クイン・ハスデンナ",
-      "desc_jp": "",
-      "desc_en": ""
+      "id": 10141,
+      "en": "Cipher: Kuyin",
+      "ja": "盟-クイン",
+      "desc_jp": "『クイン』の力が宿った巻物。\nクイン・ハスデンナの力を借りることができる。",
+      "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Mithra named Kuyin Hathdenna. Chanting the enigmatic script summons her alter ego to the bearer's side."
     }
   },
   {
@@ -2134,8 +2134,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Kupofried",
     "job": "─",
     "combatType": "支援",
-    "isLimited": true,
-    "acquireInfo": "盟-クポフリート",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10162,
       "en": "Cipher: Kupofried",
@@ -2152,8 +2152,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Sakura",
     "job": "─",
     "combatType": "支援",
-    "isLimited": true,
-    "acquireInfo": "盟-サクラ",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10123,
       "en": "Cipher: Sakura",
@@ -2170,8 +2170,8 @@ export const TRUSTS: TrustMaster[] = [
     "party_name": "Moogle",
     "job": "─",
     "combatType": "支援",
-    "isLimited": true,
-    "acquireInfo": "盟-モーグリ",
+    "isLimited": false,
+    "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
       "id": 10127,
       "en": "Cipher: Moogle",
