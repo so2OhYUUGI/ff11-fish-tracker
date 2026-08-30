@@ -5,9 +5,10 @@
  * 
  * [概要]
  * - 閲覧者自身のキャラクターおよび、URL共有経由で表示される一時的な「共有キャラ」の切替UIを提供
- * - ハンバーガーメニュー内に「チェッカー切り替え」「キャラクター選択」「進捗共有」「環境設定」を統合
+ * - 登録ユーザーにはハンバーガーメニュー内に「チェッカー切り替え」「キャラクター選択」「進捗共有」「環境設定」を統合
+ * - 未登録ユーザーにはハンバーガーボタンを非表示にし、現在の第一階層ルートへの移動を行う「登録してはじめる」CTAリンクを表示
  * - UserDataContext から表示用キャラ一覧および選択中のキャラ情報を直接参照
- * - CSS変数による抽象化テーマ（釣魚 / フェイス）を適用
+ * - CSS変数による抽象化テーマ（釣魚 / フェイス）およびデザインシステムトークン（COMMON_TOKENS, LAYOUT_TOKENS）を適用
  * 
  * [依存関係・関連ファイル]
  * - Context      : src/contexts/UserDataContext.tsx
@@ -20,12 +21,13 @@
  * 1. 【データ安全性】 effectiveActiveCharacter 内で checkedFishIds が配列であること、および数値型 ID であることを安全に補正・保証する処理を維持すること
  * 2. 【アクセス操作】 モバイル/デスクトップ共通ドロップダウン開閉時は Escape キー押下およびメニュー外クリックによる自動クローズイベントを解除（クリーンアップ）すること
  * 3. 【共有状態視認性】 isSharedActive（共有キャラ選択中）の場合、UIのアクセントカラーやバッジで明確に判別できるようにすること
+ * 4. 【スタイル統一】 個別のTailwindクラス定義を避け、デザインシステムトークン（LAYOUT_TOKENS / COMMON_TOKENS）を使用すること
  * ============================================================================
  */
 
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Fish, Scroll, Database, Settings, Menu, X, Check, Share2 } from 'lucide-react';
+import { Fish, Scroll, Database, Settings, Menu, X, Check, Share2, UserPlus } from 'lucide-react';
 import type { CharacterProgress } from '@/types/fishtracker';
 import { useUserDataContext } from '@/contexts/UserDataContext';
 import { isDev } from '@/utils/env';
@@ -46,12 +48,22 @@ export const Header: React.FC<HeaderProps> = ({
 	onOpenSettings,
 	onOpenMasterEditor,
 }) => {
-	const { displayCharacters, activeCharacter, setActiveCharacter } = useUserDataContext();
+	const {
+		displayCharacters,
+		activeCharacter,
+		setActiveCharacter,
+		isRegistered,
+	} = useUserDataContext();
+
 	const [isOpen, setIsOpen] = useState(false);
 	const menuRef = useRef<HTMLDivElement>(null);
 
 	const location = useLocation();
 	const isTrustMode = location.pathname.startsWith('/trusttracker');
+
+	// 現在のURLから第一階層のパス（例: "/trusttracker", "/fishtracker"）を自動抽出
+	const rootSegment = location.pathname.split('/')[1];
+	const registrationTarget = rootSegment ? `/${rootSegment}` : '/';
 
 	const effectiveActiveCharacter: DisplayCharacterProgress = useMemo(() => {
 		const rawChar = activeCharacter || {
@@ -123,165 +135,177 @@ export const Header: React.FC<HeaderProps> = ({
 
 					{/* 右側アクションエリア */}
 					<div className="flex items-center gap-3">
-						{/* デスクトップ用キャラ選択 & 共有ボタン */}
-						<div className="hidden md:flex items-center gap-3">
-							<div className={LAYOUT_TOKENS.header.selectGroup}>
-								<label htmlFor="char-select" className={COMMON_TOKENS.text.label}>
-									キャラ:
-								</label>
-								<select
-									id="char-select"
-									value={effectiveActiveCharacter?.id ?? ''}
-									onChange={(e) => setActiveCharacter(e.target.value)}
-									className={LAYOUT_TOKENS.control.select(isSharedActive)}
-								>
-									{displayCharacters.map((char) => (
-										<option key={char.id} value={char.id} className={LAYOUT_TOKENS.header.selectOption}>
-											{char.name} {char.isShared ? '(共有)' : ''}
-										</option>
-									))}
-								</select>
-							</div>
-
-							<ShareProgressButton activeCharacter={effectiveActiveCharacter} />
-						</div>
-
-						{/* ハンバーガーメニューエリア */}
-						<div className="relative" ref={menuRef}>
-							<button
-								type="button"
-								onClick={() => setIsOpen(!isOpen)}
-								className={LAYOUT_TOKENS.control.button}
-								aria-label="メインメニュー"
-								aria-expanded={isOpen}
-								aria-haspopup="true"
-							>
-								{isOpen ? <X className={icon.md} /> : <Menu className={icon.md} />}
-							</button>
-
-							{isOpen && (
-								<div className={LAYOUT_TOKENS.header.dropdownContainer}>
-
-									{/* 1. チェッカー機能切り替え */}
-									<div className={LAYOUT_TOKENS.header.dropdownSection}>
-										<div className={LAYOUT_TOKENS.header.sectionHeader}>
-											機能切り替え
-										</div>
-										<Link
-											to="/fishtracker/fish"
-											onClick={() => setIsOpen(false)}
-											className={
-												!isTrustMode
-													? LAYOUT_TOKENS.header.dropdownItemActive(false)
-													: LAYOUT_TOKENS.header.dropdownItemInactive
-											}
+						{isRegistered ? (
+							<>
+								{/* デスクトップ用キャラ選択 & 共有ボタン */}
+								<div className="hidden md:flex items-center gap-3">
+									<div className={LAYOUT_TOKENS.header.selectGroup}>
+										<label htmlFor="char-select" className={COMMON_TOKENS.text.label}>
+											キャラ:
+										</label>
+										<select
+											id="char-select"
+											value={effectiveActiveCharacter?.id ?? ''}
+											onChange={(e) => setActiveCharacter(e.target.value)}
+											className={LAYOUT_TOKENS.control.select(isSharedActive)}
 										>
-											<div className="flex items-center gap-2">
-												<Fish className={icon.sm} />
-												<span>釣魚チェッカー</span>
-											</div>
-											{!isTrustMode && <Check className={`${icon.sm} ${icon.active(false)}`} />}
-										</Link>
-
-										<Link
-											to="/trusttracker"
-											onClick={() => setIsOpen(false)}
-											className={
-												isTrustMode
-													? LAYOUT_TOKENS.header.dropdownItemActive(false)
-													: LAYOUT_TOKENS.header.dropdownItemInactive
-											}
-										>
-											<div className="flex items-center gap-2">
-												<Scroll className={icon.sm} />
-												<span>フェイスチェッカー</span>
-											</div>
-											{isTrustMode && <Check className={`${icon.sm} ${icon.active(false)}`} />}
-										</Link>
+											{displayCharacters.map((char) => (
+												<option key={char.id} value={char.id} className={LAYOUT_TOKENS.header.selectOption}>
+													{char.name} {char.isShared ? '(共有)' : ''}
+												</option>
+											))}
+										</select>
 									</div>
 
-									{/* 2. キャラクター選択（モバイル用） */}
-									<div className="md:hidden border-t border-slate-800 pt-2">
-										<div className={LAYOUT_TOKENS.header.dropdownSection}>
-											<div className={LAYOUT_TOKENS.header.sectionHeader}>
-												キャラクター切替
+									<ShareProgressButton activeCharacter={effectiveActiveCharacter} />
+								</div>
+
+								{/* ハンバーガーメニューエリア */}
+								<div className="relative" ref={menuRef}>
+									<button
+										type="button"
+										onClick={() => setIsOpen(!isOpen)}
+										className={LAYOUT_TOKENS.control.button}
+										aria-label="メインメニュー"
+										aria-expanded={isOpen}
+										aria-haspopup="true"
+									>
+										{isOpen ? <X className={icon.md} /> : <Menu className={icon.md} />}
+									</button>
+
+									{isOpen && (
+										<div className={LAYOUT_TOKENS.header.dropdownContainer}>
+
+											{/* 1. チェッカー機能切り替え */}
+											<div className={LAYOUT_TOKENS.header.dropdownSection}>
+												<div className={LAYOUT_TOKENS.header.sectionHeader}>
+													機能切り替え
+												</div>
+												<Link
+													to="/fishtracker/fish"
+													onClick={() => setIsOpen(false)}
+													className={
+														!isTrustMode
+															? LAYOUT_TOKENS.header.dropdownItemActive(false)
+															: LAYOUT_TOKENS.header.dropdownItemInactive
+													}
+												>
+													<div className="flex items-center gap-2">
+														<Fish className={icon.sm} />
+														<span>釣魚チェッカー</span>
+													</div>
+													{!isTrustMode && <Check className={`${icon.sm} ${icon.active(false)}`} />}
+												</Link>
+
+												<Link
+													to="/trusttracker"
+													onClick={() => setIsOpen(false)}
+													className={
+														isTrustMode
+															? LAYOUT_TOKENS.header.dropdownItemActive(false)
+															: LAYOUT_TOKENS.header.dropdownItemInactive
+													}
+												>
+													<div className="flex items-center gap-2">
+														<Scroll className={icon.sm} />
+														<span>フェイスチェッカー</span>
+													</div>
+													{isTrustMode && <Check className={`${icon.sm} ${icon.active(false)}`} />}
+												</Link>
 											</div>
-											{displayCharacters.map((char) => {
-												const isSelected = char.id === effectiveActiveCharacter?.id;
-												return (
+
+											{/* 2. キャラクター選択（モバイル用） */}
+											<div className="md:hidden border-t border-slate-800 pt-2">
+												<div className={LAYOUT_TOKENS.header.dropdownSection}>
+													<div className={LAYOUT_TOKENS.header.sectionHeader}>
+														キャラクター切替
+													</div>
+													{displayCharacters.map((char) => {
+														const isSelected = char.id === effectiveActiveCharacter?.id;
+														return (
+															<button
+																key={char.id}
+																type="button"
+																onClick={() => {
+																	setActiveCharacter(char.id);
+																	setIsOpen(false);
+																}}
+																className={
+																	isSelected
+																		? LAYOUT_TOKENS.header.dropdownItemActive(char.isShared)
+																		: LAYOUT_TOKENS.header.dropdownItemInactive
+																}
+															>
+																<div className="flex items-center gap-2 truncate">
+																	{char.isShared && <Share2 className={`${icon.sm} ${icon.shared}`} />}
+																	<span className="truncate">{char.name}</span>
+																	{char.isShared && (
+																		<span className={LAYOUT_TOKENS.header.sharedBadge}>
+																			共有
+																		</span>
+																	)}
+																</div>
+																{isSelected && (
+																	<Check className={`${icon.sm} ${icon.active(char.isShared)}`} />
+																)}
+															</button>
+														);
+													})}
+												</div>
+
+												<div className={LAYOUT_TOKENS.header.dropdownShareButtonWrapper}>
+													<ShareProgressButton
+														activeCharacter={effectiveActiveCharacter}
+														className="w-full justify-center"
+													/>
+												</div>
+											</div>
+
+											{/* 3. システム・設定 */}
+											<div className={LAYOUT_TOKENS.header.dropdownDividerSection}>
+												<div className={LAYOUT_TOKENS.header.sectionHeader}>
+													システム
+												</div>
+												<button
+													type="button"
+													onClick={() => {
+														setIsOpen(false);
+														onOpenSettings();
+													}}
+													className={LAYOUT_TOKENS.header.dropdownActionItem}
+												>
+													<Settings className={`${icon.md} ${icon.muted}`} />
+													環境設定・データ管理
+												</button>
+
+												{isDev && onOpenMasterEditor && (
 													<button
-														key={char.id}
 														type="button"
 														onClick={() => {
-															setActiveCharacter(char.id);
 															setIsOpen(false);
+															onOpenMasterEditor();
 														}}
-														className={
-															isSelected
-																? LAYOUT_TOKENS.header.dropdownItemActive(char.isShared)
-																: LAYOUT_TOKENS.header.dropdownItemInactive
-														}
+														className={LAYOUT_TOKENS.header.dropdownActionItem}
 													>
-														<div className="flex items-center gap-2 truncate">
-															{char.isShared && <Share2 className={`${icon.sm} ${icon.shared}`} />}
-															<span className="truncate">{char.name}</span>
-															{char.isShared && (
-																<span className={LAYOUT_TOKENS.header.sharedBadge}>
-																	共有
-																</span>
-															)}
-														</div>
-														{isSelected && (
-															<Check className={`${icon.sm} ${icon.active(char.isShared)}`} />
-														)}
+														<Database className={`${icon.md} ${icon.dev}`} />
+														マスターデータ編集
 													</button>
-												);
-											})}
+												)}
+											</div>
+
 										</div>
-
-										<div className={LAYOUT_TOKENS.header.dropdownShareButtonWrapper}>
-											<ShareProgressButton
-												activeCharacter={effectiveActiveCharacter}
-												className="w-full justify-center"
-											/>
-										</div>
-									</div>
-
-									{/* 3. システム・設定 */}
-									<div className={LAYOUT_TOKENS.header.dropdownDividerSection}>
-										<div className={LAYOUT_TOKENS.header.sectionHeader}>
-											システム
-										</div>
-										<button
-											type="button"
-											onClick={() => {
-												setIsOpen(false);
-												onOpenSettings();
-											}}
-											className={LAYOUT_TOKENS.header.dropdownActionItem}
-										>
-											<Settings className={`${icon.md} ${icon.muted}`} />
-											環境設定・データ管理
-										</button>
-
-										{isDev && onOpenMasterEditor && (
-											<button
-												type="button"
-												onClick={() => {
-													setIsOpen(false);
-													onOpenMasterEditor();
-												}}
-												className={LAYOUT_TOKENS.header.dropdownActionItem}
-											>
-												<Database className={`${icon.md} ${icon.dev}`} />
-												マスターデータ編集
-											</button>
-										)}
-									</div>
-
+									)}
 								</div>
-							)}
-						</div>
+							</>
+						) : (
+							<Link
+								to={registrationTarget}
+								className={LAYOUT_TOKENS.control.button}
+							>
+								<UserPlus className={icon.sm} />
+								<span>登録してはじめる</span>
+							</Link>
+						)}
 					</div>
 
 				</div>
