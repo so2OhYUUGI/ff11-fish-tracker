@@ -22,7 +22,7 @@ export const LIST_STYLES = {
 
 	// テーマ変数対応（デフォルトはCOMMON_TOKENSの既定値を維持し、CSS側でテーマ変数が適用可能に調整）
 	default: 'bg-[var(--theme-checked-bg)] border-[var(--theme-container-border)] hover:border-[var(--theme-accent-border)] hover:bg-[var(--theme-active-item-bg)] shadow-sm',
-	selected: 'bg-[var(--theme-active-item-bg)] border-[var(--theme-accent-border)] shadow-md',
+	selected: 'bg-[var(--theme-container-bg)] border-[var(--theme-accent-border)] shadow-lg ring-1 ring-[var(--theme-accent-border)]',
 	checked: `${COMMON_TOKENS.state.checked} bg-[var(--theme-checked-bg)] border-[var(--theme-checked-border)]`,
 	empty: COMMON_TOKENS.state.empty,
 	selectedCheckedOpacity: 'opacity-90',

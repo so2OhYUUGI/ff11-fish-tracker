@@ -172,20 +172,22 @@ export const TrustTrackerContainer: React.FC = () => {
 	);
 
 	return (
+		<>
+			{/* 1. フィルターバー（sticky固定領域） */}
 			<div className={LAYOUT_TOKENS.header.stickyFilterBar}>
-			{/* 1. フィルターバー */}
-			<FilterBar
-				activeType={activeType}
-				onTypeChange={handleTypeChange}
-				activeCharacter={effectiveActiveCharacter}
-				statusFilter={statusFilter}
-				onStatusFilterChange={handleStatusFilterChange}
-				searchQuery={searchQuery}
-				onSearchQueryChange={handleSearchQueryChange}
-				totalTrustCount={TRUSTS.length}
-			/>
+				<FilterBar
+					activeType={activeType}
+					onTypeChange={handleTypeChange}
+					activeCharacter={effectiveActiveCharacter}
+					statusFilter={statusFilter}
+					onStatusFilterChange={handleStatusFilterChange}
+					searchQuery={searchQuery}
+					onSearchQueryChange={handleSearchQueryChange}
+					totalTrustCount={TRUSTS.length}
+				/>
+			</div>
 
-			{/* 2. メインコンテンツ領域 */}
+			{/* 2. メインコンテンツ領域（兄弟要素として配置） */}
 			<div className="flex-1 min-h-[500px]">
 				<TrustTrackerContent
 					activeType={activeType}
@@ -196,6 +198,6 @@ export const TrustTrackerContainer: React.FC = () => {
 					onToggleCheck={handleToggleCheck}
 				/>
 			</div>
-		</div>
+		</>
 	);
 };

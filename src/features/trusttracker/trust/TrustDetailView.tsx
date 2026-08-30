@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  * [FilePath] src/features/trusttracker/trust/TrustDetailView.tsx
- * [Role] フェイス（個 could/選択中）の詳細情報表示コンポーネント
+ * [Role] フェイス（選択中）の詳細情報表示コンポーネント
  * 
  * [概要]
  * - 選択されたフェイスの基本情報（名称、ジョブ、戦闘タイプ、入手情報）の詳細表示
@@ -10,12 +10,12 @@
  * 
  * [依存関係・関連ファイル]
  * - 型定義  : src/types/trusttracker.ts (TrustMaster)
- * - スタイル: src/styles/components/listStyles.ts
+ * - スタイル: src/styles/features/FishTrackerStyle
  * ============================================================================
  */
 
 import React, { useState, useCallback } from 'react';
-import { Check, Copy, BookOpen, Shield, Award, Terminal, Sparkles } from 'lucide-react';
+import { Check, Copy, BookOpen, Shield, Award, Terminal, Sparkles, X, Users } from 'lucide-react';
 import type { TrustMaster } from '@/types/trusttracker';
 import { BADGE_BASE_STYLE } from '@/styles/features/FishTrackerStyle';
 
@@ -30,6 +30,7 @@ export const TrustDetailView: React.FC<Props> = ({
 	trust,
 	isChecked = false,
 	onToggleCheck,
+	onClose,
 }) => {
 	const [copied, setCopied] = useState(false);
 
@@ -63,28 +64,45 @@ export const TrustDetailView: React.FC<Props> = ({
 
 	return (
 		<div className="h-full flex flex-col bg-slate-900/90 border border-slate-800 rounded-xl overflow-hidden shadow-xl backdrop-blur-md">
-			{/* ヘッダーエリア */}
-			<div className="p-5 border-b border-slate-800/80 bg-slate-950/40">
-				<div className="flex items-start justify-between gap-4 mb-2">
-					<div>
-						<h2 className="text-2xl font-bold text-slate-100 tracking-wide">{trust.ja}</h2>
-						<p className="text-sm text-slate-400 font-mono">{trust.en}</p>
+			{/* 1. 固定ヘッダーエリア（アイコン・名前・チェックボタン・閉じるボタンの1行レイアウト） */}
+			<div className="p-4 sm:p-5 border-b border-slate-800/80 bg-slate-950/60 shrink-0">
+				<div className="flex items-center justify-between gap-3">
+					{/* 左側: アイコン & 名前 */}
+					<div className="flex items-center gap-2.5 min-w-0">
+						<Users className="w-5 h-5 shrink-0 text-amber-400" />
+						<div className="min-w-0 flex items-baseline gap-2">
+							<h2 className="text-lg sm:text-xl font-bold text-slate-100 tracking-wide truncate">{trust.ja}</h2>
+							<span className="text-xs text-slate-400 font-mono truncate hidden sm:inline">{trust.en}</span>
+						</div>
 					</div>
 
-					{/* 修得ボタン */}
-					{onToggleCheck && (
-						<button
-							type="button"
-							onClick={() => onToggleCheck(trust.id)}
-							className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all duration-200 shrink-0 ${isChecked
-									? 'bg-emerald-950/80 text-emerald-300 border border-emerald-800/80 hover:bg-emerald-900/80'
-									: 'bg-slate-800/80 text-slate-300 border border-slate-700/80 hover:bg-slate-700/80 hover:text-slate-100'
-								}`}
-						>
-							<Check className={`w-4 h-4 ${isChecked ? 'text-emerald-400' : 'text-slate-500'}`} />
-							<span>{isChecked ? '修得済み' : '未修得'}</span>
-						</button>
-					)}
+					{/* 右側: 修得ボタン & 閉じるボタン */}
+					<div className="flex items-center gap-2 shrink-0">
+						{onToggleCheck && (
+							<button
+								type="button"
+								onClick={() => onToggleCheck(trust.id)}
+								className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all duration-200 shrink-0 ${isChecked
+										? 'bg-emerald-950/80 text-emerald-300 border border-emerald-800/80 hover:bg-emerald-900/80'
+										: 'bg-slate-800/80 text-slate-300 border border-slate-700/80 hover:bg-slate-700/80 hover:text-slate-100'
+									}`}
+							>
+								<Check className={`w-4 h-4 ${isChecked ? 'text-emerald-400' : 'text-slate-500'}`} />
+								<span>{isChecked ? '修得済み' : '未修得'}</span>
+							</button>
+						)}
+
+						{onClose && (
+							<button
+								type="button"
+								onClick={onClose}
+								className="p-1 rounded-lg text-slate-400 hover:text-slate-100 hover:bg-slate-800/80 transition-colors"
+								aria-label="閉じる"
+							>
+								<X className="w-5 h-5" />
+							</button>
+						)}
+					</div>
 				</div>
 
 				{/* 属性バッジ群 */}
@@ -104,28 +122,27 @@ export const TrustDetailView: React.FC<Props> = ({
 				</div>
 			</div>
 
-			{/* 詳細情報ボディ */}
-			<div className="p-5 space-y-5 overflow-y-auto flex-1 text-sm text-slate-300">
-				{/* 修得方法 / 盟アイテム */}
-				<div className="space-y-3">
-					<div className="p-3.5 bg-slate-950/50 rounded-lg border border-slate-800/60 space-y-2">
-						<div className="flex items-center gap-2 text-xs font-semibold text-amber-400 uppercase tracking-wider">
-							<BookOpen className="w-3.5 h-3.5" />
-							<span>修得条件・入手方法</span>
-						</div>
-						<p className="text-slate-200 leading-relaxed pl-5">{trust.acquireInfo}</p>
+			{/* 2. スクロールコンテンツエリア */}
+			<div className="p-4 sm:p-5 space-y-4 sm:space-y-5 overflow-y-auto flex-1 text-sm text-slate-300">
+				{/* 修得条件・入手方法 */}
+				<div className="p-3.5 bg-slate-950/50 rounded-lg border border-slate-800/60 space-y-2">
+					<div className="flex items-center gap-2 text-xs font-semibold text-amber-400 uppercase tracking-wider">
+						<BookOpen className="w-3.5 h-3.5" />
+						<span>修得条件・入手方法</span>
 					</div>
-
-					{trust.item?.ja && (
-						<div className="p-3.5 bg-slate-950/50 rounded-lg border border-slate-800/60 space-y-1">
-							<div className="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
-								<Award className="w-3.5 h-3.5 text-slate-400" />
-								<span>関連アイテム</span>
-							</div>
-							<p className="text-slate-200 font-medium pl-5">{trust.item.ja}</p>
-						</div>
-					)}
+					<p className="text-slate-200 leading-relaxed pl-5">{trust.acquireInfo}</p>
 				</div>
+
+				{/* 関連アイテム */}
+				{trust.item?.ja && (
+					<div className="p-3.5 bg-slate-950/50 rounded-lg border border-slate-800/60 space-y-1">
+						<div className="flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+							<Award className="w-3.5 h-3.5 text-slate-400" />
+							<span>関連アイテム</span>
+						</div>
+						<p className="text-slate-200 font-medium pl-5">{trust.item.ja}</p>
+					</div>
+				)}
 
 				{/* 呼び出しマクロ */}
 				<div className="p-3.5 bg-slate-950/60 rounded-lg border border-slate-800/80 space-y-2">

@@ -9,6 +9,10 @@
  * - 戦闘タイプバッジの幅固定化によるレイアウト崩れ・ガタつきの防止
  * - 修得/達成状態（チェック状態）のチェックボックス描画およびトグル操作
  * - variant Props（'default' | 'inline'）によりメイン一覧用と詳細画面インライン用のスタイル切替に対応
+ * 
+ * [依存関係・関連ファイル]
+ * - 型定義  : src/types/trusttracker.ts
+ * - スタイル: src/styles/components/listStyles.ts, src/styles/features/FishTrackerStyle.ts
  * ============================================================================
  */
 
@@ -27,21 +31,35 @@ type Props = {
 	onClickDetail?: (trust: TrustMaster) => void;
 };
 
+// フェイス固有のスタイル定数定義
+const TRUST_ITEM_STYLES = {
+	itemBadge: `${BADGE_BASE_STYLE} bg-slate-800/80 text-amber-200/90 border-slate-700/80 gap-1 min-w-0 max-w-[120px] sm:max-w-[180px]`,
+	itemIcon: 'w-3 h-3 shrink-0 text-amber-400',
+	combatBadgeBase: `${BADGE_BASE_STYLE} w-[84px] justify-center shrink-0 text-center`,
+	combatTypes: {
+		physical: 'bg-amber-950/80 text-amber-300 border-amber-800/60',
+		magic: 'bg-purple-950/80 text-purple-300 border-purple-800/60',
+		support: 'bg-emerald-950/80 text-emerald-300 border-emerald-800/60',
+		tank: 'bg-blue-950/80 text-blue-300 border-blue-800/60',
+		default: 'bg-slate-800/80 text-slate-300 border-slate-700/60',
+	},
+} as const;
+
 // 戦闘タイプに応じたバッジスタイルの取得
 const getCombatTypeBadgeStyle = (combatType: TrustMaster['combatType']): string => {
 	switch (combatType) {
 		case '近接物理':
 		case '遠距離物理':
-			return 'bg-amber-950/80 text-amber-300 border-amber-800/60';
+			return TRUST_ITEM_STYLES.combatTypes.physical;
 		case '魔法攻撃':
-			return 'bg-purple-950/80 text-purple-300 border-purple-800/60';
+			return TRUST_ITEM_STYLES.combatTypes.magic;
 		case '回復':
 		case '支援':
-			return 'bg-emerald-950/80 text-emerald-300 border-emerald-800/60';
+			return TRUST_ITEM_STYLES.combatTypes.support;
 		case '盾':
-			return 'bg-blue-950/80 text-blue-300 border-blue-800/60';
+			return TRUST_ITEM_STYLES.combatTypes.tank;
 		default:
-			return 'bg-slate-800/80 text-slate-300 border-slate-700/60';
+			return TRUST_ITEM_STYLES.combatTypes.default;
 	}
 };
 
@@ -165,17 +183,17 @@ export const TrustListItem: React.FC<Props> = ({
 				{/* アイテム名 */}
 				{trust.item?.ja && (
 					<span
-						className={`${BADGE_BASE_STYLE} bg-slate-800/80 text-amber-200/90 border-slate-700/80 gap-1 min-w-0 max-w-[120px] sm:max-w-[180px]`}
+						className={TRUST_ITEM_STYLES.itemBadge}
 						title={`使用アイテム: ${trust.item.ja}`}
 					>
-						<Package className="w-3 h-3 shrink-0 text-amber-400" />
+						<Package className={TRUST_ITEM_STYLES.itemIcon} />
 						<span className="truncate">{trust.item.ja}</span>
 					</span>
 				)}
 
-				{/* 戦闘タイプ（最大文字数「遠距離物理」「魔法攻撃」に合わせた幅固定化：84px） */}
+				{/* 戦闘タイプ */}
 				<span
-					className={`${BADGE_BASE_STYLE} ${combatBadgeStyle} w-[84px] justify-center shrink-0 text-center`}
+					className={`${TRUST_ITEM_STYLES.combatBadgeBase} ${combatBadgeStyle}`}
 				>
 					{trust.combatType}
 				</span>

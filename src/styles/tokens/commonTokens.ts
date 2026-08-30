@@ -55,9 +55,9 @@ export const COMMON_TOKENS = {
   // エンティティ別アクセントカラー
   entity: {
     fish: {
-      text: 'text-blue-400',
-      textActive: 'text-blue-300',
-      badge: 'bg-blue-950/80 text-blue-300 border-blue-800/60',
+      text: 'text-cyan-400',
+      textActive: 'text-cyan-300',
+      badge: 'bg-cyan-950/80 text-cyan-300 border-cyan-800/60',
     },
     area: {
       text: 'text-red-400',

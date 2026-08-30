@@ -7,7 +7,7 @@
 	--theme-page-bg: #0f172a;
 	--theme-header-bg: linear-gradient(to right, #0f172a, rgba(30, 58, 138, 0.4), #0f172a);
 	--theme-header-border: rgba(30, 64, 175, 0.5);
-	--theme-accent-border: #3b82f6;
+	--theme-accent-border: #06b6d4;
 	--theme-accent-bg: #2563eb;
 	--theme-text-accent: #60a5fa;
 	--theme-badge-bg: rgba(23, 37, 84, 0.8);
@@ -41,6 +41,6 @@
 	--theme-inner-border: #292524;
 	--theme-active-item-bg: #44403c;
 
-	--theme-checked-bg: rgba(28, 25, 23, 0.6);
+	--theme-checked-bg: rgba(41,37,36, 0.6);
 	--theme-checked-border: rgba(41, 37, 36, 0.6);
 }
