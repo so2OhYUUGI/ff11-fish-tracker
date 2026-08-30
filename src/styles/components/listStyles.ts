@@ -6,12 +6,8 @@
  * [概要]
  * - リスト表示（FishListItem, AreaListItem, BaitListItem, TrustListItem）における横並び高密度表示用スタイル
  * - モードテーマ（data-theme="fish" / "trust"）に連動するCSS変数参照に対応
+ * - COMMON_TOKENS 側のデフォルトスタイルを維持しつつテーマ変数との互換性を確保
  * - モバイル（小画面）〜PC画面における幅・テキスト省略（truncate）領域のレスポンシブ最適化
- * 
- * [編集・改修時の注意事項（AI/エンジニア共通指示）]
- * 1. 【レイアウト/構造上の制約】 高速スキャンを実現するため、3段目の追加を避け「1行（高密度2段）」の垂直高さを維持すること。
- * 2. 【スタイルの集約】 COMMON_TOKENS 等のトークン定義を参照し、一貫したスタイル構造を維持すること。
- * 3. 【レスポンシブ幅制御】 小画面時の幅圧迫を防ぐため、nameGroup や description の柔軟な伸縮幅（min-w, max-w, shrink-0）を維持すること。
  * ============================================================================
  */
 
@@ -24,10 +20,10 @@ export const LIST_STYLES = {
 	fishRow: 'flex items-center justify-between gap-2 sm:gap-3 cursor-pointer py-1.5 px-2 sm:py-2 sm:px-3 min-h-[44px]',
 	dimmed: 'opacity-70',
 
-	// テーマ変数対応（モードに応じた背景色・枠線色の切り替え）
-	default: 'bg-[var(--theme-container-bg)] border-[var(--theme-container-border)] hover:border-[var(--theme-accent-border)] hover:bg-[var(--theme-active-item-bg)] shadow-sm',
+	// テーマ変数対応（デフォルトはCOMMON_TOKENSの既定値を維持し、CSS側でテーマ変数が適用可能に調整）
+	default: 'bg-[var(--theme-checked-bg)] border-[var(--theme-container-border)] hover:border-[var(--theme-accent-border)] hover:bg-[var(--theme-active-item-bg)] shadow-sm',
 	selected: 'bg-[var(--theme-active-item-bg)] border-[var(--theme-accent-border)] shadow-md',
-	checked: COMMON_TOKENS.state.checked,
+	checked: `${COMMON_TOKENS.state.checked} bg-[var(--theme-checked-bg)] border-[var(--theme-checked-border)]`,
 	empty: COMMON_TOKENS.state.empty,
 	selectedCheckedOpacity: 'opacity-90',
 
