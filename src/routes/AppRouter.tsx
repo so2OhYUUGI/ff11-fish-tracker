@@ -77,6 +77,9 @@ export function AppRouter({
 
   return (
     <Routes>
+      {/* 新設: 登録ページ専用ルート */}
+      <Route path="/register" element={<LandingPage />} />
+      
       {/* リダイレクトルート */}
       <Route path="/" element={<Navigate to="/fishtracker/fish" replace />} />
       <Route path="/fishtracker" element={<Navigate to="/fishtracker/fish" replace />} />

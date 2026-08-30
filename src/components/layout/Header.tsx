@@ -61,10 +61,6 @@ export const Header: React.FC<HeaderProps> = ({
 	const location = useLocation();
 	const isTrustMode = location.pathname.startsWith('/trusttracker');
 
-	// 現在のURLから第一階層のパス（例: "/trusttracker", "/fishtracker"）を自動抽出
-	const rootSegment = location.pathname.split('/')[1];
-	const registrationTarget = rootSegment ? `/${rootSegment}` : '/';
-
 	const effectiveActiveCharacter: DisplayCharacterProgress = useMemo(() => {
 		const rawChar = activeCharacter || {
 			id: 'guest',
@@ -299,7 +295,7 @@ export const Header: React.FC<HeaderProps> = ({
 							</>
 						) : (
 							<Link
-								to={registrationTarget}
+								to="/register"
 								className={LAYOUT_TOKENS.control.button}
 							>
 								<UserPlus className={icon.sm} />
