@@ -12,9 +12,9 @@
 
 import type { SizeType, WaterType } from '@/types/fishtracker';
 import { COMMON_TOKENS } from '../tokens/commonTokens';
+import { BADGE_BASE_STYLE } from '../components/badgeStyles';
 
-export const BADGE_BASE_STYLE =
-  'inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border shrink-0';
+export { BADGE_BASE_STYLE };
 
 export const FISH_STYLES = {
   badgeBase: BADGE_BASE_STYLE,

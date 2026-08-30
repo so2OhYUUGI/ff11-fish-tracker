@@ -7,10 +7,11 @@
  * - フィルター条件（アクティブタブ、修得ステータス、検索クエリ）に基づくマスターデータの抽出
  * - アクティブタブ（'trust' | 'wishlist' | 'macro'）に応じたビューの切り替え
  * - LAYOUT_TOKENS.page.mainContainer による魚チェッカーと共通の外周レイアウトパディング適用
+ * - DETAIL_STYLES による準備中画面（ウィッシュリスト・マクロ管理）のスタイル標準化
  * - ナビゲーションスタック（navStack）の下位コンポーネント（TrustView）への伝達
  * 
  * [依存関係・関連ファイル]
- * - スタイル      : src/styles/tokens/layoutTokens.ts
+ * - スタイル      : src/styles/tokens/layoutTokens.ts, src/styles/components/detailStyles.ts
  * - 型定義        : src/types/trusttracker.ts
  * - フック        : src/hooks/useTrackerNavigation.ts
  * - ビュー        : src/features/trusttracker/trust/TrustView.tsx
@@ -24,6 +25,7 @@ import type { TrustMaster, TrustSubtype, StatusFilter } from '@/types/trusttrack
 import type { TrackerNavStack } from '@/hooks/useTrackerNavigation';
 import { TrustView } from './trust/TrustView';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
+import { DETAIL_STYLES } from '@/styles/components/detailStyles';
 
 type Props = {
 	activeType: TrustSubtype;
@@ -86,20 +88,20 @@ export const TrustTrackerContent: React.FC<Props> = ({
 			)}
 
 			{activeType === 'wishlist' && (
-				<div className="flex-1 flex flex-col items-center justify-center p-12 text-center bg-slate-900/40 border border-slate-800/80 rounded-xl">
-					<Heart className="w-12 h-12 text-slate-600 mb-3" />
-					<h3 className="text-lg font-bold text-slate-300">ウィッシュリスト機能</h3>
-					<p className="text-xs text-slate-500 mt-1 max-w-sm">
+				<div className={DETAIL_STYLES.emptyDetailWrapper}>
+					<Heart className={DETAIL_STYLES.emptyDetailPulseIcon} />
+					<h3 className={DETAIL_STYLES.emptyDetailTitle}>ウィッシュリスト機能</h3>
+					<p className={DETAIL_STYLES.emptyDetailSubText}>
 						これから集めたいフェイスを目標リストとして整理できる機能を準備中です。
 					</p>
 				</div>
 			)}
 
 			{activeType === 'macro' && (
-				<div className="flex-1 flex flex-col items-center justify-center p-12 text-center bg-slate-900/40 border border-slate-800/80 rounded-xl">
-					<Terminal className="w-12 h-12 text-slate-600 mb-3" />
-					<h3 className="text-lg font-bold text-slate-300">マクロ管理機能</h3>
-					<p className="text-xs text-slate-500 mt-1 max-w-sm">
+				<div className={DETAIL_STYLES.emptyDetailWrapper}>
+					<Terminal className={DETAIL_STYLES.emptyDetailPulseIcon} />
+					<h3 className={DETAIL_STYLES.emptyDetailTitle}>マクロ管理機能</h3>
+					<p className={DETAIL_STYLES.emptyDetailSubText}>
 						パーティ編成に応じたフェイス呼び出しマクロの管理・セットアップ機能を準備中です。
 					</p>
 				</div>

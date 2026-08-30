@@ -19,7 +19,7 @@ export const DETAIL_STYLES = {
   container:
     'w-full bg-[var(--theme-container-bg)] border border-[var(--theme-container-border)] rounded-xl md:p-6 flex flex-col gap-4 sm:gap-6 h-full relative overscroll-contain',
   panelBase: 'w-full flex flex-col h-full min-h-0 overflow-hidden overscroll-contain',
-  scrollContent: 'flex-1 bg-[var(--theme-container-bg)] min-h-0 overflow-y-auto p-3 sm:p-4 space-y-4 sm:space-y-6 touch-pan-y overscroll-contain [-webkit-overflow-scrolling:touch]',
+  scrollContent: 'flex-1 bg-[var(--theme-page-bg)] min-h-0 overflow-y-auto p-3 sm:p-4 space-y-4 sm:space-y-6 touch-pan-y overscroll-contain [-webkit-overflow-scrolling:touch]',
 
   // 未選択（データ無し）表示領域
   emptyDetailContainer:

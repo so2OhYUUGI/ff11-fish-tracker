@@ -12,7 +12,8 @@
  * 
  * [依存関係・関連ファイル]
  * - 型定義  : src/types/trusttracker.ts
- * - スタイル: src/styles/components/listStyles.ts, src/styles/features/FishTrackerStyle.ts
+ * - スタイル: src/styles/components/listStyles.ts, src/styles/components/badgeStyles.ts
+ * - 共通部品: src/components/common/Badge.tsx
  * ============================================================================
  */
 
@@ -20,7 +21,8 @@ import React, { useCallback } from 'react';
 import { Check, Package } from 'lucide-react';
 import type { TrustMaster } from '@/types/trusttracker';
 import { LIST_STYLES } from '@/styles/components/listStyles';
-import { BADGE_BASE_STYLE } from '@/styles/features/FishTrackerStyle';
+import { getCombatTypeBadgeStyle } from '@/styles/components/badgeStyles';
+import { Badge } from '@/components/common/Badge';
 
 type Props = {
 	trust: TrustMaster;
@@ -31,37 +33,12 @@ type Props = {
 	onClickDetail?: (trust: TrustMaster) => void;
 };
 
-// フェイス固有のスタイル定数定義
+// フェイス固有のレイアウト補助スタイル定数
 const TRUST_ITEM_STYLES = {
-	itemBadge: `${BADGE_BASE_STYLE} bg-slate-800/80 text-amber-200/90 border-slate-700/80 gap-1 min-w-0 max-w-[120px] sm:max-w-[180px]`,
+	itemBadge: 'bg-slate-800/80 text-amber-200/90 border-slate-700/80 gap-1 min-w-0 max-w-[120px] sm:max-w-[180px]',
 	itemIcon: 'w-3 h-3 shrink-0 text-amber-400',
-	combatBadgeBase: `${BADGE_BASE_STYLE} w-[84px] justify-center shrink-0 text-center`,
-	combatTypes: {
-		physical: 'bg-amber-950/80 text-amber-300 border-amber-800/60',
-		magic: 'bg-purple-950/80 text-purple-300 border-purple-800/60',
-		support: 'bg-emerald-950/80 text-emerald-300 border-emerald-800/60',
-		tank: 'bg-blue-950/80 text-blue-300 border-blue-800/60',
-		default: 'bg-slate-800/80 text-slate-300 border-slate-700/60',
-	},
+	combatBadgeBase: 'w-[84px] justify-center shrink-0 text-center',
 } as const;
-
-// 戦闘タイプに応じたバッジスタイルの取得
-const getCombatTypeBadgeStyle = (combatType: TrustMaster['combatType']): string => {
-	switch (combatType) {
-		case '近接物理':
-		case '遠距離物理':
-			return TRUST_ITEM_STYLES.combatTypes.physical;
-		case '魔法攻撃':
-			return TRUST_ITEM_STYLES.combatTypes.magic;
-		case '回復':
-		case '支援':
-			return TRUST_ITEM_STYLES.combatTypes.support;
-		case '盾':
-			return TRUST_ITEM_STYLES.combatTypes.tank;
-		default:
-			return TRUST_ITEM_STYLES.combatTypes.default;
-	}
-};
 
 // コンテナスタイルを取得するヘルパー関数
 const getContainerStyle = (
@@ -182,21 +159,20 @@ export const TrustListItem: React.FC<Props> = ({
 			<div className={LIST_STYLES.badgeGroupContainer}>
 				{/* アイテム名 */}
 				{trust.item?.ja && (
-					<span
+					<Badge
 						className={TRUST_ITEM_STYLES.itemBadge}
-						title={`使用アイテム: ${trust.item.ja}`}
 					>
 						<Package className={TRUST_ITEM_STYLES.itemIcon} />
 						<span className="truncate">{trust.item.ja}</span>
-					</span>
+					</Badge>
 				)}
 
 				{/* 戦闘タイプ */}
-				<span
+				<Badge
 					className={`${TRUST_ITEM_STYLES.combatBadgeBase} ${combatBadgeStyle}`}
 				>
 					{trust.combatType}
-				</span>
+				</Badge>
 			</div>
 		</div>
 	);

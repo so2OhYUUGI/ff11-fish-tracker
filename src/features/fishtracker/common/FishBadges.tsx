@@ -6,13 +6,14 @@
  * [概要]
  * - `FishTrackerStyle.ts` に定義された設定オブジェクトを参照してバッジを描画
  * - 未定義の値が渡された場合もフォールバック表示により画面崩れを防止
+ * - 共通の `Badge` コンポーネントを内部で使用
  * ============================================================================
  */
 
 import React from 'react';
 import type { SizeType, WaterType } from '@/types/fishtracker';
+import { Badge } from '@/components/common/Badge';
 import {
-	BADGE_BASE_STYLE,
 	FISH_STYLES,
 	FISH_SIZE_CONFIG,
 	FISH_WATER_CONFIG,
@@ -36,9 +37,9 @@ export const SizeBadge: React.FC<SizeBadgeProps> = ({
 }) => {
 	const config = FISH_SIZE_CONFIG[sizeType] ?? FISH_SIZE_CONFIG.unknown;
 	return (
-		<span className={`${BADGE_BASE_STYLE} ${config.style}`}>
+		<Badge className={config.style}>
 			{useShortLabel ? config.shortLabel : config.label}
-		</span>
+		</Badge>
 	);
 };
 
@@ -53,9 +54,9 @@ type WaterBadgeProps = {
 export const WaterBadge: React.FC<WaterBadgeProps> = ({ waterType }) => {
 	const config = FISH_WATER_CONFIG[waterType] ?? FISH_WATER_CONFIG.unknown;
 	return (
-		<span className={`${BADGE_BASE_STYLE} ${config.style}`}>
+		<Badge className={config.style}>
 			{config.label}
-		</span>
+		</Badge>
 	);
 };
 
@@ -75,9 +76,9 @@ export const FlagBadge: React.FC<FlagBadgeProps> = ({ type }) => {
 		style: 'bg-slate-800 text-slate-300 border-slate-700',
 	};
 	return (
-		<span className={`${BADGE_BASE_STYLE} ${config.style}`}>
+		<Badge className={config.style}>
 			{config.label}
-		</span>
+		</Badge>
 	);
 };
 
@@ -96,9 +97,9 @@ export const SkillBadge: React.FC<SkillBadgeProps> = ({
 	useShortLabel = false,
 }) => {
 	return (
-		<span className={`${BADGE_BASE_STYLE} ${FISH_STYLES.badgeSkill}`}>
+		<Badge className={FISH_STYLES.badgeSkill}>
 			{useShortLabel ? `上限: ${maxSkill}` : `上限スキル: ${maxSkill}`}
-		</span>
+		</Badge>
 	);
 };
 
@@ -112,9 +113,9 @@ type HarakiriItemBadgeProps = {
  */
 export const HarakiriItemBadge: React.FC<HarakiriItemBadgeProps> = ({ itemName }) => {
 	return (
-		<span className="px-2.5 py-1 rounded bg-slate-800 text-slate-200 border border-slate-700 text-xs font-medium">
+		<Badge className="bg-slate-800 text-slate-200 border-slate-700">
 			{itemName}
-		</span>
+		</Badge>
 	);
 };
 
@@ -128,9 +129,9 @@ type HarakiriTitleBadgeProps = {
  */
 export const HarakiriTitleBadge: React.FC<HarakiriTitleBadgeProps> = ({ titleName }) => {
 	return (
-		<span className="px-2.5 py-1 rounded bg-amber-950/40 text-amber-300 border border-amber-800/60 text-xs font-medium">
+		<Badge className="bg-amber-950/40 text-amber-300 border-amber-800/60">
 			{titleName}
-		</span>
+		</Badge>
 	);
 };
 

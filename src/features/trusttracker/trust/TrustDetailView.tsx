@@ -12,16 +12,17 @@
  * 
  * [依存関係・関連ファイル]
  * - 型定義  : src/types/trusttracker.ts (TrustMaster)
- * - スタイル: src/styles/components/detailStyles.ts, src/styles/features/FishTrackerStyle
- * - 共通    : src/features/fishtracker/common/DetailHeader.tsx
+ * - スタイル: src/styles/components/detailStyles.ts, src/styles/components/badgeStyles.ts
+ * - 共通部品: src/components/common/Badge.tsx, src/features/fishtracker/common/DetailHeader.tsx
  * ============================================================================
  */
 
 import React, { useState, useCallback } from 'react';
 import { CheckSquare, Square, Copy, BookOpen, Shield, Award, Terminal, Sparkles, Users } from 'lucide-react';
 import type { TrustMaster } from '@/types/trusttracker';
-import { BADGE_BASE_STYLE } from '@/styles/features/FishTrackerStyle';
 import { DETAIL_STYLES } from '@/styles/components/detailStyles';
+import { getCombatTypeBadgeStyle } from '@/styles/components/badgeStyles';
+import { Badge } from '@/components/common/Badge';
 import { DetailHeader } from '@/features/fishtracker/common/DetailHeader';
 
 type Props = {
@@ -123,17 +124,17 @@ export const TrustDetailView: React.FC<Props> = ({
 			<div className={DETAIL_STYLES.scrollContent}>
 				{/* 属性バッジ群 */}
 				<div className={DETAIL_STYLES.badgeGroup}>
-					<span className={`${BADGE_BASE_STYLE} ${DETAIL_STYLES.badgeDefault}`}>
+					<Badge className={DETAIL_STYLES.badgeDefault}>
 						<Shield className={DETAIL_STYLES.badgeIcon} />
 						{trust.job}
-					</span>
-					<span className={`${BADGE_BASE_STYLE} ${DETAIL_STYLES.badgeDefault}`}>
+					</Badge>
+					<Badge className={getCombatTypeBadgeStyle(trust.combatType)}>
 						{trust.combatType}
-					</span>
+					</Badge>
 					{trust.isLimited && (
-						<span className={`${BADGE_BASE_STYLE} ${DETAIL_STYLES.badgeLimited}`}>
+						<Badge className={DETAIL_STYLES.badgeLimited}>
 							期間限定
-						</span>
+						</Badge>
 					)}
 				</div>
 
