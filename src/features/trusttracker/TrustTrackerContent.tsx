@@ -7,10 +7,12 @@
  * - フィルター条件（アクティブタブ、修得ステータス、検索クエリ）に基づくマスターデータの抽出
  * - アクティブタブ（'trust' | 'wishlist' | 'macro'）に応じたビューの切り替え
  * - LAYOUT_TOKENS.page.mainContainer による魚チェッカーと共通の外周レイアウトパディング適用
+ * - ナビゲーションスタック（navStack）の下位コンポーネント（TrustView）への伝達
  * 
  * [依存関係・関連ファイル]
  * - スタイル      : src/styles/tokens/layoutTokens.ts
  * - 型定義        : src/types/trusttracker.ts
+ * - フック        : src/hooks/useTrackerNavigation.ts
  * - ビュー        : src/features/trusttracker/trust/TrustView.tsx
  * - フィルター    : src/features/trusttracker/FilterBar.tsx
  * ============================================================================
@@ -19,6 +21,7 @@
 import React, { useMemo } from 'react';
 import { Heart, Terminal } from 'lucide-react';
 import type { TrustMaster, TrustSubtype, StatusFilter } from '@/types/trusttracker';
+import type { TrackerNavStack } from '@/hooks/useTrackerNavigation';
 import { TrustView } from './trust/TrustView';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
 
@@ -29,6 +32,7 @@ type Props = {
 	trusts: TrustMaster[];
 	checkedTrustIds: number[];
 	onToggleCheck: (trustId: number) => void;
+	navStack?: TrackerNavStack<TrustMaster>;
 };
 
 export const TrustTrackerContent: React.FC<Props> = ({
@@ -38,6 +42,7 @@ export const TrustTrackerContent: React.FC<Props> = ({
 	trusts,
 	checkedTrustIds,
 	onToggleCheck,
+	navStack,
 }) => {
 	// 修得済みIDの高速参照用 Set
 	const checkedSet = useMemo(() => new Set(checkedTrustIds), [checkedTrustIds]);
@@ -76,6 +81,7 @@ export const TrustTrackerContent: React.FC<Props> = ({
 					trusts={filteredTrusts}
 					checkedTrustIds={checkedTrustIds}
 					onToggleCheck={onToggleCheck}
+					navStack={navStack}
 				/>
 			)}
 

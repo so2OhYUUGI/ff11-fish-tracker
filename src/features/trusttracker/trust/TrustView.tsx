@@ -8,12 +8,14 @@
  * - LAYOUT_TOKENS を使用した魚チェッカー準拠の標準レイアウト（リスト + サイドバー詳細）
  * - PC画面（1024px以上）: 左右2カラム（リスト + 右側サイドバー詳細）
  * - モバイル画面（1024px未満）: 選択時に詳細画面をモーダル/オーバーレイ表示
+ * - navStack（共通ナビゲーション）の受領および DetailView やアイテム選択処理への伝播
  * ============================================================================
  */
 
 import React, { useState, useCallback, useMemo } from 'react';
 import { X, Users } from 'lucide-react';
 import type { TrustMaster } from '@/types/trusttracker';
+import type { TrackerNavStack } from '@/hooks/useTrackerNavigation';
 import { TrustListItem } from './TrustListItem';
 import { TrustDetailView } from './TrustDetailView';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
@@ -22,12 +24,14 @@ type Props = {
 	trusts: TrustMaster[];
 	checkedTrustIds: number[];
 	onToggleCheck: (trustId: number) => void;
+	navStack?: TrackerNavStack<TrustMaster>;
 };
 
 export const TrustView: React.FC<Props> = ({
 	trusts,
 	checkedTrustIds,
 	onToggleCheck,
+	navStack,
 }) => {
 	// 現在選択されているフェイスのID
 	const [selectedTrustId, setSelectedTrustId] = useState<number | null>(
@@ -47,15 +51,21 @@ export const TrustView: React.FC<Props> = ({
 	);
 
 	// 詳細表示の選択ハンドラ
-	const handleSelectTrust = useCallback((trust: TrustMaster) => {
-		setSelectedTrustId(trust.id);
-		setIsMobileDetailOpen(true);
-	}, []);
+	const handleSelectTrust = useCallback(
+		(trust: TrustMaster) => {
+			setSelectedTrustId(trust.id);
+			setIsMobileDetailOpen(true);
+			navStack?.selectFromList({ type: 'trust', item: trust });
+		},
+		[navStack]
+	);
 
-	// モバイル詳細閉じるハンドラ
-	const handleCloseMobileDetail = useCallback(() => {
+	// 詳細画面を閉じるハンドラ（選択解除およびモバイルオーバーレイを閉じる）
+	const handleCloseDetail = useCallback(() => {
+		setSelectedTrustId(null);
 		setIsMobileDetailOpen(false);
-	}, []);
+		navStack?.clear();
+	}, [navStack]);
 
 	const isSelected = selectedTrust !== null;
 
@@ -98,6 +108,9 @@ export const TrustView: React.FC<Props> = ({
 					trust={selectedTrust}
 					isChecked={selectedTrust ? checkedSet.has(selectedTrust.id) : false}
 					onToggleCheck={onToggleCheck}
+					canGoBack={navStack?.canGoBack ?? false}
+					onBack={navStack?.pop}
+					onClose={selectedTrust ? handleCloseDetail : undefined}
 				/>
 			</div>
 
@@ -107,7 +120,7 @@ export const TrustView: React.FC<Props> = ({
 					<div className="flex justify-end mb-2">
 						<button
 							type="button"
-							onClick={handleCloseMobileDetail}
+							onClick={handleCloseDetail}
 							className="p-2 text-slate-400 hover:text-slate-100 bg-slate-900 border border-slate-800 rounded-full"
 							aria-label="詳細を閉じる"
 						>
@@ -119,7 +132,9 @@ export const TrustView: React.FC<Props> = ({
 							trust={selectedTrust}
 							isChecked={checkedSet.has(selectedTrust.id)}
 							onToggleCheck={onToggleCheck}
-							onClose={handleCloseMobileDetail}
+							canGoBack={navStack?.canGoBack ?? false}
+							onBack={navStack?.pop}
+							onClose={handleCloseDetail}
 						/>
 					</div>
 				</div>

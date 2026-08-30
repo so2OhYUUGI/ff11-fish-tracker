@@ -8,10 +8,12 @@
  * - タブ切り替え時の URL クエリパラメータ（location.search）保持
  * - checkedTrustIds の数値化・正規化ロジックの適用
  * - 閲覧専用状態（共有キャラ）および未登録ガード判定、Undoアクション付きトーストの実装
+ * - 共通ナビゲーションフック（useTrackerNavigation）の組み込み
  * 
  * [依存関係・関連ファイル]
  * - データ      : src/data/trusts.ts
  * - Context     : src/contexts/UserDataContext.tsx
+ * - フック      : src/hooks/useTrackerNavigation.ts
  * - 関連        : src/features/trusttracker/FilterBar.tsx
  * - 関連        : src/features/trusttracker/TrustTrackerContent.tsx
  * - 型定義      : src/types/trusttracker.ts, src/components/layout/Header.ts
@@ -19,19 +21,21 @@
  */
 
 import React, { useCallback, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import { TRUSTS } from '@/data/trusts';
-import type { TrustSubtype, StatusFilter } from '@/types/trusttracker';
+import type { TrustSubtype, StatusFilter, TrustMaster } from '@/types/trusttracker';
 import type { DisplayCharacterProgress } from '@/components/layout/Header';
 import { useUserDataContext } from '@/contexts/UserDataContext';
+import { useTrackerNavigation } from '@/hooks/useTrackerNavigation';
 import { FilterBar } from './FilterBar';
 import { TrustTrackerContent } from './TrustTrackerContent';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
 
 export const TrustTrackerContainer: React.FC = () => {
 	const [searchParams, setSearchParams] = useSearchParams();
+	const { slug } = useParams<{ slug?: string }>();
 
 	const {
 		activeCharacter,
@@ -48,6 +52,14 @@ export const TrustTrackerContainer: React.FC = () => {
 
 	// 3. 検索クエリ
 	const searchQuery = searchParams.get('q') || '';
+
+	// 4. 共通ナビゲーションフックの呼び出し
+	const { effectiveNavStack } = useTrackerNavigation<TrustMaster>({
+		basePath: `/trusttracker/${activeType}`,
+		slug,
+		isRegistered,
+		onRequestRegistration,
+	});
 
 	// activeCharacter 内の checkedTrustIds を数値配列へ安全に正規化
 	const effectiveActiveCharacter: DisplayCharacterProgress = useMemo(() => {
@@ -196,6 +208,7 @@ export const TrustTrackerContainer: React.FC = () => {
 					trusts={TRUSTS}
 					checkedTrustIds={checkedTrustIds}
 					onToggleCheck={handleToggleCheck}
+					navStack={effectiveNavStack}
 				/>
 			</div>
 		</>
