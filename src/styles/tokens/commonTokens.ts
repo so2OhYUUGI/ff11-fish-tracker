@@ -93,7 +93,7 @@ export const COMMON_TOKENS = {
 
   // コンテナ・ボックスの共通背景・枠線（テーマ変数準拠）
   box: {
-    dark: 'bg-[var(--theme-container-bg)] border border-[var(--theme-container-border)] rounded-lg text-slate-300 p-3 sm:p-4 transition-colors',
+    dark: 'bg-[var(--theme-page-bg)]/60 border border-[var(--theme-container-border)] rounded-lg text-slate-300 p-3 sm:p-4 transition-colors',
     darker: 'bg-[var(--theme-inner-bg)] border border-[var(--theme-inner-border)] rounded-md text-slate-200 p-2.5 sm:p-3 transition-colors',
   },
 

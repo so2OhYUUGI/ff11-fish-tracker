@@ -4,26 +4,31 @@
  * [Role] フェイス（選択中）の詳細情報表示コンポーネント
  * 
  * [概要]
- * - 選択されたフェイスの基本情報（名称、ジョブ、戦闘タイプ、入手情報）の詳細表示
+ * - 選択されたフェイスの基本情報（名称、ジョブ、戦闘タイプ、所属、入手情報）の詳細表示
  * - 共通ヘッダーコンポーネント（`DetailHeader`）を利用して閉じるボタン等を含むヘッダー構造を統一
+ * - 共通バッジコンポーネント（`TrustBadges`）を利用した属性情報の描画
  * - 修得ステータス（修得済み/未修得）の確認およびトグル操作（ヘッダーアクション経由）
  * - 盟（アイテム）情報およびゲーム内呼び出しマクロ（/ma フェイス名 <me>）のテキストコピー機能
  * - DETAIL_STYLES の適用によるコンテナ幅・スクロール領域・各カード要素の標準化
  * 
  * [依存関係・関連ファイル]
  * - 型定義  : src/types/trusttracker.ts (TrustMaster)
- * - スタイル: src/styles/components/detailStyles.ts, src/styles/components/badgeStyles.ts
- * - 共通部品: src/components/common/Badge.tsx, src/features/fishtracker/common/DetailHeader.tsx
+ * - スタイル: src/styles/components/detailStyles.ts
+ * - 共通部品: src/features/trusttracker/common/TrustBadges.tsx, src/features/fishtracker/common/DetailHeader.tsx
  * ============================================================================
  */
 
 import React, { useState, useCallback } from 'react';
-import { CheckSquare, Square, Copy, BookOpen, Shield, Award, Terminal, Sparkles, Users } from 'lucide-react';
+import { CheckSquare, Square, Copy, BookOpen, Award, Terminal, Sparkles, Users } from 'lucide-react';
 import type { TrustMaster } from '@/types/trusttracker';
 import { DETAIL_STYLES } from '@/styles/components/detailStyles';
-import { getCombatTypeBadgeStyle } from '@/styles/components/badgeStyles';
-import { Badge } from '@/components/common/Badge';
 import { DetailHeader } from '@/features/fishtracker/common/DetailHeader';
+import {
+	JobBadge,
+	CombatTypeBadge,
+	AffiliationBadge,
+	LimitedBadge,
+} from '@/features/trusttracker/common/TrustBadges';
 
 type Props = {
 	trust: TrustMaster | null;
@@ -124,18 +129,10 @@ export const TrustDetailView: React.FC<Props> = ({
 			<div className={DETAIL_STYLES.scrollContent}>
 				{/* 属性バッジ群 */}
 				<div className={DETAIL_STYLES.badgeGroup}>
-					<Badge className={DETAIL_STYLES.badgeDefault}>
-						<Shield className={DETAIL_STYLES.badgeIcon} />
-						{trust.job}
-					</Badge>
-					<Badge className={getCombatTypeBadgeStyle(trust.combatType)}>
-						{trust.combatType}
-					</Badge>
-					{trust.isLimited && (
-						<Badge className={DETAIL_STYLES.badgeLimited}>
-							期間限定
-						</Badge>
-					)}
+					<JobBadge job={trust.job} />
+					<CombatTypeBadge combatType={trust.combatType} />
+					{trust.affiliation && <AffiliationBadge affiliation={trust.affiliation} />}
+					{trust.isLimited && <LimitedBadge />}
 				</div>
 
 				{/* 修得条件・入手方法 */}

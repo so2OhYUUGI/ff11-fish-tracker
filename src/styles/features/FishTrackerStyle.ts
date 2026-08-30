@@ -81,7 +81,7 @@ export const FILTER_BAR_STYLES = {
   progressGroup: 'flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2 w-full lg:flex-1 lg:max-w-xs px-1 sm:px-2',
   progressTextContainer: 'flex justify-between items-center text-xs font-semibold text-stone-300 whitespace-nowrap gap-2',
   progressSubText: COMMON_TOKENS.text.subText,
-  progressBarTrack: 'w-full bg-[var(--theme-inner-bg)] rounded-full h-2 overflow-hidden border border-[var(--theme-container-border)]',
+  progressBarTrack: 'w-full bg-[var(--theme-active-item-bg)] rounded-full h-2 overflow-hidden',
   progressBarFill: 'bg-[var(--theme-accent-bg)] h-2 rounded-full transition-all duration-300 ease-out',
   progressSpacer: 'hidden lg:block lg:flex-1',
 
