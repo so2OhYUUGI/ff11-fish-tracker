@@ -5,9 +5,10 @@
  * 
  * [概要]
  * - フィルタリング済みフェイス一覧のリスト表示および選択状態の管理
+ * - 初期状態は未選択（null）とし、選択時にのみ詳細を表示
  * - LAYOUT_TOKENS を使用した魚チェッカー準拠の標準レイアウト（リスト + サイドバー詳細）
  * - PC画面（1024px以上）: 左右2カラム（リスト + 右側サイドバー詳細）
- * - モバイル画面（1024px未満）: 選択時に詳細画面をモーダル/オーバーレイ表示
+ * - モバイル・タブレット画面（1024px未満）: 選択時に詳細画面をオーバーレイ表示
  * - navStack（共通ナビゲーション）の受領および DetailView やアイテム選択処理への伝播
  * ============================================================================
  */
@@ -33,12 +34,10 @@ export const TrustView: React.FC<Props> = ({
 	onToggleCheck,
 	navStack,
 }) => {
-	// 現在選択されているフェイスのID
-	const [selectedTrustId, setSelectedTrustId] = useState<number | null>(
-		trusts.length > 0 ? trusts[0].id : null
-	);
+	// 初期状態は未選択（null）
+	const [selectedTrustId, setSelectedTrustId] = useState<number | null>(null);
 
-	// モバイル表示用: 詳細モーダル/オーバーレイの開閉フラグ
+	// モバイル・タブレット表示用: 詳細モーダル/オーバーレイの開閉フラグ
 	const [isMobileDetailOpen, setIsMobileDetailOpen] = useState(false);
 
 	// 高速参照用 Set
@@ -85,14 +84,14 @@ export const TrustView: React.FC<Props> = ({
 					<div className={LAYOUT_TOKENS.view.flexColGap2}>
 						{trusts.map((trust) => {
 							const isChecked = checkedSet.has(trust.id);
-							const isSelected = trust.id === selectedTrustId;
+							const isSelectedItem = trust.id === selectedTrustId;
 
 							return (
 								<TrustListItem
 									key={trust.id}
 									trust={trust}
 									isChecked={isChecked}
-									isSelected={isSelected}
+									isSelected={isSelectedItem}
 									onToggleCheck={onToggleCheck}
 									onClickDetail={handleSelectTrust}
 								/>
@@ -102,8 +101,8 @@ export const TrustView: React.FC<Props> = ({
 				)}
 			</div>
 
-			{/* 2. 右側: PC用 サイドバー詳細パネル (1024px以上) */}
-			<div className={LAYOUT_TOKENS.sidebar.stickyContainer}>
+			{/* 2. 右側: PC用 サイドバー詳細パネル (1024px以上のみ表示) */}
+			<div className={`hidden lg:flex ${LAYOUT_TOKENS.sidebar.stickyContainer}`}>
 				<TrustDetailView
 					trust={selectedTrust}
 					isChecked={selectedTrust ? checkedSet.has(selectedTrust.id) : false}
@@ -114,7 +113,7 @@ export const TrustView: React.FC<Props> = ({
 				/>
 			</div>
 
-			{/* 3. モバイル用: フル画面オーバーレイ詳細パネル (1024px未満) */}
+			{/* 3. モバイル・タブレット用: フル画面オーバーレイ詳細パネル (1024px未満) */}
 			{isMobileDetailOpen && selectedTrust && (
 				<div className="fixed inset-0 z-50 lg:hidden bg-slate-950/80 backdrop-blur-sm flex flex-col p-4 animate-in fade-in duration-200">
 					<div className="flex justify-end mb-2">
