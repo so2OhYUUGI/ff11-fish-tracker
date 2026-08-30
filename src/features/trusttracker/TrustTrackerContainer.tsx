@@ -88,7 +88,9 @@ export const TrustTrackerContainer: React.FC = () => {
 		};
 	}, [activeCharacter]);
 
-	const checkedTrustIds = effectiveActiveCharacter.checkedTrustIds || [];
+	const checkedTrustIds = useMemo(() => {
+		return effectiveActiveCharacter.checkedTrustIds || [];
+	}, [effectiveActiveCharacter.checkedTrustIds]);
 
 	// タブ切り替え処理（クエリパラメータを保持して遷移）
 	const handleTypeChange = useCallback(

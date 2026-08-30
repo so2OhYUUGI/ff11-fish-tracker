@@ -100,7 +100,7 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 			id: SHARED_GUEST_CHARACTER_ID,
 			name: sharedProgress.characterName,
 			checkedFishIds: sharedProgress.checkedFishIds,
-			checkedTrustIds: (sharedProgress as any).checkedTrustIds || [],
+			checkedTrustIds: (sharedProgress as { checkedTrustIds?: number[] }).checkedTrustIds || [],
 			createdAt: sharedProgress.createdAt,
 			updatedAt: sharedProgress.createdAt,
 			isShared: true,

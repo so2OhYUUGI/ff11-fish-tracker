@@ -38,7 +38,7 @@ type FilterBarProps = {
 	totalTrustCount: number;
 };
 
-export const SUBTYPE_CONFIG: Record<
+const SUBTYPE_CONFIG: Record<
 	TrustSubtype,
 	{ label: string; icon: React.ElementType; description: string }
 > = {
