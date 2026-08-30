@@ -4,24 +4,52 @@
  * [Role] ランディングページおよびオンボーディングモーダルで共通利用するコンテンツ本体
  * 
  * [概要]
- * - FF11 釣魚チェッカーの概要・特徴紹介と初期キャラクター作成フォームを描画する
- * - アプリ内ブラウザの検知と標準ブラウザ利用促進の注意喚起を行う
+ * - URLパス（fishtracker / trusttracker）に応じた動的なタイトル・アイコン・アピールポイントの描画
+ * - 初期キャラクター作成フォームの描画
+ * - アプリ内ブラウザの検知と標準ブラウザ利用促進の注意喚起
  * 
  * [依存関係・関連ファイル]
  * - ユーティリティ: src/utils/environment.ts
  * - スタイル    : src/styles/tokens/commonTokens.ts
- * 
- * [編集・改修時の注意事項（AI/エンジニア共通指示）]
- * 1. 【入力制御】 空白のみの名前登録を防止するため trimmed チェックおよび isSubmitting による二重送信防止ロジックを維持すること
- * 2. 【環境判定】 アプリ内ブラウザ判定（checkInAppBrowser）の実行結果は useMemo で保持し、不要な再計算を回避すること
- * 3. 【アクセシビリティ】 フォーム要素の label htmlFor と input id の紐付けを維持すること
  * ============================================================================
  */
 
 import React, { useState, useMemo } from 'react';
-import { Fish, CheckCircle2, Users, HardDrive } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
+import { Fish, Users, CheckCircle2, HardDrive } from 'lucide-react';
 import { checkInAppBrowser } from '@/utils/environment';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
+
+type TrackerConfig = {
+	title: string;
+	subtitle: string;
+	icon: React.ElementType;
+	features: string[];
+};
+
+// パスプレフィックスに対応するチェッカーメタデータ
+const TRACKER_CONFIG_MAP: Record<string, TrackerConfig> = {
+	'/trusttracker': {
+		title: 'FF11 フェイスチェッカー',
+		subtitle: 'ファイナルファンタジーXI フェイス修得状況管理ツール',
+		icon: Users,
+		features: [
+			'フェイスの修得状況・タイプ・入手方法を簡単にチェック',
+			'複数キャラクターの個別進捗を管理可能',
+		],
+	},
+	'/fishtracker': {
+		title: 'FF11 釣魚チェッカー',
+		subtitle: 'ファイナルファンタジーXI 釣果・ハラキリ管理ツール',
+		icon: Fish,
+		features: [
+			'釣果情報・ハラキリ対象・餌を簡単にチェック',
+			'複数キャラクターの個別進捗を管理可能',
+		],
+	},
+};
+
+const DEFAULT_CONFIG = TRACKER_CONFIG_MAP['/fishtracker'];
 
 type CharacterCreateFormProps = {
 	onSubmit: (name: string) => void;
@@ -39,7 +67,6 @@ const CharacterCreateForm: React.FC<CharacterCreateFormProps> = ({
 	const [charName, setCharName] = useState('');
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
-	// useStateの初期化関数を使用して初回レンダリング時にのみ実行する
 	const [sampleName] = useState(() => {
 		const randomIndex = Math.floor(Math.random() * SAMPLE_CHARACTERS.length);
 		return SAMPLE_CHARACTERS[randomIndex];
@@ -96,7 +123,18 @@ export const CharacterCreateContent: React.FC<CharacterCreateContentProps> = ({
 	onClose,
 }) => {
 	const [copied, setCopied] = useState(false);
+	const location = useLocation();
 	const isInApp = useMemo(() => checkInAppBrowser(), []);
+
+	// URLパスに応じたチェッカー情報を特定
+	const trackerConfig = useMemo(() => {
+		const matchedPath = Object.keys(TRACKER_CONFIG_MAP).find((path) =>
+			location.pathname.startsWith(path)
+		);
+		return matchedPath ? TRACKER_CONFIG_MAP[matchedPath] : DEFAULT_CONFIG;
+	}, [location.pathname]);
+
+	const IconComponent = trackerConfig.icon;
 
 	const handleCopyUrl = async () => {
 		if (typeof window === 'undefined') return;
@@ -114,26 +152,24 @@ export const CharacterCreateContent: React.FC<CharacterCreateContentProps> = ({
 			{/* ヘッダーアイコン & タイトル */}
 			<div className={COMMON_TOKENS.layout.headerGroup}>
 				<div className={`inline-flex p-3 ${COMMON_TOKENS.color.primaryBg} rounded-2xl shadow-lg`}>
-					<Fish className={`w-10 h-10 ${COMMON_TOKENS.color.textMain}`} />
+					<IconComponent className={`w-10 h-10 ${COMMON_TOKENS.color.textMain}`} />
 				</div>
 				<h2 className={COMMON_TOKENS.text.titleMain}>
-					FF11 釣魚チェッカー
+					{trackerConfig.title}
 				</h2>
 				<p className={COMMON_TOKENS.text.subText}>
-					ファイナルファンタジーXI 釣果・ハラキリ管理ツール
+					{trackerConfig.subtitle}
 				</p>
 			</div>
 
 			{/* アピールポイント（3大特徴） */}
 			<div className={`${COMMON_TOKENS.layout.featureGroup} ${COMMON_TOKENS.box.dark}`}>
-				<div className="flex items-center gap-2.5">
-					<CheckCircle2 className={`w-4 h-4 ${COMMON_TOKENS.color.primary} shrink-0`} />
-					<span>釣果情報・ハラキリ対象・餌を簡単にチェック</span>
-				</div>
-				<div className="flex items-center gap-2.5">
-					<Users className={`w-4 h-4 ${COMMON_TOKENS.color.primary} shrink-0`} />
-					<span>複数キャラクターの個別進捗を管理可能</span>
-				</div>
+				{trackerConfig.features.map((feature, index) => (
+					<div key={index} className="flex items-center gap-2.5">
+						<CheckCircle2 className={`w-4 h-4 ${COMMON_TOKENS.color.primary} shrink-0`} />
+						<span>{feature}</span>
+					</div>
+				))}
 				<div className="flex items-center gap-2.5">
 					<HardDrive className={`w-4 h-4 ${COMMON_TOKENS.color.primary} shrink-0`} />
 					<span>データはブラウザに自動保存＆ファイル保存に対応</span>
