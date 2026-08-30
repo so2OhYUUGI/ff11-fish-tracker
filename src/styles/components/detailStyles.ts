@@ -19,11 +19,15 @@ export const DETAIL_STYLES = {
   container:
     'w-full bg-[var(--theme-container-bg)] border border-[var(--theme-container-border)] rounded-xl md:p-6 flex flex-col gap-4 sm:gap-6 h-full relative overscroll-contain',
   panelBase: 'w-full flex flex-col h-full min-h-0 overflow-hidden overscroll-contain',
-  scrollContent: 'flex-1 min-h-0 overflow-y-auto p-3 sm:p-4 space-y-4 sm:space-y-6 touch-pan-y overscroll-contain [-webkit-overflow-scrolling:touch]',
+  scrollContent: 'flex-1 bg-[var(--theme-container-bg)] min-h-0 overflow-y-auto p-3 sm:p-4 space-y-4 sm:space-y-6 touch-pan-y overscroll-contain [-webkit-overflow-scrolling:touch]',
 
   // 未選択（データ無し）表示領域
   emptyDetailContainer:
     'w-full h-full min-h-[250px] sm:min-h-[300px] flex flex-col items-center justify-center p-6 sm:p-8 bg-[var(--theme-container-bg)]/50 border border-[var(--theme-container-border)]/60 rounded-xl text-slate-400 text-center',
+  emptyDetailWrapper: 'h-full min-h-[300px] flex flex-col items-center justify-center p-6 text-center',
+  emptyDetailPulseIcon: 'w-12 h-12 text-slate-600 mb-3 animate-pulse',
+  emptyDetailTitle: 'text-slate-400 font-medium',
+  emptyDetailSubText: 'text-xs text-slate-500 mt-1',
   emptyIcon: 'w-10 h-10 sm:w-12 sm:h-12 mb-2.5 sm:mb-3 text-slate-600',
   emptyText: 'text-xs sm:text-sm font-medium text-slate-400 leading-relaxed',
 
@@ -31,6 +35,7 @@ export const DETAIL_STYLES = {
   header: 'flex items-center justify-between border-b border-[var(--theme-container-border)] pb-3 sm:pb-4 gap-2',
   headerLeft: 'flex items-center gap-2 sm:gap-3 min-w-0 flex-1',
   headerRight: 'flex items-center gap-1.5 sm:gap-2 shrink-0',
+  headerCategoryIcon: 'w-5 h-5 shrink-0 text-[var(--theme-text-accent)]',
   titleJa: 'text-lg sm:text-xl font-bold text-slate-100 truncate',
   titleEn: 'text-[10px] sm:text-xs text-slate-400 font-mono truncate',
 
@@ -65,14 +70,31 @@ export const DETAIL_STYLES = {
 
   // バッジ・ハラキリレイアウト
   badgeGroup: 'flex flex-wrap items-center gap-2',
+  badgeDefault: 'bg-[var(--theme-inner-bg)] text-slate-200 border-[var(--theme-container-border)]',
+  badgeIcon: 'w-3 h-3 text-[var(--theme-text-accent)]',
+  badgeLimited: 'bg-amber-950/80 text-amber-300 border-amber-800/80',
   harakiriGroup: 'space-y-2',
   harakiriItemRow: 'flex flex-wrap items-center gap-2',
   harakiriTitleRow: 'flex items-center gap-2 text-xs',
   harakiriLabel: 'text-xs text-slate-400',
 
-  // セクション・コンテンツ
+  // セクション・コンテンツカード
+  sectionCard: 'p-3.5 bg-[var(--theme-inner-bg)]/80 rounded-lg border border-[var(--theme-container-border)] space-y-2',
+  sectionCardHeader: 'flex items-center justify-between',
   sectionTitle:
     'text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 sm:mb-2.5 flex items-center gap-2',
+  sectionTitleAccent: 'flex items-center gap-2 text-xs font-semibold text-[var(--theme-text-accent)] uppercase tracking-wider',
+  sectionTitleMuted: 'flex items-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-wider',
+  sectionIcon: 'w-3.5 h-3.5',
+  sectionIconAccent: 'w-3.5 h-3.5 text-[var(--theme-text-accent)]',
+  sectionIconMuted: 'w-3.5 h-3.5 text-slate-400',
+  sectionContentText: 'text-slate-200 leading-relaxed pl-5 text-xs sm:text-sm',
+  sectionContentHighlight: 'text-slate-200 font-medium pl-5 text-xs sm:text-sm',
+
+  // アクション・表示ツール
+  copyButton: 'text-xs text-[var(--theme-text-accent)] hover:brightness-125 flex items-center gap-1 transition-colors',
+  codeBox: 'bg-[var(--theme-container-bg)] p-2.5 rounded border border-[var(--theme-container-border)] font-mono text-xs text-amber-200/90 select-all',
+
   tagList: 'flex flex-wrap gap-1.5 sm:gap-2',
   tagItem:
     'bg-[var(--theme-inner-bg)] border border-[var(--theme-container-border)] text-slate-200 text-xs px-2 sm:px-2.5 py-1 rounded-md',
