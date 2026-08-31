@@ -7,7 +7,7 @@
  * - App.tsx や AppRouter でのバケツリレー (Prop Drilling) を解消する
  * - useUserData / useSharedProgress / useSharedWishlist を集約し、閲覧権限（canViewContainer）判定も含めて管理する
  * - 釣魚（checkedFishIds）、フェイス修得（checkedTrustIds）、ウィッシュリスト（wishlists）のトグル状態および操作関数を提供する
- * - 共有ウィッシュリスト（trust_share）をテンポラリデータとして一覧に合成して提供する
+ * - 共有ウィッシュリスト（wishlist_share）をテンポラリデータとして一覧に合成して提供する
  * ============================================================================
  */
 
@@ -99,12 +99,14 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 	} = userDataProps;
 
 	const { sharedProgress, clearSharedMode } = useSharedProgress();
-	const { sharedWishlist } = useSharedWishlist();
+	// ※ useSharedWishlist 側にも clearSharedWishlist（または類似のURLクリア関数）が実装されている想定となります
+	const { sharedWishlist, clearSharedWishlist } = useSharedWishlist() as ReturnType<typeof useSharedWishlist> & { clearSharedWishlist?: () => void };
 
 	const [registrationMessage, setRegistrationMessage] = useState<string | null>(null);
 
 	// 初回自動選択制御フラグ
 	const hasAutoSelectedSharedRef = useRef(false);
+	const hasAutoSelectedSharedWishlistRef = useRef(false);
 
 	// sharedProgress から共有キャラクターを生成（純粋な派生値）
 	const activeSharedCharacter = useMemo<DisplayCharacterProgress | null>(() => {
@@ -149,6 +151,23 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 			clearSharedMode();
 		}
 	}, [sharedProgress, setLocalActiveCharacter, setViewMode, clearSharedMode]);
+
+	// 共有ウィッシュリストアクセス時のURL削除（テンポラリ化）
+	useEffect(() => {
+		if (sharedWishlist && !hasAutoSelectedSharedWishlistRef.current) {
+			hasAutoSelectedSharedWishlistRef.current = true;
+			if (clearSharedWishlist) {
+				clearSharedWishlist();
+			} else {
+				// フォールバックとして直接 URL パラメータから wishlist_share を削除
+				const url = new URL(window.location.href);
+				if (url.searchParams.has('wishlist_share')) {
+					url.searchParams.delete('wishlist_share');
+					window.history.replaceState({}, '', url.toString());
+				}
+			}
+		}
+	}, [sharedWishlist, clearSharedWishlist]);
 
 	// 現在選択中の表示キャラクター
 	const activeCharacter = useMemo<DisplayCharacterProgress>(() => {
