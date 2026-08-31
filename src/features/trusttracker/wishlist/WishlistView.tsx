@@ -2,32 +2,23 @@
  * ============================================================================
  * [FilePath] src/features/trusttracker/wishlist/WishlistView.tsx
  * [Role] アカウント共通ウィッシュリスト（Wishlist）閲覧・全キャラ一括修得管理ビューコンポーネント
- * 
- * [概要]
- * - 選択中スロット（ID管理）に登録されたフェイスの一覧描画
- * - アカウント配下の全キャラクターの修得状況をマトリクス（テーブル）形式で横並び表示・トグル操作
- * - 全キャラ修得完了（コンプリート）行の視覚的ハイライト表示（背景強調・アイコン付与）
- * - 戦闘タイプバッジ（CombatTypeBadge）を使用
- * - 大量キャラ・フェイス登録時でも俯瞰性と可読性を維持するレスポンシブテーブルレイアウト
- * - ウィッシュリストの複製（コピー）機能（未登録ユーザー時はロック）
- * - 共有機能は未登録ユーザーでも利用可能
  * ============================================================================
  */
 
 import React, { useState, useMemo, useCallback } from 'react';
-import { Plus, Edit2, Trash2, Share, Heart, AlertCircle, CheckSquare, Square, User, CheckCircle2, Copy, ArrowRight, Lock } from 'lucide-react';
+import { Plus, Heart, AlertCircle, Lock } from 'lucide-react';
 import { toast } from 'sonner';
 
 import type { TrustMaster, Wishlist } from '@/types/trusttracker';
 import { WISHLIST_LIMITS } from '@/types/trusttracker';
 import { useUserDataContext } from '@/contexts/UserDataContext';
 import { TrustAddModal } from './TrustAddModal';
-import { CombatTypeBadge } from '../common/TrustBadges';
+import { WishlistHeader } from './WishlistHeader';
+import { WishlistTable } from './WishlistTable';
+import { WishlistNameEditModal, WishlistCopyModal } from './WishlistModals';
 import { shareContent } from '@/utils/share';
 import { encodeSharedWishlistProgress } from '@/utils/shareEncoding';
-import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
-import { LIST_STYLES } from '@/styles/components/listStyles';
 import { DETAIL_STYLES } from '@/styles/components/detailStyles';
 import { WISHLIST_STYLES } from '@/styles/components/wishlistStyles';
 
@@ -235,93 +226,17 @@ export const WishlistView: React.FC<Props> = ({
 				</div>
 			) : (
 				<>
-					{/* ヘッダーカード */}
-					<div className={WISHLIST_STYLES.headerCard}>
-						<div className={WISHLIST_STYLES.headerTitleGroup}>
-							<div className={WISHLIST_STYLES.headerIconWrapper}>
-								<Heart className="w-5 h-5 fill-current" />
-							</div>
-							<div>
-								<h2 className={WISHLIST_STYLES.headerTitle}>
-									{activeWishlist.name}
-									<span className={WISHLIST_STYLES.headerSubTitle}>
-										({activeWishlist.trustIds.length} / {WISHLIST_LIMITS.MAX_ITEMS} 個)
-									</span>
-								</h2>
-							</div>
-						</div>
+					<WishlistHeader
+						activeWishlist={activeWishlist}
+						isRegistered={isRegistered}
+						isSharedWishlist={isSharedWishlist}
+						onOpenAddModal={() => setIsAddModalOpen(true)}
+						onOpenEditNameModal={handleOpenEditNameModal}
+						onOpenCopyModal={handleOpenCopyModal}
+						onShare={handleShare}
+						onDeleteSlot={handleDeleteSlot}
+					/>
 
-						{/* アクションボタン群 */}
-						<div className={WISHLIST_STYLES.actionsGroup}>
-							{!isSharedWishlist && (
-								<>
-									<button
-										type="button"
-										onClick={() => setIsAddModalOpen(true)}
-										disabled={!isRegistered}
-										title={!isRegistered ? 'キャラクター登録を行うと追加できます' : undefined}
-										className={`${WISHLIST_STYLES.addButton} ${!isRegistered ? 'opacity-50 cursor-not-allowed' : ''
-											}`}
-									>
-										{!isRegistered ? <Lock className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-										<span>フェイス追加</span>
-									</button>
-
-									<button
-										type="button"
-										onClick={handleOpenEditNameModal}
-										disabled={!isRegistered}
-										className={`${WISHLIST_STYLES.actionButton} ${!isRegistered ? 'opacity-50 cursor-not-allowed' : ''
-											}`}
-										title={!isRegistered ? 'キャラクター登録を行うと編集できます' : 'リスト名を変更'}
-										aria-label="リスト名を変更"
-									>
-										{!isRegistered ? <Lock className="w-5 h-5" /> : <Edit2 className="w-5 h-5" />}
-									</button>
-								</>
-							)}
-
-							{/* コピーボタン（未登録時はロック） */}
-							<button
-								type="button"
-								onClick={handleOpenCopyModal}
-								disabled={!isRegistered}
-								className={`${WISHLIST_STYLES.actionButton} ${!isRegistered ? 'opacity-50 cursor-not-allowed' : ''
-									}`}
-								title={!isRegistered ? 'キャラクター登録を行うとコピーできます' : 'ウィッシュリストをコピー'}
-								aria-label="ウィッシュリストをコピー"
-							>
-								{!isRegistered ? <Lock className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
-							</button>
-
-							{/* 共有ボタン（未登録ユーザーでも利用可能） */}
-							<button
-								type="button"
-								onClick={handleShare}
-								className={WISHLIST_STYLES.actionButton}
-								title="ウィッシュリストを共有"
-								aria-label="ウィッシュリストを共有"
-							>
-								<Share className={`w-5 h-5 ${COMMON_TOKENS.entity.fish.text}`} />
-							</button>
-
-							{!isSharedWishlist && (
-								<button
-									type="button"
-									onClick={handleDeleteSlot}
-									disabled={!isRegistered}
-									className={`${WISHLIST_STYLES.deleteIconButton} ${!isRegistered ? 'opacity-50 cursor-not-allowed' : ''
-										}`}
-									title={!isRegistered ? 'キャラクター登録を行うと削除できます' : 'リストを削除'}
-									aria-label="リストを削除"
-								>
-									{!isRegistered ? <Lock className="w-5 h-5" /> : <Trash2 className="w-5 h-5" />}
-								</button>
-							)}
-						</div>
-					</div>
-
-					{/* フェイスリスト表示部分 */}
 					{wishlistTrusts.length === 0 ? (
 						<div className={LAYOUT_TOKENS.view.emptyContainer}>
 							<AlertCircle className="w-10 h-10 text-slate-600 mb-2" />
@@ -333,108 +248,19 @@ export const WishlistView: React.FC<Props> = ({
 							)}
 						</div>
 					) : (
-						<div className={WISHLIST_STYLES.tableCard}>
-							<div className={WISHLIST_STYLES.tableWrapper}>
-								<table className={WISHLIST_STYLES.table}>
-									<thead>
-										<tr className={WISHLIST_STYLES.thead}>
-											<th className={WISHLIST_STYLES.thTrust}>フェイス</th>
-											{characters.map((char) => (
-												<th key={char.id} className={WISHLIST_STYLES.thChar}>
-													<div className={WISHLIST_STYLES.charHeaderContainer} title={char.name}>
-														<User className={WISHLIST_STYLES.charHeaderIcon} />
-														<span className="truncate">{char.name}</span>
-													</div>
-												</th>
-											))}
-											{!isSharedWishlist && <th className={WISHLIST_STYLES.thAction}>操作</th>}
-										</tr>
-									</thead>
-									<tbody className={WISHLIST_STYLES.tbody}>
-										{wishlistTrusts.map((trust) => {
-											const isAllCompleted =
-												characters.length > 0 &&
-												characters.every((char) => char.checkedTrustIds.includes(trust.id));
-
-											return (
-												<tr
-													key={trust.id}
-													className={isAllCompleted ? WISHLIST_STYLES.trCompleted : WISHLIST_STYLES.trNormal}
-												>
-													{/* フェイス基本情報 */}
-													<td className={WISHLIST_STYLES.trustCellContainer}>
-														<div className={WISHLIST_STYLES.trustCellWrapper}>
-															<div className={WISHLIST_STYLES.badgeWrapper}>
-																<CombatTypeBadge combatType={trust.combatType} />
-															</div>
-															<div className={WISHLIST_STYLES.trustInfoGroup}>
-																<div className={WISHLIST_STYLES.trustTitle}>
-																	<span>{trust.ja}</span>
-																	{isAllCompleted && (
-																		<CheckCircle2 className={WISHLIST_STYLES.trustCompletedIcon} />
-																	)}
-																</div>
-																{trust.acquireInfo && (
-																	<div className={WISHLIST_STYLES.acquireInfo}>
-																		<span className={WISHLIST_STYLES.acquireLabel}>入手:</span>
-																		{trust.acquireInfo}
-																	</div>
-																)}
-															</div>
-														</div>
-													</td>
-
-													{/* 各キャラクターの修得チェックセル */}
-													{characters.map((char) => {
-														const isChecked = char.checkedTrustIds.includes(trust.id);
-														return (
-															<td key={char.id} className={WISHLIST_STYLES.centerCell}>
-																<button
-																	type="button"
-																	onClick={isRegistered ? () => toggleCharacterTrustCheck(char.id, trust.id) : undefined}
-																	disabled={!isRegistered}
-																	className={`${isChecked ? WISHLIST_STYLES.checkButtonChecked : WISHLIST_STYLES.checkButtonUnchecked} ${!isRegistered ? 'opacity-50 cursor-not-allowed' : ''
-																		}`}
-																	title={!isRegistered ? 'キャラクター登録を行うと操作できます' : `${char.name}: ${isChecked ? '未修得にする' : '修得済みにする'}`}
-																>
-																	{isChecked ? (
-																		<CheckSquare className="w-5 h-5" />
-																	) : (
-																		<Square className="w-5 h-5" />
-																	)}
-																</button>
-															</td>
-														);
-													})}
-
-													{/* リスト解除操作（未登録時・共有リスト閲覧時は非表示/非活性） */}
-													{!isSharedWishlist && (
-														<td className={WISHLIST_STYLES.centerCell}>
-															<button
-																type="button"
-																onClick={isRegistered ? () => handleRemoveFromWishlist(trust.id) : undefined}
-																disabled={!isRegistered}
-																className={`${WISHLIST_STYLES.removeButton} ${!isRegistered ? 'opacity-50 cursor-not-allowed' : ''
-																	}`}
-																title={!isRegistered ? 'キャラクター登録を行うと操作できます' : 'リストから外す'}
-																aria-label={`${trust.ja}をリストから解除`}
-															>
-																{!isRegistered ? <Lock className="w-4 h-4" /> : <Trash2 className="w-4 h-4" />}
-															</button>
-														</td>
-													)}
-												</tr>
-											);
-										})}
-									</tbody>
-								</table>
-							</div>
-						</div>
+						<WishlistTable
+							wishlistTrusts={wishlistTrusts}
+							characters={characters}
+							isRegistered={isRegistered}
+							isSharedWishlist={isSharedWishlist}
+							onToggleCharacterTrustCheck={toggleCharacterTrustCheck}
+							onRemoveFromWishlist={handleRemoveFromWishlist}
+						/>
 					)}
 				</>
 			)}
 
-			{/* リスト追加モーダル */}
+			{/* フェイス追加モーダル */}
 			{activeWishlist && !isSharedWishlist && isRegistered && (
 				<TrustAddModal
 					isOpen={isAddModalOpen}
@@ -445,109 +271,27 @@ export const WishlistView: React.FC<Props> = ({
 				/>
 			)}
 
-			{/* 名称編集モーダル */}
-			{isNameModalOpen && activeWishlist && !isSharedWishlist && isRegistered && (
-				<div className={WISHLIST_STYLES.modalOverlay}>
-					<div className={WISHLIST_STYLES.modalCard}>
-						<h3 className={WISHLIST_STYLES.modalTitle}>
-							<Edit2 className="w-4 h-4 text-(--theme-text-accent)" />
-							ウィッシュリスト名の変更
-						</h3>
-						<input
-							type="text"
-							value={editingName}
-							onChange={(e) => setEditingName(e.target.value)}
-							maxLength={20}
-							placeholder="例: 目標フェイスリスト"
-							className={LIST_STYLES.searchInput}
-							autoFocus
-						/>
-						<div className={WISHLIST_STYLES.modalActionsGroup}>
-							<button
-								type="button"
-								onClick={() => setIsNameModalOpen(false)}
-								className={WISHLIST_STYLES.modalCancelBtn}
-							>
-								キャンセル
-							</button>
-							<button
-								type="button"
-								onClick={handleSaveName}
-								className={WISHLIST_STYLES.modalSaveBtn}
-							>
-								保存
-							</button>
-						</div>
-					</div>
-				</div>
-			)}
+			{/* リスト名変更モーダル */}
+			<WishlistNameEditModal
+				isOpen={isNameModalOpen && Boolean(activeWishlist) && !isSharedWishlist && isRegistered}
+				editingName={editingName}
+				onEditingNameChange={setEditingName}
+				onSave={handleSaveName}
+				onClose={() => setIsNameModalOpen(false)}
+			/>
 
 			{/* リストコピーモーダル */}
-			{isCopyModalOpen && activeWishlist && isRegistered && (
-				<div className={WISHLIST_STYLES.modalOverlay}>
-					<div className={WISHLIST_STYLES.modalCard}>
-						<h3 className={WISHLIST_STYLES.modalTitle}>
-							<Copy className="w-4 h-4 text-(--theme-text-accent)" />
-							ウィッシュリストのコピー
-						</h3>
-
-						<div className={WISHLIST_STYLES.copyModalContent}>
-							<div className={WISHLIST_STYLES.copyFlowCard}>
-								<div>
-									<span className={WISHLIST_STYLES.copyFlowLabel}>コピー元リスト</span>
-									<span className={WISHLIST_STYLES.copyFlowValue}>{activeWishlist.name}</span>
-								</div>
-
-								<div className={WISHLIST_STYLES.copyArrowWrapper}>
-									<ArrowRight className={WISHLIST_STYLES.copyArrowIcon} />
-								</div>
-
-								<div>
-									<label className={WISHLIST_STYLES.copyFlowLabelBold}>コピー先</label>
-									<select
-										value={copyTargetId}
-										onChange={(e) => setCopyTargetId(e.target.value)}
-										className={`${LIST_STYLES.searchInput} w-full`}
-									>
-										{wishlists.filter((w) => !(w as { isShared?: boolean }).isShared).length < WISHLIST_LIMITS.MAX_SLOTS && (
-											<option value="NEW">新規スロットとして追加</option>
-										)}
-										{wishlists
-											.filter((w) => !(w as { isShared?: boolean }).isShared)
-											.map((w, idx) => (
-												<option key={w.id} value={w.id}>
-													スロット {idx + 1}: {w.name} {w.id === activeWishlistId ? '(現在のリスト)' : ''}
-												</option>
-											))}
-									</select>
-								</div>
-							</div>
-
-							{copyTargetId !== 'NEW' && (
-								<p className={WISHLIST_STYLES.copyWarningText}>
-									※ 既存のスロットへ上書きコピーされます。対象スロットの登録済みフェイスは上書きされます。
-								</p>
-							)}
-						</div>
-
-						<div className={WISHLIST_STYLES.modalActionsGroup}>
-							<button
-								type="button"
-								onClick={() => setIsCopyModalOpen(false)}
-								className={WISHLIST_STYLES.modalCancelBtn}
-							>
-								キャンセル
-							</button>
-							<button
-								type="button"
-								onClick={handleCopyWishlist}
-								className={WISHLIST_STYLES.modalSaveBtn}
-							>
-								コピー実行
-							</button>
-						</div>
-					</div>
-				</div>
+			{activeWishlist && (
+				<WishlistCopyModal
+					isOpen={isCopyModalOpen && isRegistered}
+					activeWishlist={activeWishlist}
+					wishlists={wishlists}
+					activeWishlistId={activeWishlistId}
+					copyTargetId={copyTargetId}
+					onCopyTargetIdChange={setCopyTargetId}
+					onCopy={handleCopyWishlist}
+					onClose={() => setIsCopyModalOpen(false)}
+				/>
 			)}
 		</div>
 	);
