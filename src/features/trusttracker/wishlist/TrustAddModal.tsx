@@ -6,6 +6,7 @@
  * [概要]
  * - マスターデータからのキーワード検索およびウィッシュリストへの登録・解除トグル操作
  * - 限定フェイス（isLimited === true）の選択リストからの除外処理
+ * - モーダルの高さを固定し、検索時のガタつき（ぴょこぴょこ動く現象）を防止
  * - モーダル全体にテーマ変数（--theme-*）を適用し、テーマ切替に対応
  * ============================================================================
  */
@@ -76,8 +77,8 @@ export const TrustAddModal: React.FC<Props> = ({
 
 	return (
 		<div className={LAYOUT_TOKENS.modalShare.overlay}>
-			{/* モーダル外枠：テーマ背景変数を指定 */}
-			<div className="w-full max-w-2xl max-h-[85vh] my-auto bg-(--theme-container-bg) border border-(--theme-container-border) rounded-2xl shadow-2xl overflow-hidden flex flex-col relative">
+			{/* モーダル外枠：高さを 85vh に固定し、検索時のガタつきを防止 */}
+			<div className="w-full max-w-2xl h-[85vh] my-auto bg-(--theme-container-bg) border border-(--theme-container-border) rounded-2xl shadow-2xl overflow-hidden flex flex-col relative">
 
 				{/* ヘッダー：インナー背景変数を指定 */}
 				<div className="flex items-center justify-between px-6 py-4 border-b border-(--theme-container-border) bg-(--theme-inner-bg) shrink-0">
@@ -98,7 +99,7 @@ export const TrustAddModal: React.FC<Props> = ({
 				</div>
 
 				{/* 検索入力欄エリア */}
-				<div className="px-6 py-3 border-b border-(--theme-container-border) bg-(--theme-inner-bg)">
+				<div className="px-6 py-3 border-b border-(--theme-container-border) bg-(--theme-inner-bg) shrink-0">
 					<div className="relative">
 						<Search className={`absolute left-3 top-1/2 -translate-y-1/2 ${LAYOUT_TOKENS.header.icon.md} ${LAYOUT_TOKENS.header.icon.muted}`} />
 						<input
@@ -112,12 +113,14 @@ export const TrustAddModal: React.FC<Props> = ({
 					</div>
 				</div>
 
-				{/* フェイス選択リストエリア */}
+				{/* フェイス選択リストエリア（flex-1 で残りの高さを埋める） */}
 				<div className="p-6 space-y-2 overflow-y-auto flex-1">
 					{filteredTrusts.length === 0 ? (
-						<p className={LAYOUT_TOKENS.view.emptyText}>
-							該当するフェイスが見つかりません
-						</p>
+						<div className="flex flex-col items-center justify-center h-full text-center">
+							<p className={LAYOUT_TOKENS.view.emptyText}>
+								該当するフェイスが見つかりません
+							</p>
+						</div>
 					) : (
 						filteredTrusts.map((trust) => {
 							const isAdded = registeredSet.has(trust.id);

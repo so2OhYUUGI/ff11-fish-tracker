@@ -77,8 +77,6 @@ export function AppRouter({
 
   return (
     <Routes>
-      {/* 新設: 登録ページ専用ルート */}
-      <Route path="/register" element={<LandingPage />} />
       
       {/* リダイレクトルート */}
       <Route path="/" element={<Navigate to="/fishtracker/fish" replace />} />
@@ -87,6 +85,9 @@ export function AppRouter({
       {/* ====================================================================
        * 1. 釣魚チェッカー (fishtracker)
        * ==================================================================== */}
+      {/* 登録ページ */}
+      <Route path="/fishtracker/register" element={<LandingPage />} />
+      
       {/* 一覧表示（slug なし） */}
       <Route
         path="/fishtracker/:type"
@@ -109,6 +110,9 @@ export function AppRouter({
       {/* リダイレクト (デフォルトサブタイプ: trust) */}
       <Route path="/trusttracker" element={<Navigate to="/trusttracker/trust" replace />} />
 
+      {/* 登録ページ */}
+      <Route path="/trusttracker/register" element={<LandingPage />} />
+      
       {/* 一覧表示（slug なし） */}
       <Route
         path="/trusttracker/:type"

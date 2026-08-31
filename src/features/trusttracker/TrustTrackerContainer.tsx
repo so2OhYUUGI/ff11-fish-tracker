@@ -77,25 +77,22 @@ export const TrustTrackerContainer: React.FC = () => {
 	// 3. 検索クエリ
 	const searchQuery = searchParams.get('q') || '';
 
-	// 4. ウィッシュリストの選択ID
-	const [activeWishlistId, setActiveWishlistId] = useState<string>(() => {
-		if (sharedWishlist) return sharedWishlist.id;
-		return wishlists && wishlists.length > 0 ? wishlists[0].id : '';
-	});
+	// 4. ウィッシュリストの選択ID管理（rawState と 派生評価の分離）
+	const [rawActiveWishlistId, setActiveWishlistId] = useState<string>('');
 
-	// activeWishlistId の同期・フォールバック制御
-	useEffect(() => {
-		if (!wishlists || wishlists.length === 0) return;
+	// 実際の描画・配下に渡す有効な activeWishlistId をレンダー時に安全に評価
+	const effectiveActiveWishlistId = useMemo(() => {
+		if (!wishlists || wishlists.length === 0) return '';
 
-		// activeWishlistId が未設定、または存在しないIDを指している場合のみ選択を補正
-		const exists = wishlists.some((w) => w.id === activeWishlistId);
-		if (!activeWishlistId || !exists) {
-			const targetId = sharedWishlist ? sharedWishlist.id : wishlists[0]?.id;
-			if (targetId) {
-				setActiveWishlistId(targetId);
-			}
+		// 現在選択中のIDが実際に存在すればそれを採用
+		const exists = wishlists.some((w) => w.id === rawActiveWishlistId);
+		if (rawActiveWishlistId && exists) {
+			return rawActiveWishlistId;
 		}
-	}, [wishlists, activeWishlistId, sharedWishlist]);
+
+		// 存在しない・未選択の場合は共有リスト優先、次いで先頭のリストへ自動フォールバック
+		return sharedWishlist ? sharedWishlist.id : wishlists[0]?.id || '';
+	}, [wishlists, rawActiveWishlistId, sharedWishlist]);
 
 	// 共有ウィッシュリスト自動選択の重複実行・通知防止用フラグ
 	const hasSelectedSharedWishlistRef = useRef(false);
@@ -286,7 +283,7 @@ export const TrustTrackerContainer: React.FC = () => {
 					onSearchQueryChange={handleSearchQueryChange}
 					totalTrustCount={totalTrustCount}
 					wishlists={wishlists}
-					activeWishlistId={activeWishlistId}
+					activeWishlistId={effectiveActiveWishlistId}
 					onWishlistIdChange={setActiveWishlistId}
 					onCreateWishlist={handleCreateWishlist}
 				/>
@@ -303,7 +300,7 @@ export const TrustTrackerContainer: React.FC = () => {
 					onToggleCheck={handleToggleCheck}
 					navStack={effectiveNavStack}
 					wishlists={wishlists}
-					activeWishlistId={activeWishlistId}
+					activeWishlistId={effectiveActiveWishlistId}
 					onWishlistIdChange={setActiveWishlistId}
 				/>
 			</div>

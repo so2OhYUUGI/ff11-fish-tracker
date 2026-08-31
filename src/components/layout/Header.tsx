@@ -6,7 +6,8 @@
  * [概要]
  * - 閲覧者自身のキャラクターおよび、URL共有経由で表示される一時的な「共有キャラ」の切替UIを提供
  * - 登録ユーザーにはハンバーガーメニュー内に「チェッカー切り替え」「キャラクター選択」「環境設定」を統合
- * - 未登録ユーザーにはハンバーガーボタンを非表示にし、現在の第一階層ルートへの移動を行う「登録してはじめる」CTAリンクを表示
+ * - 未登録ユーザーにはハンバーガーボタンを非表示にし、現在のページのURL情報を保持して各テーマ配下の登録ページへ移動する「登録してはじめる」CTAリンクを表示
+ * - URLパスのセグメント解析により、新トラッカー追加時もコード変更なしで動的テーマ・動的ルーティングに対応
  * - UserDataContext から表示用キャラ一覧および選択中のキャラ情報を直接参照
  * - CSS変数による抽象化テーマ（釣魚 / フェイス）およびデザインシステムトークン（COMMON_TOKENS, LAYOUT_TOKENS）を適用
  * 
@@ -20,6 +21,7 @@
  * 1. 【アクセス操作】 モバイル/デスクトップ共通ドロップダウン開閉時は Escape キー押下およびメニュー外クリックによる自動クローズイベントを解除（クリーンアップ）すること
  * 2. 【共有状態視認性】 isSharedActive（共有キャラ選択中）の場合、UIのアクセントカラーやバッジで明確に判別できるようにすること
  * 3. 【スタイル統一】 個別のTailwindクラス定義を避け、デザインシステムトークン（LAYOUT_TOKENS / COMMON_TOKENS）を使用すること
+ * 4. 【拡張性維持】 特定トラッカーのハードコード（isTrustMode 等）は避け、URLパスの第1セグメントからの動的判定（currentPrefix / registerPath）を維持すること
  * ============================================================================
  */
 
@@ -51,7 +53,14 @@ export const Header: React.FC<HeaderProps> = ({
 	const menuRef = useRef<HTMLDivElement>(null);
 
 	const location = useLocation();
-	const isTrustMode = location.pathname.startsWith('/trusttracker');
+
+	// パスの第1セグメントから現在のトラッカープレフィックスを動的取得 (例: "/fishtracker", "/trusttracker")
+	const pathSegments = location.pathname.split('/').filter(Boolean);
+	const currentPrefix = pathSegments.length > 0 ? `/${pathSegments[0]}` : '/fishtracker';
+
+	// 将来機能が増えても動的に当該トラッカー配下の /register パスを生成
+	const registerPath = `${currentPrefix}/register`;
+	const isTrustMode = currentPrefix === '/trusttracker';
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
@@ -261,7 +270,8 @@ export const Header: React.FC<HeaderProps> = ({
 							</>
 						) : (
 							<Link
-								to="/register"
+								to={registerPath}
+								state={{ from: `${location.pathname}${location.search}` }}
 								className={LAYOUT_TOKENS.control.button}
 							>
 								<UserPlus className={icon.sm} />
