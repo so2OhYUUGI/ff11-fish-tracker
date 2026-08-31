@@ -11,14 +11,6 @@
  * - 閲覧専用状態（共有キャラ）および未登録ガード判定、Undoアクション付きトーストの実装
  * - 共通ナビゲーションフック（useTrackerNavigation）の組み込み
  * - 限定（isLimited: true）を除外したフェイス総数の計算・伝播
- * 
- * [依存関係・関連ファイル]
- * - データ      : src/data/trusts.ts
- * - Context     : src/contexts/UserDataContext.tsx
- * - フック      : src/hooks/useTrackerNavigation.ts
- * - 関連        : src/features/trusttracker/FilterBar.tsx
- * - 関連        : src/features/trusttracker/TrustTrackerContent.tsx
- * - 型定義      : src/types/trusttracker.ts, src/components/layout/Header.ts
  * ============================================================================
  */
 
@@ -46,12 +38,18 @@ export const TrustTrackerContainer: React.FC = () => {
 	const { slug } = useParams<{ slug?: string }>();
 
 	const {
+		userData,
 		activeCharacter,
 		isRegistered,
 		toggleTrustCheck,
 		addWishlist,
 		setRegistrationMessage: onRequestRegistration,
 	} = useUserDataContext();
+
+	// アカウント共通のウィッシュリスト一覧
+	const wishlists = useMemo<Wishlist[]>(() => {
+		return userData.wishlists || [];
+	}, [userData.wishlists]);
 
 	// 限定（isLimited: true）を除外したフェイスの抽出と総数
 	const nonLimitedTrusts = useMemo(() => {
@@ -104,9 +102,9 @@ export const TrustTrackerContainer: React.FC = () => {
 		return {
 			...activeCharacter,
 			checkedTrustIds: normalizedIds,
-			wishlists: activeCharacter.wishlists || [],
+			wishlists: wishlists,
 		};
-	}, [activeCharacter]);
+	}, [activeCharacter, wishlists]);
 
 	const checkedTrustIds = useMemo(() => {
 		return effectiveActiveCharacter.checkedTrustIds || [];
@@ -167,7 +165,7 @@ export const TrustTrackerContainer: React.FC = () => {
 
 	// ウィッシュリスト作成ハンドラ（FilterBarおよびEmptyState共通）
 	const handleCreateWishlist = useCallback(() => {
-		const currentCount = effectiveActiveCharacter.wishlists.length;
+		const currentCount = wishlists.length;
 		if (currentCount >= WISHLIST_LIMITS.MAX_SLOTS) {
 			toast.error(`ウィッシュリストは最大 ${WISHLIST_LIMITS.MAX_SLOTS} つまで作成できます。`);
 			return;
@@ -178,7 +176,7 @@ export const TrustTrackerContainer: React.FC = () => {
 			setActiveWishlistIndex(currentCount);
 			toast.success(`「${defaultName}」を作成しました`);
 		}
-	}, [effectiveActiveCharacter.wishlists.length, addWishlist]);
+	}, [wishlists.length, addWishlist]);
 
 	// 修得トグル処理
 	const handleToggleCheck = useCallback(
@@ -233,7 +231,7 @@ export const TrustTrackerContainer: React.FC = () => {
 					searchQuery={searchQuery}
 					onSearchQueryChange={handleSearchQueryChange}
 					totalTrustCount={totalTrustCount}
-					wishlists={effectiveActiveCharacter.wishlists}
+					wishlists={wishlists}
 					activeWishlistIndex={activeWishlistIndex}
 					onWishlistIndexChange={setActiveWishlistIndex}
 					onCreateWishlist={handleCreateWishlist}

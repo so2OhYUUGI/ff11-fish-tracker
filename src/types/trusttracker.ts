@@ -6,7 +6,8 @@
  * [概要]
  * - フェイスマスターデータ（TrustMaster）および関連プロパティの型定義
  * - メインタブ、フィルター、サブタイプなどの状態定義
- * - ウィッシュリスト（Wishlist）およびマイフェイス編成（MyParty）の型定義
+ * - ウィッシュリスト（Wishlist: アカウント共通）およびマイフェイス編成（MyMacro）の型定義
+ * - キャラクターおよびユーザーデータ全体の型定義
  * ============================================================================
  */
 
@@ -78,12 +79,14 @@ export type TrustMaster = {
 };
 
 /**
- * ウィッシュリストデータ（旧 TargetList）
+ * ウィッシュリストデータ（アカウント共通管理）
  */
 export type Wishlist = {
 	id: string;
 	name: string;
 	trustIds: number[];
+	createdAt?: number;
+	updatedAt?: number;
 };
 
 /**
@@ -96,12 +99,23 @@ export type MyMacro = {
 };
 
 /**
- * フェイスチェッカー ユーザー進捗構造
+ * 単一キャラクターの進行・設定状態
  */
-export type TrustCharacterProgress = {
+export type Character = {
+	id: string;
+	name: string;
+	world?: string;
 	checkedTrustIds: number[];
-	wishlists: Wishlist[];
 	macro: MyMacro[];
+};
+
+/**
+ * ユーザー全体の永続化データ構造
+ */
+export type UserData = {
+	activeCharacterId: string | null;
+	characters: Character[];
+	wishlists: Wishlist[]; // アカウント共通のウィッシュリスト
 };
 
 /**

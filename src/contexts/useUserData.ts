@@ -2,11 +2,15 @@
  * ============================================================================
  * [FilePath] src/contexts/useUserData.ts
  * [Role] ユーザー進捗データおよびアプリ設定の永続化管理カスタムフック
+ * 
+ * [概要]
+ * - キャラクター一覧、修得進捗（釣魚、フェイス）およびアカウント共通ウィッシュリストの永続化管理
+ * - キャラクターID指定でのフェイス修得状態トグル関数（toggleCharacterTrustCheck）を提供
  * ============================================================================
  */
 
-import { useState, useEffect } from 'react';
-import type { UserData, CharacterProgress, ViewMode } from '@/types/user';
+import { useState, useEffect, useCallback } from 'react';
+import type { UserData, NormalizedCharacterProgress, ViewMode } from '@/types/user';
 import type { Wishlist } from '@/types/trusttracker';
 import { WISHLIST_LIMITS } from '@/types/trusttracker';
 import { SHARED_GUEST_CHARACTER_ID } from '@/constants/character';
@@ -16,6 +20,7 @@ const STORAGE_KEY = 'ff11_fish_tracker_user_data';
 const EMPTY_USER_DATA: UserData = {
 	activeCharacterId: '',
 	characters: [],
+	wishlists: [],
 	viewMode: 'card',
 };
 
@@ -26,7 +31,7 @@ const generateUniqueId = (): string => {
 	return `char-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 };
 
-const normalizeCharacterProgress = (rawChar: unknown): CharacterProgress => {
+const normalizeCharacterProgress = (rawChar: unknown): NormalizedCharacterProgress => {
 	const char = (typeof rawChar === 'object' && rawChar !== null ? rawChar : {}) as Record<string, unknown>;
 
 	return {
@@ -35,7 +40,6 @@ const normalizeCharacterProgress = (rawChar: unknown): CharacterProgress => {
 		name: typeof char.name === 'string' && char.name ? char.name : '新規キャラクター',
 		checkedFishIds: Array.isArray(char.checkedFishIds) ? char.checkedFishIds.map(Number).filter((id) => !isNaN(id)) : [],
 		checkedTrustIds: Array.isArray(char.checkedTrustIds) ? char.checkedTrustIds.map(Number).filter((id) => !isNaN(id)) : [],
-		wishlists: Array.isArray(char.wishlists) ? (char.wishlists as Wishlist[]) : [],
 		createdAt: typeof char.createdAt === 'number' ? char.createdAt : Date.now(),
 		updatedAt: typeof char.updatedAt === 'number' ? char.updatedAt : Date.now(),
 	};
@@ -49,9 +53,24 @@ export const useUserData = () => {
 			const parsed = JSON.parse(saved);
 			if (!parsed || !Array.isArray(parsed.characters)) return EMPTY_USER_DATA;
 
+			// 旧形式データ（キャラ配下のウィッシュリスト）の移行処理
+			let wishlists: Wishlist[] = Array.isArray(parsed.wishlists) ? parsed.wishlists : [];
+			if (wishlists.length === 0) {
+				parsed.characters.forEach((char: Record<string, unknown>) => {
+					if (Array.isArray(char.wishlists) && char.wishlists.length > 0) {
+						wishlists = [...wishlists, ...(char.wishlists as Wishlist[])];
+					}
+				});
+				// 重複ID排除と制限数制御
+				const uniqueMap = new Map<string, Wishlist>();
+				wishlists.forEach((w) => uniqueMap.set(w.id, w));
+				wishlists = Array.from(uniqueMap.values()).slice(0, WISHLIST_LIMITS.MAX_SLOTS);
+			}
+
 			return {
 				...parsed,
 				characters: parsed.characters.map(normalizeCharacterProgress),
+				wishlists,
 				viewMode: parsed.viewMode ?? 'card',
 			};
 		} catch {
@@ -72,17 +91,16 @@ export const useUserData = () => {
 
 	const isRegistered = userData.characters.length > 0;
 
-	const setActiveCharacter = (characterId: string) => {
+	const setActiveCharacter = useCallback((characterId: string) => {
 		setUserData((prev) => ({ ...prev, activeCharacterId: characterId }));
-	};
+	}, []);
 
-	const addCharacter = (name: string): CharacterProgress => {
-		const newChar: CharacterProgress = {
+	const addCharacter = useCallback((name: string): NormalizedCharacterProgress => {
+		const newChar: NormalizedCharacterProgress = {
 			id: generateUniqueId(),
 			name,
 			checkedFishIds: [],
 			checkedTrustIds: [],
-			wishlists: [],
 			createdAt: Date.now(),
 			updatedAt: Date.now(),
 		};
@@ -92,18 +110,18 @@ export const useUserData = () => {
 			characters: [...prev.characters, newChar],
 		}));
 		return newChar;
-	};
+	}, []);
 
-	const renameCharacter = (characterId: string, newName: string) => {
+	const renameCharacter = useCallback((characterId: string, newName: string) => {
 		setUserData((prev) => ({
 			...prev,
 			characters: prev.characters.map((char) =>
 				char.id === characterId ? { ...char, name: newName, updatedAt: Date.now() } : char
 			),
 		}));
-	};
+	}, []);
 
-	const deleteCharacter = (characterId: string) => {
+	const deleteCharacter = useCallback((characterId: string) => {
 		setUserData((prev) => {
 			if (prev.characters.length <= 1) return prev;
 			const nextChars = prev.characters.filter((c) => c.id !== characterId);
@@ -113,9 +131,9 @@ export const useUserData = () => {
 				characters: nextChars,
 			};
 		});
-	};
+	}, []);
 
-	const toggleFishCheck = (fishId: number) => {
+	const toggleFishCheck = useCallback((fishId: number) => {
 		setUserData((prev) => {
 			if (prev.activeCharacterId === SHARED_GUEST_CHARACTER_ID) return prev;
 			return {
@@ -133,9 +151,10 @@ export const useUserData = () => {
 				}),
 			};
 		});
-	};
+	}, []);
 
-	const toggleTrustCheck = (trustId: number) => {
+	// アクティブキャラクターの修得トグル
+	const toggleTrustCheck = useCallback((trustId: number) => {
 		setUserData((prev) => {
 			if (prev.activeCharacterId === SHARED_GUEST_CHARACTER_ID) return prev;
 			return {
@@ -152,88 +171,93 @@ export const useUserData = () => {
 				}),
 			};
 		});
-	};
+	}, []);
 
-	// --- ウィッシュリスト（Wishlist）操作 ---
-
-	const addWishlist = (name: string): boolean => {
-		if (!activeCharacter) return false;
-		const current = activeCharacter.wishlists || [];
-		if (current.length >= WISHLIST_LIMITS.MAX_SLOTS) return false;
-
-		const newWishlist: Wishlist = {
-			id: `wishlist-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-			name: name || `ウィッシュリスト ${current.length + 1}`,
-			trustIds: [],
-		};
-
+	// ★ 任意キャラクターの修得トグル（ウィッシュリスト等での全キャラ横断操作用）
+	const toggleCharacterTrustCheck = useCallback((characterId: string, trustId: number) => {
+		if (characterId === SHARED_GUEST_CHARACTER_ID) return;
 		setUserData((prev) => ({
 			...prev,
-			characters: prev.characters.map((char) =>
-				char.id === prev.activeCharacterId
-					? { ...char, wishlists: [...(char.wishlists || []), newWishlist], updatedAt: Date.now() }
-					: char
-			),
+			characters: prev.characters.map((char) => {
+				if (char.id !== characterId) return char;
+				const raw = char.checkedTrustIds || [];
+				const isChecked = raw.includes(trustId);
+				return {
+					...char,
+					checkedTrustIds: isChecked ? raw.filter((id) => id !== trustId) : [...raw, trustId],
+					updatedAt: Date.now(),
+				};
+			}),
 		}));
+	}, []);
+
+	// --- ウィッシュリスト（Wishlist: アカウント共通）操作 ---
+
+	const addWishlist = useCallback((name: string): boolean => {
+		setUserData((prev) => {
+			const current = prev.wishlists || [];
+			if (current.length >= WISHLIST_LIMITS.MAX_SLOTS) return prev;
+
+			const newWishlist: Wishlist = {
+				id: `wishlist-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+				name: name || `ウィッシュリスト ${current.length + 1}`,
+				trustIds: [],
+				createdAt: Date.now(),
+				updatedAt: Date.now(),
+			};
+
+			return {
+				...prev,
+				wishlists: [...current, newWishlist],
+			};
+		});
 		return true;
-	};
+	}, []);
 
-	const updateWishlist = (wishlistId: string, newName: string, trustIds?: number[]) => {
+	const updateWishlist = useCallback((wishlistId: string, newName: string, trustIds?: number[]) => {
 		setUserData((prev) => ({
 			...prev,
-			characters: prev.characters.map((char) => {
-				if (char.id !== prev.activeCharacterId) return char;
-				return {
-					...char,
-					wishlists: (char.wishlists || []).map((w) =>
-						w.id === wishlistId
-							? { ...w, name: newName, trustIds: trustIds ? trustIds.slice(0, WISHLIST_LIMITS.MAX_ITEMS) : w.trustIds }
-							: w
-					),
-					updatedAt: Date.now(),
-				};
-			}),
-		}));
-	};
-
-	const deleteWishlist = (wishlistId: string) => {
-		setUserData((prev) => ({
-			...prev,
-			characters: prev.characters.map((char) =>
-				char.id === prev.activeCharacterId
-					? { ...char, wishlists: (char.wishlists || []).filter((w) => w.id !== wishlistId), updatedAt: Date.now() }
-					: char
+			wishlists: (prev.wishlists || []).map((w) =>
+				w.id === wishlistId
+					? {
+						...w,
+						name: newName,
+						trustIds: trustIds ? trustIds.slice(0, WISHLIST_LIMITS.MAX_ITEMS) : w.trustIds,
+						updatedAt: Date.now(),
+					}
+					: w
 			),
 		}));
-	};
+	}, []);
 
-	const toggleWishlistTrust = (wishlistId: string, trustId: number) => {
+	const deleteWishlist = useCallback((wishlistId: string) => {
 		setUserData((prev) => ({
 			...prev,
-			characters: prev.characters.map((char) => {
-				if (char.id !== prev.activeCharacterId) return char;
+			wishlists: (prev.wishlists || []).filter((w) => w.id !== wishlistId),
+		}));
+	}, []);
+
+	const toggleWishlistTrust = useCallback((wishlistId: string, trustId: number) => {
+		setUserData((prev) => ({
+			...prev,
+			wishlists: (prev.wishlists || []).map((w) => {
+				if (w.id !== wishlistId) return w;
+				const exists = w.trustIds.includes(trustId);
+				if (!exists && w.trustIds.length >= WISHLIST_LIMITS.MAX_ITEMS) return w;
 				return {
-					...char,
-					wishlists: (char.wishlists || []).map((w) => {
-						if (w.id !== wishlistId) return w;
-						const exists = w.trustIds.includes(trustId);
-						if (!exists && w.trustIds.length >= WISHLIST_LIMITS.MAX_ITEMS) return w;
-						return {
-							...w,
-							trustIds: exists ? w.trustIds.filter((id) => id !== trustId) : [...w.trustIds, trustId],
-						};
-					}),
+					...w,
+					trustIds: exists ? w.trustIds.filter((id) => id !== trustId) : [...w.trustIds, trustId],
 					updatedAt: Date.now(),
 				};
 			}),
 		}));
-	};
+	}, []);
 
-	const setViewMode = (viewMode: ViewMode) => {
+	const setViewMode = useCallback((viewMode: ViewMode) => {
 		setUserData((prev) => ({ ...prev, viewMode }));
-	};
+	}, []);
 
-	const exportData = () => {
+	const exportData = useCallback(() => {
 		const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(userData, null, 2));
 		const downloadAnchor = document.createElement('a');
 		downloadAnchor.setAttribute('href', dataStr);
@@ -241,9 +265,9 @@ export const useUserData = () => {
 		document.body.appendChild(downloadAnchor);
 		downloadAnchor.click();
 		downloadAnchor.remove();
-	};
+	}, [userData]);
 
-	const importData = (file: File): Promise<boolean> => {
+	const importData = useCallback((file: File): Promise<boolean> => {
 		return new Promise((resolve, reject) => {
 			const reader = new FileReader();
 			reader.onload = (e) => {
@@ -253,6 +277,7 @@ export const useUserData = () => {
 						setUserData({
 							...parsedData,
 							characters: parsedData.characters.map(normalizeCharacterProgress),
+							wishlists: Array.isArray(parsedData.wishlists) ? parsedData.wishlists : [],
 							viewMode: parsedData.viewMode ?? 'card',
 						});
 						resolve(true);
@@ -266,7 +291,7 @@ export const useUserData = () => {
 			reader.onerror = () => reject(new Error('ファイルの読み込みに失敗しました。'));
 			reader.readAsText(file);
 		});
-	};
+	}, []);
 
 	return {
 		userData,
@@ -280,6 +305,7 @@ export const useUserData = () => {
 		deleteCharacter,
 		toggleFishCheck,
 		toggleTrustCheck,
+		toggleCharacterTrustCheck,
 		addWishlist,
 		updateWishlist,
 		deleteWishlist,

@@ -1,24 +1,26 @@
 /**
  * ============================================================================
  * [FilePath] src/features/trusttracker/wishlist/WishlistView.tsx
- * [Role] ウィッシュリスト（Wishlist）の3スロット閲覧・共有統合ビューコンポーネント
+ * [Role] アカウント共通ウィッシュリスト（Wishlist）閲覧・全キャラ一括修得管理ビューコンポーネント
  * 
  * [概要]
  * - 選択中スロットに登録されたフェイスの一覧描画
- * - ヘッダーにテキスト明示の「フェイス追加」ボタンを設置
- * - リスト表示要素の整理（タイプ・アイテム表示削除、入手方法を名称と同列化）
+ * - アカウント配下の全キャラクターの修得状況をマトリクス（テーブル）形式で横並び表示・トグル操作
+ * - 全キャラ修得完了（コンプリート）行の視覚的ハイライト表示（背景強調・アイコン付与）
+ * - 戦闘タイプバッジ（CombatTypeBadge）を使用（幅固定コンテナ配置でレイアウトズレを防止）
+ * - 大量キャラ・フェイス登録時でも俯瞰性と可読性を維持するレスポンシブテーブルレイアウト
  * ============================================================================
  */
 
 import React, { useState, useMemo, useCallback } from 'react';
-import { Plus, Edit2, Trash2, Share2, Heart, AlertCircle, CheckSquare, Square } from 'lucide-react';
+import { Plus, Edit2, Trash2, Share2, Heart, AlertCircle, CheckSquare, Square, User, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 import type { TrustMaster, Wishlist } from '@/types/trusttracker';
 import { WISHLIST_LIMITS } from '@/types/trusttracker';
 import { useUserDataContext } from '@/contexts/UserDataContext';
 import { TrustAddModal } from './TrustAddModal';
-import { JobBadge } from '../common/TrustBadges';
+import { CombatTypeBadge } from '../common/TrustBadges';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
 import { LIST_STYLES } from '@/styles/components/listStyles';
@@ -42,29 +44,30 @@ const WISHLIST_STYLES = {
 	addButton: 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 hover:border-emerald-500/50 transition-all shadow-sm',
 
 	deleteIconButton: 'bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border-rose-500/30 hover:border-rose-500/50',
-
-	itemRow: 'bg-slate-900/60 border border-slate-800/80 hover:border-slate-700/80 rounded-xl p-3 flex items-center justify-between gap-3 transition-all',
 } as const;
 
 export const WishlistView: React.FC<Props> = ({
 	trusts,
-	checkedTrustIds,
-	onToggleCheck,
 	searchQuery,
 	activeWishlistIndex,
 	onWishlistIndexChange,
 }) => {
 	const {
-		activeCharacter,
+		userData,
 		addWishlist,
 		updateWishlist,
 		deleteWishlist,
 		toggleWishlistTrust,
+		toggleCharacterTrustCheck,
 	} = useUserDataContext();
 
 	const wishlists = useMemo<Wishlist[]>(() => {
-		return activeCharacter?.wishlists || [];
-	}, [activeCharacter?.wishlists]);
+		return userData.wishlists || [];
+	}, [userData.wishlists]);
+
+	const characters = useMemo(() => {
+		return userData.characters || [];
+	}, [userData.characters]);
 
 	// モーダル状態管理
 	const [isNameModalOpen, setIsNameModalOpen] = useState(false);
@@ -74,7 +77,6 @@ export const WishlistView: React.FC<Props> = ({
 	const activeWishlist = wishlists[activeWishlistIndex] || null;
 
 	const trustMap = useMemo(() => new Map(trusts.map((t) => [t.id, t])), [trusts]);
-	const checkedSet = useMemo(() => new Set(checkedTrustIds), [checkedTrustIds]);
 
 	const wishlistTrusts = useMemo(() => {
 		if (!activeWishlist) return [];
@@ -90,6 +92,7 @@ export const WishlistView: React.FC<Props> = ({
 					t.ja.toLowerCase().includes(query) ||
 					t.en.toLowerCase().includes(query) ||
 					t.job.toLowerCase().includes(query) ||
+					(t.combatType?.toLowerCase().includes(query) ?? false) ||
 					(t.acquireInfo?.toLowerCase().includes(query) ?? false)
 				);
 			});
@@ -231,7 +234,7 @@ export const WishlistView: React.FC<Props> = ({
 						</div>
 					</div>
 
-					{/* フェイスリスト表示部分 */}
+					{/* フェイスリスト表示部分 (マトリクス・テーブルUI) */}
 					{wishlistTrusts.length === 0 ? (
 						<div className={LAYOUT_TOKENS.view.emptyContainer}>
 							<AlertCircle className="w-10 h-10 text-slate-600 mb-2" />
@@ -241,57 +244,107 @@ export const WishlistView: React.FC<Props> = ({
 							</p>
 						</div>
 					) : (
-						<div className="grid grid-cols-1 gap-2">
-							{wishlistTrusts.map((trust) => {
-								const isChecked = checkedSet.has(trust.id);
+						<div className="bg-slate-900/80 border border-slate-800 rounded-xl overflow-hidden shadow-md backdrop-blur-sm">
+							<div className="overflow-x-auto">
+								<table className="w-full text-left border-collapse min-w-[600px]">
+									<thead>
+										<tr className="border-b border-slate-800 bg-slate-950/50 text-xs font-semibold text-slate-400">
+											<th className="p-3 min-w-[260px]">フェイス</th>
+											{characters.map((char) => (
+												<th key={char.id} className="p-3 text-center w-28 min-w-[112px]">
+													<div className="flex items-center justify-center gap-1.5 truncate" title={char.name}>
+														<User className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+														<span className="truncate">{char.name}</span>
+													</div>
+												</th>
+											))}
+											<th className="p-3 text-center w-12 min-w-[48px]">操作</th>
+										</tr>
+									</thead>
+									<tbody className="divide-y divide-slate-800/60 text-sm">
+										{wishlistTrusts.map((trust) => {
+											// 全キャラクターが修得済みか判定
+											const isAllCompleted =
+												characters.length > 0 &&
+												characters.every((char) => char.checkedTrustIds.includes(trust.id));
 
-								return (
-									<div key={trust.id} className={WISHLIST_STYLES.itemRow}>
-										{/* 修得チェックボタン */}
-										<button
-											type="button"
-											onClick={() => onToggleCheck(trust.id)}
-											className="text-slate-500 hover:text-emerald-400 transition-colors p-1 shrink-0"
-											title={isChecked ? '未修得にする' : '修得済みにする'}
-										>
-											{isChecked ? (
-												<CheckSquare className="w-5 h-5 text-emerald-400" />
-											) : (
-												<Square className="w-5 h-5" />
-											)}
-										</button>
+											return (
+												<tr
+													key={trust.id}
+													className={`transition-colors ${isAllCompleted
+															? 'bg-emerald-950/20 hover:bg-emerald-950/30'
+															: 'hover:bg-slate-800/30'
+														}`}
+												>
+													{/* フェイス基本情報 */}
+													<td className="p-3">
+														<div className="flex items-center gap-2.5">
+															{/* バッジの表示幅を w-[5.25rem] (84px) に固定 */}
+															<div className="w-[5.25rem] shrink-0 flex justify-center">
+																<CombatTypeBadge combatType={trust.combatType} />
+															</div>
+															<div className="min-w-0 flex-1">
+																<div className="font-bold text-slate-100 truncate flex items-center gap-1.5">
+																	<span>{trust.ja}</span>
+																	{isAllCompleted && (
+																		<CheckCircle2
+																			className="w-4 h-4 text-emerald-400 shrink-0"
+																			title="全キャラ修得完了"
+																		/>
+																	)}
+																</div>
+																{trust.acquireInfo && (
+																	<div className="text-xs text-slate-400 truncate max-w-xs">
+																		<span className="text-slate-500 mr-1">入手:</span>
+																		{trust.acquireInfo}
+																	</div>
+																)}
+															</div>
+														</div>
+													</td>
 
-										{/* メイン情報：ジョブ、名前、入手方法 */}
-										<div className="flex-1 min-w-0 flex items-center gap-3">
-											<JobBadge job={trust.job} />
+													{/* 各キャラクターの修得チェックセル */}
+													{characters.map((char) => {
+														const isChecked = char.checkedTrustIds.includes(trust.id);
+														return (
+															<td key={char.id} className="p-3 text-center">
+																<button
+																	type="button"
+																	onClick={() => toggleCharacterTrustCheck(char.id, trust.id)}
+																	className={`inline-flex items-center justify-center p-1.5 rounded-lg border transition-all ${isChecked
+																			? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'
+																			: 'bg-slate-800/40 text-slate-500 border-slate-700/60 hover:text-slate-300 hover:bg-slate-800'
+																		}`}
+																	title={`${char.name}: ${isChecked ? '未修得にする' : '修得済みにする'}`}
+																>
+																	{isChecked ? (
+																		<CheckSquare className="w-5 h-5" />
+																	) : (
+																		<Square className="w-5 h-5" />
+																	)}
+																</button>
+															</td>
+														);
+													})}
 
-											<div className="min-w-0 flex-1 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
-												<span className={`font-bold text-sm truncate ${isChecked ? 'text-slate-400 line-through' : 'text-slate-100'}`}>
-													{trust.ja}
-												</span>
-
-												{trust.acquireInfo && (
-													<span className="text-xs text-slate-400 truncate">
-														<span className="text-slate-500 mr-1">入手:</span>
-														{trust.acquireInfo}
-													</span>
-												)}
-											</div>
-										</div>
-
-										{/* リスト解除ボタン */}
-										<button
-											type="button"
-											onClick={() => handleRemoveFromWishlist(trust.id)}
-											className="text-slate-500 hover:text-rose-400 transition-colors p-1 shrink-0"
-											title="リストから外す"
-											aria-label={`${trust.ja}をリストから解除`}
-										>
-											<Trash2 className="w-4 h-4" />
-										</button>
-									</div>
-								);
-							})}
+													{/* リスト解除操作 */}
+													<td className="p-3 text-center">
+														<button
+															type="button"
+															onClick={() => handleRemoveFromWishlist(trust.id)}
+															className="text-slate-500 hover:text-rose-400 transition-colors p-1"
+															title="リストから外す"
+															aria-label={`${trust.ja}をリストから解除`}
+														>
+															<Trash2 className="w-4 h-4" />
+														</button>
+													</td>
+												</tr>
+											);
+										})}
+									</tbody>
+								</table>
+							</div>
 						</div>
 					)}
 				</>

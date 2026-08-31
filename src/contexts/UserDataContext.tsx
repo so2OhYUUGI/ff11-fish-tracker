@@ -7,11 +7,7 @@
  * - App.tsx や AppRouter でのバケツリレー (Prop Drilling) を解消する
  * - useUserData / useSharedProgress を集約し、閲覧権限（canViewContainer）判定も含めて管理する
  * - 釣魚（checkedFishIds）、フェイス修得（checkedTrustIds）、ウィッシュリスト（wishlists）のトグル状態および操作関数を提供する
- * 
- * [依存関係・関連ファイル]
- * - フック   : src/hooks/useUserData.ts, src/hooks/useSharedProgress.ts
- * - 型定義   : src/types/fishtracker.ts, src/types/trusttracker.ts
- * - 定数     : src/constants/character.ts
+ * - アカウント共通のウィッシュリストおよび各キャラクターごとの進捗トグル操作を提供
  * ============================================================================
  */
 
@@ -32,7 +28,6 @@ const FALLBACK_GUEST_CHARACTER: DisplayCharacterProgress = {
 	name: 'ゲスト',
 	checkedFishIds: [],
 	checkedTrustIds: [],
-	wishlists: [],
 	createdAt: Date.now(),
 	updatedAt: Date.now(),
 	isShared: true,
@@ -40,6 +35,7 @@ const FALLBACK_GUEST_CHARACTER: DisplayCharacterProgress = {
 
 interface UserDataContextType {
 	userData: UserData;
+	wishlists: Wishlist[];
 	activeCharacter: DisplayCharacterProgress;
 	displayCharacters: DisplayCharacterProgress[];
 	activeCharacterId: string;
@@ -54,10 +50,13 @@ interface UserDataContextType {
 	addCharacter: (name: string) => CharacterProgress;
 	renameCharacter: (characterId: string, newName: string) => void;
 	deleteCharacter: (characterId: string) => void;
+
+	// チェック操作メソッド
 	toggleFishCheck: (fishId: number) => void;
 	toggleTrustCheck: (trustId: number) => void;
+	toggleCharacterTrustCheck: (characterId: string, trustId: number) => void; // ★ 任意キャラのフェイス修得トグル
 
-	// ウィッシュリスト操作メソッド
+	// ウィッシュリスト操作メソッド（アカウント共通）
 	addWishlist: (name: string) => boolean;
 	updateWishlist: (wishlistId: string, newName: string, trustIds?: number[]) => void;
 	deleteWishlist: (wishlistId: string) => void;
@@ -85,6 +84,7 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 		deleteCharacter,
 		toggleFishCheck,
 		toggleTrustCheck,
+		toggleCharacterTrustCheck, // ★ useUserData 側に追加した関数を受け取る
 		addWishlist,
 		updateWishlist,
 		deleteWishlist,
@@ -108,7 +108,6 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 			name: sharedProgress.characterName,
 			checkedFishIds: sharedProgress.checkedFishIds,
 			checkedTrustIds: (sharedProgress as { checkedTrustIds?: number[] }).checkedTrustIds || [],
-			wishlists: (sharedProgress as { wishlists?: Wishlist[] }).wishlists || [],
 			createdAt: sharedProgress.createdAt,
 			updatedAt: sharedProgress.createdAt,
 			isShared: true,
@@ -151,6 +150,11 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 		return displayCharacters[0];
 	}, [userData.activeCharacterId, displayCharacters, localActiveCharacter]);
 
+	// アカウント共通のウィッシュリスト一覧を取得
+	const wishlists = useMemo<Wishlist[]>(() => {
+		return userData.wishlists || [];
+	}, [userData.wishlists]);
+
 	// 一覧ページの閲覧権限判定（未登録ユーザが共有リンク以外でアクセスした場合はランディングへ遷移させる）
 	const canViewContainer = isRegistered || !!activeSharedCharacter;
 
@@ -164,6 +168,7 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
 	const value: UserDataContextType = {
 		userData,
+		wishlists,
 		activeCharacter,
 		displayCharacters,
 		activeCharacterId: userData.activeCharacterId,
@@ -178,6 +183,7 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 		deleteCharacter,
 		toggleFishCheck,
 		toggleTrustCheck,
+		toggleCharacterTrustCheck,
 		addWishlist,
 		updateWishlist,
 		deleteWishlist,

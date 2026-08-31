@@ -32,11 +32,18 @@ export type CharacterProgress = {
 	updatedAt: number;
 };
 
+export type NormalizedCharacterProgress = CharacterProgress & {
+	checkedFishIds: number[];
+	checkedTrustIds: number[];
+
+}
+
 /**
  * アプリ全体で保持するユーザー設定およびデータ構造
  */
 export type UserData = {
 	activeCharacterId: string;       // 現在選択中のキャラID
-	characters: CharacterProgress[]; // キャラクター一覧
+	characters: NormalizedCharacterProgress[]; // キャラクター一覧
+	wishlists:Wishlist[],
 	viewMode?: ViewMode;             // 全体の表示モード（未設定時は default: 'card'）
 };
