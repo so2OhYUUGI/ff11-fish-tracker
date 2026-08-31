@@ -10,9 +10,6 @@
  * ============================================================================
  */
 
-import { DETAIL_STYLES } from './detailStyles';
-import { LIST_STYLES } from './listStyles';
-
 export const WISHLIST_STYLES = {
 	// ヘッダーカード
 	headerCard:

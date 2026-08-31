@@ -402,7 +402,7 @@ export const WishlistView: React.FC<Props> = ({
 				<div className={WISHLIST_STYLES.modalOverlay}>
 					<div className={WISHLIST_STYLES.modalCard}>
 						<h3 className={WISHLIST_STYLES.modalTitle}>
-							<Edit2 className="w-4 h-4 text-[var(--theme-text-accent)]" />
+							<Edit2 className="w-4 h-4 text-(--theme-text-accent)" />
 							ウィッシュリスト名の変更
 						</h3>
 						<input
@@ -439,7 +439,7 @@ export const WishlistView: React.FC<Props> = ({
 				<div className={WISHLIST_STYLES.modalOverlay}>
 					<div className={WISHLIST_STYLES.modalCard}>
 						<h3 className={WISHLIST_STYLES.modalTitle}>
-							<Copy className="w-4 h-4 text-[var(--theme-text-accent)]" />
+							<Copy className="w-4 h-4 text-(--theme-text-accent)" />
 							ウィッシュリストのコピー
 						</h3>
 
