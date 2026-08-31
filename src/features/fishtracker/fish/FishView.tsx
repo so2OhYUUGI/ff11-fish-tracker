@@ -12,7 +12,7 @@ import { FishListItem } from './FishListItem';
 import { FishDetailView } from './FishDetailView';
 import { AreaDetailView } from '../area/AreaDetailView';
 import { BaitDetailView } from '../bait/BaitDetailView';
-import type { FishMaster, ViewMode, ZoneMaster, BaitMaster } from '@/types/fishtracker';
+import type { FishMaster, ViewMode, ZoneMaster, BaitMaster } from '@/types/';
 import { FISHES, ZONES, BAITS, REGIONS } from '@/data';
 import { findBySlug } from '@/utils/slug';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';

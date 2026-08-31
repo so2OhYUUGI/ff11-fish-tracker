@@ -7,7 +7,7 @@
 
 import { useMemo, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import type { ZoneMaster, FishMaster, ViewMode, RegionMaster, BaitMaster } from '@/types/fishtracker';
+import type { ZoneMaster, FishMaster, ViewMode, RegionMaster, BaitMaster } from '@/types/';
 import { REGIONS, ZONES, FISHES, BAITS, FISH_LOCATIONS } from '@/data/';
 import { findBySlug } from '@/utils/slug';
 import { AreaCard } from './AreaCard';

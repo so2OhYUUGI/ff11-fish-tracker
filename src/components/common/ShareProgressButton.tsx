@@ -8,7 +8,7 @@
 import React, { useState } from 'react';
 import { Share } from 'lucide-react';
 import { toast } from 'sonner';
-import type { CharacterProgress } from '@/types/fishtracker';
+import type { CharacterProgress } from '@/types/';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 import { ProgressShareModal } from '@/components/share/ProgressShareModal';
 

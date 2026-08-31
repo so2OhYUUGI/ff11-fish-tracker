@@ -74,4 +74,7 @@ export const LIST_STYLES = {
 	zoneCountBase: 'inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] sm:text-xs font-medium border shrink-0',
 	zoneCountSingle: 'bg-amber-950/50 text-amber-300 border-amber-800/40',
 	zoneCountMultiple: 'bg-[var(--theme-container-bg)] text-slate-300 border-[var(--theme-container-border)]',
+
+	// 7. 検索・入力フォームフィールド
+	searchInput: 'w-full py-2 px-3 text-sm rounded-lg bg-[var(--theme-inner-bg)] border border-[var(--theme-container-border)] text-slate-100 placeholder-slate-500 focus:outline-none focus:border-[var(--theme-accent-border)] transition-colors',
 } as const;

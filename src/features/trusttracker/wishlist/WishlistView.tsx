@@ -13,7 +13,7 @@
  */
 
 import React, { useState, useMemo, useCallback } from 'react';
-import { Plus, Edit2, Trash2, Share2, Heart, AlertCircle, CheckSquare, Square, User, CheckCircle2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, Share, Heart, AlertCircle, CheckSquare, Square, User, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 import type { TrustMaster, Wishlist } from '@/types/trusttracker';
@@ -26,6 +26,46 @@ import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
 import { LIST_STYLES } from '@/styles/components/listStyles';
 import { DETAIL_STYLES } from '@/styles/components/detailStyles';
 
+const WISHLIST_STYLES = {
+	headerCard: 'bg-[var(--theme-container-bg)] border border-[var(--theme-container-border)] rounded-xl p-4 md:p-5 mb-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-md backdrop-blur-sm',
+	headerTitleGroup: 'flex items-center gap-3',
+	headerTitle: 'text-lg md:text-xl font-bold text-slate-100 flex items-center gap-2.5',
+	headerSubTitle: 'text-xs font-normal text-slate-400',
+	headerIconWrapper: 'p-2 rounded-lg bg-[var(--theme-inner-bg)] border border-[var(--theme-container-border)] text-[var(--theme-text-accent)]',
+
+	// テキスト付き追加ボタン
+	addButton: 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-[var(--theme-text-accent)] bg-[var(--theme-inner-bg)] hover:bg-[var(--theme-active-item-bg)] border border-[var(--theme-accent-border)] transition-all shadow-sm',
+
+	// 汎用アクションボタン
+	actionButton: 'p-2 rounded-lg text-slate-300 hover:text-slate-100 bg-[var(--theme-inner-bg)] hover:bg-[var(--theme-active-item-bg)] border border-[var(--theme-container-border)] transition-colors',
+	deleteIconButton: 'p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 hover:border-rose-500/50 transition-colors',
+
+	// テーブルコンテナ・レイアウト
+	tableCard: 'bg-[var(--theme-container-bg)] border border-[var(--theme-container-border)] rounded-xl overflow-hidden shadow-md backdrop-blur-sm',
+	table: 'w-full text-left border-collapse min-w-[600px]',
+	thead: 'border-b border-[var(--theme-container-border)] bg-[var(--theme-inner-bg)] text-xs font-semibold text-slate-400',
+	thTrust: 'p-3 min-w-[260px]',
+	thChar: 'p-3 text-center w-28 min-w-[112px]',
+	thAction: 'p-3 text-center w-12 min-w-[48px]',
+	tbody: 'divide-y divide-[var(--theme-container-border)]/60 text-sm',
+
+	// 行ステート
+	trNormal: 'hover:bg-[var(--theme-active-item-bg)] transition-colors',
+	trCompleted: 'bg-emerald-950/20 hover:bg-emerald-950/30 transition-colors',
+
+	// トグルボタン
+	checkButtonChecked: 'inline-flex items-center justify-center p-1.5 rounded-lg border transition-all bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20',
+	checkButtonUnchecked: 'inline-flex items-center justify-center p-1.5 rounded-lg border transition-all bg-[var(--theme-inner-bg)] text-slate-500 border-[var(--theme-container-border)] hover:text-slate-300 hover:bg-[var(--theme-active-item-bg)]',
+
+	// モーダル関連
+	modalOverlay: 'fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm',
+	modalCard: 'bg-[var(--theme-container-bg)] border border-[var(--theme-container-border)] rounded-xl p-5 w-full max-w-md shadow-2xl',
+	modalTitle: 'text-base font-bold text-slate-100 mb-3 flex items-center gap-2',
+	modalCancelBtn: 'px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:bg-[var(--theme-active-item-bg)] transition-colors',
+	modalSaveBtn: 'inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 border border-emerald-500/50 shadow-sm transition-colors',
+	createBtn: 'inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-500 border border-emerald-500/50 shadow-sm mt-3 transition-colors',
+} as const;
+
 type Props = {
 	trusts: TrustMaster[];
 	checkedTrustIds: number[];
@@ -34,17 +74,6 @@ type Props = {
 	activeWishlistIndex: number;
 	onWishlistIndexChange: (index: number) => void;
 };
-
-const WISHLIST_STYLES = {
-	headerCard: 'bg-slate-900/80 border border-slate-800 rounded-xl p-4 md:p-5 mb-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-md backdrop-blur-sm',
-	headerTitleGroup: 'flex items-center gap-3',
-	headerTitle: 'text-lg md:text-xl font-bold text-slate-100 flex items-center gap-2.5',
-
-	// テキスト付き追加ボタン
-	addButton: 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 hover:border-emerald-500/50 transition-all shadow-sm',
-
-	deleteIconButton: 'bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border-rose-500/30 hover:border-rose-500/50',
-} as const;
 
 export const WishlistView: React.FC<Props> = ({
 	trusts,
@@ -156,7 +185,7 @@ export const WishlistView: React.FC<Props> = ({
 	}, [activeWishlist]);
 
 	return (
-		<div className={LAYOUT_TOKENS.view.flexColGap4}>
+		<div className={LAYOUT_TOKENS.view.flexColGap2}>
 			{!activeWishlist ? (
 				<div className={DETAIL_STYLES.emptyDetailWrapper}>
 					<Heart className={DETAIL_STYLES.emptyDetailPulseIcon} />
@@ -167,7 +196,7 @@ export const WishlistView: React.FC<Props> = ({
 					<button
 						type="button"
 						onClick={handleCreateSlot}
-						className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-500 border border-emerald-500/50 shadow-sm mt-3"
+						className={WISHLIST_STYLES.createBtn}
 					>
 						<Plus className="w-4 h-4" />
 						ウィッシュリストを作成
@@ -178,13 +207,13 @@ export const WishlistView: React.FC<Props> = ({
 					{/* ヘッダーカード */}
 					<div className={WISHLIST_STYLES.headerCard}>
 						<div className={WISHLIST_STYLES.headerTitleGroup}>
-							<div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-								<Heart className="w-5 h-5 fill-emerald-400/20" />
+							<div className={WISHLIST_STYLES.headerIconWrapper}>
+								<Heart className="w-5 h-5 fill-current" />
 							</div>
 							<div>
 								<h2 className={WISHLIST_STYLES.headerTitle}>
 									{activeWishlist.name}
-									<span className="text-xs font-normal text-slate-400">
+									<span className={WISHLIST_STYLES.headerSubTitle}>
 										({activeWishlist.trustIds.length} / {WISHLIST_LIMITS.MAX_ITEMS} 個)
 									</span>
 								</h2>
@@ -205,7 +234,7 @@ export const WishlistView: React.FC<Props> = ({
 							<button
 								type="button"
 								onClick={handleOpenEditNameModal}
-								className={COMMON_TOKENS.button.shareIcon}
+								className={WISHLIST_STYLES.actionButton}
 								title="リスト名を変更"
 								aria-label="リスト名を変更"
 							>
@@ -215,17 +244,17 @@ export const WishlistView: React.FC<Props> = ({
 							<button
 								type="button"
 								onClick={handleShare}
-								className={COMMON_TOKENS.button.shareIcon}
+								className={WISHLIST_STYLES.actionButton}
 								title="ウィッシュリストを共有"
 								aria-label="ウィッシュリストを共有"
 							>
-								<Share2 className={`w-5 h-5 ${COMMON_TOKENS.entity.fish.text}`} />
+								<Share className={`w-5 h-5 ${COMMON_TOKENS.entity.fish.text}`} />
 							</button>
 
 							<button
 								type="button"
 								onClick={handleDeleteSlot}
-								className={`${COMMON_TOKENS.button.shareIcon} ${WISHLIST_STYLES.deleteIconButton}`}
+								className={WISHLIST_STYLES.deleteIconButton}
 								title="リストを削除"
 								aria-label="リストを削除"
 							>
@@ -239,29 +268,29 @@ export const WishlistView: React.FC<Props> = ({
 						<div className={LAYOUT_TOKENS.view.emptyContainer}>
 							<AlertCircle className="w-10 h-10 text-slate-600 mb-2" />
 							<p className={LAYOUT_TOKENS.view.emptyText}>登録されているフェイスがありません</p>
-							<p className="text-xs text-slate-500 mt-1">
+							<p className={DETAIL_STYLES.emptyDetailSubText}>
 								ヘッダーの「フェイス追加」ボタンから登録してください。
 							</p>
 						</div>
 					) : (
-						<div className="bg-slate-900/80 border border-slate-800 rounded-xl overflow-hidden shadow-md backdrop-blur-sm">
+						<div className={WISHLIST_STYLES.tableCard}>
 							<div className="overflow-x-auto">
-								<table className="w-full text-left border-collapse min-w-[600px]">
+								<table className={WISHLIST_STYLES.table}>
 									<thead>
-										<tr className="border-b border-slate-800 bg-slate-950/50 text-xs font-semibold text-slate-400">
-											<th className="p-3 min-w-[260px]">フェイス</th>
+										<tr className={WISHLIST_STYLES.thead}>
+											<th className={WISHLIST_STYLES.thTrust}>フェイス</th>
 											{characters.map((char) => (
-												<th key={char.id} className="p-3 text-center w-28 min-w-[112px]">
+												<th key={char.id} className={WISHLIST_STYLES.thChar}>
 													<div className="flex items-center justify-center gap-1.5 truncate" title={char.name}>
 														<User className="w-3.5 h-3.5 text-slate-500 shrink-0" />
 														<span className="truncate">{char.name}</span>
 													</div>
 												</th>
 											))}
-											<th className="p-3 text-center w-12 min-w-[48px]">操作</th>
+											<th className={WISHLIST_STYLES.thAction}>操作</th>
 										</tr>
 									</thead>
-									<tbody className="divide-y divide-slate-800/60 text-sm">
+									<tbody className={WISHLIST_STYLES.tbody}>
 										{wishlistTrusts.map((trust) => {
 											// 全キャラクターが修得済みか判定
 											const isAllCompleted =
@@ -271,10 +300,7 @@ export const WishlistView: React.FC<Props> = ({
 											return (
 												<tr
 													key={trust.id}
-													className={`transition-colors ${isAllCompleted
-															? 'bg-emerald-950/20 hover:bg-emerald-950/30'
-															: 'hover:bg-slate-800/30'
-														}`}
+													className={isAllCompleted ? WISHLIST_STYLES.trCompleted : WISHLIST_STYLES.trNormal}
 												>
 													{/* フェイス基本情報 */}
 													<td className="p-3">
@@ -289,7 +315,6 @@ export const WishlistView: React.FC<Props> = ({
 																	{isAllCompleted && (
 																		<CheckCircle2
 																			className="w-4 h-4 text-emerald-400 shrink-0"
-																			title="全キャラ修得完了"
 																		/>
 																	)}
 																</div>
@@ -311,10 +336,7 @@ export const WishlistView: React.FC<Props> = ({
 																<button
 																	type="button"
 																	onClick={() => toggleCharacterTrustCheck(char.id, trust.id)}
-																	className={`inline-flex items-center justify-center p-1.5 rounded-lg border transition-all ${isChecked
-																			? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'
-																			: 'bg-slate-800/40 text-slate-500 border-slate-700/60 hover:text-slate-300 hover:bg-slate-800'
-																		}`}
+																	className={isChecked ? WISHLIST_STYLES.checkButtonChecked : WISHLIST_STYLES.checkButtonUnchecked}
 																	title={`${char.name}: ${isChecked ? '未修得にする' : '修得済みにする'}`}
 																>
 																	{isChecked ? (
@@ -363,10 +385,10 @@ export const WishlistView: React.FC<Props> = ({
 
 			{/* 名称編集モーダル */}
 			{isNameModalOpen && (
-				<div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-					<div className="bg-slate-900 border border-slate-800 rounded-xl p-5 w-full max-w-md shadow-2xl">
-						<h3 className="text-base font-bold text-slate-100 mb-3 flex items-center gap-2">
-							<Edit2 className="w-4 h-4 text-emerald-400" />
+				<div className={WISHLIST_STYLES.modalOverlay}>
+					<div className={WISHLIST_STYLES.modalCard}>
+						<h3 className={WISHLIST_STYLES.modalTitle}>
+							<Edit2 className="w-4 h-4 text-[var(--theme-text-accent)]" />
 							ウィッシュリスト名の変更
 						</h3>
 						<input
@@ -382,14 +404,14 @@ export const WishlistView: React.FC<Props> = ({
 							<button
 								type="button"
 								onClick={() => setIsNameModalOpen(false)}
-								className="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:bg-slate-800"
+								className={WISHLIST_STYLES.modalCancelBtn}
 							>
 								キャンセル
 							</button>
 							<button
 								type="button"
 								onClick={handleSaveName}
-								className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 border border-emerald-500/50 shadow-sm"
+								className={WISHLIST_STYLES.modalSaveBtn}
 							>
 								保存
 							</button>

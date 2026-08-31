@@ -22,7 +22,7 @@ import { useCallback, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useIsMobileLayout } from '@/hooks/useIsMobileLayout';
 import { toSlug } from '@/utils/slug';
-import type { MainTab, CharacterProgress, FishMaster, ZoneMaster, BaitMaster } from '@/types/fishtracker';
+import type { MainTab, CharacterProgress, FishMaster, ZoneMaster, BaitMaster } from '@/types/';
 import type { DisplayCharacterProgress } from '@/components/layout/Header';
 
 export type NavItem =

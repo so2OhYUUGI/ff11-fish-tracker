@@ -22,7 +22,7 @@
 
 import React, { useCallback, useMemo, useEffect, useRef } from 'react';
 import { Search, LayoutGrid, List, Fish, Utensils, MapPin, X } from 'lucide-react';
-import type { ViewMode, MainTab, CharacterProgress } from '@/types/fishtracker';
+import type { ViewMode, MainTab, CharacterProgress } from '@/types/';
 import { FILTER_BAR_STYLES } from '@/styles/features/FishTrackerStyle';
 
 export type StatusFilter = 'all' | 'checked' | 'unchecked';

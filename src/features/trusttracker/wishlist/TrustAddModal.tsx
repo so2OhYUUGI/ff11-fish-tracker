@@ -5,6 +5,7 @@
  * 
  * [概要]
  * - マスターデータからのキーワード検索およびウィッシュリストへの登録・解除トグル操作
+ * - モーダル全体にテーマ変数（--theme-*）を適用し、テーマ切替に対応
  * ============================================================================
  */
 
@@ -13,7 +14,9 @@ import { Search, X, Plus, Check, Users } from 'lucide-react';
 import type { TrustMaster, Wishlist } from '@/types/trusttracker';
 import { WISHLIST_LIMITS } from '@/types/trusttracker';
 import { JobBadge, CombatTypeBadge } from '../common/TrustBadges';
+import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
 import { LIST_STYLES } from '@/styles/components/listStyles';
+import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 
 type Props = {
 	isOpen: boolean;
@@ -68,29 +71,32 @@ export const TrustAddModal: React.FC<Props> = ({
 	const isLimitReached = activeWishlist.trustIds.length >= WISHLIST_LIMITS.MAX_ITEMS;
 
 	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-			<div className="bg-slate-900 border border-slate-800 rounded-xl w-full max-w-xl max-h-[80vh] flex flex-col shadow-2xl overflow-hidden">
-				{/* ヘッダー */}
-				<div className="p-4 border-b border-slate-800 flex items-center justify-between">
-					<div className="flex items-center gap-2">
-						<Users className="w-5 h-5 text-emerald-400" />
-						<h3 className="text-base font-bold text-slate-100">
+		<div className={LAYOUT_TOKENS.modalShare.overlay}>
+			{/* モーダル外枠：テーマ背景変数 (--theme-container-bg) を指定 */}
+			<div className="w-full max-w-2xl max-h-[85vh] my-auto bg-[var(--theme-container-bg)] border border-[var(--theme-container-border)] rounded-2xl shadow-2xl overflow-hidden flex flex-col relative">
+
+				{/* ヘッダー：インナー背景変数 (--theme-inner-bg) を指定 */}
+				<div className="flex items-center justify-between px-6 py-4 border-b border-[var(--theme-container-border)] bg-[var(--theme-inner-bg)] shrink-0">
+					<div className={LAYOUT_TOKENS.header.titleWrapper}>
+						<Users className={`${LAYOUT_TOKENS.header.icon.md} ${LAYOUT_TOKENS.header.icon.active()}`} />
+						<h3 className={LAYOUT_TOKENS.header.titleText}>
 							フェイスを追加 ({activeWishlist.trustIds.length} / {WISHLIST_LIMITS.MAX_ITEMS})
 						</h3>
 					</div>
 					<button
 						type="button"
 						onClick={onClose}
-						className="p-1 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors"
+						className={LAYOUT_TOKENS.modalShare.closeButton}
+						aria-label="閉じる"
 					>
-						<X className="w-5 h-5" />
+						<X className={LAYOUT_TOKENS.header.icon.md} />
 					</button>
 				</div>
 
-				{/* 検索入力欄 */}
-				<div className="p-4 border-b border-slate-800/80 bg-slate-950/40">
+				{/* 検索入力欄エリア */}
+				<div className="px-6 py-3 border-b border-[var(--theme-container-border)] bg-[var(--theme-inner-bg)]">
 					<div className="relative">
-						<Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+						<Search className={`absolute left-3 top-1/2 -translate-y-1/2 ${LAYOUT_TOKENS.header.icon.md} ${LAYOUT_TOKENS.header.icon.muted}`} />
 						<input
 							type="text"
 							value={searchQuery}
@@ -102,10 +108,10 @@ export const TrustAddModal: React.FC<Props> = ({
 					</div>
 				</div>
 
-				{/* フェイス選択リスト */}
-				<div className="flex-1 overflow-y-auto p-4 space-y-2">
+				{/* フェイス選択リストエリア */}
+				<div className="p-6 space-y-2 overflow-y-auto flex-1">
 					{filteredTrusts.length === 0 ? (
-						<p className="text-center text-sm text-slate-500 py-8">
+						<p className={LAYOUT_TOKENS.view.emptyText}>
 							該当するフェイスが見つかりません
 						</p>
 					) : (
@@ -113,21 +119,27 @@ export const TrustAddModal: React.FC<Props> = ({
 							const isAdded = registeredSet.has(trust.id);
 							const isDisabled = !isAdded && isLimitReached;
 
+							const buttonStateStyle = isAdded
+								? COMMON_TOKENS.state.checked
+								: isDisabled
+									? 'opacity-50 cursor-not-allowed'
+									: '';
+
 							return (
 								<div
 									key={trust.id}
-									className="flex items-center justify-between p-3 rounded-lg bg-slate-800/40 border border-slate-800 hover:border-slate-700 transition-all gap-3"
+									className={LIST_STYLES.inlineBase}
 								>
-									<div className="min-w-0 flex-1">
-										<div className="flex items-center gap-2">
-											<span className="font-bold text-sm text-slate-200 truncate">
+									<div className={LIST_STYLES.leftGroupContainer}>
+										<div className={LIST_STYLES.titleGroup}>
+											<span className={LIST_STYLES.titleInlineJa}>
 												{trust.ja}
 											</span>
-											<span className="text-xs text-slate-500 hidden sm:inline">
+											<span className={LIST_STYLES.titleInlineEn}>
 												{trust.en}
 											</span>
 										</div>
-										<div className="flex items-center gap-2 mt-1">
+										<div className={LIST_STYLES.badgeGroupContainer}>
 											<JobBadge job={trust.job} />
 											<CombatTypeBadge combatType={trust.combatType} />
 										</div>
@@ -137,21 +149,16 @@ export const TrustAddModal: React.FC<Props> = ({
 										type="button"
 										onClick={() => handleToggle(trust.id)}
 										disabled={isDisabled}
-										className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border shrink-0 ${isAdded
-												? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40 hover:bg-emerald-500/30'
-												: isDisabled
-													? 'bg-slate-800 text-slate-500 border-slate-800 cursor-not-allowed'
-													: 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700'
-											}`}
+										className={`${LAYOUT_TOKENS.control.button} ${buttonStateStyle}`}
 									>
 										{isAdded ? (
 											<>
-												<Check className="w-3.5 h-3.5" />
+												<Check className={LAYOUT_TOKENS.header.icon.sm} />
 												<span>追加済み</span>
 											</>
 										) : (
 											<>
-												<Plus className="w-3.5 h-3.5" />
+												<Plus className={LAYOUT_TOKENS.header.icon.sm} />
 												<span>追加</span>
 											</>
 										)}
@@ -162,12 +169,12 @@ export const TrustAddModal: React.FC<Props> = ({
 					)}
 				</div>
 
-				{/* フッター */}
-				<div className="p-3 border-t border-slate-800 bg-slate-950/60 flex justify-end">
+				{/* フッター：インナー背景変数 (--theme-inner-bg) を指定 */}
+				<div className="px-6 py-3 bg-[var(--theme-inner-bg)] border-t border-[var(--theme-container-border)] flex justify-end shrink-0">
 					<button
 						type="button"
 						onClick={onClose}
-						className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-500/50 shadow-sm"
+						className={LAYOUT_TOKENS.control.button}
 					>
 						完了
 					</button>

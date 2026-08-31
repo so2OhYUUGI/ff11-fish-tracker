@@ -99,26 +99,6 @@ export type MyMacro = {
 };
 
 /**
- * 単一キャラクターの進行・設定状態
- */
-export type Character = {
-	id: string;
-	name: string;
-	world?: string;
-	checkedTrustIds: number[];
-	macro: MyMacro[];
-};
-
-/**
- * ユーザー全体の永続化データ構造
- */
-export type UserData = {
-	activeCharacterId: string | null;
-	characters: Character[];
-	wishlists: Wishlist[]; // アカウント共通のウィッシュリスト
-};
-
-/**
  * サブタイプ（メインタブ）
  */
 export type TrustSubtype = 'trust' | 'wishlist' | 'macro';

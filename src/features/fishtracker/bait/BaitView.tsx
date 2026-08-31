@@ -7,7 +7,7 @@
 
 import { useMemo, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import type { BaitMaster, FishMaster, ViewMode, ZoneMaster } from '@/types/fishtracker';
+import type { BaitMaster, FishMaster, ViewMode, ZoneMaster } from '@/types/';
 import { BaitCard } from './BaitCard';
 import { BaitListItem } from './BaitListItem';
 import { BaitDetailView } from './BaitDetailView';

@@ -11,7 +11,7 @@
 import React, { useState } from 'react';
 import { UserPlus, Edit2, Trash2, Check, X, User } from 'lucide-react';
 import { useUserDataContext } from '@/contexts/UserDataContext';
-import type { CharacterProgress } from '@/types/fishtracker';
+import type { CharacterProgress } from '@/types/';
 import { SETTINGS_STYLES } from '@/styles/components/settingsStyles';
 
 export const CharacterTab: React.FC = () => {
