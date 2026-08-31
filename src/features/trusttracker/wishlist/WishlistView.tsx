@@ -9,11 +9,12 @@
  * - 全キャラ修得完了（コンプリート）行の視覚的ハイライト表示（背景強調・アイコン付与）
  * - 戦闘タイプバッジ（CombatTypeBadge）を使用（幅固定コンテナ配置でレイアウトズレを防止）
  * - 大量キャラ・フェイス登録時でも俯瞰性と可読性を維持するレスポンシブテーブルレイアウト
+ * - ウィッシュリストの複製（コピー）機能
  * ============================================================================
  */
 
 import React, { useState, useMemo, useCallback } from 'react';
-import { Plus, Edit2, Trash2, Share, Heart, AlertCircle, CheckSquare, Square, User, CheckCircle2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, Share, Heart, AlertCircle, CheckSquare, Square, User, CheckCircle2, Copy, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
 
 import type { TrustMaster, Wishlist } from '@/types/trusttracker';
@@ -25,46 +26,7 @@ import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
 import { LIST_STYLES } from '@/styles/components/listStyles';
 import { DETAIL_STYLES } from '@/styles/components/detailStyles';
-
-const WISHLIST_STYLES = {
-	headerCard: 'bg-(--theme-container-bg) border border-(--theme-container-border) rounded-xl p-4 md:p-5 mb-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-md backdrop-blur-sm',
-	headerTitleGroup: 'flex items-center gap-3',
-	headerTitle: 'text-lg md:text-xl font-bold text-slate-100 flex items-center gap-2.5',
-	headerSubTitle: 'text-xs font-normal text-slate-400',
-	headerIconWrapper: 'p-2 rounded-lg bg-(--theme-inner-bg) border border-(--theme-container-border) text-(--theme-text-accent)',
-
-	// テキスト付き追加ボタン
-	addButton: 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-(--theme-text-accent) bg-(--theme-inner-bg) hover:bg-(--theme-active-item-bg) border border-(--theme-accent-border) transition-all shadow-sm',
-
-	// 汎用アクションボタン
-	actionButton: 'p-2 rounded-lg text-slate-300 hover:text-slate-100 bg-(--theme-inner-bg) hover:bg-(--theme-active-item-bg) border border-(--theme-container-border) transition-colors',
-	deleteIconButton: 'p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 hover:border-rose-500/50 transition-colors',
-
-	// テーブルコンテナ・レイアウト
-	tableCard: 'bg-(--theme-container-bg) border border-(--theme-container-border) rounded-xl overflow-hidden shadow-md backdrop-blur-sm',
-	table: 'w-full text-left border-collapse min-w-[600px]',
-	thead: 'border-b border-(--theme-container-border) bg-(--theme-inner-bg) text-xs font-semibold text-slate-400',
-	thTrust: 'p-3 min-w-[260px]',
-	thChar: 'p-3 text-center w-28 min-w-[112px]',
-	thAction: 'p-3 text-center w-12 min-w-[48px]',
-	tbody: 'divide-y divide-(--theme-container-border)/60 text-sm',
-
-	// 行ステート
-	trNormal: 'hover:bg-(--theme-active-item-bg) transition-colors',
-	trCompleted: 'bg-emerald-950/20 hover:bg-emerald-950/30 transition-colors',
-
-	// トグルボタン
-	checkButtonChecked: 'inline-flex items-center justify-center p-1.5 rounded-lg border transition-all bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20',
-	checkButtonUnchecked: 'inline-flex items-center justify-center p-1.5 rounded-lg border transition-all bg-(--theme-inner-bg) text-slate-500 border-(--theme-container-border) hover:text-slate-300 hover:bg-(--theme-active-item-bg)',
-
-	// モーダル関連
-	modalOverlay: 'fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm',
-	modalCard: 'bg-(--theme-container-bg) border border-(--theme-container-border) rounded-xl p-5 w-full max-w-md shadow-2xl',
-	modalTitle: 'text-base font-bold text-slate-100 mb-3 flex items-center gap-2',
-	modalCancelBtn: 'px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:bg-(--theme-active-item-bg) transition-colors',
-	modalSaveBtn: 'inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 border border-emerald-500/50 shadow-sm transition-colors',
-	createBtn: 'inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-500 border border-emerald-500/50 shadow-sm mt-3 transition-colors',
-} as const;
+import { WISHLIST_STYLES } from '@/styles/components/wishlistStyles';
 
 type Props = {
 	trusts: TrustMaster[];
@@ -101,7 +63,10 @@ export const WishlistView: React.FC<Props> = ({
 	// モーダル状態管理
 	const [isNameModalOpen, setIsNameModalOpen] = useState(false);
 	const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+	const [isCopyModalOpen, setIsCopyModalOpen] = useState(false);
+
 	const [editingName, setEditingName] = useState('');
+	const [copyTargetIndex, setCopyTargetIndex] = useState<number>(-1); // -1: 新規スロット作成
 
 	const activeWishlist = wishlists[activeWishlistIndex] || null;
 
@@ -157,6 +122,49 @@ export const WishlistView: React.FC<Props> = ({
 		setIsNameModalOpen(false);
 		toast.success('リスト名を変更しました');
 	}, [activeWishlist, editingName, updateWishlist]);
+
+	const handleOpenCopyModal = useCallback(() => {
+		if (!activeWishlist) return;
+		if (wishlists.length < WISHLIST_LIMITS.MAX_SLOTS) {
+			setCopyTargetIndex(-1);
+		} else {
+			const availableIndex = wishlists.findIndex((_, idx) => idx !== activeWishlistIndex);
+			setCopyTargetIndex(availableIndex !== -1 ? availableIndex : 0);
+		}
+		setIsCopyModalOpen(true);
+	}, [activeWishlist, wishlists, activeWishlistIndex]);
+
+	const handleCopyWishlist = useCallback(() => {
+		if (!activeWishlist) return;
+
+		if (copyTargetIndex === -1) {
+			if (wishlists.length >= WISHLIST_LIMITS.MAX_SLOTS) {
+				toast.error(`ウィッシュリストは最大 ${WISHLIST_LIMITS.MAX_SLOTS} つまで作成できます。`);
+				return;
+			}
+			const newListName = `${activeWishlist.name} のコピー`;
+			const success = addWishlist(newListName);
+			if (success) {
+				const newIndex = wishlists.length;
+				const newWishlistId = `wishlist_${Date.now()}`;
+				setTimeout(() => {
+					updateWishlist(newWishlistId, newListName, [...activeWishlist.trustIds]);
+				}, 0);
+
+				onWishlistIndexChange(newIndex);
+				setIsCopyModalOpen(false);
+				toast.success(`「${newListName}」として複製しました`);
+			}
+		} else {
+			const targetWishlist = wishlists[copyTargetIndex];
+			if (!targetWishlist) return;
+
+			updateWishlist(targetWishlist.id, targetWishlist.name, [...activeWishlist.trustIds]);
+			onWishlistIndexChange(copyTargetIndex);
+			setIsCopyModalOpen(false);
+			toast.success(`「${targetWishlist.name}」へコピーしました`);
+		}
+	}, [activeWishlist, copyTargetIndex, wishlists, addWishlist, updateWishlist, onWishlistIndexChange]);
 
 	const handleDeleteSlot = useCallback(() => {
 		if (!activeWishlist) return;
@@ -221,7 +229,7 @@ export const WishlistView: React.FC<Props> = ({
 						</div>
 
 						{/* アクションボタン群 */}
-						<div className="flex items-center gap-2">
+						<div className={WISHLIST_STYLES.actionsGroup}>
 							<button
 								type="button"
 								onClick={() => setIsAddModalOpen(true)}
@@ -238,7 +246,17 @@ export const WishlistView: React.FC<Props> = ({
 								title="リスト名を変更"
 								aria-label="リスト名を変更"
 							>
-								<Edit2 className="w-5 h-5 text-slate-300" />
+								<Edit2 className="w-5 h-5" />
+							</button>
+
+							<button
+								type="button"
+								onClick={handleOpenCopyModal}
+								className={WISHLIST_STYLES.actionButton}
+								title="ウィッシュリストをコピー"
+								aria-label="ウィッシュリストをコピー"
+							>
+								<Copy className="w-5 h-5" />
 							</button>
 
 							<button
@@ -274,15 +292,15 @@ export const WishlistView: React.FC<Props> = ({
 						</div>
 					) : (
 						<div className={WISHLIST_STYLES.tableCard}>
-							<div className="overflow-x-auto">
+							<div className={WISHLIST_STYLES.tableWrapper}>
 								<table className={WISHLIST_STYLES.table}>
 									<thead>
 										<tr className={WISHLIST_STYLES.thead}>
 											<th className={WISHLIST_STYLES.thTrust}>フェイス</th>
 											{characters.map((char) => (
 												<th key={char.id} className={WISHLIST_STYLES.thChar}>
-													<div className="flex items-center justify-center gap-1.5 truncate" title={char.name}>
-														<User className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+													<div className={WISHLIST_STYLES.charHeaderContainer} title={char.name}>
+														<User className={WISHLIST_STYLES.charHeaderIcon} />
 														<span className="truncate">{char.name}</span>
 													</div>
 												</th>
@@ -292,7 +310,6 @@ export const WishlistView: React.FC<Props> = ({
 									</thead>
 									<tbody className={WISHLIST_STYLES.tbody}>
 										{wishlistTrusts.map((trust) => {
-											// 全キャラクターが修得済みか判定
 											const isAllCompleted =
 												characters.length > 0 &&
 												characters.every((char) => char.checkedTrustIds.includes(trust.id));
@@ -303,24 +320,21 @@ export const WishlistView: React.FC<Props> = ({
 													className={isAllCompleted ? WISHLIST_STYLES.trCompleted : WISHLIST_STYLES.trNormal}
 												>
 													{/* フェイス基本情報 */}
-													<td className="p-3">
-														<div className="flex items-center gap-2.5">
-															{/* バッジの表示幅を w-[5.25rem] (84px) に固定 */}
-															<div className="w-5.25rem shrink-0 flex justify-center">
+													<td className={WISHLIST_STYLES.trustCellContainer}>
+														<div className={WISHLIST_STYLES.trustCellWrapper}>
+															<div className={WISHLIST_STYLES.badgeWrapper}>
 																<CombatTypeBadge combatType={trust.combatType} />
 															</div>
-															<div className="min-w-0 flex-1">
-																<div className="font-bold text-slate-100 truncate flex items-center gap-1.5">
+															<div className={WISHLIST_STYLES.trustInfoGroup}>
+																<div className={WISHLIST_STYLES.trustTitle}>
 																	<span>{trust.ja}</span>
 																	{isAllCompleted && (
-																		<CheckCircle2
-																			className="w-4 h-4 text-emerald-400 shrink-0"
-																		/>
+																		<CheckCircle2 className={WISHLIST_STYLES.trustCompletedIcon} />
 																	)}
 																</div>
 																{trust.acquireInfo && (
-																	<div className="text-xs text-slate-400 truncate max-w-xs">
-																		<span className="text-slate-500 mr-1">入手:</span>
+																	<div className={WISHLIST_STYLES.acquireInfo}>
+																		<span className={WISHLIST_STYLES.acquireLabel}>入手:</span>
 																		{trust.acquireInfo}
 																	</div>
 																)}
@@ -332,7 +346,7 @@ export const WishlistView: React.FC<Props> = ({
 													{characters.map((char) => {
 														const isChecked = char.checkedTrustIds.includes(trust.id);
 														return (
-															<td key={char.id} className="p-3 text-center">
+															<td key={char.id} className={WISHLIST_STYLES.centerCell}>
 																<button
 																	type="button"
 																	onClick={() => toggleCharacterTrustCheck(char.id, trust.id)}
@@ -350,11 +364,11 @@ export const WishlistView: React.FC<Props> = ({
 													})}
 
 													{/* リスト解除操作 */}
-													<td className="p-3 text-center">
+													<td className={WISHLIST_STYLES.centerCell}>
 														<button
 															type="button"
 															onClick={() => handleRemoveFromWishlist(trust.id)}
-															className="text-slate-500 hover:text-rose-400 transition-colors p-1"
+															className={WISHLIST_STYLES.removeButton}
 															title="リストから外す"
 															aria-label={`${trust.ja}をリストから解除`}
 														>
@@ -388,7 +402,7 @@ export const WishlistView: React.FC<Props> = ({
 				<div className={WISHLIST_STYLES.modalOverlay}>
 					<div className={WISHLIST_STYLES.modalCard}>
 						<h3 className={WISHLIST_STYLES.modalTitle}>
-							<Edit2 className="w-4 h-4 text-(--theme-text-accent)" />
+							<Edit2 className="w-4 h-4 text-[var(--theme-text-accent)]" />
 							ウィッシュリスト名の変更
 						</h3>
 						<input
@@ -400,7 +414,7 @@ export const WishlistView: React.FC<Props> = ({
 							className={LIST_STYLES.searchInput}
 							autoFocus
 						/>
-						<div className="flex justify-end gap-2 mt-4">
+						<div className={WISHLIST_STYLES.modalActionsGroup}>
 							<button
 								type="button"
 								onClick={() => setIsNameModalOpen(false)}
@@ -414,6 +428,72 @@ export const WishlistView: React.FC<Props> = ({
 								className={WISHLIST_STYLES.modalSaveBtn}
 							>
 								保存
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
+
+			{/* リストコピーモーダル */}
+			{isCopyModalOpen && activeWishlist && (
+				<div className={WISHLIST_STYLES.modalOverlay}>
+					<div className={WISHLIST_STYLES.modalCard}>
+						<h3 className={WISHLIST_STYLES.modalTitle}>
+							<Copy className="w-4 h-4 text-[var(--theme-text-accent)]" />
+							ウィッシュリストのコピー
+						</h3>
+
+						<div className={WISHLIST_STYLES.copyModalContent}>
+							<div className={WISHLIST_STYLES.copyFlowCard}>
+								<div>
+									<span className={WISHLIST_STYLES.copyFlowLabel}>コピー元リスト</span>
+									<span className={WISHLIST_STYLES.copyFlowValue}>{activeWishlist.name}</span>
+								</div>
+
+								<div className={WISHLIST_STYLES.copyArrowWrapper}>
+									<ArrowRight className={WISHLIST_STYLES.copyArrowIcon} />
+								</div>
+
+								<div>
+									<label className={WISHLIST_STYLES.copyFlowLabelBold}>コピー先</label>
+									<select
+										value={copyTargetIndex}
+										onChange={(e) => setCopyTargetIndex(Number(e.target.value))}
+										className={`${LIST_STYLES.searchInput} w-full`}
+									>
+										{wishlists.length < WISHLIST_LIMITS.MAX_SLOTS && (
+											<option value={-1}>新規スロットとして追加</option>
+										)}
+										{wishlists.map((w, idx) => (
+											<option key={w.id} value={idx}>
+												スロット {idx + 1}: {w.name} {idx === activeWishlistIndex ? '(現在のリスト)' : ''}
+											</option>
+										))}
+									</select>
+								</div>
+							</div>
+
+							{copyTargetIndex !== -1 && (
+								<p className={WISHLIST_STYLES.copyWarningText}>
+									※ 既存のスロットへ上書きコピーされます。対象スロットの登録済みフェイスは上書きされます。
+								</p>
+							)}
+						</div>
+
+						<div className={WISHLIST_STYLES.modalActionsGroup}>
+							<button
+								type="button"
+								onClick={() => setIsCopyModalOpen(false)}
+								className={WISHLIST_STYLES.modalCancelBtn}
+							>
+								キャンセル
+							</button>
+							<button
+								type="button"
+								onClick={handleCopyWishlist}
+								className={WISHLIST_STYLES.modalSaveBtn}
+							>
+								コピー実行
 							</button>
 						</div>
 					</div>
