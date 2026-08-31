@@ -6,6 +6,7 @@
  * [概要]
  * - UserDataContext から状態および操作関数を取得し、進捗の永続化・反映を実施
  * - タブ切り替え時の URL クエリパラメータ（location.search）保持
+ * - ウィッシュリストの選択スロット（activeWishlistIndex）の管理と FilterBar / Content への伝播
  * - checkedTrustIds の数値化・正規化ロジックの適用
  * - 閲覧専用状態（共有キャラ）および未登録ガード判定、Undoアクション付きトーストの実装
  * - 共通ナビゲーションフック（useTrackerNavigation）の組み込み
@@ -21,18 +22,24 @@
  * ============================================================================
  */
 
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import { TRUSTS } from '@/data/trusts';
-import type { TrustSubtype, StatusFilter, TrustMaster } from '@/types/trusttracker';
-import type { DisplayCharacterProgress } from '@/components/layout/Header';
+import type { TrustSubtype, StatusFilter, TrustMaster, CharacterProgress, Wishlist } from '@/types/';
+import { WISHLIST_LIMITS } from '@/types/trusttracker';
 import { useUserDataContext } from '@/contexts/UserDataContext';
 import { useTrackerNavigation } from '@/hooks/useTrackerNavigation';
 import { FilterBar } from './FilterBar';
 import { TrustTrackerContent } from './TrustTrackerContent';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
+
+export interface DisplayCharacterProgress extends CharacterProgress {
+	isShared?: boolean;
+	checkedTrustIds: number[];
+	wishlists: Wishlist[];
+}
 
 export const TrustTrackerContainer: React.FC = () => {
 	const [searchParams, setSearchParams] = useSearchParams();
@@ -42,6 +49,7 @@ export const TrustTrackerContainer: React.FC = () => {
 		activeCharacter,
 		isRegistered,
 		toggleTrustCheck,
+		addWishlist,
 		setRegistrationMessage: onRequestRegistration,
 	} = useUserDataContext();
 
@@ -61,7 +69,10 @@ export const TrustTrackerContainer: React.FC = () => {
 	// 3. 検索クエリ
 	const searchQuery = searchParams.get('q') || '';
 
-	// 4. 共通ナビゲーションフックの呼び出し
+	// 4. ウィッシュリストの選択インデックス
+	const [activeWishlistIndex, setActiveWishlistIndex] = useState<number>(0);
+
+	// 5. 共通ナビゲーションフックの呼び出し
 	const { effectiveNavStack } = useTrackerNavigation<TrustMaster>({
 		basePath: `/trusttracker/${activeType}`,
 		slug,
@@ -75,8 +86,8 @@ export const TrustTrackerContainer: React.FC = () => {
 			return {
 				id: 'guest',
 				name: 'ゲスト',
-				checkedFishIds: [],
 				checkedTrustIds: [],
+				wishlists: [],
 				createdAt: 0,
 				updatedAt: 0,
 			};
@@ -93,6 +104,7 @@ export const TrustTrackerContainer: React.FC = () => {
 		return {
 			...activeCharacter,
 			checkedTrustIds: normalizedIds,
+			wishlists: activeCharacter.wishlists || [],
 		};
 	}, [activeCharacter]);
 
@@ -153,6 +165,21 @@ export const TrustTrackerContainer: React.FC = () => {
 		[setSearchParams]
 	);
 
+	// ウィッシュリスト作成ハンドラ（FilterBarおよびEmptyState共通）
+	const handleCreateWishlist = useCallback(() => {
+		const currentCount = effectiveActiveCharacter.wishlists.length;
+		if (currentCount >= WISHLIST_LIMITS.MAX_SLOTS) {
+			toast.error(`ウィッシュリストは最大 ${WISHLIST_LIMITS.MAX_SLOTS} つまで作成できます。`);
+			return;
+		}
+		const defaultName = `ウィッシュリスト ${currentCount + 1}`;
+		const success = addWishlist(defaultName);
+		if (success) {
+			setActiveWishlistIndex(currentCount);
+			toast.success(`「${defaultName}」を作成しました`);
+		}
+	}, [effectiveActiveCharacter.wishlists.length, addWishlist]);
+
 	// 修得トグル処理
 	const handleToggleCheck = useCallback(
 		(trustId: number) => {
@@ -206,6 +233,10 @@ export const TrustTrackerContainer: React.FC = () => {
 					searchQuery={searchQuery}
 					onSearchQueryChange={handleSearchQueryChange}
 					totalTrustCount={totalTrustCount}
+					wishlists={effectiveActiveCharacter.wishlists}
+					activeWishlistIndex={activeWishlistIndex}
+					onWishlistIndexChange={setActiveWishlistIndex}
+					onCreateWishlist={handleCreateWishlist}
 				/>
 			</div>
 
@@ -219,6 +250,8 @@ export const TrustTrackerContainer: React.FC = () => {
 					checkedTrustIds={checkedTrustIds}
 					onToggleCheck={handleToggleCheck}
 					navStack={effectiveNavStack}
+					activeWishlistIndex={activeWishlistIndex}
+					onWishlistIndexChange={setActiveWishlistIndex}
 				/>
 			</div>
 		</>

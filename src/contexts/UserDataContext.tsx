@@ -6,29 +6,24 @@
  * [概要]
  * - App.tsx や AppRouter でのバケツリレー (Prop Drilling) を解消する
  * - useUserData / useSharedProgress を集約し、閲覧権限（canViewContainer）判定も含めて管理する
- * - 釣魚（checkedFishIds）に加え、フェイス修得（checkedTrustIds）のトグル状態および操作関数を提供する
+ * - 釣魚（checkedFishIds）、フェイス修得（checkedTrustIds）、ウィッシュリスト（wishlists）のトグル状態および操作関数を提供する
  * 
  * [依存関係・関連ファイル]
- * - フック   : src/contexts/useUserData.ts, src/hooks/useSharedProgress.ts
- * - 型定義   : src/types/fishtracker.ts
+ * - フック   : src/hooks/useUserData.ts, src/hooks/useSharedProgress.ts
+ * - 型定義   : src/types/fishtracker.ts, src/types/trusttracker.ts
  * - 定数     : src/constants/character.ts
- * 
- * [編集・改修時の注意事項（AI/エンジニア共通指示）]
- * 1. 【安全宣言】 Context 非依存の箇所で useUserDataContext を呼び出した場合は安全にエラーを出力させること
- * 2. 【既存挙動の完全維持】 isShared フラグの付与、URLクリーンアップ等の挙動を破壊しないこと
- * 3. 【Fast Refresh対応】 ProviderコンポーネントとHookの同一ファイル共有のため eslint-disable-next-line 注記を維持すること
  * ============================================================================
  */
 
 import React, { createContext, useContext, useMemo, useEffect, useRef, useState } from 'react';
-import type { CharacterProgress, UserData, ViewMode } from '@/types/fishtracker';
+import type { CharacterProgress, UserData, ViewMode } from '@/types/';
+import type { Wishlist } from '@/types/trusttracker';
 import { useUserData } from '@/contexts/useUserData';
 import { useSharedProgress } from '@/hooks/useSharedProgress';
 import { SHARED_GUEST_CHARACTER_ID } from '@/constants/character';
 
 export interface DisplayCharacterProgress extends CharacterProgress {
 	isShared?: boolean;
-	checkedTrustIds?: number[];
 }
 
 // 未登録かつ共有データもない場合に表示するフォールバック用のゲストキャラクター
@@ -37,6 +32,7 @@ const FALLBACK_GUEST_CHARACTER: DisplayCharacterProgress = {
 	name: 'ゲスト',
 	checkedFishIds: [],
 	checkedTrustIds: [],
+	wishlists: [],
 	createdAt: Date.now(),
 	updatedAt: Date.now(),
 	isShared: true,
@@ -60,6 +56,13 @@ interface UserDataContextType {
 	deleteCharacter: (characterId: string) => void;
 	toggleFishCheck: (fishId: number) => void;
 	toggleTrustCheck: (trustId: number) => void;
+
+	// ウィッシュリスト操作メソッド
+	addWishlist: (name: string) => boolean;
+	updateWishlist: (wishlistId: string, newName: string, trustIds?: number[]) => void;
+	deleteWishlist: (wishlistId: string) => void;
+	toggleWishlistTrust: (wishlistId: string, trustId: number) => void;
+
 	setViewMode: (mode: ViewMode) => void;
 	exportData: () => void;
 	importData: (file: File) => Promise<boolean>;
@@ -82,6 +85,10 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 		deleteCharacter,
 		toggleFishCheck,
 		toggleTrustCheck,
+		addWishlist,
+		updateWishlist,
+		deleteWishlist,
+		toggleWishlistTrust,
 		exportData,
 		importData,
 	} = userDataProps;
@@ -101,6 +108,7 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 			name: sharedProgress.characterName,
 			checkedFishIds: sharedProgress.checkedFishIds,
 			checkedTrustIds: (sharedProgress as { checkedTrustIds?: number[] }).checkedTrustIds || [],
+			wishlists: (sharedProgress as { wishlists?: Wishlist[] }).wishlists || [],
 			createdAt: sharedProgress.createdAt,
 			updatedAt: sharedProgress.createdAt,
 			isShared: true,
@@ -170,6 +178,10 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 		deleteCharacter,
 		toggleFishCheck,
 		toggleTrustCheck,
+		addWishlist,
+		updateWishlist,
+		deleteWishlist,
+		toggleWishlistTrust,
 		setViewMode,
 		exportData,
 		importData,

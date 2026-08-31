@@ -6,8 +6,17 @@
  * [概要]
  * - フェイスマスターデータ（TrustMaster）および関連プロパティの型定義
  * - メインタブ、フィルター、サブタイプなどの状態定義
+ * - ウィッシュリスト（Wishlist）およびマイフェイス編成（MyParty）の型定義
  * ============================================================================
  */
+
+/**
+ * ウィッシュリストに関する定数制限
+ */
+export const WISHLIST_LIMITS = {
+	MAX_SLOTS: 3,       // 最大スロット数
+	MAX_ITEMS: 30,      // 1リストあたりの最大登録フェイス数
+} as const;
 
 /**
  * 戦闘タイプの分類
@@ -33,7 +42,7 @@ export type TrustAffiliation =
 	| 'アトルガン'   // 紫色
 	| 'アルタナ'     // 真紅
 	| 'アドゥリン'   // 青緑
-	| 'その他'       // 灰色
+	| 'その他';      // 灰色
 
 /**
  * 盟（アイテム）情報
@@ -66,6 +75,33 @@ export type TrustMaster = {
 	category?: string;
 	description?: string;
 	spSkills?: string[];
+};
+
+/**
+ * ウィッシュリストデータ（旧 TargetList）
+ */
+export type Wishlist = {
+	id: string;
+	name: string;
+	trustIds: number[];
+};
+
+/**
+ * フェイスマクロデータ
+ */
+export type MyMacro = {
+	id: string;
+	name: string;
+	memberTrustIds: number[];
+};
+
+/**
+ * フェイスチェッカー ユーザー進捗構造
+ */
+export type TrustCharacterProgress = {
+	checkedTrustIds: number[];
+	wishlists: Wishlist[];
+	macro: MyMacro[];
 };
 
 /**

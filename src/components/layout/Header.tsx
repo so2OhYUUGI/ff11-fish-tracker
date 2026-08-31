@@ -28,7 +28,7 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Fish, Scroll, Database, Settings, Menu, X, Check, Share2, UserPlus } from 'lucide-react';
-import type { CharacterProgress } from '@/types/fishtracker';
+import type { CharacterProgress } from '@/types/';
 import { useUserDataContext } from '@/contexts/UserDataContext';
 import { isDev } from '@/utils/env';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
@@ -37,6 +37,7 @@ import { ShareProgressButton } from '@/components/common/ShareProgressButton';
 
 export interface DisplayCharacterProgress extends CharacterProgress {
 	isShared?: boolean;
+	checkedFishIds: number[];
 }
 
 type HeaderProps = {

@@ -6,24 +6,18 @@
  * [概要]
  * - フィルター条件（アクティブタブ、修得ステータス、検索クエリ）に基づくマスターデータの抽出
  * - アクティブタブ（'trust' | 'wishlist' | 'macro'）に応じたビューの切り替え
- * - LAYOUT_TOKENS.page.mainContainer による魚チェッカーと共通の外周レイアウトパディング適用
- * - DETAIL_STYLES による準備中画面（ウィッシュリスト・マクロ管理）のスタイル標準化
- * - ナビゲーションスタック（navStack）の下位コンポーネント（TrustView）への伝達
- * 
- * [依存関係・関連ファイル]
- * - スタイル      : src/styles/tokens/layoutTokens.ts, src/styles/components/detailStyles.ts
- * - 型定義        : src/types/trusttracker.ts
- * - フック        : src/hooks/useTrackerNavigation.ts
- * - ビュー        : src/features/trusttracker/trust/TrustView.tsx
- * - フィルター    : src/features/trusttracker/FilterBar.tsx
+ * - LAYOUT_TOKENS.page.mainContainer による外周レイアウトパディング適用
+ * - ナビゲーションスタック（navStack）の TrustView への伝達
+ * - ウィッシュリスト画面（WishlistView）へのアクティブスロット連動Propsの中継
  * ============================================================================
  */
 
 import React, { useMemo } from 'react';
-import { Heart, Terminal } from 'lucide-react';
+import { Terminal } from 'lucide-react';
 import type { TrustMaster, TrustSubtype, StatusFilter } from '@/types/trusttracker';
 import type { TrackerNavStack } from '@/hooks/useTrackerNavigation';
 import { TrustView } from './trust/TrustView';
+import { WishlistView } from './wishlist/WishlistView';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
 import { DETAIL_STYLES } from '@/styles/components/detailStyles';
 
@@ -35,6 +29,8 @@ type Props = {
 	checkedTrustIds: number[];
 	onToggleCheck: (trustId: number) => void;
 	navStack?: TrackerNavStack<TrustMaster>;
+	activeWishlistIndex?: number;
+	onWishlistIndexChange?: (index: number) => void;
 };
 
 export const TrustTrackerContent: React.FC<Props> = ({
@@ -45,6 +41,8 @@ export const TrustTrackerContent: React.FC<Props> = ({
 	checkedTrustIds,
 	onToggleCheck,
 	navStack,
+	activeWishlistIndex = 0,
+	onWishlistIndexChange = () => { },
 }) => {
 	// 修得済みIDの高速参照用 Set
 	const checkedSet = useMemo(() => new Set(checkedTrustIds), [checkedTrustIds]);
@@ -88,13 +86,14 @@ export const TrustTrackerContent: React.FC<Props> = ({
 			)}
 
 			{activeType === 'wishlist' && (
-				<div className={DETAIL_STYLES.emptyDetailWrapper}>
-					<Heart className={DETAIL_STYLES.emptyDetailPulseIcon} />
-					<h3 className={DETAIL_STYLES.emptyDetailTitle}>ウィッシュリスト機能</h3>
-					<p className={DETAIL_STYLES.emptyDetailSubText}>
-						これから集めたいフェイスを目標リストとして整理できる機能を準備中です。
-					</p>
-				</div>
+				<WishlistView
+					trusts={trusts}
+					checkedTrustIds={checkedTrustIds}
+					onToggleCheck={onToggleCheck}
+					searchQuery={searchQuery}
+					activeWishlistIndex={activeWishlistIndex}
+					onWishlistIndexChange={onWishlistIndexChange}
+				/>
 			)}
 
 			{activeType === 'macro' && (
