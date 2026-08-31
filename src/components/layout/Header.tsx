@@ -1,11 +1,11 @@
 /**
  * ============================================================================
  * [FilePath] src/components/layout/Header.tsx
- * [Role]     アプリケーションの固定ヘッダー・キャラクター切り替え・チェッカー機能切り替え・設定/開発用ツール・進捗共有導線コンポーネント
+ * [Role]     アプリケーションの固定ヘッダー・キャラクター切り替え・チェッカー機能切り替え・設定/開発用ツール導線コンポーネント
  * 
  * [概要]
  * - 閲覧者自身のキャラクターおよび、URL共有経由で表示される一時的な「共有キャラ」の切替UIを提供
- * - 登録ユーザーにはハンバーガーメニュー内に「チェッカー切り替え」「キャラクター選択」「進捗共有」「環境設定」を統合
+ * - 登録ユーザーにはハンバーガーメニュー内に「チェッカー切り替え」「キャラクター選択」「環境設定」を統合
  * - 未登録ユーザーにはハンバーガーボタンを非表示にし、現在の第一階層ルートへの移動を行う「登録してはじめる」CTAリンクを表示
  * - UserDataContext から表示用キャラ一覧および選択中のキャラ情報を直接参照
  * - CSS変数による抽象化テーマ（釣魚 / フェイス）およびデザインシステムトークン（COMMON_TOKENS, LAYOUT_TOKENS）を適用
@@ -13,32 +13,23 @@
  * [依存関係・関連ファイル]
  * - Context      : src/contexts/UserDataContext.tsx
  * - ルーティング : react-router-dom (Link, useLocation)
- * - コンポーネント: src/components/common/ShareProgressButton.tsx
  * - トークン    : src/styles/tokens/commonTokens.ts, src/styles/tokens/layoutTokens.ts
  * - ユーティリティ: src/utils/env.ts
  * 
  * [編集・改修時の注意事項（AI/エンジニア共通指示）]
- * 1. 【データ安全性】 effectiveActiveCharacter 内で checkedFishIds が配列であること、および数値型 ID であることを安全に補正・保証する処理を維持すること
- * 2. 【アクセス操作】 モバイル/デスクトップ共通ドロップダウン開閉時は Escape キー押下およびメニュー外クリックによる自動クローズイベントを解除（クリーンアップ）すること
- * 3. 【共有状態視認性】 isSharedActive（共有キャラ選択中）の場合、UIのアクセントカラーやバッジで明確に判別できるようにすること
- * 4. 【スタイル統一】 個別のTailwindクラス定義を避け、デザインシステムトークン（LAYOUT_TOKENS / COMMON_TOKENS）を使用すること
+ * 1. 【アクセス操作】 モバイル/デスクトップ共通ドロップダウン開閉時は Escape キー押下およびメニュー外クリックによる自動クローズイベントを解除（クリーンアップ）すること
+ * 2. 【共有状態視認性】 isSharedActive（共有キャラ選択中）の場合、UIのアクセントカラーやバッジで明確に判別できるようにすること
+ * 3. 【スタイル統一】 個別のTailwindクラス定義を避け、デザインシステムトークン（LAYOUT_TOKENS / COMMON_TOKENS）を使用すること
  * ============================================================================
  */
 
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Fish, Scroll, Database, Settings, Menu, X, Check, Share2, UserPlus } from 'lucide-react';
-import type { CharacterProgress } from '@/types/';
 import { useUserDataContext } from '@/contexts/UserDataContext';
 import { isDev } from '@/utils/env';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
-import { ShareProgressButton } from '@/components/common/ShareProgressButton';
-
-export interface DisplayCharacterProgress extends CharacterProgress {
-	isShared?: boolean;
-	checkedFishIds: number[];
-}
 
 type HeaderProps = {
 	onOpenSettings: () => void;
@@ -61,23 +52,6 @@ export const Header: React.FC<HeaderProps> = ({
 
 	const location = useLocation();
 	const isTrustMode = location.pathname.startsWith('/trusttracker');
-
-	const effectiveActiveCharacter: DisplayCharacterProgress = useMemo(() => {
-		const rawChar = activeCharacter || {
-			id: 'guest',
-			name: 'ゲスト',
-			checkedFishIds: [],
-			createdAt: 0,
-			updatedAt: 0,
-		};
-
-		return {
-			...rawChar,
-			checkedFishIds: Array.isArray(rawChar.checkedFishIds)
-				? rawChar.checkedFishIds.map((id) => Number(id)).filter((id) => !isNaN(id))
-				: [],
-		};
-	}, [activeCharacter]);
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
@@ -103,7 +77,7 @@ export const Header: React.FC<HeaderProps> = ({
 		};
 	}, [isOpen]);
 
-	const isSharedActive = !!effectiveActiveCharacter?.isShared;
+	const isSharedActive = !!activeCharacter?.isShared;
 	const { icon } = LAYOUT_TOKENS.header;
 
 	return (
@@ -134,7 +108,7 @@ export const Header: React.FC<HeaderProps> = ({
 					<div className="flex items-center gap-3">
 						{isRegistered ? (
 							<>
-								{/* デスクトップ用キャラ選択 & 共有ボタン */}
+								{/* デスクトップ用キャラ選択 */}
 								<div className="hidden md:flex items-center gap-3">
 									<div className={LAYOUT_TOKENS.header.selectGroup}>
 										<label htmlFor="char-select" className={COMMON_TOKENS.text.label}>
@@ -142,7 +116,7 @@ export const Header: React.FC<HeaderProps> = ({
 										</label>
 										<select
 											id="char-select"
-											value={effectiveActiveCharacter?.id ?? ''}
+											value={activeCharacter?.id ?? ''}
 											onChange={(e) => setActiveCharacter(e.target.value)}
 											className={LAYOUT_TOKENS.control.select(isSharedActive)}
 										>
@@ -153,8 +127,6 @@ export const Header: React.FC<HeaderProps> = ({
 											))}
 										</select>
 									</div>
-
-									<ShareProgressButton activeCharacter={effectiveActiveCharacter} />
 								</div>
 
 								{/* ハンバーガーメニューエリア */}
@@ -218,7 +190,7 @@ export const Header: React.FC<HeaderProps> = ({
 														キャラクター切替
 													</div>
 													{displayCharacters.map((char) => {
-														const isSelected = char.id === effectiveActiveCharacter?.id;
+														const isSelected = char.id === activeCharacter?.id;
 														return (
 															<button
 																key={char.id}
@@ -248,13 +220,6 @@ export const Header: React.FC<HeaderProps> = ({
 															</button>
 														);
 													})}
-												</div>
-
-												<div className={LAYOUT_TOKENS.header.dropdownShareButtonWrapper}>
-													<ShareProgressButton
-														activeCharacter={effectiveActiveCharacter}
-														className="w-full justify-center"
-													/>
 												</div>
 											</div>
 
