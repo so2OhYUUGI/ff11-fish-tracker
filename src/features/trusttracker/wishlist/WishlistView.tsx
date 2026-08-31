@@ -4,7 +4,7 @@
  * [Role] アカウント共通ウィッシュリスト（Wishlist）閲覧・全キャラ一括修得管理ビューコンポーネント
  * 
  * [概要]
- * - 選択中スロットに登録されたフェイスの一覧描画
+ * - 選択中スロット（ID管理）に登録されたフェイスの一覧描画
  * - アカウント配下の全キャラクターの修得状況をマトリクス（テーブル）形式で横並び表示・トグル操作
  * - 全キャラ修得完了（コンプリート）行の視覚的ハイライト表示（背景強調・アイコン付与）
  * - 戦闘タイプバッジ（CombatTypeBadge）を使用（幅固定コンテナ配置でレイアウトズレを防止）
@@ -22,6 +22,8 @@ import { WISHLIST_LIMITS } from '@/types/trusttracker';
 import { useUserDataContext } from '@/contexts/UserDataContext';
 import { TrustAddModal } from './TrustAddModal';
 import { CombatTypeBadge } from '../common/TrustBadges';
+import { shareContent } from '@/utils/share';
+import { encodeSharedWishlistProgress } from '@/utils/shareEncoding';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
 import { LIST_STYLES } from '@/styles/components/listStyles';
@@ -33,18 +35,21 @@ type Props = {
 	checkedTrustIds: number[];
 	onToggleCheck: (trustId: number) => void;
 	searchQuery: string;
-	activeWishlistIndex: number;
-	onWishlistIndexChange: (index: number) => void;
+	wishlists?: Wishlist[];
+	activeWishlistId: string;
+	onWishlistIdChange: (id: string) => void;
 };
 
 export const WishlistView: React.FC<Props> = ({
 	trusts,
 	searchQuery,
-	activeWishlistIndex,
-	onWishlistIndexChange,
+	wishlists: propWishlists,
+	activeWishlistId,
+	onWishlistIdChange,
 }) => {
 	const {
 		userData,
+		wishlists: contextWishlists, // 共有リストがマージされたContext側のリスト
 		addWishlist,
 		updateWishlist,
 		deleteWishlist,
@@ -52,9 +57,10 @@ export const WishlistView: React.FC<Props> = ({
 		toggleCharacterTrustCheck,
 	} = useUserDataContext();
 
+	// Props経由のリスト一覧を優先し、無ければContextの合成済みリストを使用
 	const wishlists = useMemo<Wishlist[]>(() => {
-		return userData.wishlists || [];
-	}, [userData.wishlists]);
+		return propWishlists || contextWishlists || [];
+	}, [propWishlists, contextWishlists]);
 
 	const characters = useMemo(() => {
 		return userData.characters || [];
@@ -66,9 +72,11 @@ export const WishlistView: React.FC<Props> = ({
 	const [isCopyModalOpen, setIsCopyModalOpen] = useState(false);
 
 	const [editingName, setEditingName] = useState('');
-	const [copyTargetIndex, setCopyTargetIndex] = useState<number>(-1); // -1: 新規スロット作成
+	const [copyTargetId, setCopyTargetId] = useState<string>('NEW');
 
-	const activeWishlist = wishlists[activeWishlistIndex] || null;
+	const activeWishlist = useMemo(() => {
+		return wishlists.find((w) => w.id === activeWishlistId) || null;
+	}, [wishlists, activeWishlistId]);
 
 	const trustMap = useMemo(() => new Map(trusts.map((t) => [t.id, t])), [trusts]);
 
@@ -98,12 +106,12 @@ export const WishlistView: React.FC<Props> = ({
 			return;
 		}
 		const defaultName = `ウィッシュリスト ${wishlists.length + 1}`;
-		const success = addWishlist(defaultName);
-		if (success) {
-			onWishlistIndexChange(wishlists.length);
+		const newId = addWishlist(defaultName);
+		if (newId) {
+			onWishlistIdChange(newId);
 			toast.success(`「${defaultName}」を作成しました`);
 		}
-	}, [wishlists.length, addWishlist, onWishlistIndexChange]);
+	}, [wishlists.length, addWishlist, onWishlistIdChange]);
 
 	const handleOpenEditNameModal = useCallback(() => {
 		if (!activeWishlist) return;
@@ -126,54 +134,50 @@ export const WishlistView: React.FC<Props> = ({
 	const handleOpenCopyModal = useCallback(() => {
 		if (!activeWishlist) return;
 		if (wishlists.length < WISHLIST_LIMITS.MAX_SLOTS) {
-			setCopyTargetIndex(-1);
+			setCopyTargetId('NEW');
 		} else {
-			const availableIndex = wishlists.findIndex((_, idx) => idx !== activeWishlistIndex);
-			setCopyTargetIndex(availableIndex !== -1 ? availableIndex : 0);
+			const availableList = wishlists.find((w) => w.id !== activeWishlistId);
+			setCopyTargetId(availableList ? availableList.id : wishlists[0]?.id || 'NEW');
 		}
 		setIsCopyModalOpen(true);
-	}, [activeWishlist, wishlists, activeWishlistIndex]);
+	}, [activeWishlist, wishlists, activeWishlistId]);
 
 	const handleCopyWishlist = useCallback(() => {
 		if (!activeWishlist) return;
 
-		if (copyTargetIndex === -1) {
+		if (copyTargetId === 'NEW') {
 			if (wishlists.length >= WISHLIST_LIMITS.MAX_SLOTS) {
 				toast.error(`ウィッシュリストは最大 ${WISHLIST_LIMITS.MAX_SLOTS} つまで作成できます。`);
 				return;
 			}
 			const newListName = `${activeWishlist.name} のコピー`;
-			const success = addWishlist(newListName);
-			if (success) {
-				const newIndex = wishlists.length;
-				const newWishlistId = `wishlist_${Date.now()}`;
-				setTimeout(() => {
-					updateWishlist(newWishlistId, newListName, [...activeWishlist.trustIds]);
-				}, 0);
-
-				onWishlistIndexChange(newIndex);
+			const newId = addWishlist(newListName);
+			if (newId) {
+				updateWishlist(newId, newListName, [...activeWishlist.trustIds]);
+				onWishlistIdChange(newId);
 				setIsCopyModalOpen(false);
 				toast.success(`「${newListName}」として複製しました`);
 			}
 		} else {
-			const targetWishlist = wishlists[copyTargetIndex];
+			const targetWishlist = wishlists.find((w) => w.id === copyTargetId);
 			if (!targetWishlist) return;
 
 			updateWishlist(targetWishlist.id, targetWishlist.name, [...activeWishlist.trustIds]);
-			onWishlistIndexChange(copyTargetIndex);
+			onWishlistIdChange(copyTargetId);
 			setIsCopyModalOpen(false);
 			toast.success(`「${targetWishlist.name}」へコピーしました`);
 		}
-	}, [activeWishlist, copyTargetIndex, wishlists, addWishlist, updateWishlist, onWishlistIndexChange]);
+	}, [activeWishlist, copyTargetId, wishlists, addWishlist, updateWishlist, onWishlistIdChange]);
 
 	const handleDeleteSlot = useCallback(() => {
 		if (!activeWishlist) return;
 		if (window.confirm(`「${activeWishlist.name}」を削除してもよろしいですか？`)) {
+			const remainingList = wishlists.filter((w) => w.id !== activeWishlist.id);
 			deleteWishlist(activeWishlist.id);
-			onWishlistIndexChange(0);
+			onWishlistIdChange(remainingList[0]?.id || '');
 			toast.success('ウィッシュリストを削除しました');
 		}
-	}, [activeWishlist, deleteWishlist, onWishlistIndexChange]);
+	}, [activeWishlist, wishlists, deleteWishlist, onWishlistIdChange]);
 
 	const handleRemoveFromWishlist = useCallback(
 		(trustId: number) => {
@@ -184,13 +188,30 @@ export const WishlistView: React.FC<Props> = ({
 		[activeWishlist, toggleWishlistTrust]
 	);
 
-	const handleShare = useCallback(() => {
+	// shareContent ユーティリティを使用した共有処理
+	const handleShare = useCallback(async () => {
 		if (!activeWishlist) return;
+
+		const encodedData = encodeSharedWishlistProgress(activeWishlist);
 		const url = new URL(window.location.href);
-		url.searchParams.set('wishlist', activeWishlist.id);
-		navigator.clipboard.writeText(url.toString());
-		toast.success('共有用URLをクリップボードにコピーしました');
+
+		// クエリ文字列の整形（既存パラメータのクリアと新規追加）
+		url.search = '';
+		if (encodedData) {
+			url.searchParams.set('wishlist_share', encodedData);
+		}
+
+		await shareContent({
+			title: `FF11 フェイスウィッシュリスト - ${activeWishlist.name}`,
+			text: `【FF11 フェイスウィッシュリスト】\nリスト名: ${activeWishlist.name}\n登録数: ${activeWishlist.trustIds.length}個`,
+			url: url.toString(),
+		});
 	}, [activeWishlist]);
+
+	// 共有リスト（isShared または shared- ID）かどうか
+	const isSharedWishlist = activeWishlist
+		? (activeWishlist as { isShared?: boolean }).isShared || activeWishlist.id.startsWith('shared-')
+		: false;
 
 	return (
 		<div className={LAYOUT_TOKENS.view.flexColGap2}>
@@ -230,24 +251,28 @@ export const WishlistView: React.FC<Props> = ({
 
 						{/* アクションボタン群 */}
 						<div className={WISHLIST_STYLES.actionsGroup}>
-							<button
-								type="button"
-								onClick={() => setIsAddModalOpen(true)}
-								className={WISHLIST_STYLES.addButton}
-							>
-								<Plus className="w-4 h-4" />
-								<span>フェイス追加</span>
-							</button>
+							{!isSharedWishlist && (
+								<>
+									<button
+										type="button"
+										onClick={() => setIsAddModalOpen(true)}
+										className={WISHLIST_STYLES.addButton}
+									>
+										<Plus className="w-4 h-4" />
+										<span>フェイス追加</span>
+									</button>
 
-							<button
-								type="button"
-								onClick={handleOpenEditNameModal}
-								className={WISHLIST_STYLES.actionButton}
-								title="リスト名を変更"
-								aria-label="リスト名を変更"
-							>
-								<Edit2 className="w-5 h-5" />
-							</button>
+									<button
+										type="button"
+										onClick={handleOpenEditNameModal}
+										className={WISHLIST_STYLES.actionButton}
+										title="リスト名を変更"
+										aria-label="リスト名を変更"
+									>
+										<Edit2 className="w-5 h-5" />
+									</button>
+								</>
+							)}
 
 							<button
 								type="button"
@@ -269,15 +294,17 @@ export const WishlistView: React.FC<Props> = ({
 								<Share className={`w-5 h-5 ${COMMON_TOKENS.entity.fish.text}`} />
 							</button>
 
-							<button
-								type="button"
-								onClick={handleDeleteSlot}
-								className={WISHLIST_STYLES.deleteIconButton}
-								title="リストを削除"
-								aria-label="リストを削除"
-							>
-								<Trash2 className="w-5 h-5" />
-							</button>
+							{!isSharedWishlist && (
+								<button
+									type="button"
+									onClick={handleDeleteSlot}
+									className={WISHLIST_STYLES.deleteIconButton}
+									title="リストを削除"
+									aria-label="リストを削除"
+								>
+									<Trash2 className="w-5 h-5" />
+								</button>
+							)}
 						</div>
 					</div>
 
@@ -286,9 +313,11 @@ export const WishlistView: React.FC<Props> = ({
 						<div className={LAYOUT_TOKENS.view.emptyContainer}>
 							<AlertCircle className="w-10 h-10 text-slate-600 mb-2" />
 							<p className={LAYOUT_TOKENS.view.emptyText}>登録されているフェイスがありません</p>
-							<p className={DETAIL_STYLES.emptyDetailSubText}>
-								ヘッダーの「フェイス追加」ボタンから登録してください。
-							</p>
+							{!isSharedWishlist && (
+								<p className={DETAIL_STYLES.emptyDetailSubText}>
+									ヘッダーの「フェイス追加」ボタンから登録してください。
+								</p>
+							)}
 						</div>
 					) : (
 						<div className={WISHLIST_STYLES.tableCard}>
@@ -305,7 +334,7 @@ export const WishlistView: React.FC<Props> = ({
 													</div>
 												</th>
 											))}
-											<th className={WISHLIST_STYLES.thAction}>操作</th>
+											{!isSharedWishlist && <th className={WISHLIST_STYLES.thAction}>操作</th>}
 										</tr>
 									</thead>
 									<tbody className={WISHLIST_STYLES.tbody}>
@@ -363,18 +392,20 @@ export const WishlistView: React.FC<Props> = ({
 														);
 													})}
 
-													{/* リスト解除操作 */}
-													<td className={WISHLIST_STYLES.centerCell}>
-														<button
-															type="button"
-															onClick={() => handleRemoveFromWishlist(trust.id)}
-															className={WISHLIST_STYLES.removeButton}
-															title="リストから外す"
-															aria-label={`${trust.ja}をリストから解除`}
-														>
-															<Trash2 className="w-4 h-4" />
-														</button>
-													</td>
+													{/* リスト解除操作（共有リスト閲覧時は非表示） */}
+													{!isSharedWishlist && (
+														<td className={WISHLIST_STYLES.centerCell}>
+															<button
+																type="button"
+																onClick={() => handleRemoveFromWishlist(trust.id)}
+																className={WISHLIST_STYLES.removeButton}
+																title="リストから外す"
+																aria-label={`${trust.ja}をリストから解除`}
+															>
+																<Trash2 className="w-4 h-4" />
+															</button>
+														</td>
+													)}
 												</tr>
 											);
 										})}
@@ -387,7 +418,7 @@ export const WishlistView: React.FC<Props> = ({
 			)}
 
 			{/* リスト追加モーダル */}
-			{activeWishlist && (
+			{activeWishlist && !isSharedWishlist && (
 				<TrustAddModal
 					isOpen={isAddModalOpen}
 					onClose={() => setIsAddModalOpen(false)}
@@ -398,7 +429,7 @@ export const WishlistView: React.FC<Props> = ({
 			)}
 
 			{/* 名称編集モーダル */}
-			{isNameModalOpen && (
+			{isNameModalOpen && activeWishlist && !isSharedWishlist && (
 				<div className={WISHLIST_STYLES.modalOverlay}>
 					<div className={WISHLIST_STYLES.modalCard}>
 						<h3 className={WISHLIST_STYLES.modalTitle}>
@@ -457,23 +488,25 @@ export const WishlistView: React.FC<Props> = ({
 								<div>
 									<label className={WISHLIST_STYLES.copyFlowLabelBold}>コピー先</label>
 									<select
-										value={copyTargetIndex}
-										onChange={(e) => setCopyTargetIndex(Number(e.target.value))}
+										value={copyTargetId}
+										onChange={(e) => setCopyTargetId(e.target.value)}
 										className={`${LIST_STYLES.searchInput} w-full`}
 									>
-										{wishlists.length < WISHLIST_LIMITS.MAX_SLOTS && (
-											<option value={-1}>新規スロットとして追加</option>
+										{wishlists.filter((w) => !(w as { isShared?: boolean }).isShared).length < WISHLIST_LIMITS.MAX_SLOTS && (
+											<option value="NEW">新規スロットとして追加</option>
 										)}
-										{wishlists.map((w, idx) => (
-											<option key={w.id} value={idx}>
-												スロット {idx + 1}: {w.name} {idx === activeWishlistIndex ? '(現在のリスト)' : ''}
-											</option>
-										))}
+										{wishlists
+											.filter((w) => !(w as { isShared?: boolean }).isShared)
+											.map((w, idx) => (
+												<option key={w.id} value={w.id}>
+													スロット {idx + 1}: {w.name} {w.id === activeWishlistId ? '(現在のリスト)' : ''}
+												</option>
+											))}
 									</select>
 								</div>
 							</div>
 
-							{copyTargetIndex !== -1 && (
+							{copyTargetId !== 'NEW' && (
 								<p className={WISHLIST_STYLES.copyWarningText}>
 									※ 既存のスロットへ上書きコピーされます。対象スロットの登録済みフェイスは上書きされます。
 								</p>

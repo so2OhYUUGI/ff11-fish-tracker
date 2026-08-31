@@ -8,13 +8,13 @@
  * - アクティブタブ（'trust' | 'wishlist' | 'macro'）に応じたビューの切り替え
  * - LAYOUT_TOKENS.page.mainContainer による外周レイアウトパディング適用
  * - ナビゲーションスタック（navStack）の TrustView への伝達
- * - ウィッシュリスト画面（WishlistView）へのアクティブスロット連動Propsの中継
+ * - ウィッシュリスト画面（WishlistView）へのアクティブリストID連動Propsおよび合成済wishlistsの伝播
  * ============================================================================
  */
 
 import React, { useMemo } from 'react';
 import { Terminal } from 'lucide-react';
-import type { TrustMaster, TrustSubtype, StatusFilter } from '@/types/trusttracker';
+import type { TrustMaster, TrustSubtype, StatusFilter, Wishlist } from '@/types/trusttracker';
 import type { TrackerNavStack } from '@/hooks/useTrackerNavigation';
 import { TrustView } from './trust/TrustView';
 import { WishlistView } from './wishlist/WishlistView';
@@ -29,8 +29,9 @@ type Props = {
 	checkedTrustIds: number[];
 	onToggleCheck: (trustId: number) => void;
 	navStack?: TrackerNavStack<TrustMaster>;
-	activeWishlistIndex?: number;
-	onWishlistIndexChange?: (index: number) => void;
+	wishlists?: Wishlist[];
+	activeWishlistId?: string;
+	onWishlistIdChange?: (id: string) => void;
 };
 
 export const TrustTrackerContent: React.FC<Props> = ({
@@ -41,8 +42,9 @@ export const TrustTrackerContent: React.FC<Props> = ({
 	checkedTrustIds,
 	onToggleCheck,
 	navStack,
-	activeWishlistIndex = 0,
-	onWishlistIndexChange = () => { },
+	wishlists = [],
+	activeWishlistId = '',
+	onWishlistIdChange = () => { },
 }) => {
 	// 修得済みIDの高速参照用 Set
 	const checkedSet = useMemo(() => new Set(checkedTrustIds), [checkedTrustIds]);
@@ -91,8 +93,9 @@ export const TrustTrackerContent: React.FC<Props> = ({
 					checkedTrustIds={checkedTrustIds}
 					onToggleCheck={onToggleCheck}
 					searchQuery={searchQuery}
-					activeWishlistIndex={activeWishlistIndex}
-					onWishlistIndexChange={onWishlistIndexChange}
+					wishlists={wishlists}
+					activeWishlistId={activeWishlistId}
+					onWishlistIdChange={onWishlistIdChange}
 				/>
 			)}
 

@@ -6,7 +6,8 @@
  * [概要]
  * - UserDataContext から状態および操作関数を取得し、進捗の永続化・反映を実施
  * - タブ切り替え時の URL クエリパラメータ（location.search）保持
- * - ウィッシュリストの選択スロット（activeWishlistIndex）の管理と FilterBar / Content への伝播
+ * - ウィッシュリストの選択（activeWishlistId）の管理と FilterBar / Content への伝播
+ * - 共有ウィッシュリスト（isShared）アクセス時の自動タブ切り替えおよび初期選択処理
  * - checkedTrustIds の数値化・正規化ロジックの適用
  * - 閲覧専用状態（共有キャラ）および未登録ガード判定、Undoアクション付きトーストの実装
  * - 共通ナビゲーションフック（useTrackerNavigation）の組み込み
@@ -14,7 +15,7 @@
  * ============================================================================
  */
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -38,18 +39,13 @@ export const TrustTrackerContainer: React.FC = () => {
 	const { slug } = useParams<{ slug?: string }>();
 
 	const {
-		userData,
+		wishlists, // Context 側で共有ウィッシュリストが合成された一覧を取得
 		activeCharacter,
 		isRegistered,
 		toggleTrustCheck,
 		addWishlist,
 		setRegistrationMessage: onRequestRegistration,
 	} = useUserDataContext();
-
-	// アカウント共通のウィッシュリスト一覧
-	const wishlists = useMemo<Wishlist[]>(() => {
-		return userData.wishlists || [];
-	}, [userData.wishlists]);
 
 	// 限定（isLimited: true）を除外したフェイスの抽出と総数
 	const nonLimitedTrusts = useMemo(() => {
@@ -58,8 +54,22 @@ export const TrustTrackerContainer: React.FC = () => {
 
 	const totalTrustCount = nonLimitedTrusts.length;
 
+	// 共有ウィッシュリストを取得
+	const sharedWishlist = useMemo(() => {
+		return wishlists.find((w) => (w as { isShared?: boolean }).isShared || w.id.startsWith('shared-'));
+	}, [wishlists]);
+
+	const hasSharedWishlist = !!sharedWishlist;
+
 	// 1. サブタイプ（メインタブ）
-	const activeType = (searchParams.get('type') as TrustSubtype) || 'trust';
+	const urlType = searchParams.get('type') as TrustSubtype | null;
+	const isShareParamPresent = searchParams.has('wishlist_share');
+
+	const activeType: TrustSubtype = useMemo(() => {
+		if (urlType) return urlType;
+		if (hasSharedWishlist || isShareParamPresent) return 'wishlist';
+		return 'trust';
+	}, [urlType, hasSharedWishlist, isShareParamPresent]);
 
 	// 2. 修得ステータスフィルター
 	const statusFilter = (searchParams.get('status') as StatusFilter) || 'all';
@@ -67,8 +77,50 @@ export const TrustTrackerContainer: React.FC = () => {
 	// 3. 検索クエリ
 	const searchQuery = searchParams.get('q') || '';
 
-	// 4. ウィッシュリストの選択インデックス
-	const [activeWishlistIndex, setActiveWishlistIndex] = useState<number>(0);
+	// 4. ウィッシュリストの選択ID
+	const [activeWishlistId, setActiveWishlistId] = useState<string>(() => {
+		if (sharedWishlist) return sharedWishlist.id;
+		return wishlists && wishlists.length > 0 ? wishlists[0].id : '';
+	});
+
+	// activeWishlistId の同期・フォールバック制御
+	useEffect(() => {
+		if (!wishlists || wishlists.length === 0) return;
+
+		// activeWishlistId が未設定、または存在しないIDを指している場合のみ選択を補正
+		const exists = wishlists.some((w) => w.id === activeWishlistId);
+		if (!activeWishlistId || !exists) {
+			const targetId = sharedWishlist ? sharedWishlist.id : wishlists[0]?.id;
+			if (targetId) {
+				setActiveWishlistId(targetId);
+			}
+		}
+	}, [wishlists, activeWishlistId, sharedWishlist]);
+
+	// 共有ウィッシュリスト自動選択の重複実行・通知防止用フラグ
+	const hasSelectedSharedWishlistRef = useRef(false);
+
+	// 共有ウィッシュリストが非同期ロード等で後から追加された場合の反映・通知
+	useEffect(() => {
+		if (sharedWishlist && !hasSelectedSharedWishlistRef.current) {
+			hasSelectedSharedWishlistRef.current = true;
+			setActiveWishlistId(sharedWishlist.id);
+
+			// URLパラメータの type を wishlist に同期
+			if (searchParams.get('type') !== 'wishlist') {
+				setSearchParams(
+					(prev) => {
+						const nextParams = new URLSearchParams(prev);
+						nextParams.set('type', 'wishlist');
+						return nextParams;
+					},
+					{ replace: true }
+				);
+			}
+
+			toast.info(`共有された「${sharedWishlist.name}」を表示しています`);
+		}
+	}, [sharedWishlist, searchParams, setSearchParams]);
 
 	// 5. 共通ナビゲーションフックの呼び出し
 	const { effectiveNavStack } = useTrackerNavigation<TrustMaster>({
@@ -163,31 +215,33 @@ export const TrustTrackerContainer: React.FC = () => {
 		[setSearchParams]
 	);
 
-	// ウィッシュリスト作成ハンドラ（FilterBarおよびEmptyState共通）
+	// ウィッシュリスト作成ハンドラ
 	const handleCreateWishlist = useCallback(() => {
-		const currentCount = wishlists.length;
-		if (currentCount >= WISHLIST_LIMITS.MAX_SLOTS) {
+		const myWishlistsCount = wishlists.filter(
+			(w) => !(w as { isShared?: boolean }).isShared && !w.id.startsWith('shared-')
+		).length;
+
+		if (myWishlistsCount >= WISHLIST_LIMITS.MAX_SLOTS) {
 			toast.error(`ウィッシュリストは最大 ${WISHLIST_LIMITS.MAX_SLOTS} つまで作成できます。`);
 			return;
 		}
-		const defaultName = `ウィッシュリスト ${currentCount + 1}`;
-		const success = addWishlist(defaultName);
-		if (success) {
-			setActiveWishlistIndex(currentCount);
+		const defaultName = `ウィッシュリスト ${myWishlistsCount + 1}`;
+		const newId = addWishlist(defaultName);
+		if (newId) {
+			// 作成された ID を直接アクティブに切り替える
+			setActiveWishlistId(newId);
 			toast.success(`「${defaultName}」を作成しました`);
 		}
-	}, [wishlists.length, addWishlist]);
+	}, [wishlists, addWishlist]);
 
 	// 修得トグル処理
 	const handleToggleCheck = useCallback(
 		(trustId: number) => {
-			// 共有キャラの閲覧時はチェック操作不可
 			if (effectiveActiveCharacter.isShared) {
 				toast.info('共有キャラクターの修得状況は変更できません（閲覧専用）');
 				return;
 			}
 
-			// 未登録かつ非共有時のガード
 			if (!isRegistered || !activeCharacter) {
 				onRequestRegistration('キャラクターを登録すると修得状況を記録できます');
 				return;
@@ -232,13 +286,13 @@ export const TrustTrackerContainer: React.FC = () => {
 					onSearchQueryChange={handleSearchQueryChange}
 					totalTrustCount={totalTrustCount}
 					wishlists={wishlists}
-					activeWishlistIndex={activeWishlistIndex}
-					onWishlistIndexChange={setActiveWishlistIndex}
+					activeWishlistId={activeWishlistId}
+					onWishlistIdChange={setActiveWishlistId}
 					onCreateWishlist={handleCreateWishlist}
 				/>
 			</div>
 
-			{/* 2. メインコンテンツ領域（兄弟要素として配置） */}
+			{/* 2. メインコンテンツ領域 */}
 			<div className="flex-1 min-h-500px">
 				<TrustTrackerContent
 					activeType={activeType}
@@ -248,8 +302,9 @@ export const TrustTrackerContainer: React.FC = () => {
 					checkedTrustIds={checkedTrustIds}
 					onToggleCheck={handleToggleCheck}
 					navStack={effectiveNavStack}
-					activeWishlistIndex={activeWishlistIndex}
-					onWishlistIndexChange={setActiveWishlistIndex}
+					wishlists={wishlists}
+					activeWishlistId={activeWishlistId}
+					onWishlistIdChange={setActiveWishlistId}
 				/>
 			</div>
 		</>

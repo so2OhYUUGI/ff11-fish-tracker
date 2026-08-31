@@ -193,26 +193,31 @@ export const useUserData = () => {
 
 	// --- ウィッシュリスト（Wishlist: アカウント共通）操作 ---
 
-	const addWishlist = useCallback((name: string): boolean => {
+	const addWishlist = useCallback((name: string): string | null => {
+		if ((userData.wishlists || []).length >= WISHLIST_LIMITS.MAX_SLOTS) {
+			return null;
+		}
+
+		const newWishlist: Wishlist = {
+			id: `wishlist-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+			name: name || `ウィッシュリスト ${(userData.wishlists || []).length + 1}`,
+			trustIds: [],
+			createdAt: Date.now(),
+			updatedAt: Date.now(),
+		};
+
 		setUserData((prev) => {
 			const current = prev.wishlists || [];
 			if (current.length >= WISHLIST_LIMITS.MAX_SLOTS) return prev;
-
-			const newWishlist: Wishlist = {
-				id: `wishlist-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-				name: name || `ウィッシュリスト ${current.length + 1}`,
-				trustIds: [],
-				createdAt: Date.now(),
-				updatedAt: Date.now(),
-			};
 
 			return {
 				...prev,
 				wishlists: [...current, newWishlist],
 			};
 		});
-		return true;
-	}, []);
+
+		return newWishlist.id;
+	}, [userData.wishlists]);
 
 	const updateWishlist = useCallback((wishlistId: string, newName: string, trustIds?: number[]) => {
 		setUserData((prev) => ({

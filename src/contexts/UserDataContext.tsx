@@ -5,9 +5,9 @@
  * 
  * [概要]
  * - App.tsx や AppRouter でのバケツリレー (Prop Drilling) を解消する
- * - useUserData / useSharedProgress を集約し、閲覧権限（canViewContainer）判定も含めて管理する
+ * - useUserData / useSharedProgress / useSharedWishlist を集約し、閲覧権限（canViewContainer）判定も含めて管理する
  * - 釣魚（checkedFishIds）、フェイス修得（checkedTrustIds）、ウィッシュリスト（wishlists）のトグル状態および操作関数を提供する
- * - アカウント共通のウィッシュリストおよび各キャラクターごとの進捗トグル操作を提供
+ * - 共有ウィッシュリスト（trust_share）をテンポラリデータとして一覧に合成して提供する
  * ============================================================================
  */
 
@@ -16,9 +16,14 @@ import type { CharacterProgress, UserData, ViewMode } from '@/types/';
 import type { Wishlist } from '@/types/trusttracker';
 import { useUserData } from '@/contexts/useUserData';
 import { useSharedProgress } from '@/hooks/useSharedProgress';
+import { useSharedWishlist } from '@/hooks/useSharedWishlist';
 import { SHARED_GUEST_CHARACTER_ID } from '@/constants/character';
 
 export interface DisplayCharacterProgress extends CharacterProgress {
+	isShared?: boolean;
+}
+
+export interface DisplayWishlist extends Wishlist {
 	isShared?: boolean;
 }
 
@@ -35,7 +40,7 @@ const FALLBACK_GUEST_CHARACTER: DisplayCharacterProgress = {
 
 interface UserDataContextType {
 	userData: UserData;
-	wishlists: Wishlist[];
+	wishlists: DisplayWishlist[];
 	activeCharacter: DisplayCharacterProgress;
 	displayCharacters: DisplayCharacterProgress[];
 	activeCharacterId: string;
@@ -54,10 +59,10 @@ interface UserDataContextType {
 	// チェック操作メソッド
 	toggleFishCheck: (fishId: number) => void;
 	toggleTrustCheck: (trustId: number) => void;
-	toggleCharacterTrustCheck: (characterId: string, trustId: number) => void; // ★ 任意キャラのフェイス修得トグル
+	toggleCharacterTrustCheck: (characterId: string, trustId: number) => void;
 
 	// ウィッシュリスト操作メソッド（アカウント共通）
-	addWishlist: (name: string) => boolean;
+	addWishlist: (name: string) => string | null;
 	updateWishlist: (wishlistId: string, newName: string, trustIds?: number[]) => void;
 	deleteWishlist: (wishlistId: string) => void;
 	toggleWishlistTrust: (wishlistId: string, trustId: number) => void;
@@ -84,7 +89,7 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 		deleteCharacter,
 		toggleFishCheck,
 		toggleTrustCheck,
-		toggleCharacterTrustCheck, // ★ useUserData 側に追加した関数を受け取る
+		toggleCharacterTrustCheck,
 		addWishlist,
 		updateWishlist,
 		deleteWishlist,
@@ -94,6 +99,7 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 	} = userDataProps;
 
 	const { sharedProgress, clearSharedMode } = useSharedProgress();
+	const { sharedWishlist } = useSharedWishlist();
 
 	const [registrationMessage, setRegistrationMessage] = useState<string | null>(null);
 
@@ -114,6 +120,15 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 		};
 	}, [sharedProgress]);
 
+	// 共有ウィッシュリストをテンポラリデータとして生成
+	const activeSharedWishlist = useMemo<DisplayWishlist | null>(() => {
+		if (!sharedWishlist) return null;
+		return {
+			...sharedWishlist,
+			isShared: true,
+		};
+	}, [sharedWishlist]);
+
 	// 表示用キャラクター一覧
 	const displayCharacters = useMemo<DisplayCharacterProgress[]>(() => {
 		if (activeSharedCharacter) {
@@ -125,7 +140,7 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 		return userData.characters;
 	}, [userData.characters, activeSharedCharacter]);
 
-	// 共有URLアクセス時の初回自動選択とURL削除（クリーンアップ）
+	// 共有URL（魚/フェイス進捗）アクセス時の初回自動選択とURL削除
 	useEffect(() => {
 		if (sharedProgress && !hasAutoSelectedSharedRef.current) {
 			setLocalActiveCharacter(SHARED_GUEST_CHARACTER_ID);
@@ -150,13 +165,19 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 		return displayCharacters[0];
 	}, [userData.activeCharacterId, displayCharacters, localActiveCharacter]);
 
-	// アカウント共通のウィッシュリスト一覧を取得
-	const wishlists = useMemo<Wishlist[]>(() => {
-		return userData.wishlists || [];
-	}, [userData.wishlists]);
+	// アカウント共通のウィッシュリスト一覧を取得（共有ウィッシュリストがあれば安全に合成）
+	const wishlists = useMemo<DisplayWishlist[]>(() => {
+		const localLists: DisplayWishlist[] = userData.wishlists || [];
+		if (activeSharedWishlist) {
+			// ローカルリストと sharedId の重複を防止して合成
+			const filteredLocal = localLists.filter((w) => w.id !== activeSharedWishlist.id);
+			return [...filteredLocal, activeSharedWishlist];
+		}
+		return localLists;
+	}, [userData.wishlists, activeSharedWishlist]);
 
-	// 一覧ページの閲覧権限判定（未登録ユーザが共有リンク以外でアクセスした場合はランディングへ遷移させる）
-	const canViewContainer = isRegistered || !!activeSharedCharacter;
+	// 一覧ページの閲覧権限判定（未登録ユーザでも共有キャラクターまたは共有ウィッシュリストがあれば閲覧可能）
+	const canViewContainer = isRegistered || !!activeSharedCharacter || !!activeSharedWishlist;
 
 	const handleCreateCharacterAndClose = (name: string) => {
 		const newChar = addCharacter(name);

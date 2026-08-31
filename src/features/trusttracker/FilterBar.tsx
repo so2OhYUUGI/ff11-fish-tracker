@@ -6,7 +6,7 @@
  * [概要]
  * - メイン表示タブ（フェイス一覧 / ウィッシュリスト / マクロ管理）の切替
  * - フェイス表示時の修得ステータス絞り込み（すべて / 未修得 / 修得済み）および進捗率描画
- * - ウィッシュリスト表示時のスロット切替（「すべて/未修得/修得済み」と同位置の filterContainer 内に配置）
+ * - ウィッシュリスト表示時のスロット切替（文字列IDによる動的レンダリング）
  * - ウィッシュリスト表示時は進捗バーおよび検索インプットを非表示
  * 
  * [依存関係・関連ファイル]
@@ -16,7 +16,7 @@
  */
 
 import React, { useCallback, useMemo, useEffect, useRef } from 'react';
-import { Search, Users, Heart, Terminal, X, Plus } from 'lucide-react';
+import { Search, Users, Heart, Terminal, X, Plus, Share2 } from 'lucide-react';
 import type { CharacterProgress } from '@/types/';
 import type { Wishlist } from '@/types/trusttracker';
 import { FILTER_BAR_STYLES } from '@/styles/features/FishTrackerStyle';
@@ -33,10 +33,10 @@ type FilterBarProps = {
 	searchQuery: string;
 	onSearchQueryChange: (query: string) => void;
 	totalTrustCount: number;
-	// ウィッシュリスト用プロップス
+	// ウィッシュリスト用プロップス（IDベースに改修）
 	wishlists?: Wishlist[];
-	activeWishlistIndex?: number;
-	onWishlistIndexChange?: (index: number) => void;
+	activeWishlistId?: string;
+	onWishlistIdChange?: (id: string) => void;
 	onCreateWishlist?: () => void;
 };
 
@@ -71,8 +71,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 	searchQuery,
 	onSearchQueryChange,
 	wishlists = [],
-	activeWishlistIndex = 0,
-	onWishlistIndexChange,
+	activeWishlistId = '',
+	onWishlistIdChange,
 	onCreateWishlist,
 }) => {
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -127,6 +127,9 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 		}
 		onSearchQueryChange('');
 	}, [onSearchQueryChange]);
+
+	// 通常リスト枠の上限数（3つ）
+	const MAX_MY_WISHLISTS = 3;
 
 	return (
 		<div className={FILTER_BAR_STYLES.container}>
@@ -190,34 +193,43 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 						</div>
 					)}
 
-					{/* ウィッシュリスト時のスロット切替（「すべて/未修得/修得済み」と同じ配置エリア） */}
+					{/* ウィッシュリスト時のスロット切替（登録済みリスト＋共有リスト＋作成ボタンを動的描画） */}
 					{activeType === 'wishlist' && (
 						<div className={FILTER_BAR_STYLES.filterContainer}>
-							{[0, 1, 2].map((index) => {
-								const list = wishlists[index];
-								const isActive = activeWishlistIndex === index;
-
-								if (list) {
-									return (
-										<button
-											key={list.id}
-											type="button"
-											onClick={() => onWishlistIndexChange?.(index)}
-											className={`${FILTER_BAR_STYLES.statusButtonBase} ${isActive
-													? FILTER_BAR_STYLES.statusAllActive
-													: FILTER_BAR_STYLES.statusInactive
-												}`}
-											aria-label={`ウィッシュリスト: ${list.name}`}
-										>
-											<span>{list.name}</span>
-											<span className="text-[10px] opacity-75 ml-1">({list.trustIds.length})</span>
-										</button>
-									);
-								}
+							{wishlists.map((list) => {
+								const isActive = activeWishlistId === list.id;
+								const isShared =
+									(list as unknown as Record<string, unknown>).isShared ||
+									list.id.startsWith('shared-');
 
 								return (
 									<button
-										key={`empty-slot-${index}`}
+										key={list.id}
+										type="button"
+										onClick={() => onWishlistIdChange?.(list.id)}
+										className={`${FILTER_BAR_STYLES.statusButtonBase} ${isActive
+												? FILTER_BAR_STYLES.statusAllActive
+												: FILTER_BAR_STYLES.statusInactive
+											}`}
+										aria-label={`ウィッシュリスト: ${list.name}`}
+									>
+										{isShared && <Share2 className="w-3 h-3 mr-1 inline opacity-80" />}
+										<span>{list.name}</span>
+										<span className="text-[10px] opacity-75 ml-1">
+											({list.trustIds?.length ?? 0})
+										</span>
+									</button>
+								);
+							})}
+
+							{/* マイリストが上限（3つ）未満の場合に「作成」ボタンを表示 */}
+							{wishlists.filter(
+								(l) =>
+									!(l as unknown as Record<string, unknown>).isShared &&
+									!l.id.startsWith('shared-')
+							).length < MAX_MY_WISHLISTS &&
+								onCreateWishlist && (
+									<button
 										type="button"
 										onClick={onCreateWishlist}
 										className={`${FILTER_BAR_STYLES.statusButtonBase} ${FILTER_BAR_STYLES.statusInactive} border-dashed`}
@@ -226,8 +238,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 										<Plus className="w-3 h-3 mr-1 inline" />
 										<span>作成</span>
 									</button>
-								);
-							})}
+								)}
 						</div>
 					)}
 				</div>
