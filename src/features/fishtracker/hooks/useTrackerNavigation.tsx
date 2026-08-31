@@ -23,7 +23,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useIsMobileLayout } from '@/hooks/useIsMobileLayout';
 import { toSlug } from '@/utils/slug';
 import type { MainTab, CharacterProgress, FishMaster, ZoneMaster, BaitMaster } from '@/types/';
-import type { DisplayCharacterProgress } from '@/components/layout/Header';
+
+export interface DisplayCharacterProgress extends CharacterProgress {
+  isShared?: boolean;
+  checkedFishIds: number[];
+}
 
 export type NavItem =
   | { type: 'fish'; item: FishMaster }

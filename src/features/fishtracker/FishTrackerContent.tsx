@@ -25,7 +25,7 @@ import { BaitView } from './bait/BaitView';
 import { AreaView } from './area/AreaView';
 import type { MainTab, ViewMode, CharacterProgress } from '@/types/';
 import type { StatusFilter } from '@/features/fishtracker/FilterBar';
-import type { DisplayCharacterProgress } from '@/components/layout/Header';
+import type { DisplayCharacterProgress } from './hooks/useTrackerNavigation';
 import type { NavItem } from '@/features/fishtracker/hooks/useTrackerNavigation';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
 

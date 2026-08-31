@@ -29,7 +29,7 @@ import { useParams, useNavigate, useSearchParams, useLocation } from 'react-rout
 import { toast } from 'sonner';
 
 import { FISHES } from '@/data/';
-import type { DisplayCharacterProgress } from '@/components/layout/Header';
+import type { DisplayCharacterProgress } from './hooks/useTrackerNavigation';
 import { useUserDataContext } from '@/contexts/UserDataContext';
 import { SeoHead } from '@/components/common/SeoHead';
 import { FilterBar, type StatusFilter } from '@/features/fishtracker/FilterBar';
