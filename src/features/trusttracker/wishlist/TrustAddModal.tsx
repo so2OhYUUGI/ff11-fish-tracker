@@ -5,6 +5,7 @@
  * 
  * [概要]
  * - マスターデータからのキーワード検索およびウィッシュリストへの登録・解除トグル操作
+ * - 限定フェイス（isLimited === true）の選択リストからの除外処理
  * - モーダル全体にテーマ変数（--theme-*）を適用し、テーマ切替に対応
  * ============================================================================
  */
@@ -41,10 +42,13 @@ export const TrustAddModal: React.FC<Props> = ({
 	);
 
 	const filteredTrusts = useMemo(() => {
-		const query = searchQuery.trim().toLowerCase();
-		if (!query) return trusts;
+		// 限定フラグ（isLimited）が true のフェイスを一覧から除外
+		const nonLimitedTrusts = trusts.filter((t) => !t.isLimited);
 
-		return trusts.filter(
+		const query = searchQuery.trim().toLowerCase();
+		if (!query) return nonLimitedTrusts;
+
+		return nonLimitedTrusts.filter(
 			(t) =>
 				t.ja.toLowerCase().includes(query) ||
 				t.en.toLowerCase().includes(query) ||
