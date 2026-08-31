@@ -7,14 +7,15 @@
  * - 選択中スロット（ID管理）に登録されたフェイスの一覧描画
  * - アカウント配下の全キャラクターの修得状況をマトリクス（テーブル）形式で横並び表示・トグル操作
  * - 全キャラ修得完了（コンプリート）行の視覚的ハイライト表示（背景強調・アイコン付与）
- * - 戦闘タイプバッジ（CombatTypeBadge）を使用（幅固定コンテナ配置でレイアウトズレを防止）
+ * - 戦闘タイプバッジ（CombatTypeBadge）を使用
  * - 大量キャラ・フェイス登録時でも俯瞰性と可読性を維持するレスポンシブテーブルレイアウト
- * - ウィッシュリストの複製（コピー）機能
+ * - ウィッシュリストの複製（コピー）機能（未登録ユーザー時はロック）
+ * - 共有機能は未登録ユーザーでも利用可能
  * ============================================================================
  */
 
 import React, { useState, useMemo, useCallback } from 'react';
-import { Plus, Edit2, Trash2, Share, Heart, AlertCircle, CheckSquare, Square, User, CheckCircle2, Copy, ArrowRight } from 'lucide-react';
+import { Plus, Edit2, Trash2, Share, Heart, AlertCircle, CheckSquare, Square, User, CheckCircle2, Copy, ArrowRight, Lock } from 'lucide-react';
 import { toast } from 'sonner';
 
 import type { TrustMaster, Wishlist } from '@/types/trusttracker';
@@ -48,8 +49,9 @@ export const WishlistView: React.FC<Props> = ({
 	onWishlistIdChange,
 }) => {
 	const {
+		isRegistered,
 		userData,
-		wishlists: contextWishlists, // 共有リストがマージされたContext側のリスト
+		wishlists: contextWishlists,
 		addWishlist,
 		updateWishlist,
 		deleteWishlist,
@@ -57,7 +59,6 @@ export const WishlistView: React.FC<Props> = ({
 		toggleCharacterTrustCheck,
 	} = useUserDataContext();
 
-	// Props経由のリスト一覧を優先し、無ければContextの合成済みリストを使用
 	const wishlists = useMemo<Wishlist[]>(() => {
 		return propWishlists || contextWishlists || [];
 	}, [propWishlists, contextWishlists]);
@@ -101,6 +102,7 @@ export const WishlistView: React.FC<Props> = ({
 	}, [activeWishlist, trustMap, searchQuery]);
 
 	const handleCreateSlot = useCallback(() => {
+		if (!isRegistered) return;
 		if (wishlists.length >= WISHLIST_LIMITS.MAX_SLOTS) {
 			toast.error(`ウィッシュリストは最大 ${WISHLIST_LIMITS.MAX_SLOTS} つまで作成できます。`);
 			return;
@@ -111,16 +113,16 @@ export const WishlistView: React.FC<Props> = ({
 			onWishlistIdChange(newId);
 			toast.success(`「${defaultName}」を作成しました`);
 		}
-	}, [wishlists.length, addWishlist, onWishlistIdChange]);
+	}, [isRegistered, wishlists.length, addWishlist, onWishlistIdChange]);
 
 	const handleOpenEditNameModal = useCallback(() => {
-		if (!activeWishlist) return;
+		if (!activeWishlist || !isRegistered) return;
 		setEditingName(activeWishlist.name);
 		setIsNameModalOpen(true);
-	}, [activeWishlist]);
+	}, [activeWishlist, isRegistered]);
 
 	const handleSaveName = useCallback(() => {
-		if (!activeWishlist) return;
+		if (!activeWishlist || !isRegistered) return;
 		const trimmed = editingName.trim();
 		if (!trimmed) {
 			toast.error('リスト名を入力してください');
@@ -129,10 +131,10 @@ export const WishlistView: React.FC<Props> = ({
 		updateWishlist(activeWishlist.id, trimmed);
 		setIsNameModalOpen(false);
 		toast.success('リスト名を変更しました');
-	}, [activeWishlist, editingName, updateWishlist]);
+	}, [activeWishlist, editingName, isRegistered, updateWishlist]);
 
 	const handleOpenCopyModal = useCallback(() => {
-		if (!activeWishlist) return;
+		if (!activeWishlist || !isRegistered) return;
 		if (wishlists.length < WISHLIST_LIMITS.MAX_SLOTS) {
 			setCopyTargetId('NEW');
 		} else {
@@ -140,10 +142,10 @@ export const WishlistView: React.FC<Props> = ({
 			setCopyTargetId(availableList ? availableList.id : wishlists[0]?.id || 'NEW');
 		}
 		setIsCopyModalOpen(true);
-	}, [activeWishlist, wishlists, activeWishlistId]);
+	}, [activeWishlist, isRegistered, wishlists, activeWishlistId]);
 
 	const handleCopyWishlist = useCallback(() => {
-		if (!activeWishlist) return;
+		if (!activeWishlist || !isRegistered) return;
 
 		if (copyTargetId === 'NEW') {
 			if (wishlists.length >= WISHLIST_LIMITS.MAX_SLOTS) {
@@ -167,35 +169,33 @@ export const WishlistView: React.FC<Props> = ({
 			setIsCopyModalOpen(false);
 			toast.success(`「${targetWishlist.name}」へコピーしました`);
 		}
-	}, [activeWishlist, copyTargetId, wishlists, addWishlist, updateWishlist, onWishlistIdChange]);
+	}, [activeWishlist, isRegistered, copyTargetId, wishlists, addWishlist, updateWishlist, onWishlistIdChange]);
 
 	const handleDeleteSlot = useCallback(() => {
-		if (!activeWishlist) return;
+		if (!activeWishlist || !isRegistered) return;
 		if (window.confirm(`「${activeWishlist.name}」を削除してもよろしいですか？`)) {
 			const remainingList = wishlists.filter((w) => w.id !== activeWishlist.id);
 			deleteWishlist(activeWishlist.id);
 			onWishlistIdChange(remainingList[0]?.id || '');
 			toast.success('ウィッシュリストを削除しました');
 		}
-	}, [activeWishlist, wishlists, deleteWishlist, onWishlistIdChange]);
+	}, [activeWishlist, isRegistered, wishlists, deleteWishlist, onWishlistIdChange]);
 
 	const handleRemoveFromWishlist = useCallback(
 		(trustId: number) => {
-			if (!activeWishlist) return;
+			if (!activeWishlist || !isRegistered) return;
 			toggleWishlistTrust(activeWishlist.id, trustId);
 			toast.info('リストから解除しました');
 		},
-		[activeWishlist, toggleWishlistTrust]
+		[activeWishlist, isRegistered, toggleWishlistTrust]
 	);
 
-	// shareContent ユーティリティを使用した共有処理
 	const handleShare = useCallback(async () => {
 		if (!activeWishlist) return;
 
 		const encodedData = encodeSharedWishlistProgress(activeWishlist);
 		const url = new URL(window.location.href);
 
-		// クエリ文字列の整形（既存パラメータのクリアと新規追加）
 		url.search = '';
 		if (encodedData) {
 			url.searchParams.set('wishlist_share', encodedData);
@@ -208,7 +208,6 @@ export const WishlistView: React.FC<Props> = ({
 		});
 	}, [activeWishlist]);
 
-	// 共有リスト（isShared または shared- ID）かどうか
 	const isSharedWishlist = activeWishlist
 		? (activeWishlist as { isShared?: boolean }).isShared || activeWishlist.id.startsWith('shared-')
 		: false;
@@ -225,9 +224,12 @@ export const WishlistView: React.FC<Props> = ({
 					<button
 						type="button"
 						onClick={handleCreateSlot}
-						className={WISHLIST_STYLES.createBtn}
+						disabled={!isRegistered}
+						title={!isRegistered ? 'キャラクター登録を行うと作成できます' : undefined}
+						className={`${WISHLIST_STYLES.createBtn} ${!isRegistered ? 'opacity-50 cursor-not-allowed' : ''
+							}`}
 					>
-						<Plus className="w-4 h-4" />
+						{!isRegistered ? <Lock className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
 						ウィッシュリストを作成
 					</button>
 				</div>
@@ -256,34 +258,43 @@ export const WishlistView: React.FC<Props> = ({
 									<button
 										type="button"
 										onClick={() => setIsAddModalOpen(true)}
-										className={WISHLIST_STYLES.addButton}
+										disabled={!isRegistered}
+										title={!isRegistered ? 'キャラクター登録を行うと追加できます' : undefined}
+										className={`${WISHLIST_STYLES.addButton} ${!isRegistered ? 'opacity-50 cursor-not-allowed' : ''
+											}`}
 									>
-										<Plus className="w-4 h-4" />
+										{!isRegistered ? <Lock className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
 										<span>フェイス追加</span>
 									</button>
 
 									<button
 										type="button"
 										onClick={handleOpenEditNameModal}
-										className={WISHLIST_STYLES.actionButton}
-										title="リスト名を変更"
+										disabled={!isRegistered}
+										className={`${WISHLIST_STYLES.actionButton} ${!isRegistered ? 'opacity-50 cursor-not-allowed' : ''
+											}`}
+										title={!isRegistered ? 'キャラクター登録を行うと編集できます' : 'リスト名を変更'}
 										aria-label="リスト名を変更"
 									>
-										<Edit2 className="w-5 h-5" />
+										{!isRegistered ? <Lock className="w-5 h-5" /> : <Edit2 className="w-5 h-5" />}
 									</button>
 								</>
 							)}
 
+							{/* コピーボタン（未登録時はロック） */}
 							<button
 								type="button"
 								onClick={handleOpenCopyModal}
-								className={WISHLIST_STYLES.actionButton}
-								title="ウィッシュリストをコピー"
+								disabled={!isRegistered}
+								className={`${WISHLIST_STYLES.actionButton} ${!isRegistered ? 'opacity-50 cursor-not-allowed' : ''
+									}`}
+								title={!isRegistered ? 'キャラクター登録を行うとコピーできます' : 'ウィッシュリストをコピー'}
 								aria-label="ウィッシュリストをコピー"
 							>
-								<Copy className="w-5 h-5" />
+								{!isRegistered ? <Lock className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
 							</button>
 
+							{/* 共有ボタン（未登録ユーザーでも利用可能） */}
 							<button
 								type="button"
 								onClick={handleShare}
@@ -298,22 +309,24 @@ export const WishlistView: React.FC<Props> = ({
 								<button
 									type="button"
 									onClick={handleDeleteSlot}
-									className={WISHLIST_STYLES.deleteIconButton}
-									title="リストを削除"
+									disabled={!isRegistered}
+									className={`${WISHLIST_STYLES.deleteIconButton} ${!isRegistered ? 'opacity-50 cursor-not-allowed' : ''
+										}`}
+									title={!isRegistered ? 'キャラクター登録を行うと削除できます' : 'リストを削除'}
 									aria-label="リストを削除"
 								>
-									<Trash2 className="w-5 h-5" />
+									{!isRegistered ? <Lock className="w-5 h-5" /> : <Trash2 className="w-5 h-5" />}
 								</button>
 							)}
 						</div>
 					</div>
 
-					{/* フェイスリスト表示部分 (マトリクス・テーブルUI) */}
+					{/* フェイスリスト表示部分 */}
 					{wishlistTrusts.length === 0 ? (
 						<div className={LAYOUT_TOKENS.view.emptyContainer}>
 							<AlertCircle className="w-10 h-10 text-slate-600 mb-2" />
 							<p className={LAYOUT_TOKENS.view.emptyText}>登録されているフェイスがありません</p>
-							{!isSharedWishlist && (
+							{!isSharedWishlist && isRegistered && (
 								<p className={DETAIL_STYLES.emptyDetailSubText}>
 									ヘッダーの「フェイス追加」ボタンから登録してください。
 								</p>
@@ -378,9 +391,11 @@ export const WishlistView: React.FC<Props> = ({
 															<td key={char.id} className={WISHLIST_STYLES.centerCell}>
 																<button
 																	type="button"
-																	onClick={() => toggleCharacterTrustCheck(char.id, trust.id)}
-																	className={isChecked ? WISHLIST_STYLES.checkButtonChecked : WISHLIST_STYLES.checkButtonUnchecked}
-																	title={`${char.name}: ${isChecked ? '未修得にする' : '修得済みにする'}`}
+																	onClick={isRegistered ? () => toggleCharacterTrustCheck(char.id, trust.id) : undefined}
+																	disabled={!isRegistered}
+																	className={`${isChecked ? WISHLIST_STYLES.checkButtonChecked : WISHLIST_STYLES.checkButtonUnchecked} ${!isRegistered ? 'opacity-50 cursor-not-allowed' : ''
+																		}`}
+																	title={!isRegistered ? 'キャラクター登録を行うと操作できます' : `${char.name}: ${isChecked ? '未修得にする' : '修得済みにする'}`}
 																>
 																	{isChecked ? (
 																		<CheckSquare className="w-5 h-5" />
@@ -392,17 +407,19 @@ export const WishlistView: React.FC<Props> = ({
 														);
 													})}
 
-													{/* リスト解除操作（共有リスト閲覧時は非表示） */}
+													{/* リスト解除操作（未登録時・共有リスト閲覧時は非表示/非活性） */}
 													{!isSharedWishlist && (
 														<td className={WISHLIST_STYLES.centerCell}>
 															<button
 																type="button"
-																onClick={() => handleRemoveFromWishlist(trust.id)}
-																className={WISHLIST_STYLES.removeButton}
-																title="リストから外す"
+																onClick={isRegistered ? () => handleRemoveFromWishlist(trust.id) : undefined}
+																disabled={!isRegistered}
+																className={`${WISHLIST_STYLES.removeButton} ${!isRegistered ? 'opacity-50 cursor-not-allowed' : ''
+																	}`}
+																title={!isRegistered ? 'キャラクター登録を行うと操作できます' : 'リストから外す'}
 																aria-label={`${trust.ja}をリストから解除`}
 															>
-																<Trash2 className="w-4 h-4" />
+																{!isRegistered ? <Lock className="w-4 h-4" /> : <Trash2 className="w-4 h-4" />}
 															</button>
 														</td>
 													)}
@@ -418,7 +435,7 @@ export const WishlistView: React.FC<Props> = ({
 			)}
 
 			{/* リスト追加モーダル */}
-			{activeWishlist && !isSharedWishlist && (
+			{activeWishlist && !isSharedWishlist && isRegistered && (
 				<TrustAddModal
 					isOpen={isAddModalOpen}
 					onClose={() => setIsAddModalOpen(false)}
@@ -429,7 +446,7 @@ export const WishlistView: React.FC<Props> = ({
 			)}
 
 			{/* 名称編集モーダル */}
-			{isNameModalOpen && activeWishlist && !isSharedWishlist && (
+			{isNameModalOpen && activeWishlist && !isSharedWishlist && isRegistered && (
 				<div className={WISHLIST_STYLES.modalOverlay}>
 					<div className={WISHLIST_STYLES.modalCard}>
 						<h3 className={WISHLIST_STYLES.modalTitle}>
@@ -466,7 +483,7 @@ export const WishlistView: React.FC<Props> = ({
 			)}
 
 			{/* リストコピーモーダル */}
-			{isCopyModalOpen && activeWishlist && (
+			{isCopyModalOpen && activeWishlist && isRegistered && (
 				<div className={WISHLIST_STYLES.modalOverlay}>
 					<div className={WISHLIST_STYLES.modalCard}>
 						<h3 className={WISHLIST_STYLES.modalTitle}>

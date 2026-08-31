@@ -4,19 +4,22 @@
  * [Role] フェイスチェッカー用のメインナビゲーション・絞り込み・検索・進捗表示コンポーネント
  * 
  * [概要]
- * - メイン表示タブ（フェイス一覧 / ウィッシュリスト / マクロ管理）の切替
+ * - メイン表示タブの切替（未登録ユーザーは「フェイス一覧」「マクロ管理」のみロック、ウィッシュリストは利用可）
  * - フェイス表示時の修得ステータス絞り込み（すべて / 未修得 / 修得済み）および進捗率描画
  * - ウィッシュリスト表示時のスロット切替（文字列IDによる動的レンダリング）
+ * - ウィッシュリスト内の新規作成ボタンは未登録ユーザー時にロック
  * - ウィッシュリスト表示時は進捗バーおよび検索インプットを非表示
  * 
  * [依存関係・関連ファイル]
+ * - Context  : src/contexts/UserDataContext.tsx
  * - 型定義  : src/types/fishtracker.ts (CharacterProgress参照), src/types/trusttracker.ts (Wishlist参照)
  * - スタイル: src/styles/features/FishTrackerStyle.ts (FILTER_BAR_STYLES共通利用)
  * ============================================================================
  */
 
 import React, { useCallback, useMemo, useEffect, useRef } from 'react';
-import { Search, Users, Heart, Terminal, X, Plus, Share2 } from 'lucide-react';
+import { Search, Users, Heart, Terminal, X, Plus, Share2, Lock } from 'lucide-react';
+import { useUserDataContext } from '@/contexts/UserDataContext';
 import type { CharacterProgress } from '@/types/';
 import type { Wishlist } from '@/types/trusttracker';
 import { FILTER_BAR_STYLES } from '@/styles/features/FishTrackerStyle';
@@ -33,7 +36,6 @@ type FilterBarProps = {
 	searchQuery: string;
 	onSearchQueryChange: (query: string) => void;
 	totalTrustCount: number;
-	// ウィッシュリスト用プロップス（IDベースに改修）
 	wishlists?: Wishlist[];
 	activeWishlistId?: string;
 	onWishlistIdChange?: (id: string) => void;
@@ -75,6 +77,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 	onWishlistIdChange,
 	onCreateWishlist,
 }) => {
+	const { isRegistered } = useUserDataContext();
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
@@ -128,7 +131,6 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 		onSearchQueryChange('');
 	}, [onSearchQueryChange]);
 
-	// 通常リスト枠の上限数（3つ）
 	const MAX_MY_WISHLISTS = 3;
 
 	return (
@@ -141,16 +143,29 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 							const { label, icon: Icon } = SUBTYPE_CONFIG[subKey];
 							const isActive = activeType === subKey;
 
+							// 未登録時に「フェイス一覧」「マクロ管理」タブをロック
+							const isLockedTab = !isRegistered && subKey !== 'wishlist';
+
 							return (
 								<button
 									key={subKey}
 									type="button"
-									onClick={() => onTypeChange(subKey)}
-									className={`${FILTER_BAR_STYLES.tabButtonBase} ${isActive ? FILTER_BAR_STYLES.tabActive : FILTER_BAR_STYLES.tabInactive
+									onClick={!isLockedTab ? () => onTypeChange(subKey) : undefined}
+									disabled={isLockedTab}
+									title={isLockedTab ? 'キャラクター登録を行うと利用できます' : undefined}
+									className={`${FILTER_BAR_STYLES.tabButtonBase} ${isLockedTab
+											? 'opacity-50 cursor-not-allowed text-slate-500'
+											: isActive
+												? FILTER_BAR_STYLES.tabActive
+												: FILTER_BAR_STYLES.tabInactive
 										}`}
 									aria-label={`${label}タブ`}
 								>
-									<Icon className={FILTER_BAR_STYLES.tabIcon} />
+									{isLockedTab ? (
+										<Lock className={FILTER_BAR_STYLES.tabIcon} />
+									) : (
+										<Icon className={FILTER_BAR_STYLES.tabIcon} />
+									)}
 									<span>{label}</span>
 								</button>
 							);
@@ -193,7 +208,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 						</div>
 					)}
 
-					{/* ウィッシュリスト時のスロット切替（登録済みリスト＋共有リスト＋作成ボタンを動的描画） */}
+					{/* ウィッシュリスト時のスロット切替 */}
 					{activeType === 'wishlist' && (
 						<div className={FILTER_BAR_STYLES.filterContainer}>
 							{wishlists.map((list) => {
@@ -222,7 +237,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 								);
 							})}
 
-							{/* マイリストが上限（3つ）未満の場合に「作成」ボタンを表示 */}
+							{/* マイリスト上限未満の場合に作成ボタン表示（未登録時は作成のみロック） */}
 							{wishlists.filter(
 								(l) =>
 									!(l as unknown as Record<string, unknown>).isShared &&
@@ -231,11 +246,20 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 								onCreateWishlist && (
 									<button
 										type="button"
-										onClick={onCreateWishlist}
-										className={`${FILTER_BAR_STYLES.statusButtonBase} ${FILTER_BAR_STYLES.statusInactive} border-dashed`}
+										onClick={isRegistered ? onCreateWishlist : undefined}
+										disabled={!isRegistered}
+										title={!isRegistered ? 'キャラクター登録を行うと作成できます' : undefined}
+										className={`${FILTER_BAR_STYLES.statusButtonBase} ${!isRegistered
+												? 'opacity-50 cursor-not-allowed bg-slate-800/50 text-slate-500 border-slate-700'
+												: `${FILTER_BAR_STYLES.statusInactive} border-dashed`
+											}`}
 										aria-label="新規ウィッシュリスト作成"
 									>
-										<Plus className="w-3 h-3 mr-1 inline" />
+										{!isRegistered ? (
+											<Lock className="w-3 h-3 mr-1 inline" />
+										) : (
+											<Plus className="w-3 h-3 mr-1 inline" />
+										)}
 										<span>作成</span>
 									</button>
 								)}
@@ -243,7 +267,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 					)}
 				</div>
 
-				{/* 中央: 達成率表示領域（フェイス一覧表示時のみ） */}
+				{/* 中央: 達成率表示領域 */}
 				{activeType === 'trust' ? (
 					<div className={FILTER_BAR_STYLES.progressGroup}>
 						<div className={FILTER_BAR_STYLES.progressTextContainer}>
@@ -263,7 +287,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 					<div className={FILTER_BAR_STYLES.progressSpacer} />
 				)}
 
-				{/* 右側: 検索インプット（フェイス一覧・マクロ管理時のみ描画） */}
+				{/* 右側: 検索インプット */}
 				{activeType !== 'wishlist' && (
 					<div className={FILTER_BAR_STYLES.rightGroup}>
 						<div className={FILTER_BAR_STYLES.searchContainer}>
