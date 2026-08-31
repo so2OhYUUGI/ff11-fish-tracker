@@ -37,8 +37,8 @@
 | `src/features/trusttracker/TrustTrackerContent.tsx` | フェイスチェッカーメイン領域の表示切替（フェイスリスト・詳細表示、目標リスト・編成管理ビュー） |
 | `src/features/trusttracker/trust/TrustListItem.tsx` | リスト表示用個別フェイス行コンポーネント（詳細パネル内での `variant="inline"` 対応、高密度構成、アクセシビリティ対応） |
 | `src/features/trusttracker/trust/TrustDetailView.tsx` | フェイス詳細情報表示コンポーネント（取得方法の改行エスケープ対応、関連目標/編成バッジ表示） |
-| `src/features/trusttracker/target/TargetListManager.tsx` | 目標リスト（最大3つ）の作成・編集・フェイス追加/削除および共有機能 |
-| `src/features/trusttracker/party/MyPartyManager.tsx` | マイフェイス編成の作成・メンバー（最大5名＋自分）構成・共有機能 |
+| `src/features/trusttracker/target/TrustView.tsx` | 目標リスト（最大3つ）の作成・編集・フェイス追加/削除および共有機能 |
+| `src/features/trusttracker/macro/MyMacroView.tsx` | マイフェイス編成の作成・メンバー（最大5名＋自分）構成・共有機能 |
 | `src/data/trusts.ts` | フェイスマスターデータ定義 (`trusts`, `trustCategories`, `trustRoles`) |
 
 ---
@@ -58,30 +58,6 @@
 
 ### **データ宣言**
 - `src/types/`以下にあるファイルの宣言に従うこと。
-
-### **フェイスマスターデータ**
-- `trustId`: 数値ID (`number`)
-- `name`: 日本語名 (`string`)
-- `enName`: 英語名 (`string`)
-- `role`: ロールID (`TrustRoleType`: `'tank'` \| `'attacker'` \| `'healer'` \| `'support'` 等)
-- `category`: 入手カテゴリID (`TrustCategoryType`: `'mission'` \| `'campaign'` \| `'rosea'` 等)
-- `obtainMethod`: 取得方法の詳細説明文 (`string`)
-
-### **目標リストデータ (`TargetList`)**
-- `id`: 一意の識別子 (`string`)
-- `name`: 目標リスト名 (`string`)
-- `trustIds`: 登録されているフェイスID配列 (`number[]`)
-
-### **マイフェイス編成データ (`MyParty`)**
-- `id`: 一意の識別子 (`string`)
-- `name`: 編成名 (`string`)
-- `memberTrustIds`: 登録メンバーのフェイスID配列 (`number[]`、最大5件)
-
-### **ユーザー進捗 (`CharacterProgress`)**
-- LocalStorage キー: `ff11_trust_tracker_user_data`
-- `checkedTrustIds`: 取得済みのフェイスID（`number[]`）を保持
-- `targetLists`: 目標リスト配列 (`TargetList[]`、最大3件)
-- `myParties`: マイフェイス編成配列 (`MyParty[]`)
 
 ### **共有関連データ**
 - 共有URLクエリパラメータ: `trust_share`（Base64 URL Safe等でエンコードされた文字列）
