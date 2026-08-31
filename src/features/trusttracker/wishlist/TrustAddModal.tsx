@@ -72,11 +72,11 @@ export const TrustAddModal: React.FC<Props> = ({
 
 	return (
 		<div className={LAYOUT_TOKENS.modalShare.overlay}>
-			{/* モーダル外枠：テーマ背景変数 (--theme-container-bg) を指定 */}
-			<div className="w-full max-w-2xl max-h-[85vh] my-auto bg-[var(--theme-container-bg)] border border-[var(--theme-container-border)] rounded-2xl shadow-2xl overflow-hidden flex flex-col relative">
+			{/* モーダル外枠：テーマ背景変数を指定 */}
+			<div className="w-full max-w-2xl max-h-[85vh] my-auto bg-(--theme-container-bg) border border-(--theme-container-border) rounded-2xl shadow-2xl overflow-hidden flex flex-col relative">
 
-				{/* ヘッダー：インナー背景変数 (--theme-inner-bg) を指定 */}
-				<div className="flex items-center justify-between px-6 py-4 border-b border-[var(--theme-container-border)] bg-[var(--theme-inner-bg)] shrink-0">
+				{/* ヘッダー：インナー背景変数を指定 */}
+				<div className="flex items-center justify-between px-6 py-4 border-b border-(--theme-container-border) bg-(--theme-inner-bg) shrink-0">
 					<div className={LAYOUT_TOKENS.header.titleWrapper}>
 						<Users className={`${LAYOUT_TOKENS.header.icon.md} ${LAYOUT_TOKENS.header.icon.active()}`} />
 						<h3 className={LAYOUT_TOKENS.header.titleText}>
@@ -94,7 +94,7 @@ export const TrustAddModal: React.FC<Props> = ({
 				</div>
 
 				{/* 検索入力欄エリア */}
-				<div className="px-6 py-3 border-b border-[var(--theme-container-border)] bg-[var(--theme-inner-bg)]">
+				<div className="px-6 py-3 border-b border-(--theme-container-border) bg-(--theme-inner-bg)">
 					<div className="relative">
 						<Search className={`absolute left-3 top-1/2 -translate-y-1/2 ${LAYOUT_TOKENS.header.icon.md} ${LAYOUT_TOKENS.header.icon.muted}`} />
 						<input
@@ -169,8 +169,8 @@ export const TrustAddModal: React.FC<Props> = ({
 					)}
 				</div>
 
-				{/* フッター：インナー背景変数 (--theme-inner-bg) を指定 */}
-				<div className="px-6 py-3 bg-[var(--theme-inner-bg)] border-t border-[var(--theme-container-border)] flex justify-end shrink-0">
+				{/* フッター：インナー背景変数を指定 */}
+				<div className="px-6 py-3 bg-(--theme-inner-bg) border-t border-(--theme-container-border) flex justify-end shrink-0">
 					<button
 						type="button"
 						onClick={onClose}

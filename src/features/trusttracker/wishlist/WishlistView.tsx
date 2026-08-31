@@ -27,41 +27,41 @@ import { LIST_STYLES } from '@/styles/components/listStyles';
 import { DETAIL_STYLES } from '@/styles/components/detailStyles';
 
 const WISHLIST_STYLES = {
-	headerCard: 'bg-[var(--theme-container-bg)] border border-[var(--theme-container-border)] rounded-xl p-4 md:p-5 mb-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-md backdrop-blur-sm',
+	headerCard: 'bg-(--theme-container-bg) border border-(--theme-container-border) rounded-xl p-4 md:p-5 mb-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-md backdrop-blur-sm',
 	headerTitleGroup: 'flex items-center gap-3',
 	headerTitle: 'text-lg md:text-xl font-bold text-slate-100 flex items-center gap-2.5',
 	headerSubTitle: 'text-xs font-normal text-slate-400',
-	headerIconWrapper: 'p-2 rounded-lg bg-[var(--theme-inner-bg)] border border-[var(--theme-container-border)] text-[var(--theme-text-accent)]',
+	headerIconWrapper: 'p-2 rounded-lg bg-(--theme-inner-bg) border border-(--theme-container-border) text-(--theme-text-accent)',
 
 	// テキスト付き追加ボタン
-	addButton: 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-[var(--theme-text-accent)] bg-[var(--theme-inner-bg)] hover:bg-[var(--theme-active-item-bg)] border border-[var(--theme-accent-border)] transition-all shadow-sm',
+	addButton: 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-(--theme-text-accent) bg-(--theme-inner-bg) hover:bg-(--theme-active-item-bg) border border-(--theme-accent-border) transition-all shadow-sm',
 
 	// 汎用アクションボタン
-	actionButton: 'p-2 rounded-lg text-slate-300 hover:text-slate-100 bg-[var(--theme-inner-bg)] hover:bg-[var(--theme-active-item-bg)] border border-[var(--theme-container-border)] transition-colors',
+	actionButton: 'p-2 rounded-lg text-slate-300 hover:text-slate-100 bg-(--theme-inner-bg) hover:bg-(--theme-active-item-bg) border border-(--theme-container-border) transition-colors',
 	deleteIconButton: 'p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 hover:border-rose-500/50 transition-colors',
 
 	// テーブルコンテナ・レイアウト
-	tableCard: 'bg-[var(--theme-container-bg)] border border-[var(--theme-container-border)] rounded-xl overflow-hidden shadow-md backdrop-blur-sm',
+	tableCard: 'bg-(--theme-container-bg) border border-(--theme-container-border) rounded-xl overflow-hidden shadow-md backdrop-blur-sm',
 	table: 'w-full text-left border-collapse min-w-[600px]',
-	thead: 'border-b border-[var(--theme-container-border)] bg-[var(--theme-inner-bg)] text-xs font-semibold text-slate-400',
+	thead: 'border-b border-(--theme-container-border) bg-(--theme-inner-bg) text-xs font-semibold text-slate-400',
 	thTrust: 'p-3 min-w-[260px]',
 	thChar: 'p-3 text-center w-28 min-w-[112px]',
 	thAction: 'p-3 text-center w-12 min-w-[48px]',
-	tbody: 'divide-y divide-[var(--theme-container-border)]/60 text-sm',
+	tbody: 'divide-y divide-(--theme-container-border)/60 text-sm',
 
 	// 行ステート
-	trNormal: 'hover:bg-[var(--theme-active-item-bg)] transition-colors',
+	trNormal: 'hover:bg-(--theme-active-item-bg) transition-colors',
 	trCompleted: 'bg-emerald-950/20 hover:bg-emerald-950/30 transition-colors',
 
 	// トグルボタン
 	checkButtonChecked: 'inline-flex items-center justify-center p-1.5 rounded-lg border transition-all bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20',
-	checkButtonUnchecked: 'inline-flex items-center justify-center p-1.5 rounded-lg border transition-all bg-[var(--theme-inner-bg)] text-slate-500 border-[var(--theme-container-border)] hover:text-slate-300 hover:bg-[var(--theme-active-item-bg)]',
+	checkButtonUnchecked: 'inline-flex items-center justify-center p-1.5 rounded-lg border transition-all bg-(--theme-inner-bg) text-slate-500 border-(--theme-container-border) hover:text-slate-300 hover:bg-(--theme-active-item-bg)',
 
 	// モーダル関連
 	modalOverlay: 'fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm',
-	modalCard: 'bg-[var(--theme-container-bg)] border border-[var(--theme-container-border)] rounded-xl p-5 w-full max-w-md shadow-2xl',
+	modalCard: 'bg-(--theme-container-bg) border border-(--theme-container-border) rounded-xl p-5 w-full max-w-md shadow-2xl',
 	modalTitle: 'text-base font-bold text-slate-100 mb-3 flex items-center gap-2',
-	modalCancelBtn: 'px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:bg-[var(--theme-active-item-bg)] transition-colors',
+	modalCancelBtn: 'px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:bg-(--theme-active-item-bg) transition-colors',
 	modalSaveBtn: 'inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 border border-emerald-500/50 shadow-sm transition-colors',
 	createBtn: 'inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-500 border border-emerald-500/50 shadow-sm mt-3 transition-colors',
 } as const;
@@ -306,7 +306,7 @@ export const WishlistView: React.FC<Props> = ({
 													<td className="p-3">
 														<div className="flex items-center gap-2.5">
 															{/* バッジの表示幅を w-[5.25rem] (84px) に固定 */}
-															<div className="w-[5.25rem] shrink-0 flex justify-center">
+															<div className="w-5.25rem shrink-0 flex justify-center">
 																<CombatTypeBadge combatType={trust.combatType} />
 															</div>
 															<div className="min-w-0 flex-1">
@@ -388,7 +388,7 @@ export const WishlistView: React.FC<Props> = ({
 				<div className={WISHLIST_STYLES.modalOverlay}>
 					<div className={WISHLIST_STYLES.modalCard}>
 						<h3 className={WISHLIST_STYLES.modalTitle}>
-							<Edit2 className="w-4 h-4 text-[var(--theme-text-accent)]" />
+							<Edit2 className="w-4 h-4 text-(--theme-text-accent)" />
 							ウィッシュリスト名の変更
 						</h3>
 						<input

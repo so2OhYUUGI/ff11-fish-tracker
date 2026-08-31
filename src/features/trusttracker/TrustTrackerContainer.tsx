@@ -239,7 +239,7 @@ export const TrustTrackerContainer: React.FC = () => {
 			</div>
 
 			{/* 2. メインコンテンツ領域（兄弟要素として配置） */}
-			<div className="flex-1 min-h-[500px]">
+			<div className="flex-1 min-h-500px">
 				<TrustTrackerContent
 					activeType={activeType}
 					statusFilter={statusFilter}
