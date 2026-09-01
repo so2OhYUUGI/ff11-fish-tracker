@@ -376,7 +376,7 @@ export const TRUSTS: TrustMaster[] = [
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-ナジ",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
     }
@@ -1780,7 +1780,7 @@ export const TRUSTS: TrustMaster[] = [
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-クピピ",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
     }
