@@ -61,7 +61,6 @@ export default {
 				await ensureInitialized(env, request.url);
 
 				const shareParam = url.searchParams.get('share');
-				const trackerType = url.searchParams.get('type') || (isTrustTracker ? 'trust' : 'fish');
 
 				let characterName = 'Unknown Angler';
 				let checkedFishIds: number[] = [];
