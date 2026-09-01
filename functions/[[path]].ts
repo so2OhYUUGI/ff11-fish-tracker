@@ -4,8 +4,8 @@
  * [Role]     OGP画像生成（SVG->PNG変換）およびSNSクローラー向けHTMLメタタグの動的書き換え（SSR/エッジ処理）
  * 
  * [概要]
- * - /api/ogp: 共有パラメータから釣獲進捗データを生成し、svg2png-wasm を用いて PNG 画像としてレスポンス返却
- * - クローラー対応: URLの share パラメータを解釈し、HTMLRewriter で OGP メタタグを動的置換
+ * - /api/ogp: 共有パラメータから釣獲/フェイス進捗データを生成し、svg2png-wasm を用いて PNG 画像としてレスポンス返却
+ * - クローラー対応: URLのパスおよび share パラメータを解釈し、HTMLRewriter で OGP メタタグを動的置換
  * 
  * [依存関係・関連ファイル]
  * - 型定義   : functions/env.d.ts (*.wasm のモジュール型定義)
@@ -15,6 +15,7 @@
  * 1. 【WASMの二重初期化防止】 initialized フラグを用い、Worker プロセス生存期間中に initialize() を1度のみ実行すること。
  * 2. 【レスポンス形式】 SNS (X/Twitter等) 互換性のため /api/ogp の Content-Type は必ず image/png を維持すること。
  * 3. 【描画サイズ】 OGP 標準規格に合わせ 1200 x 630 ピクセルを指定すること。
+ * 4. 【既存互換性】 魚チェッカー（デフォルトおよび /fishtracker）の挙動・出力結果を変更しないこと。
  * ============================================================================
  **/
 /// <reference types="@cloudflare/workers-types" />
@@ -51,6 +52,7 @@ async function ensureInitialized(env: Env, requestUrl: string) {
 export default {
 	async fetch(request: Request, env: Env): Promise<Response> {
 		const url = new URL(request.url);
+		const isTrustTracker = url.pathname.startsWith('/trusttracker');
 
 		// 1. OGP画像生成エンドポイントの処理 (/api/ogp)
 		if (url.pathname.startsWith('/api/ogp')) {
@@ -59,6 +61,8 @@ export default {
 				await ensureInitialized(env, request.url);
 
 				const shareParam = url.searchParams.get('share');
+				const trackerType = url.searchParams.get('type') || (isTrustTracker ? 'trust' : 'fish');
+
 				let characterName = 'Unknown Angler';
 				let checkedFishIds: number[] = [];
 
@@ -72,6 +76,7 @@ export default {
 
 				const cardData = buildShareCardData(characterName, checkedFishIds);
 
+				// 魚チェッカー用 SVG カード描画
 				const svgContent = `
           <svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
             <!-- 背景と外枠 -->
@@ -142,10 +147,28 @@ export default {
 		const response = await env.ASSETS.fetch(request);
 		const shareParam = url.searchParams.get('share');
 
+		// 進捗共有パラメータが無い場合：パス別にデフォルト OGP を差し替え
 		if (!shareParam) {
+			if (isTrustTracker) {
+				const trustTitle = 'FF11 フェイス取得チェッカー';
+				const trustDescription = 'FF11のフェイス取得状況・修得クエスト情報を一覧で管理・チェックできるツールです。';
+				const trustImageUrl = `${url.origin}/ogp-trust-default.png`;
+
+				return new HTMLRewriter()
+					.on('title', { element(e) { e.setInnerContent(trustTitle); } })
+					.on('meta[name="description"]', { element(e) { e.setAttribute('content', trustDescription); } })
+					.on('meta[property="og:title"]', { element(e) { e.setAttribute('content', trustTitle); } })
+					.on('meta[property="og:description"]', { element(e) { e.setAttribute('content', trustDescription); } })
+					.on('meta[property="og:image"]', { element(e) { e.setAttribute('content', trustImageUrl); } })
+					.on('meta[name="twitter:title"]', { element(e) { e.setAttribute('content', trustTitle); } })
+					.on('meta[name="twitter:description"]', { element(e) { e.setAttribute('content', trustDescription); } })
+					.on('meta[name="twitter:image"]', { element(e) { e.setAttribute('content', trustImageUrl); } })
+					.transform(response);
+			}
 			return response;
 		}
 
+		// 進捗共有パラメータがある場合
 		const decoded = decodeSharedProgress(shareParam);
 		if (!decoded) {
 			return response;
