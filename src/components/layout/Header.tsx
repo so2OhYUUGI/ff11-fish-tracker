@@ -5,7 +5,8 @@
  * 
  * [概要]
  * - 閲覧者自身のキャラクターおよび、URL共有経由で表示される一時的な「共有キャラ」の切替UIを提供
- * - 登録ユーザーにはハンバーガーメニュー内に「チェッカー切り替え」「キャラクター選択」「環境設定」を統合
+ * - モバイルサイズでもキャラセレクタを常時表示し、操作領域を1タップに最適化（"キャラ:"ラベルは小画面で非表示）
+ * - 登録ユーザーにはハンバーガーメニュー内に「チェッカー切り替え」「環境設定」を統合
  * - 未登録ユーザーにはハンバーガーボタンを非表示にし、現在のページのURL情報を保持して各テーマ配下の登録ページへ移動する「登録してはじめる」CTAリンクを表示
  * - URLパスのセグメント解析により、新トラッカー追加時もコード変更なしで動的テーマ・動的ルーティングに対応
  * - UserDataContext から表示用キャラ一覧および選択中のキャラ情報を直接参照
@@ -27,7 +28,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Fish, Scroll, Database, Settings, Menu, X, Check, Share2, UserPlus } from 'lucide-react';
+import { Fish, Scroll, Database, Settings, Menu, X, Check, UserPlus } from 'lucide-react';
 import { useUserDataContext } from '@/contexts/UserDataContext';
 import { isDev } from '@/utils/env';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
@@ -92,10 +93,10 @@ export const Header: React.FC<HeaderProps> = ({
 	return (
 		<header className={LAYOUT_TOKENS.header.container}>
 			<div className={LAYOUT_TOKENS.header.inner}>
-				<div className="flex items-center justify-between gap-4">
+				<div className="flex items-center justify-between gap-2 sm:gap-4">
 
 					{/* タイトル（左寄せ領域を確保） */}
-					<div className={`${LAYOUT_TOKENS.header.titleWrapper} flex-1`}>
+					<div className={`${LAYOUT_TOKENS.header.titleWrapper} flex-1 min-w-0`}>
 						<div className={LAYOUT_TOKENS.header.iconBg}>
 							{isTrustMode ? (
 								<Scroll className={`${icon.lg} ${COMMON_TOKENS.color.textMain}`} />
@@ -103,31 +104,31 @@ export const Header: React.FC<HeaderProps> = ({
 								<Fish className={`${icon.lg} ${COMMON_TOKENS.color.textMain}`} />
 							)}
 						</div>
-						<div>
-							<h1 className={LAYOUT_TOKENS.header.titleText}>
+						<div className="min-w-0">
+							<h1 className={`${LAYOUT_TOKENS.header.titleText} truncate`}>
 								{isTrustMode ? 'FF11 フェイスチェッカー' : 'FF11 釣魚チェッカー'}
 							</h1>
-							<p className={COMMON_TOKENS.text.subText}>
+							<p className={`${COMMON_TOKENS.text.subText} truncate hidden xs:block`}>
 								{isTrustMode ? 'FF11 Trust Tracker' : 'FF11 Fishing Tracker'}
 							</p>
 						</div>
 					</div>
 
 					{/* 右側アクションエリア */}
-					<div className="flex items-center gap-3">
+					<div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
 						{isRegistered ? (
 							<>
-								{/* デスクトップ用キャラ選択 */}
-								<div className="hidden md:flex items-center gap-3">
+								{/* 常時表示キャラセレクタ（モバイル時はラベル非表示・幅自動制御） */}
+								<div className="flex items-center gap-1.5 sm:gap-3">
 									<div className={LAYOUT_TOKENS.header.selectGroup}>
-										<label htmlFor="char-select" className={COMMON_TOKENS.text.label}>
+										<label htmlFor="char-select" className={`${COMMON_TOKENS.text.label} hidden sm:inline`}>
 											キャラ:
 										</label>
 										<select
 											id="char-select"
 											value={activeCharacter?.id ?? ''}
 											onChange={(e) => setActiveCharacter(e.target.value)}
-											className={LAYOUT_TOKENS.control.select(isSharedActive)}
+											className={`${LAYOUT_TOKENS.control.select(isSharedActive)} max-w-[110px] xs:max-w-[140px] sm:max-w-none truncate`}
 										>
 											{displayCharacters.map((char) => (
 												<option key={char.id} value={char.id} className={LAYOUT_TOKENS.header.selectOption}>
@@ -192,47 +193,7 @@ export const Header: React.FC<HeaderProps> = ({
 												</Link>
 											</div>
 
-											{/* 2. キャラクター選択（モバイル用） */}
-											<div className="md:hidden border-t border-slate-800 pt-2">
-												<div className={LAYOUT_TOKENS.header.dropdownSection}>
-													<div className={LAYOUT_TOKENS.header.sectionHeader}>
-														キャラクター切替
-													</div>
-													{displayCharacters.map((char) => {
-														const isSelected = char.id === activeCharacter?.id;
-														return (
-															<button
-																key={char.id}
-																type="button"
-																onClick={() => {
-																	setActiveCharacter(char.id);
-																	setIsOpen(false);
-																}}
-																className={
-																	isSelected
-																		? LAYOUT_TOKENS.header.dropdownItemActive(char.isShared)
-																		: LAYOUT_TOKENS.header.dropdownItemInactive
-																}
-															>
-																<div className="flex items-center gap-2 truncate">
-																	{char.isShared && <Share2 className={`${icon.sm} ${icon.shared}`} />}
-																	<span className="truncate">{char.name}</span>
-																	{char.isShared && (
-																		<span className={LAYOUT_TOKENS.header.sharedBadge}>
-																			共有
-																		</span>
-																	)}
-																</div>
-																{isSelected && (
-																	<Check className={`${icon.sm} ${icon.active(char.isShared)}`} />
-																)}
-															</button>
-														);
-													})}
-												</div>
-											</div>
-
-											{/* 3. システム・設定 */}
+											{/* 2. システム・設定 */}
 											<div className={LAYOUT_TOKENS.header.dropdownDividerSection}>
 												<div className={LAYOUT_TOKENS.header.sectionHeader}>
 													システム
