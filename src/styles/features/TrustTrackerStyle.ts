@@ -22,27 +22,27 @@ export const TRUST_COMBAT_TYPE_CONFIG: Record<
 > = {
 	盾: {
 		label: '盾',
-		style: 'bg-blue-950/80 text-blue-300 border-blue-800/80',
+		style: 'bg-blue-950/80 text-blue-300 border-blue-800/60',
 	},
-	前衛: {
-		label: '前衛',
-		style: 'bg-red-950/80 text-red-300 border-red-800/80',
+	近接物理: {
+		label: '近接物理',
+		style: 'bg-amber-950/80 text-amber-300 border-amber-800/60',
 	},
-	後衛: {
-		label: '後衛',
-		style: 'bg-amber-950/80 text-amber-300 border-amber-800/80',
+	遠隔物理: {
+		label: '遠隔物理',
+		style: 'bg-amber-950/80 text-amber-300 border-amber-800/60',
+	},
+	魔法攻撃: {
+		label: '魔法攻撃',
+		style: 'bg-purple-950/80 text-purple-300 border-purple-800/60',
 	},
 	回復: {
 		label: '回復',
-		style: 'bg-emerald-950/80 text-emerald-300 border-emerald-800/80',
+		style: 'bg-emerald-950/80 text-emerald-300 border-emerald-800/60',
 	},
 	支援: {
 		label: '支援',
-		style: 'bg-purple-950/80 text-purple-300 border-purple-800/80',
-	},
-	置物: {
-		label: '置物',
-		style: 'bg-slate-800/80 text-slate-400 border-slate-700/80',
+		style: 'bg-emerald-950/80 text-emerald-300 border-emerald-800/60',
 	},
 };
 
