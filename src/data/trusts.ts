@@ -525,7 +525,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-ミルドリオン",
       "desc_jp": "『ミルドリオン』の力が宿った巻物。\nミルドリオン・Ｃ・ギルメーの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Hume named Mildaurion. Chanting the enigmatic script summons her alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "プロマシア"
   },
   {
     "id": 915,
@@ -543,7 +544,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "プロマシア"
   },
   {
     "id": 979,
