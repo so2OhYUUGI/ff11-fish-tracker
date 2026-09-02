@@ -36,7 +36,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "サンドリア"
   },
   {
     "id": 951,
@@ -54,7 +55,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-ラーアル",
       "desc_jp": "『ラーアル』の力が宿った巻物。\nラーアル・Ｓ・ルブラールの力を\n借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of an Elvaan named Rahal. Chanting the enigmatic script summons his alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "サンドリア"
   },
   {
     "id": 918,
@@ -90,7 +92,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-メネジン",
       "desc_jp": "『メネジン』の力が宿った巻物。\nメネジンの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of an automaton named Mnejing. Chanting the enigmatic script summons his alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "アトルガン"
   },
   {
     "id": 960,
@@ -108,7 +111,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-ルガジーン",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "アトルガン"
   },
   {
     "id": 910,
@@ -126,7 +130,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-ヴァレンラール",
       "desc_jp": "『ヴァレンラール』の力が宿った巻物。\nヴァレンラール・Ｒ・ダヴィルの力を\n借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of an Elvaan named Valaineral R Davilles. Chanting the enigmatic script summons his alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "アルタナ"
   },
   {
     "id": 969,
@@ -144,7 +149,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-アムチュチュ",
       "desc_jp": "『アムチュチュ』の力が宿った巻物。\nアムチュチュの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Tarutaru named Amchuchu. Chanting the enigmatic script summons her alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "アドゥリン"
   },
   {
     "id": 984,
@@ -162,7 +168,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-オーグスト",
       "desc_jp": "『オーグスト』の力が宿った巻物。\nオーグスト・P・アドゥリンの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Hume named August. Chanting the enigmatic script summons his alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "アドゥリン"
   },
   {
     "id": 993,
@@ -234,7 +241,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-ハルヴァー",
       "desc_jp": "『ハルヴァー』の力が宿った巻物。\nハルヴァー・Ｍ・ボーレルの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of an Elvaan named Halver. Chanting the enigmatic script summons his alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "サンドリア"
   },
   {
     "id": 954,
@@ -271,7 +279,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "バストゥーク"
   },
   {
     "id": 900,
@@ -289,7 +298,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "バストゥーク"
   },
   {
     "id": 1005,
@@ -326,7 +336,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-ザイド",
       "desc_jp": "『ザイド』の力が宿った巻物。\nザイドの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Galka named Zeid. Chanting the enigmatic script summons his alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "バストゥーク"
   },
   {
     "id": 1010,
@@ -344,7 +355,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-ザイドII",
       "desc_jp": "『ザイド』の力が宿った巻物。\n強い絆で結ばれたザイドの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Galka named Zeid. Chanting the enigmatic script summons his alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "バストゥーク"
   },
   {
     "id": 937,
@@ -362,7 +374,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-シド",
       "desc_jp": "『シド』の力が宿った巻物。\nシドの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Hume named Cid. Chanting the enigmatic script summons his alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "バストゥーク"
   },
   {
     "id": 897,
@@ -380,7 +393,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "バストゥーク"
   },
   {
     "id": 903,
@@ -398,7 +412,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "バストゥーク"
   },
   {
     "id": 901,
@@ -416,7 +431,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "ウィンダス"
   },
   {
     "id": 930,
@@ -471,7 +487,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "ジュノ"
   },
   {
     "id": 1006,
@@ -544,7 +561,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-セルテウス",
       "desc_jp": "『セルテウス』の力が宿った巻物。\nセルテウスの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Kuluu named Selh'teus. Chanting the enigmatic script summons his alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "プロマシア"
   },
   {
     "id": 908,
@@ -562,7 +580,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-テンゼン",
       "desc_jp": "『テンゼン』の力が宿った巻物。\nテンゼンの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Hume named Tenzen. Chanting the enigmatic script summons his alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "プロマシア"
   },
   {
     "id": 913,
@@ -580,7 +599,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "プロマシア"
   },
   {
     "id": 1011,
@@ -598,7 +618,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-プリッシュII",
       "desc_jp": "『プリッシュ』の力が宿った巻物。\n強い絆で結ばれたプリッシュの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of an Elvaan named Prishe. Chanting the enigmatic script summons her alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "プロマシア"
   },
   {
     "id": 982,
@@ -616,7 +637,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-アブクーバ",
       "desc_jp": "『アブクーバ』の力が宿った巻物。\nアブクーバの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Hume named Abquhbah. Chanting the enigmatic script summons his alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "アトルガン"
   },
   {
     "id": 924,
@@ -634,7 +656,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "アトルガン"
   },
   {
     "id": 912,
@@ -652,7 +675,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-ナジャ",
       "desc_jp": "『ナジャ』の力が宿った巻物。\nナジャ・サラヒムの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Mithra named Naja Salaheem. Chanting the enigmatic script summons her alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "アトルガン"
   },
   {
     "id": 1008,
@@ -689,7 +713,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "アトルガン"
   },
   {
     "id": 1012,
@@ -707,7 +732,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-ナシュメラII",
       "desc_jp": "『ナシュメラ』の力が宿った巻物。\n強い絆で結ばれたナシュメラの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Hume named Nashmeira. Chanting the enigmatic script summons her alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "アトルガン"
   },
   {
     "id": 928,
@@ -725,7 +751,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-ルザフ",
       "desc_jp": "『ルザフ』の力が宿った巻物。\nルザフの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of an Elvaan named Luzaf. Chanting the enigmatic script summons his alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "アトルガン"
   },
   {
     "id": 973,
@@ -851,7 +878,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-マヤコフ",
       "desc_jp": "『マヤコフ』の力が宿った巻物。\nマヤコフ・アレクセイの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Hume named Mayakov Alexei. Chanting the enigmatic script summons his alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "アルタナ"
   },
   {
     "id": 920,
@@ -887,7 +915,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-リリゼット",
       "desc_jp": "『リリゼット』の力が宿った巻物。\nリリゼットの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Hume-Elvaan named Lilisette. Chanting the enigmatic script summons her alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "アルタナ"
   },
   {
     "id": 1013,
@@ -905,7 +934,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-リリゼットII",
       "desc_jp": "『リリゼット』の力が宿った巻物。\n強い絆で結ばれたリリゼットの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Hume-Elvaan named Lilisette. Chanting the enigmatic script summons her alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "アルタナ"
   },
   {
     "id": 943,
@@ -923,7 +953,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-ルー",
       "desc_jp": "『ルー』の力が宿った巻物。\nルー・マカラッカの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Mithra named Lhu Mhakaracca. Chanting the enigmatic script summons her alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "アルタナ"
   },
   {
     "id": 922,
@@ -941,7 +972,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-レコ・ハボッカ",
       "desc_jp": "『レコ』の力が宿った巻物。\nレコ・ハボッカの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Mithra named Lehko Habhoka. Chanting the enigmatic script summons his alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "アルタナ"
   },
   {
     "id": 949,
@@ -977,7 +1009,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-イングリッドII",
       "desc_jp": "『イングリッド』の力が宿った巻物。\n強い絆で結ばれたイングリッドの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Hume named Ingrid. Chanting the enigmatic script summons her alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "アドゥリン"
   },
   {
     "id": 991,
@@ -995,7 +1028,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-ダラクァルン",
       "desc_jp": "『ダラクァルン』の力が宿った巻物。\nダラクァルンの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a tiger named Darrcuiln. Chanting the enigmatic script summons his alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "アドゥリン"
   },
   {
     "id": 963,
@@ -1031,7 +1065,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-テオドール",
       "desc_jp": "『テオドール』の力が宿った巻物。\nテオドールの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Hume named Teodor. Chanting the enigmatic script summons his alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "アドゥリン"
   },
   {
     "id": 983,
@@ -1049,7 +1084,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-バラモア",
       "desc_jp": "『バラモア』の力が宿った巻物。\nバラモアの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Xol named Balamor. Chanting the enigmatic script summons his alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "アドゥリン"
   },
   {
     "id": 957,
@@ -1086,7 +1122,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-モリマー",
       "desc_jp": "『モリマー』の力が宿った巻物。\nモリマー・シュネデックの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Hume named Morimar. Chanting the enigmatic script summons his alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "アドゥリン"
   },
   {
     "id": 964,
@@ -1428,7 +1465,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-風蛇将",
       "desc_jp": "『風蛇将』の力が宿った巻物。\n風蛇将ナジュリス・パレビアの力を\n借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Hume named Najelith Vareviya. Chanting the enigmatic script summons her alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "アトルガン"
   },
   {
     "id": 941,
@@ -1482,7 +1520,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "ウィンダス"
   },
   {
     "id": 896,
@@ -1500,7 +1539,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "ウィンダス"
   },
   {
     "id": 961,
@@ -1536,7 +1576,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-アヴゼン",
       "desc_jp": "『アヴゼン』の力が宿った巻物。\nアヴゼンの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of an automaton named Ovjang. Chanting the enigmatic script summons her alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "アトルガン"
   },
   {
     "id": 919,
@@ -1554,7 +1595,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "アトルガン"
   },
   {
     "id": 968,
@@ -1644,7 +1686,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "アドゥリン"
   },
   {
     "id": 985,
@@ -1662,7 +1705,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-ロスレーシャ",
       "desc_jp": "『ロスレーシャ』の力が宿った巻物。\nロスレーシャの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Leafkin named Rosulatia. Chanting the enigmatic script summons her alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "アドゥリン"
   },
   {
     "id": 934,
@@ -1790,7 +1834,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "ウィンダス"
   },
   {
     "id": 980,
@@ -1827,7 +1872,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-モンブロー",
       "desc_jp": "『モンブロー』の力が宿った巻物。\nモンブローの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of an Elvaan named Monberaux. Chanting the enigmatic script summons his alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "ジュノ"
   },
   {
     "id": 916,
@@ -1863,7 +1909,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-水蛇将",
       "desc_jp": "『水蛇将』の力が宿った巻物。\n水蛇将ミリ・アリアポーの力を\n借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Mithra named Mihli Aliapoh. Chanting the enigmatic script summons her alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "アトルガン"
   },
   {
     "id": 936,
@@ -1899,7 +1946,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-フェリアス",
       "desc_jp": "『フェリアス』の力が宿った巻物。\nフェリアスコフィンの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Galka named Ferreous Coffin. Chanting the enigmatic script summons his alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "アルタナ"
   },
   {
     "id": 998,
@@ -1917,7 +1965,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "アドゥリン"
   },
   {
     "id": 989,
@@ -1935,7 +1984,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-キング",
       "desc_jp": "『キング』の力が宿った巻物。\nキング・オブ・ハーツの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Cardian named the King of Hearts. Chanting the enigmatic script summons his alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "ウィンダス"
   },
   {
     "id": 952,
@@ -1953,7 +2003,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-コルモル",
       "desc_jp": "『コルモル』の力が宿った巻物。\nコルモルの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Tarutaru named Koru-Moru. Chanting the enigmatic script summons his alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "ウィンダス"
   },
   {
     "id": 914,
@@ -1971,7 +2022,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "プロマシア"
   },
   {
     "id": 967,
@@ -1989,7 +2041,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-クルタダ",
       "desc_jp": "『クルタダ』の力が宿った巻物。\nクルタダの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of an Elvaan named Qultada. Chanting the enigmatic script summons his alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "アトルガン"
   },
   {
     "id": 965,
@@ -2007,7 +2060,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "アドゥリン"
   },
   {
     "id": 1017,
@@ -2025,7 +2079,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-アシェラII",
       "desc_jp": "『アシェラ』の力が宿った巻物。\n強い絆で結ばれたアシェラ・V・アドゥリンの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Hume named Arciela. Chanting the enigmatic script summons her alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "アドゥリン"
   },
   {
     "id": 981,
@@ -2080,7 +2135,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "バストゥーク"
   },
   {
     "id": 970,
@@ -2098,7 +2154,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-ブリジッド",
       "desc_jp": "『ブリジッド』の力が宿った巻物。\nブリジッドの力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Hume named Brygid. Chanting the enigmatic script summons her alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "バストゥーク"
   },
   {
     "id": 935,
@@ -2116,7 +2173,8 @@ export const TRUSTS: TrustMaster[] = [
       "ja": "盟-星の神子",
       "desc_jp": "『星の神子』の力が宿った巻物。\n星の神子の力を借りることができる。",
       "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Tarutaru known as the Star Sibyl. Chanting the enigmatic script summons her alter ego to the bearer's side."
-    }
+    },
+    "affiliation": "ウィンダス"
   },
   {
     "id": 950,
