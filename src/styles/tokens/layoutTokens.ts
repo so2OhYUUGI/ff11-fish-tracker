@@ -23,7 +23,7 @@ export const LAYOUT_TOKENS = {
 
   header: {
     stickyWrapper: 'sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-700/80 shadow-md transition-all',
-    stickyFilterBar: 'sticky top-[66px] sm:top-[82px] z-30 bg-slate-900/90 backdrop-blur-md pb-0 p-0 transition-all',
+    stickyFilterBar: 'sticky top-[58px] sm:top-[74px] z-30 bg-slate-900/90 backdrop-blur-md pb-0 p-0 transition-all',
     container: 'bg-[image:var(--theme-header-bg)] text-white shadow-md border-b [border-bottom-color:var(--theme-header-border)] [border-top-color:var(--theme-accent-border)] transition-all',
     inner: 'max-w-7xl mx-auto px-3 py-2.5 sm:px-6 sm:py-4 lg:px-8',
     rowWrapper: 'flex items-center justify-between gap-4',
