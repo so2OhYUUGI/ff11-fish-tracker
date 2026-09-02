@@ -15,7 +15,7 @@ export const BADGE_BASE_STYLE =
 /** 戦闘タイプに応じたバッジスタイルのマッピング */
 export const COMBAT_TYPE_BADGE_STYLES: Record<string, string> = {
 	近接物理: 'bg-amber-950/80 text-amber-300 border-amber-800/60',
-	遠距離物理: 'bg-amber-950/80 text-amber-300 border-amber-800/60',
+	遠隔物理: 'bg-amber-950/80 text-amber-300 border-amber-800/60',
 	魔法攻撃: 'bg-purple-950/80 text-purple-300 border-purple-800/60',
 	回復: 'bg-emerald-950/80 text-emerald-300 border-emerald-800/60',
 	支援: 'bg-emerald-950/80 text-emerald-300 border-emerald-800/60',

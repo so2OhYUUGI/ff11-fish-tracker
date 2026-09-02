@@ -87,3 +87,10 @@ export const TRUST_AFFILIATION_CONFIG: Record<
 		style: 'bg-gray-800/80 text-gray-300 border-gray-700/80',
 	},
 };
+
+// フェイス固有のレイアウト補助スタイル定数
+export const TRUST_ITEM_STYLES = {
+	itemBadge: 'bg-slate-800/80 text-amber-200/90 border-slate-700/80 gap-1 min-w-0 max-w-[120px] sm:max-w-[180px]',
+	itemIcon: 'w-3 h-3 shrink-0 text-amber-400',
+	combatBadgeBase: 'w-[84px] justify-center shrink-0 text-center',
+} as const;

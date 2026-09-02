@@ -23,6 +23,7 @@ import { Check, Package } from 'lucide-react';
 import type { TrustMaster } from '@/types/trusttracker';
 import { LIST_STYLES } from '@/styles/components/listStyles';
 import { getCombatTypeBadgeStyle } from '@/styles/components/badgeStyles';
+import { TRUST_ITEM_STYLES } from '@/styles/features/TrustTrackerStyle';
 import { Badge } from '@/components/common/Badge';
 
 type Props = {
@@ -33,13 +34,6 @@ type Props = {
 	onToggleCheck?: (trustId: number) => void;
 	onClickDetail?: (trust: TrustMaster) => void;
 };
-
-// フェイス固有のレイアウト補助スタイル定数
-const TRUST_ITEM_STYLES = {
-	itemBadge: 'bg-slate-800/80 text-amber-200/90 border-slate-700/80 gap-1 min-w-0 max-w-[120px] sm:max-w-[180px]',
-	itemIcon: 'w-3 h-3 shrink-0 text-amber-400',
-	combatBadgeBase: 'w-[84px] justify-center shrink-0 text-center',
-} as const;
 
 // コンテナスタイルを取得するヘルパー関数
 const getContainerStyle = (

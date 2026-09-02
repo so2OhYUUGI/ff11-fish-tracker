@@ -10,11 +10,11 @@ export const TRUSTS: TrustMaster[] = [
     "job": "ナイト",
     "combatType": "盾",
     "isLimited": false,
-    "acquireInfo": "通常",
+    "acquireInfo": "「新魔法フェイス（サンドリア）」、ドラゴンミッション",
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-クリルラ",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
     },
@@ -29,11 +29,11 @@ export const TRUSTS: TrustMaster[] = [
     "job": "ナイト",
     "combatType": "盾",
     "isLimited": false,
-    "acquireInfo": "通常",
+    "acquireInfo": "「新魔法フェイス（サンドリア）」、闇王ミッション",
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-トリオン",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
     }
@@ -213,7 +213,7 @@ export const TRUSTS: TrustMaster[] = [
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-エグセニミル",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
     }
@@ -242,10 +242,10 @@ export const TRUSTS: TrustMaster[] = [
     "ja": "I.シールド(UC)",
     "icon_id": 1010,
     "party_name": "InvincibleShld",
-    "job": "",
+    "job": "戦士",
     "combatType": "近接物理",
     "isLimited": true,
-    "acquireInfo": "",
+    "acquireInfo": "該当のユニティに所属。フェイス使用許可証。",
     "item": {
       "id": 0,
       "en": "",
@@ -268,7 +268,7 @@ export const TRUSTS: TrustMaster[] = [
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-アイアンイーター",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
     }
@@ -282,11 +282,11 @@ export const TRUSTS: TrustMaster[] = [
     "job": "侍",
     "combatType": "近接物理",
     "isLimited": false,
-    "acquireInfo": "通常",
+    "acquireInfo": "「新魔法フェイス（バストゥーク）」、ドラゴンミッション",
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-アヤメ",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
     }
@@ -297,17 +297,18 @@ export const TRUSTS: TrustMaster[] = [
     "ja": "アヤメ(UC)",
     "icon_id": 1010,
     "party_name": "Ayame",
-    "job": "",
-    "combatType": "",
+    "job": "侍",
+    "combatType": "近接物理",
     "isLimited": true,
-    "acquireInfo": "",
+    "acquireInfo": "該当のユニティに所属。フェイス使用許可証。",
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-アヤメ(UC)",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "バストゥーク"
   },
   {
     "id": 906,
@@ -390,11 +391,11 @@ export const TRUSTS: TrustMaster[] = [
     "job": "戦士",
     "combatType": "近接物理",
     "isLimited": false,
-    "acquireInfo": "通常",
+    "acquireInfo": "「新魔法フェイス（バストゥーク）」、闇王ミッション",
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-フォルカー",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
     }
@@ -408,11 +409,11 @@ export const TRUSTS: TrustMaster[] = [
     "job": "シーフ",
     "combatType": "近接物理",
     "isLimited": false,
-    "acquireInfo": "通常",
+    "acquireInfo": "「新魔法フェイス（ウィンダス）」、ドラゴンミッション、「仲良くしたい？」",
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-ナナー・ミーゴ",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
     }
@@ -441,17 +442,18 @@ export const TRUSTS: TrustMaster[] = [
     "ja": "アルド(UC)",
     "icon_id": 1012,
     "party_name": "Aldo",
-    "job": "",
-    "combatType": "",
+    "job": "シーフ",
+    "combatType": "近接物理",
     "isLimited": true,
-    "acquireInfo": "",
+    "acquireInfo": "該当のユニティに所属。フェイス使用許可証。",
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-アルド(UC)",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "ジュノ"
   },
   {
     "id": 933,
@@ -466,7 +468,7 @@ export const TRUSTS: TrustMaster[] = [
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-マート",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
     }
@@ -477,17 +479,18 @@ export const TRUSTS: TrustMaster[] = [
     "ja": "マート(UC)",
     "icon_id": 1012,
     "party_name": "Maat",
-    "job": "",
-    "combatType": "",
+    "job": "モンク",
+    "combatType": "近接物理",
     "isLimited": true,
-    "acquireInfo": "",
+    "acquireInfo": "該当のユニティに所属。フェイス使用許可証。",
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-マート(UC)",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "ジュノ"
   },
   {
     "id": 971,
@@ -520,7 +523,7 @@ export const TRUSTS: TrustMaster[] = [
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-スカリーZ",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
     }
@@ -574,7 +577,7 @@ export const TRUSTS: TrustMaster[] = [
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-プリッシュ",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
     }
@@ -628,7 +631,7 @@ export const TRUSTS: TrustMaster[] = [
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-ザザーグ",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
     }
@@ -644,11 +647,11 @@ export const TRUSTS: TrustMaster[] = [
     "isLimited": false,
     "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
-      "id": 0,
-      "en": "",
-      "ja": "盟-ナジャ・サラヒム",
-      "desc_jp": "",
-      "desc_en": ""
+      "id": 10118,
+      "en": "Cipher: Naja",
+      "ja": "盟-ナジャ",
+      "desc_jp": "『ナジャ』の力が宿った巻物。\nナジャ・サラヒムの力を借りることができる。",
+      "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Mithra named Naja Salaheem. Chanting the enigmatic script summons her alter ego to the bearer's side."
     }
   },
   {
@@ -657,17 +660,18 @@ export const TRUSTS: TrustMaster[] = [
     "ja": "ナジャ(UC)",
     "icon_id": 1014,
     "party_name": "NajaSalaheem",
-    "job": "",
-    "combatType": "",
+    "job": "モンク",
+    "combatType": "近接物理",
     "isLimited": true,
-    "acquireInfo": "",
+    "acquireInfo": "該当のユニティに所属。フェイス使用許可証。",
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-ナジャ(UC)",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "アトルガン"
   },
   {
     "id": 923,
@@ -682,7 +686,7 @@ export const TRUSTS: TrustMaster[] = [
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-ナシュメラ",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
     }
@@ -768,11 +772,11 @@ export const TRUSTS: TrustMaster[] = [
     "job": "戦士",
     "combatType": "近接物理",
     "isLimited": false,
-    "acquireInfo": "通常。要「未完成のスクロール束」",
+    "acquireInfo": "フェイス使用許可証。要「未完成のスクロール束」。過去サンド「それぞれの未来へ」",
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-エグセニミルII",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
     }
@@ -786,11 +790,11 @@ export const TRUSTS: TrustMaster[] = [
     "job": "戦士",
     "combatType": "近接物理",
     "isLimited": false,
-    "acquireInfo": "通常。要「未完成のスクロール束」",
+    "acquireInfo": "フェイス使用許可証。要「未完成のスクロール束」。過去バス「己の行く先に」",
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-クララ",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
     }
@@ -876,7 +880,7 @@ export const TRUSTS: TrustMaster[] = [
     "job": "踊り子",
     "combatType": "近接物理",
     "isLimited": false,
-    "acquireInfo": "盟-リリゼットクエスト「禁断の再会」",
+    "acquireInfo": "クエスト「禁断の再会」",
     "item": {
       "id": 10137,
       "en": "Cipher: Lilisette",
@@ -894,7 +898,7 @@ export const TRUSTS: TrustMaster[] = [
     "job": "踊り子",
     "combatType": "近接物理",
     "isLimited": false,
-    "acquireInfo": "盟-リリゼットII星唄ミッション第2章第16節「仮面の一味」",
+    "acquireInfo": "星唄ミッション第2章第16節「仮面の一味」",
     "item": {
       "id": 10171,
       "en": "Cipher: Lilisette II",
@@ -914,11 +918,11 @@ export const TRUSTS: TrustMaster[] = [
     "isLimited": false,
     "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
-      "id": 0,
-      "en": "",
-      "ja": "盟-ルー・マカラッカ",
-      "desc_jp": "",
-      "desc_en": ""
+      "id": 10132,
+      "en": "Cipher: Lhu",
+      "ja": "盟-ルー",
+      "desc_jp": "『ルー』の力が宿った巻物。\nルー・マカラッカの力を借りることができる。",
+      "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Mithra named Lhu Mhakaracca. Chanting the enigmatic script summons her alter ego to the bearer's side."
     }
   },
   {
@@ -932,11 +936,11 @@ export const TRUSTS: TrustMaster[] = [
     "isLimited": false,
     "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
-      "id": 0,
-      "en": "",
+      "id": 10120,
+      "en": "Cipher: Lehko",
       "ja": "盟-レコ・ハボッカ",
-      "desc_jp": "",
-      "desc_en": ""
+      "desc_jp": "『レコ』の力が宿った巻物。\nレコ・ハボッカの力を借りることができる。",
+      "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Mithra named Lehko Habhoka. Chanting the enigmatic script summons his alter ego to the bearer's side."
     }
   },
   {
@@ -948,11 +952,11 @@ export const TRUSTS: TrustMaster[] = [
     "job": "シーフ",
     "combatType": "近接物理",
     "isLimited": false,
-    "acquireInfo": "通常。要「未完成のスクロール束」",
+    "acquireInfo": "フェイス使用許可証。要「未完成のスクロール束」。過去ウィン「魂の果て」",
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-ロマー・ミーゴ",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
     }
@@ -966,7 +970,7 @@ export const TRUSTS: TrustMaster[] = [
     "job": "白魔道士",
     "combatType": "近接物理",
     "isLimited": false,
-    "acquireInfo": "盟-イングリッドIIBFシニスターレイン",
+    "acquireInfo": "BFシニスターレイン。エミネンス・レコードクエスト3「絆パワーですわ！」",
     "item": {
       "id": 10174,
       "en": "Cipher: Ingrid II",
@@ -1006,7 +1010,7 @@ export const TRUSTS: TrustMaster[] = [
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-チャチャルン",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
     }
@@ -1053,17 +1057,18 @@ export const TRUSTS: TrustMaster[] = [
     "ja": "フラヴィリア(UC)",
     "icon_id": 1016,
     "party_name": "Flaviria",
-    "job": "",
-    "combatType": "",
+    "job": "竜騎士",
+    "combatType": "近接物理",
     "isLimited": true,
-    "acquireInfo": "",
+    "acquireInfo": "該当のユニティに所属。フェイス使用許可証。",
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-フラヴィリア(UC)",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "アドゥリン"
   },
   {
     "id": 990,
@@ -1094,11 +1099,11 @@ export const TRUSTS: TrustMaster[] = [
     "isLimited": false,
     "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
-      "id": 0,
-      "en": "",
-      "ja": "盟-レイ・ランガヴォ",
-      "desc_jp": "",
-      "desc_en": ""
+      "id": 10150,
+      "en": "Cipher: Lhe",
+      "ja": "盟-レイ",
+      "desc_jp": "『レイ』の力が宿った巻物。\nレイ・ランガヴォの力を借りることができる。",
+      "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Mithra named Lhe Lhangavo. Chanting the enigmatic script summons her alter ego to the bearer's side."
     }
   },
   {
@@ -1164,7 +1169,7 @@ export const TRUSTS: TrustMaster[] = [
     "job": "侍",
     "combatType": "近接物理",
     "isLimited": false,
-    "acquireInfo": "盟-イロハ星唄ミッション第3章第28節「雲ひとつなし」",
+    "acquireInfo": "星唄ミッション第3章第28節「雲ひとつなし」",
     "item": {
       "id": 10185,
       "en": "Cipher: Iroha",
@@ -1182,7 +1187,7 @@ export const TRUSTS: TrustMaster[] = [
     "job": "侍",
     "combatType": "近接物理",
     "isLimited": false,
-    "acquireInfo": "盟-イロハII星唄ミッション第3章第35節「すべてが星の唄となる」",
+    "acquireInfo": "星唄ミッション第3章第35節「すべてが星の唄となる」",
     "item": {
       "id": 10186,
       "en": "Cipher: Iroha II",
@@ -1220,11 +1225,11 @@ export const TRUSTS: TrustMaster[] = [
     "isLimited": false,
     "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
-      "id": 0,
-      "en": "",
-      "ja": "盟-ウカ・トトゥリン",
-      "desc_jp": "",
-      "desc_en": ""
+      "id": 10136,
+      "en": "Cipher: Uka",
+      "ja": "盟-ウカ",
+      "desc_jp": "『ウカ』の力が宿った巻物。\nウカ・トトゥリンの力を借りることができる。",
+      "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Mithra named Uka Totlihn. Chanting the enigmatic script summons her alter ego to the bearer's side."
     }
   },
   {
@@ -1251,14 +1256,14 @@ export const TRUSTS: TrustMaster[] = [
     "ja": "ジャコ(UC)",
     "icon_id": 1017,
     "party_name": "JakohWahcondalo",
-    "job": "",
-    "combatType": "",
+    "job": "シーフ",
+    "combatType": "近接物理",
     "isLimited": true,
-    "acquireInfo": "",
+    "acquireInfo": "該当のユニティに所属。フェイス使用許可証。",
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-ジャコ(UC)",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
     }
@@ -1344,7 +1349,7 @@ export const TRUSTS: TrustMaster[] = [
     "job": "シーフ",
     "combatType": "近接物理",
     "isLimited": false,
-    "acquireInfo": "盟-ライオンII星唄ミッション第1章第10節",
+    "acquireInfo": "星唄ミッション第1章第10節",
     "item": {
       "id": 10159,
       "en": "Cipher: Lion II",
@@ -1362,13 +1367,13 @@ export const TRUSTS: TrustMaster[] = [
     "job": "狩人",
     "combatType": "遠隔物理",
     "isLimited": false,
-    "acquireInfo": "盟-セミドラゴンミッション、星唄ミッション第1章第5節「祈りの炎」",
+    "acquireInfo": "ドラゴンミッション、星唄ミッション第1章第5節「祈りの炎」",
     "item": {
-      "id": 0,
-      "en": "",
-      "ja": "盟-セミ・ラフィーナ",
-      "desc_jp": "",
-      "desc_en": ""
+      "id": 10157,
+      "en": "Cipher: Semih",
+      "ja": "盟-セミ",
+      "desc_jp": "『セミ』の力が宿った巻物。\nセミ・ラフィーナの力を借りることができる。",
+      "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Mithra named Semih Lafihna. Chanting the enigmatic script summons her alter ego to the bearer's side."
     }
   },
   {
@@ -1380,7 +1385,7 @@ export const TRUSTS: TrustMaster[] = [
     "job": "侍",
     "combatType": "遠隔物理",
     "isLimited": false,
-    "acquireInfo": "盟-テンゼンII星唄ミッション第2章第2節「波の向こうに」",
+    "acquireInfo": "星唄ミッション第2章第2節「波の向こうに」",
     "item": {
       "id": 10167,
       "en": "Cipher: Tenzen II",
@@ -1400,11 +1405,11 @@ export const TRUSTS: TrustMaster[] = [
     "isLimited": false,
     "acquireInfo": "フェイスゲットキャンペーン",
     "item": {
-      "id": 0,
-      "en": "",
-      "ja": "盟-マッキーチェブキー",
-      "desc_jp": "",
-      "desc_en": ""
+      "id": 10180,
+      "en": "Cipher: Makki",
+      "ja": "盟-マッキー",
+      "desc_jp": "『マッキー』の力が宿った巻物。\nマッキーチェブキーの力を借りることができる。",
+      "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Tarutaru named Makki-Chebukki. Chanting the enigmatic script summons his alter ego to the bearer's side."
     }
   },
   {
@@ -1418,11 +1423,11 @@ export const TRUSTS: TrustMaster[] = [
     "isLimited": false,
     "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
-      "id": 0,
-      "en": "",
-      "ja": "盟-ナジュリス",
-      "desc_jp": "",
-      "desc_en": ""
+      "id": 10125,
+      "en": "Cipher: Najelith",
+      "ja": "盟-風蛇将",
+      "desc_jp": "『風蛇将』の力が宿った巻物。\n風蛇将ナジュリス・パレビアの力を\n借りることができる。",
+      "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Hume named Najelith Vareviya. Chanting the enigmatic script summons her alter ego to the bearer's side."
     }
   },
   {
@@ -1470,11 +1475,11 @@ export const TRUSTS: TrustMaster[] = [
     "job": "黒魔道士",
     "combatType": "魔法攻撃",
     "isLimited": false,
-    "acquireInfo": "通常",
+    "acquireInfo": "「新魔法フェイス（ウィンダス）」。闇王ミッション。ウィンMが6-1クリアから9-1ではない",
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-アジドマルジド",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
     }
@@ -1488,11 +1493,11 @@ export const TRUSTS: TrustMaster[] = [
     "job": "黒魔道士",
     "combatType": "魔法攻撃",
     "isLimited": false,
-    "acquireInfo": "通常",
+    "acquireInfo": "「新魔法フェイス（ウィンダス）」、「ゴーレムのまなざし」。フェイスクリルラ、アヤメ、ナナー・ミーゴ、トリオン、フォルカー、アジドマルジド」を習得",
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-シャントット",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
     }
@@ -1508,11 +1513,11 @@ export const TRUSTS: TrustMaster[] = [
     "isLimited": false,
     "acquireInfo": "フェイスゲットキャンペーン",
     "item": {
-      "id": 0,
-      "en": "",
-      "ja": "盟-クッキーチェブキー",
-      "desc_jp": "",
-      "desc_en": ""
+      "id": 10146,
+      "en": "Cipher: Kukki",
+      "ja": "盟-クッキー",
+      "desc_jp": "『クッキー』の力が宿った巻物。\nクッキーチェブキーの力を借りることができる。",
+      "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Tarutaru named Kukki-Chebukki. Chanting the enigmatic script summons his alter ego to the bearer's side."
     }
   },
   {
@@ -1546,7 +1551,7 @@ export const TRUSTS: TrustMaster[] = [
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-ガダラル",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
     }
@@ -1636,7 +1641,7 @@ export const TRUSTS: TrustMaster[] = [
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-イングリッド",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
     }
@@ -1737,17 +1742,18 @@ export const TRUSTS: TrustMaster[] = [
     "ja": "ピエージェ(UC)",
     "icon_id": 1036,
     "party_name": "Pieuje",
-    "job": "",
-    "combatType": "",
+    "job": "白魔道士",
+    "combatType": "回復",
     "isLimited": true,
-    "acquireInfo": "",
+    "acquireInfo": "該当のユニティに所属。フェイス使用許可証。",
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-ピエージェ(UC)",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "サンドリア"
   },
   {
     "id": 955,
@@ -1755,17 +1761,18 @@ export const TRUSTS: TrustMaster[] = [
     "ja": "アプルル(UC)",
     "icon_id": 1038,
     "party_name": "Apururu",
-    "job": "",
-    "combatType": "",
+    "job": "白魔道士",
+    "combatType": "回復",
     "isLimited": true,
-    "acquireInfo": "",
+    "acquireInfo": "該当のユニティに所属。フェイス使用許可証。",
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-アプルル(UC)",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "ウィンダス"
   },
   {
     "id": 898,
@@ -1791,17 +1798,18 @@ export const TRUSTS: TrustMaster[] = [
     "ja": "ヨランオラン(UC)",
     "icon_id": 1038,
     "party_name": "Yoran-Oran",
-    "job": "",
-    "combatType": "",
+    "job": "白魔道士",
+    "combatType": "回復",
     "isLimited": true,
-    "acquireInfo": "",
+    "acquireInfo": "該当のユニティに所属。フェイス使用許可証。",
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-ヨランオラン(UC)",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "ウィンダス"
   },
   {
     "id": 999,
@@ -1886,11 +1894,11 @@ export const TRUSTS: TrustMaster[] = [
     "isLimited": false,
     "acquireInfo": "継続ログインキャンペーンなど",
     "item": {
-      "id": 0,
-      "en": "",
-      "ja": "盟-フェリアスコフィン",
-      "desc_jp": "",
-      "desc_en": ""
+      "id": 10133,
+      "en": "Cipher: F. Coffin",
+      "ja": "盟-フェリアス",
+      "desc_jp": "『フェリアス』の力が宿った巻物。\nフェリアスコフィンの力を借りることができる。",
+      "desc_en": "A scroll inscribed with strange symbols that seal away the puissance of a Galka named Ferreous Coffin. Chanting the enigmatic script summons his alter ego to the bearer's side."
     }
   },
   {
@@ -1960,7 +1968,7 @@ export const TRUSTS: TrustMaster[] = [
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-ウルミア",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
     }
@@ -1996,7 +2004,7 @@ export const TRUSTS: TrustMaster[] = [
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-アシェラ",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
     }
@@ -2025,17 +2033,18 @@ export const TRUSTS: TrustMaster[] = [
     "ja": "シルヴィ(UC)",
     "icon_id": 1052,
     "party_name": "Sylvie",
-    "job": "",
-    "combatType": "",
+    "job": "風水士",
+    "combatType": "支援",
     "isLimited": true,
-    "acquireInfo": "",
+    "acquireInfo": "該当のユニティに所属。フェイス使用許可証。",
     "item": {
       "id": 0,
       "en": "",
-      "ja": "盟-シルヴィ(UC)",
+      "ja": "",
       "desc_jp": "",
       "desc_en": ""
-    }
+    },
+    "affiliation": "アドゥリン"
   },
   {
     "id": 911,
