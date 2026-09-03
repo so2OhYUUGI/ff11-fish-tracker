@@ -8,6 +8,7 @@
  * - モバイルサイズでもキャラセレクタを常時表示し、操作領域を1タップに最適化（"キャラ:"ラベルは小画面で非表示）
  * - 登録ユーザーにはハンバーガーメニュー内に「チェッカー切り替え」「環境設定」を統合
  * - 未登録ユーザーにはハンバーガーボタンを非表示にし、現在のページのURL情報を保持して各テーマ配下の登録ページへ移動する「登録してはじめる」CTAリンクを表示
+ * - アプリ内ブラウザ環境（SNS等）の未登録ユーザーには標準ブラウザでの閲覧を促す「ブラウザで開く」ボタンを表示
  * - URLパスのセグメント解析により、新トラッカー追加時もコード変更なしで動的テーマ・動的ルーティングに対応
  * - UserDataContext から表示用キャラ一覧および選択中のキャラ情報を直接参照
  * - CSS変数による抽象化テーマ（釣魚 / フェイス）およびデザインシステムトークン（COMMON_TOKENS, LAYOUT_TOKENS）を適用
@@ -16,7 +17,7 @@
  * - Context      : src/contexts/UserDataContext.tsx
  * - ルーティング : react-router-dom (Link, useLocation)
  * - トークン    : src/styles/tokens/commonTokens.ts, src/styles/tokens/layoutTokens.ts
- * - ユーティリティ: src/utils/env.ts
+ * - ユーティリティ: src/utils/env.ts, src/utils/environment.ts
  * 
  * [編集・改修時の注意事項（AI/エンジニア共通指示）]
  * 1. 【アクセス操作】 モバイル/デスクトップ共通ドロップダウン開閉時は Escape キー押下およびメニュー外クリックによる自動クローズイベントを解除（クリーンアップ）すること
@@ -26,11 +27,12 @@
  * ============================================================================
  */
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Fish, Scroll, Database, Settings, Menu, X, Check, UserPlus } from 'lucide-react';
+import { Fish, Scroll, Database, Settings, Menu, X, Check, UserPlus, ExternalLink } from 'lucide-react';
 import { useUserDataContext } from '@/contexts/UserDataContext';
 import { isDev } from '@/utils/env';
+import { checkInAppBrowser, openInExternalBrowser } from '@/utils/environment';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 import { LAYOUT_TOKENS } from '@/styles/tokens/layoutTokens';
 
@@ -51,9 +53,12 @@ export const Header: React.FC<HeaderProps> = ({
 	} = useUserDataContext();
 
 	const [isOpen, setIsOpen] = useState(false);
+	const [showCopyNotice, setShowCopyNotice] = useState(false);
 	const menuRef = useRef<HTMLDivElement>(null);
 
 	const location = useLocation();
+
+	const isInApp = useMemo(() => checkInAppBrowser(), []);
 
 	// パスの第1セグメントから現在のトラッカープレフィックスを動的取得 (例: "/fishtracker", "/trusttracker")
 	const pathSegments = location.pathname.split('/').filter(Boolean);
@@ -86,6 +91,16 @@ export const Header: React.FC<HeaderProps> = ({
 			window.removeEventListener('keydown', handleKeyDown);
 		};
 	}, [isOpen]);
+
+	const handleOpenBrowser = async () => {
+		const result = await openInExternalBrowser();
+		if (result === 'copied') {
+			setShowCopyNotice(true);
+			setTimeout(() => setShowCopyNotice(false), 3000);
+		} else if (result === 'failed') {
+			alert('URLの取得に失敗しました。アドレスバーのURLを直接コピーして標準ブラウザで開いてください。');
+		}
+	};
 
 	const isSharedActive = !!activeCharacter?.isShared;
 	const { icon } = LAYOUT_TOKENS.header;
@@ -128,7 +143,7 @@ export const Header: React.FC<HeaderProps> = ({
 											id="char-select"
 											value={activeCharacter?.id ?? ''}
 											onChange={(e) => setActiveCharacter(e.target.value)}
-											className={`${LAYOUT_TOKENS.control.select(isSharedActive)} max-w-[110px] xs:max-w-[140px] sm:max-w-none truncate`}
+											className={`${LAYOUT_TOKENS.control.select(isSharedActive)} max-w-110px xs:max-w-[140px] sm:max-w-none truncate`}
 										>
 											{displayCharacters.map((char) => (
 												<option key={char.id} value={char.id} className={LAYOUT_TOKENS.header.selectOption}>
@@ -229,6 +244,22 @@ export const Header: React.FC<HeaderProps> = ({
 									)}
 								</div>
 							</>
+						) : isInApp ? (
+							<div className="relative">
+								<button
+									type="button"
+									onClick={handleOpenBrowser}
+									className={LAYOUT_TOKENS.control.button}
+								>
+									<ExternalLink className={icon.sm} />
+									<span>ブラウザで開く</span>
+								</button>
+								{showCopyNotice && (
+									<div className="absolute right-0 top-full mt-2 w-64 p-2 bg-gray-800 text-white text-xs rounded shadow-lg z-50 text-center">
+										URLをコピーしました。SafariやChromeに貼り付けて開いてください。
+									</div>
+								)}
+							</div>
 						) : (
 							<Link
 								to={registerPath}

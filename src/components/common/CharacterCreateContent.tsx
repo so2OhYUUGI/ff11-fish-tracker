@@ -6,7 +6,7 @@
  * [概要]
  * - URLパス（fishtracker / trusttracker）に応じた動的なタイトル・アイコン・アピールポイントの描画
  * - 初期キャラクター作成フォームの描画
- * - アプリ内ブラウザの検知と標準ブラウザ利用促進の注意喚起
+ * - アプリ内ブラウザの検知と標準ブラウザ利用促進の注意喚起・外部ブラウザ起動機能
  * 
  * [依存関係・関連ファイル]
  * - ユーティリティ: src/utils/environment.ts
@@ -16,8 +16,8 @@
 
 import React, { useState, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Fish, Users, CheckCircle2, HardDrive } from 'lucide-react';
-import { checkInAppBrowser } from '@/utils/environment';
+import { Fish, Users, CheckCircle2, HardDrive, ExternalLink } from 'lucide-react';
+import { checkInAppBrowser, openInExternalBrowser } from '@/utils/environment';
 import { COMMON_TOKENS } from '@/styles/tokens/commonTokens';
 
 type TrackerConfig = {
@@ -136,14 +136,13 @@ export const CharacterCreateContent: React.FC<CharacterCreateContentProps> = ({
 
 	const IconComponent = trackerConfig.icon;
 
-	const handleCopyUrl = async () => {
-		if (typeof window === 'undefined') return;
-		try {
-			await navigator.clipboard.writeText(window.location.href);
+	const handleOpenBrowser = async () => {
+		const result = await openInExternalBrowser();
+		if (result === 'copied') {
 			setCopied(true);
 			setTimeout(() => setCopied(false), 3000);
-		} catch (err) {
-			console.error('URLのコピーに失敗しました', err);
+		} else if (result === 'failed') {
+			alert('URLの取得に失敗しました。アドレスバーのURLを直接コピーしてご利用ください。');
 		}
 	};
 
@@ -193,10 +192,11 @@ export const CharacterCreateContent: React.FC<CharacterCreateContentProps> = ({
 					</p>
 					<button
 						type="button"
-						onClick={handleCopyUrl}
-						className={COMMON_TOKENS.alert.actionButton}
+						onClick={handleOpenBrowser}
+						className={`${COMMON_TOKENS.alert.actionButton} flex items-center justify-center gap-2`}
 					>
-						{copied ? '✓ URLをコピーしました！' : 'URLをコピーして標準ブラウザで開く'}
+						<ExternalLink className="w-4 h-4" />
+						<span>{copied ? '✓ URLをコピーしました！Safari/Chromeで開いてください' : '標準ブラウザで開く'}</span>
 					</button>
 				</div>
 			)}
