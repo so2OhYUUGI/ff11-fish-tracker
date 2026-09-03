@@ -18,6 +18,7 @@ import { useUserData } from '@/contexts/useUserData';
 import { useSharedProgress } from '@/hooks/useSharedProgress';
 import { useSharedWishlist } from '@/hooks/useSharedWishlist';
 import { SHARED_GUEST_CHARACTER_ID } from '@/constants/character';
+import { checkInAppBrowser } from '@/utils/environment';
 
 export interface DisplayCharacterProgress extends CharacterProgress {
 	isShared?: boolean;
@@ -142,28 +143,32 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 		return userData.characters;
 	}, [userData.characters, activeSharedCharacter]);
 
-	// 共有URL（魚/フェイス進捗）アクセス時の初回自動選択とURL削除
+	// 共有URL（魚/フェイス進捗）アクセス時の初回自動選択とURL削除（SNSブラウザ以外で実行）
 	useEffect(() => {
 		if (sharedProgress && !hasAutoSelectedSharedRef.current) {
 			setLocalActiveCharacter(SHARED_GUEST_CHARACTER_ID);
 			setViewMode('list');
 			hasAutoSelectedSharedRef.current = true;
-			clearSharedMode();
+			if (!checkInAppBrowser()) {
+				clearSharedMode();
+			}
 		}
 	}, [sharedProgress, setLocalActiveCharacter, setViewMode, clearSharedMode]);
 
-	// 共有ウィッシュリストアクセス時のURL削除（テンポラリ化）
+	// 共有ウィッシュリストアクセス時のURL削除（テンポラリ化、SNSブラウザ以外で実行）
 	useEffect(() => {
 		if (sharedWishlist && !hasAutoSelectedSharedWishlistRef.current) {
 			hasAutoSelectedSharedWishlistRef.current = true;
-			if (clearSharedWishlist) {
-				clearSharedWishlist();
-			} else {
-				// フォールバックとして直接 URL パラメータから wishlist_share を削除
-				const url = new URL(window.location.href);
-				if (url.searchParams.has('wishlist_share')) {
-					url.searchParams.delete('wishlist_share');
-					window.history.replaceState({}, '', url.toString());
+			if (!checkInAppBrowser()) {
+				if (clearSharedWishlist) {
+					clearSharedWishlist();
+				} else {
+					// フォールバックとして直接 URL パラメータから wishlist_share を削除
+					const url = new URL(window.location.href);
+					if (url.searchParams.has('wishlist_share')) {
+						url.searchParams.delete('wishlist_share');
+						window.history.replaceState({}, '', url.toString());
+					}
 				}
 			}
 		}
